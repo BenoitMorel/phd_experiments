@@ -1,0 +1,3 @@
+PROT
+FASTA
+family_149.fasta
