@@ -24,6 +24,7 @@ genedir = os.path.join(datadir, gene)
 script_path = os.path.join(exp.treerecs_root, "scripts", "experiments", "plot_likelihood_vs_threshold.py")
 resultsdir= os.path.join(exp.results_root, "treerecs", "threshold_likelihood_plots", gene)
 
-exp.write_results_info(resultsdir, "") 
+result_msg = "Treerecs git: \n" + exp.get_git_info(exp.treerecs_root)
+exp.write_results_info(resultsdir, result_msg) 
 run(genedir, script_path, resultsdir)
 
