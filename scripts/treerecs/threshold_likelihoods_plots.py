@@ -5,26 +5,26 @@ import subprocess
 sys.path.insert(0, 'scripts')
 import experiments as exp
 
-def run(genedir, script_path, resultsdir):
-  os.makedirs(resultsdir, exist_ok=True)
+def run(datadir, script_path, resultsdir):
   command = []
   command.append("python")
   command.append(script_path)
-  command.append(os.path.join(genedir, gene + "_raxml_support.newick"))
+  command.append(os.path.join(datadir, "geneTrees.newick"))
   command.append(os.path.join(datadir, "speciesTree.newick"))
-  command.append(os.path.join(genedir, "alignment.txt"))
-  command.append(os.path.join(genedir, gene + ".map"))
+  command.append(os.path.join(datadir, "alignment.txt"))
+  command.append(os.path.join(datadir, "mapping.txt"))
   command.append("7")
   command.append(resultsdir)
   subprocess.check_call(command)
 
-datadir = os.path.join(exp.datasets_root, "phyldog_test_dataset", "treerecs_format")
-gene = "HBG011000"
-genedir = os.path.join(datadir, gene)
+basedir = "HBG011000"
+datadir = os.path.join(exp.datasets_root, "treerecs", "phyldog_example", basedir)
 script_path = os.path.join(exp.treerecs_root, "scripts", "experiments", "plot_likelihood_vs_threshold.py")
-resultsdir= os.path.join(exp.results_root, "treerecs", "threshold_likelihood_plots", gene)
+resultsdir= os.path.join(exp.results_root, "treerecs", "threshold_likelihoods_plots", basedir)
+
+os.makedirs(resultsdir, exist_ok=True)
 
 result_msg = "Treerecs git: \n" + exp.get_git_info(exp.treerecs_root)
 exp.write_results_info(resultsdir, result_msg) 
-run(genedir, script_path, resultsdir)
+run(datadir, script_path, resultsdir)
 
