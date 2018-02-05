@@ -1,24 +1,29 @@
 import os
+import sys
 import subprocess
 
-reporoot = "./"
-treerecsroot = os.path.join("..", "Treerecs")
-datadir = os.path.join(reporoot, "datasets", "phyldog_test_dataset", "treerecs_format")
+sys.path.insert(0, 'scripts')
+import experiments as exp
+
+def run(genedir, script_path, resultsdir):
+  os.makedirs(resultsdir, exist_ok=True)
+  command = []
+  command.append("python")
+  command.append(script_path)
+  command.append(os.path.join(genedir, gene + "_raxml_support.newick"))
+  command.append(os.path.join(datadir, "speciesTree.newick"))
+  command.append(os.path.join(genedir, "alignment.txt"))
+  command.append(os.path.join(genedir, gene + ".map"))
+  command.append("7")
+  command.append(resultsdir)
+  subprocess.check_call(command)
+
+datadir = os.path.join(exp.datasets_root, "phyldog_test_dataset", "treerecs_format")
 gene = "HBG011000"
 genedir = os.path.join(datadir, gene)
-resultsdir= os.path.join(reporoot, "results", "treerecs", "threshold_likelihood_plots", gene)
-os.makedirs(resultsdir, exist_ok=True)
-script_path = os.path.join(treerecsroot, "scripts", "experiments", "plot_likelihood_vs_threshold.py")
+script_path = os.path.join(exp.treerecs_root, "scripts", "experiments", "plot_likelihood_vs_threshold.py")
+resultsdir= os.path.join(exp.results_root, "treerecs", "threshold_likelihood_plots", gene)
 
-command = []
-command.append("python")
-command.append(script_path)
-command.append(os.path.join(genedir, gene + "_raxml_support.newick"))
-command.append(os.path.join(datadir, "speciesTree.newick"))
-command.append(os.path.join(genedir, "alignment.txt"))
-command.append(os.path.join(genedir, gene + ".map"))
-command.append("7")
-command.append(resultsdir)
-subprocess.check_call(command)
-#python $treerecsroot/scripts/experiments/plot_likelihood_vs_threshold.py ${datadir}/${gene}/${gene}_raxml_support.newick ${datadir}/speciesTree.newick ${datadir}/${gene}/alignment.txt ${datadir}/${gene}/${gene}.map 20 $resultsdir
+exp.write_results_info(resultsdir, "") 
+run(genedir, script_path, resultsdir)
 
