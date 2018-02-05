@@ -1,5 +1,5 @@
-Start: 2018-02-05 15:28:54.091503
-Command: scripts/treerecs/threshold_likelihoods_plots.py phyldog_example_HBG011000
+Start: 2018-02-05 15:30:12.308779
+Command: scripts/treerecs/threshold_likelihoods_plots.py tree_2537
 
 Experiment git: 
 Git repo: git@github.com:BenoitMorel/phd_experiments.git
