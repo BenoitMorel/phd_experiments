@@ -61,6 +61,6 @@ def create_result_dir(suffix):
     result_dir = base + str(i)
     if (not os.path.isdir(result_dir)):
       os.makedirs(result_dir)
-      return result_dir
+      return os.path.abspath(result_dir)
 
 
