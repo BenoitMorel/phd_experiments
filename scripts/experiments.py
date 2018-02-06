@@ -17,6 +17,7 @@ results_root = os.path.join(root, "results")
 
 # externals
 treerecs_root = os.path.join("..", "Treerecs")
+multiraxml_root = os.path.join("..", "multi-raxml", "deps", "raxml-ng")
 
 # utils
 def get_git_info(repo_path):
@@ -40,6 +41,16 @@ def write_results_info(resultsdir, msg):
     writer.write("\n")
     writer.write(msg)
 
-
-
+def display_warning_file(warning_filename):
+  if (not os.path.isfile(warning_filename)):
+      return
+  with open(warning_filename) as f:
+    print("##########################")
+    print("# Warning file content:  #")
+    print("##########################")
+    print("")
+    print(f.read())
+    print("########################")
+    print("# End of warning file  #")
+    print("########################")
 
