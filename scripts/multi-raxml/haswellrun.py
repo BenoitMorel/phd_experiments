@@ -17,8 +17,7 @@ if (len(sys.argv) != 3):
 data = sys.argv[1]
 threads = int(sys.argv[2])
 
-resultsdir = os.path.join(exp.results_root, "multi-raxml", data)
-os.makedirs(resultsdir, exist_ok=True)
+resultsdir = exp.create_result_dir(os.path.join("multi-raxml", data))
 result_msg = "multi-raxml git: \n" + exp.get_git_info(exp.multiraxml_root)
 exp.write_results_info(resultsdir, result_msg) 
 

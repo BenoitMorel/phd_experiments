@@ -31,8 +31,7 @@ basedir = sys.argv[1]
 
 datadir = os.path.join(datadir, basedir)
 script_path = os.path.join(exp.treerecs_root, "scripts", "experiments", "plot_likelihood_vs_threshold.py")
-resultsdir= os.path.join(exp.results_root, "treerecs", "threshold_likelihoods_plots", basedir)
-os.makedirs(resultsdir, exist_ok=True)
+resultsdir= exp.create_result_dir(os.path.join("treerecs", "threshold_likelihoods_plots", basedir))
 result_msg = "Treerecs git: \n" + exp.get_git_info(exp.treerecs_root)
 exp.write_results_info(resultsdir, result_msg) 
 run(datadir, script_path, resultsdir)

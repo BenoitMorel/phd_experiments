@@ -54,3 +54,13 @@ def display_warning_file(warning_filename):
     print("# End of warning file  #")
     print("########################")
 
+def create_result_dir(suffix):
+  base = os.path.join(results_root, suffix) + "_"
+  result_dir = ""
+  for i in range(0, 10000):
+    result_dir = base + str(i)
+    if (not os.path.isdir(result_dir)):
+      os.makedirs(result_dir)
+      return result_dir
+
+
