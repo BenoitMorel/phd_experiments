@@ -1,0 +1,4 @@
+This command files assumes that all the fasta files are in a hardcoded path (see the command.txt file)
+The fasta files come from  a Phyldog example dataset (55 species, 40 gene families)
+Command to replace the directory:
+sed -i 's|OLDPATH|YOURPATH|g' command.txt

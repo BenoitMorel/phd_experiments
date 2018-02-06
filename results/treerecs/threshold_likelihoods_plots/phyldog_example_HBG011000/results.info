@@ -1,12 +1,12 @@
-Start: 2018-02-05 14:06:40.069066
+Start: 2018-02-06 11:37:55.851110
 Command: scripts/treerecs/threshold_likelihoods_plots.py phyldog_example_HBG011000
 
 Experiment git: 
 Git repo: git@github.com:BenoitMorel/phd_experiments.git
 Git branch: master
-Git commit: 882eb3c7837bef1d9289a1c03d7fadda20175215
+Git commit: 8d2311c608fdfca824e40b1c3cbdadded1b3163d
 
 Treerecs git: 
 Git repo: https://gitlab.inria.fr/Phylophile/Treerecs.git
 Git branch: libpll_integration
-Git commit: 63c07859c22c812e51e5a6371b9a624795084801
+Git commit: b60bd94a55e2030db63fcfc27cf57f0c4432ca15
