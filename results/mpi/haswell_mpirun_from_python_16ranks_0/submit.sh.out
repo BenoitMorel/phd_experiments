@@ -1,0 +1,4 @@
+Fake computation on 10000 trees and 100000 sites with 16 ranks.
+result: 6.9527e-306
+Elapsed time 80179ms
+Running mpirun -n 16 /home/morelbt/github/phd_experiments/programs/mpi/fake_mpi_program/build/fake_mpi_program 10000 100000
