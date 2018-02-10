@@ -4,7 +4,11 @@ import os
 import datetime
 import sys
 import subprocess
-root = "./"
+
+def get_parent_path(path):
+  return os.path.abspath(os.path.join(path, os.pardir))
+
+root = get_parent_path(get_parent_path(os.path.realpath(__file__)))
 
 # scripts
 scripts_root = os.path.join(root, "scripts")
@@ -72,4 +76,25 @@ def redirect_logs(result_dir):
     print("logs redirected to " + logs)
     sys.stdout = open(logs, 'w')
     sys.stderr = open(err, 'w')
+
+def submit_haswell(submit_file_path, command, threads):
+  nodes = str((int(threads) - 1) // 16 + 1)
+  with open(submitFile, "w") as f:
+    f.write("#!/bin/bash\n")
+    f.write("#SBATCH -o " + submit_file_path + ".out" + "\n")
+    f.write("#SBATCH -B 2:8:1\n")
+    f.write("#SBATCH -N " + str(nodes) + "\n")
+    f.write("#SBATCH -n " + str(threads) + "\n")
+    f.write("#SBATCH --threads-per-core=1\n")
+    f.write("#SBATCH --cpus-per-task=1\n")
+    f.write("#SBATCH --hint=compute_bound\n")
+    f.write("#SBATCH -t 24:00:00\n")
+    f.write("\n")
+    f.write(command)
+  subprocess.check_call(["sbatch", "-s" ,submitFile])
+
+
+
+  
+
 
