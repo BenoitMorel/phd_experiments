@@ -9,6 +9,9 @@ root = "./"
 # scripts
 scripts_root = os.path.join(root, "scripts")
 
+# programs
+programs_root = os.path.join(root, "programs")
+
 # datasets
 datasets_root = os.path.join(root, "datasets")
 

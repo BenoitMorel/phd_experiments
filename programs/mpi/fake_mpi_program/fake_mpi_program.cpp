@@ -33,7 +33,6 @@ void fake_mpi_program(int trees, int sites)
   if (rank == 0) {
     cout << "Fake computation on " << trees << " trees " <<
       "and " << sites << " sites with " << size << " ranks."<< endl;
-
   }
   
   vector<double> bidon_input;
@@ -77,7 +76,10 @@ int main(int argc, char *argv[])
   auto end = chrono::system_clock::now();
   auto elapsed = chrono::duration_cast<chrono::milliseconds>
                                  (end-start).count();
-  cout << "Elapsed time " << elapsed << "ms" << endl; 
+  int rank;
+  MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+  if (rank == 0)
+    cout << "Elapsed time " << elapsed << "ms" << endl; 
   MPI_Finalize();              
   return 0;
 }
