@@ -6,7 +6,7 @@ import experiments as exp
 
 if (len(sys.argv) != 4):
     print("Syntax error : ")
-    print("python mpirun_from_python trees_number sites_number ranks")
+    print("python fake_mpi_program.py trees_number sites_number ranks")
     sys.exit(0)
 
 trees = sys.argv[1]

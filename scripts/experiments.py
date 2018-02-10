@@ -66,4 +66,10 @@ def create_result_dir(suffix):
       os.makedirs(result_dir)
       return os.path.abspath(result_dir)
 
+def redirect_logs(result_dir):
+    logs = os.path.join(result_dir, "logs.txt")
+    err = os.path.join(result_dir, "err.txt")
+    print("logs redirected to " + logs)
+    sys.stdout = open(logs, 'w')
+    sys.stderr = open(err, 'w')
 
