@@ -7,23 +7,40 @@
  */
 
 #include <mpi.h>
+#include <cstdio>
 #include <iostream>
 #include <chrono>
 #include <vector>
 #include <string>
 #include <unistd.h>
+#include <sys/types.h>
+#include <dirent.h>
+
 using namespace std;
+ 
+void read_directory(const std::string& name, 
+    vector<string> &v)
+{
+  DIR* dirp = opendir(name.c_str());
+  struct dirent * dp;
+  while ((dp = readdir(dirp)) != NULL) {
+    v.push_back(dp->d_name);
+  }
+  closedir(dirp);
+}
 
 
 void spawn(const string &executable,
     const vector<string> &arguments,
     int spawns_number)
 {
+  static int index = 0;
+  string indexStr = string("plop_") + to_string(index++);
   char **argv = new char*[arguments.size() + 2];
-  //argv[0] = (char*)"plop";
+  argv[0] = (char*)indexStr.c_str();
   for(unsigned int i = 0; i < arguments.size(); ++i)
-    argv[i] = (char*)arguments[i].c_str();
-  argv[arguments.size()] = 0;
+    argv[i + 1] = (char*)arguments[i].c_str();
+  argv[arguments.size() + 1] = 0;
 
   MPI_Comm intercomm;
   MPI_Comm_spawn((char*)executable.c_str(), argv, spawns_number,  
@@ -40,16 +57,37 @@ void spawner()
   string executable = "../script_wrap.sh";
   vector<string> arguments;
   arguments.push_back("1000");
-  arguments.push_back("100000");
+  arguments.push_back("5000");
   
-  int spawns_number = 3;
+  std::vector<int> jobs_sizes;
+  jobs_sizes.push_back(3);
+  jobs_sizes.push_back(3);
+  jobs_sizes.push_back(3);
+  jobs_sizes.push_back(3);
+  jobs_sizes.push_back(3);
   MPI_Comm intercomm;
-  for (unsigned int iter = 0; iter < 3; ++iter) { 
-    std::cout << "spawner: iter " << iter << std::endl;
-    for (unsigned int i = 0; i < 2; ++i) {
-      spawn(executable, arguments, spawns_number);
+  unsigned int available_ranks = 0;
+  unsigned int max_ranks = 6;
+  string prefix = "plop_";
+  for (int spawns_number: jobs_sizes) {
+    while (true) {
+      if (available_ranks + spawns_number <= max_ranks) {
+        spawn(executable, arguments, spawns_number);
+        available_ranks += spawns_number;
+        continue;
+      }
+      vector<string> files;
+      read_directory(".", files);
+      for (auto f: files) {
+        if (!f.compare(0, prefix.size(), prefix)) {
+          cout << f << endl;
+          remove(f.c_str());
+          available_ranks -= 3;
+        }
+      }
+      usleep(100 * 1000);      
+
     }
-    usleep(10 * 1000 * 1000);
   }
   cout << "End of spawner" << std::endl;
 }
