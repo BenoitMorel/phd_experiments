@@ -13,11 +13,11 @@
 
 using namespace std;
 
-double superfunction(unsigned int s, const vector<double> &v)
+int superfunction(unsigned int s, const vector<int> &v)
 {
-  double res = 0;
+  int res = 0;
   for (auto d: v)
-    res += d * s + s * s;
+    res += d * s + s % (d+1);
   return res;
 }
 
@@ -29,26 +29,26 @@ void fake_mpi_program(int trees, int sites)
 
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
   MPI_Comm_size(MPI_COMM_WORLD, &size);
-  
+ 
   if (rank == 0) {
     cout << "Fake computation on " << trees << " trees " <<
       "and " << sites << " sites with " << size << " ranks."<< endl;
   }
   
-  vector<double> bidon_input;
+  vector<int> bidon_input;
   for (unsigned int i = 0; i < 100; ++i) {
-    bidon_input.push_back(i * 5 + i);
+    bidon_input.push_back(i);
   }
-  double globalTreell = 0.0;
+  int globalTreell = 0;
   int start = (sites / size) * rank;
   int end = min(sites, start + sites / size);
   for (unsigned int tree = 0; tree < trees; ++tree) {
-    double localTreell = 0.0;
+    int localTreell = 0;
     for (unsigned int s = start; s < end; ++s) {
       localTreell += superfunction(s, bidon_input);      
     }
-    double temp;
-    MPI_Reduce(&localTreell, &temp, 1, MPI_REAL, MPI_SUM, 0, MPI_COMM_WORLD);
+    int temp;
+    MPI_Reduce(&localTreell, &temp, 1, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
     globalTreell += temp;
   }
 
