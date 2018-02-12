@@ -1,10 +1,10 @@
-Start: 2018-02-05 15:30:12.308779
+Start: 2018-02-05 15:48:23.498770
 Command: scripts/treerecs/threshold_likelihoods_plots.py tree_2537
 
 Experiment git: 
 Git repo: git@github.com:BenoitMorel/phd_experiments.git
 Git branch: master
-Git commit: 8d2311c608fdfca824e40b1c3cbdadded1b3163d
+Git commit: e0ce7388a19a9fbc9485327bed3835fcae2de4d2
 
 Treerecs git: 
 Git repo: git@gitlab.inria.fr:Phylophile/Treerecs.git
