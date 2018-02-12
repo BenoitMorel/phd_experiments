@@ -24,7 +24,9 @@ results_root = os.path.join(root, "results")
 
 # externals
 treerecs_root = os.path.join("..", "Treerecs")
+treerecs_exec = os.path.join(treerecs_root, "build", "bin", "Treerecs")
 multiraxml_root = os.path.join("..", "multi-raxml", "deps", "raxml-ng")
+
 
 # utils
 def get_git_info(repo_path):
