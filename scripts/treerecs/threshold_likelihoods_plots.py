@@ -98,7 +98,7 @@ def parse_treerecs_output(treerecs_output, output_dir):
 
 
 
-def compute_plots(datadir, script_path, resultsdir):
+def compute_plots(datadir, resultsdir):
   gene_trees = os.path.join(datadir, "geneTrees.newick")
   species_trees = os.path.join(datadir, "speciesTree.newick")
   alignment = os.path.join(datadir, "alignment.txt")
@@ -122,11 +122,10 @@ if (len(sys.argv) != 2):
 
 basedir = sys.argv[1]
 datadir = os.path.join(datadir, basedir)
-script_path = os.path.join(exp.treerecs_root, "scripts", "experiments", "plot_likelihood_vs_threshold.py")
 resultsdir = exp.create_result_dir(os.path.join("treerecs", "threshold_likelihoods_plots", basedir))
 result_msg = "Treerecs git: \n" + exp.get_git_info(exp.treerecs_root)
 exp.write_results_info(resultsdir, result_msg) 
-compute_plots(datadir, script_path, resultsdir)
+compute_plots(datadir, resultsdir)
 
 
 

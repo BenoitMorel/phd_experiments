@@ -23,10 +23,11 @@ datasets_root = os.path.join(root, "datasets")
 results_root = os.path.join(root, "results")
 
 # externals
-treerecs_root = os.path.join("..", "Treerecs")
+treerecs_root = os.path.join(root, "..", "Treerecs")
 treerecs_exec = os.path.join(treerecs_root, "build", "bin", "Treerecs")
-multiraxml_root = os.path.join("..", "multi-raxml", "deps", "raxml-ng")
-
+multiraxml_root = os.path.join(root, "..", "multi-raxml")
+multiraxml_exec = os.path.join(multiraxml_root, "build", "multi-raxml")
+raxml_root = os.path.join(root, "..", "raxml-ng")
 
 # utils
 def get_git_info(repo_path):
