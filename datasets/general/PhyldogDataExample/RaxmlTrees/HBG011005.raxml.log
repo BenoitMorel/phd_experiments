@@ -1,0 +1,87 @@
+
+RAxML-NG v. 0.4.1 BETA released on 20.07.2017 by The Exelixis Lab.
+Authors: Alexey Kozlov, Alexandros Stamatakis, Diego Darriba, Tomas Flouri, Benoit Morel.
+Latest version: https://github.com/amkozlov/raxml-ng
+Questions/problems/suggestions? Please visit: https://groups.google.com/forum/#!forum/raxml
+
+WARNING: This is a BETA release, please use at your own risk!
+
+RAxML-NG was called as follows:
+
+./raxml-ng-mpi --msa ../phyldogdata/ExampleData/FastaFiles/HBG011005.fasta --prefix ../phyldogdata/ExampleData/RaxmlTrees/HBG011005 --model GTR+G --repeats on --threads 4
+
+Analysis options:
+  run mode: ML tree search
+  start tree(s): random
+  random seed: 1512594371
+  tip-inner: OFF
+  repeats: ON
+  pattern compression: ON
+  fast spr radius: AUTO
+  spr subtree cutoff: 1.000000
+  branch lengths: ML estimate (linked)
+  SIMD kernels: AVX2
+  parallelization: PTHREADS (4 threads)
+
+[00:00:00] Reading alignment from file: ../phyldogdata/ExampleData/FastaFiles/HBG011005.fasta
+[00:00:00] Loaded alignment with 56 taxa and 2667 sites
+
+Alignment comprises 1 partitions and 2378 patterns
+
+Partition 0: noname
+Model: GTR+FO+G4m
+Alignment sites / patterns: 2667 / 2378
+Gaps: 13.90 %
+Invariant sites: 14.25 %
+
+
+[00:00:00] Generating random starting tree(s) with 56 taxa
+[00:00:00] Data distribution: partitions/thread: 1-1, patterns/thread: 594-595
+
+Starting ML tree search with 1 distinct starting trees
+
+[00:00:00 -76869.236245] Initial branch length optimization
+[00:00:00 -58184.270154] Model parameter optimization (eps = 10.000000)
+[00:00:01 -54261.236786] AUTODETECT spr round 1 (radius: 5)
+[00:00:01 -50470.920381] AUTODETECT spr round 2 (radius: 10)
+[00:00:02 -48503.951744] AUTODETECT spr round 3 (radius: 15)
+[00:00:03 -48118.849229] AUTODETECT spr round 4 (radius: 20)
+[00:00:03 -48118.828637] SPR radius for FAST iterations: 15 (autodetect)
+[00:00:03 -48118.828637] Model parameter optimization (eps = 3.000000)
+[00:00:04 -48039.612601] FAST spr round 1 (radius: 15)
+[00:00:05 -47664.843674] FAST spr round 2 (radius: 15)
+[00:00:06 -47660.064013] FAST spr round 3 (radius: 15)
+[00:00:06 -47658.934108] FAST spr round 4 (radius: 15)
+[00:00:07 -47658.693294] FAST spr round 5 (radius: 15)
+[00:00:08 -47658.549058] FAST spr round 6 (radius: 15)
+[00:00:09 -47656.246443] FAST spr round 7 (radius: 15)
+[00:00:09 -47656.245419] Model parameter optimization (eps = 1.000000)
+[00:00:10 -47651.269288] SLOW spr round 1 (radius: 5)
+[00:00:12 -47643.263703] SLOW spr round 2 (radius: 5)
+[00:00:14 -47643.262819] SLOW spr round 3 (radius: 10)
+[00:00:16 -47643.262816] SLOW spr round 4 (radius: 15)
+[00:00:18 -47643.262816] SLOW spr round 5 (radius: 20)
+[00:00:19 -47643.262816] SLOW spr round 6 (radius: 25)
+[00:00:19 -47643.262816] Model parameter optimization (eps = 0.100000)
+
+[00:00:19] ML tree search #1, logLikelihood: -47643.081386
+
+
+Optimized model parameters:
+
+   Partition 0: noname
+   Rate heterogeneity: GAMMA (4 cats, mean),  alpha: 0.453862 (ML),  weights&rates: (0.250000,0.025189) (0.250000,0.220733) (0.250000,0.783560) (0.250000,2.970518) 
+   Base frequencies (ML): 0.278072 0.242869 0.238851 0.240209 
+   Substitution rates (ML): 1.854930 5.309495 0.976654 1.380354 8.046340 1.000000 
+
+Final LogLikelihood: -47643.081386
+
+Best ML tree saved to: /home/morelbt/github/raxml-ng/phyldogdata/ExampleData/RaxmlTrees/HBG011005.raxml.bestTree
+Optimized model saved to: /home/morelbt/github/raxml-ng/phyldogdata/ExampleData/RaxmlTrees/HBG011005.raxml.bestModel
+
+Execution log saved to: /home/morelbt/github/raxml-ng/phyldogdata/ExampleData/RaxmlTrees/HBG011005.raxml.log
+
+Analysis started: 06-Dec-2017 22:06:11 / finished: 06-Dec-2017 22:06:31
+
+Elapsed time: 19.978 seconds
+

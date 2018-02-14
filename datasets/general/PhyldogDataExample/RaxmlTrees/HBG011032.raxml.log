@@ -1,0 +1,93 @@
+
+RAxML-NG v. 0.4.1 BETA released on 20.07.2017 by The Exelixis Lab.
+Authors: Alexey Kozlov, Alexandros Stamatakis, Diego Darriba, Tomas Flouri, Benoit Morel.
+Latest version: https://github.com/amkozlov/raxml-ng
+Questions/problems/suggestions? Please visit: https://groups.google.com/forum/#!forum/raxml
+
+WARNING: This is a BETA release, please use at your own risk!
+
+RAxML-NG was called as follows:
+
+./raxml-ng-mpi --msa ../phyldogdata/ExampleData/FastaFiles/HBG011032.fasta --prefix ../phyldogdata/ExampleData/RaxmlTrees/HBG011032 --model GTR+G --repeats on --threads 4
+
+Analysis options:
+  run mode: ML tree search
+  start tree(s): random
+  random seed: 1512594358
+  tip-inner: OFF
+  repeats: ON
+  pattern compression: ON
+  fast spr radius: AUTO
+  spr subtree cutoff: 1.000000
+  branch lengths: ML estimate (linked)
+  SIMD kernels: AVX2
+  parallelization: PTHREADS (4 threads)
+
+[00:00:00] Reading alignment from file: ../phyldogdata/ExampleData/FastaFiles/HBG011032.fasta
+[00:00:00] Loaded alignment with 92 taxa and 387 sites
+
+WARNING: Duplicate sequences found: 4
+WARNING: Sequences ENSGGOP00000006306 and ENSPTRP00000050591 are exactly identical!
+WARNING: Sequences ENSGGOP00000006306 and ENSP00000442131 are exactly identical!
+WARNING: Sequences ENSGGOP00000006306 and ENSMMUP00000015498 are exactly identical!
+WARNING: Sequences ENSDARP00000106391 and ENSDARP00000095891 are exactly identical!
+
+Alignment comprises 1 partitions and 348 patterns
+
+Partition 0: noname
+Model: GTR+FO+G4m
+Alignment sites / patterns: 387 / 348
+Gaps: 10.21 %
+Invariant sites: 16.80 %
+
+
+[00:00:00] Generating random starting tree(s) with 92 taxa
+[00:00:00] Data distribution: partitions/thread: 1-1, patterns/thread: 87-87
+
+Starting ML tree search with 1 distinct starting trees
+
+[00:00:00 -23580.857790] Initial branch length optimization
+[00:00:00 -18484.401112] Model parameter optimization (eps = 10.000000)
+[00:00:00 -17515.420147] AUTODETECT spr round 1 (radius: 5)
+[00:00:01 -12492.039874] AUTODETECT spr round 2 (radius: 10)
+[00:00:01 -10542.543168] AUTODETECT spr round 3 (radius: 15)
+[00:00:01 -9967.748999] AUTODETECT spr round 4 (radius: 20)
+[00:00:02 -9967.722367] SPR radius for FAST iterations: 15 (autodetect)
+[00:00:02 -9967.722367] Model parameter optimization (eps = 3.000000)
+[00:00:02 -9900.309217] FAST spr round 1 (radius: 15)
+[00:00:03 -9581.966363] FAST spr round 2 (radius: 15)
+[00:00:03 -9561.751643] FAST spr round 3 (radius: 15)
+[00:00:03 -9559.940460] FAST spr round 4 (radius: 15)
+[00:00:04 -9559.939289] Model parameter optimization (eps = 1.000000)
+[00:00:04 -9556.960070] SLOW spr round 1 (radius: 5)
+[00:00:05 -9553.847048] SLOW spr round 2 (radius: 5)
+[00:00:06 -9553.844133] SLOW spr round 3 (radius: 10)
+[00:00:07 -9553.844117] SLOW spr round 4 (radius: 15)
+[00:00:08 -9553.320022] SLOW spr round 5 (radius: 5)
+[00:00:09 -9553.319967] SLOW spr round 6 (radius: 10)
+[00:00:10 -9553.319961] SLOW spr round 7 (radius: 15)
+[00:00:11 -9553.319960] SLOW spr round 8 (radius: 20)
+[00:00:12 -9553.319960] SLOW spr round 9 (radius: 25)
+[00:00:13 -9553.319960] Model parameter optimization (eps = 0.100000)
+
+[00:00:13] ML tree search #1, logLikelihood: -9553.220608
+
+
+Optimized model parameters:
+
+   Partition 0: noname
+   Rate heterogeneity: GAMMA (4 cats, mean),  alpha: 0.581529 (ML),  weights&rates: (0.250000,0.049322) (0.250000,0.301847) (0.250000,0.871595) (0.250000,2.777236) 
+   Base frequencies (ML): 0.160921 0.360522 0.270724 0.207833 
+   Substitution rates (ML): 1.544633 4.333661 1.399531 1.147625 3.525521 1.000000 
+
+Final LogLikelihood: -9553.220608
+
+Best ML tree saved to: /home/morelbt/github/raxml-ng/phyldogdata/ExampleData/RaxmlTrees/HBG011032.raxml.bestTree
+Optimized model saved to: /home/morelbt/github/raxml-ng/phyldogdata/ExampleData/RaxmlTrees/HBG011032.raxml.bestModel
+
+Execution log saved to: /home/morelbt/github/raxml-ng/phyldogdata/ExampleData/RaxmlTrees/HBG011032.raxml.log
+
+Analysis started: 06-Dec-2017 22:05:58 / finished: 06-Dec-2017 22:06:11
+
+Elapsed time: 13.438 seconds
+

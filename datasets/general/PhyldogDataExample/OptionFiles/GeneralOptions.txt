@@ -1,0 +1,19 @@
+
+######## First, data files ########
+OPT=/home/morelbt/github/PHYLDOG/ExampleData/OptionFiles/
+RESULT=/home/morelbt/github/PHYLDOG/ExampleData/ResultFiles/
+DATA=HBG011040
+init.species.tree=random #user
+species.names.file=$(OPT)listSpecies.txt
+starting.tree.file=$(RESULT)StartingTree.tree
+output.tree.file=$(RESULT)OutputSpeciesTree.tree
+genelist.file=$(OPT)listGenes.txt
+output.duplications.tree.file=$(RESULT)OutputSpeciesTree_ConsensusDuplications.tree
+output.losses.tree.file=$(RESULT)OutputSpeciesTree_ConsensusLosses.tree
+output.numbered.tree.file=$(RESULT)OutputSpeciesTree_ConsensusNumbered.tree
+
+######## Second, options ########
+optimization.topology=yes
+branchProbabilities.optimization=average_then_branchwise
+spr.limit=5
+time.limit=4

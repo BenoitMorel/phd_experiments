@@ -1,0 +1,94 @@
+
+RAxML-NG v. 0.4.1 BETA released on 20.07.2017 by The Exelixis Lab.
+Authors: Alexey Kozlov, Alexandros Stamatakis, Diego Darriba, Tomas Flouri, Benoit Morel.
+Latest version: https://github.com/amkozlov/raxml-ng
+Questions/problems/suggestions? Please visit: https://groups.google.com/forum/#!forum/raxml
+
+WARNING: This is a BETA release, please use at your own risk!
+
+RAxML-NG was called as follows:
+
+./raxml-ng-mpi --msa ../phyldogdata/ExampleData/FastaFiles/HBG011026.fasta --prefix ../phyldogdata/ExampleData/RaxmlTrees/HBG011026 --model GTR+G --repeats on --threads 4
+
+Analysis options:
+  run mode: ML tree search
+  start tree(s): random
+  random seed: 1512594149
+  tip-inner: OFF
+  repeats: ON
+  pattern compression: ON
+  fast spr radius: AUTO
+  spr subtree cutoff: 1.000000
+  branch lengths: ML estimate (linked)
+  SIMD kernels: AVX2
+  parallelization: PTHREADS (4 threads)
+
+[00:00:00] Reading alignment from file: ../phyldogdata/ExampleData/FastaFiles/HBG011026.fasta
+[00:00:00] Loaded alignment with 107 taxa and 1038 sites
+
+Alignment comprises 1 partitions and 1004 patterns
+
+Partition 0: noname
+Model: GTR+FO+G4m
+Alignment sites / patterns: 1038 / 1004
+Gaps: 20.21 %
+Invariant sites: 8.38 %
+
+
+[00:00:00] Generating random starting tree(s) with 107 taxa
+[00:00:00] Data distribution: partitions/thread: 1-1, patterns/thread: 251-251
+
+Starting ML tree search with 1 distinct starting trees
+
+[00:00:00 -84776.030347] Initial branch length optimization
+[00:00:00 -68640.356208] Model parameter optimization (eps = 10.000000)
+[00:00:00 -67057.000110] AUTODETECT spr round 1 (radius: 5)
+[00:00:01 -47416.228944] AUTODETECT spr round 2 (radius: 10)
+[00:00:02 -44231.440392] AUTODETECT spr round 3 (radius: 15)
+[00:00:03 -42218.485749] AUTODETECT spr round 4 (radius: 20)
+[00:00:04 -42180.765040] AUTODETECT spr round 5 (radius: 25)
+[00:00:04 -42098.973936] SPR radius for FAST iterations: 25 (autodetect)
+[00:00:04 -42098.973936] Model parameter optimization (eps = 3.000000)
+[00:00:05 -41917.245297] FAST spr round 1 (radius: 25)
+[00:00:06 -41001.338908] FAST spr round 2 (radius: 25)
+[00:00:07 -40933.404931] FAST spr round 3 (radius: 25)
+[00:00:08 -40915.121606] FAST spr round 4 (radius: 25)
+[00:00:09 -40914.325378] FAST spr round 5 (radius: 25)
+[00:00:10 -40913.558868] FAST spr round 6 (radius: 25)
+[00:00:10 -40912.945099] FAST spr round 7 (radius: 25)
+[00:00:11 -40912.448337] FAST spr round 8 (radius: 25)
+[00:00:12 -40912.124836] FAST spr round 9 (radius: 25)
+[00:00:13 -40912.124611] Model parameter optimization (eps = 1.000000)
+[00:00:13 -40910.786531] SLOW spr round 1 (radius: 5)
+[00:00:16 -40910.064335] SLOW spr round 2 (radius: 5)
+[00:00:18 -40904.480075] SLOW spr round 3 (radius: 5)
+[00:00:21 -40904.479249] SLOW spr round 4 (radius: 10)
+[00:00:23 -40903.960311] SLOW spr round 5 (radius: 5)
+[00:00:26 -40902.922345] SLOW spr round 6 (radius: 5)
+[00:00:29 -40902.922280] SLOW spr round 7 (radius: 10)
+[00:00:31 -40902.922274] SLOW spr round 8 (radius: 15)
+[00:00:33 -40902.922274] SLOW spr round 9 (radius: 20)
+[00:00:35 -40902.922273] SLOW spr round 10 (radius: 25)
+[00:00:36 -40902.922273] Model parameter optimization (eps = 0.100000)
+
+[00:00:36] ML tree search #1, logLikelihood: -40902.837331
+
+
+Optimized model parameters:
+
+   Partition 0: noname
+   Rate heterogeneity: GAMMA (4 cats, mean),  alpha: 0.957617 (ML),  weights&rates: (0.250000,0.128422) (0.250000,0.463631) (0.250000,0.992606) (0.250000,2.415341) 
+   Base frequencies (ML): 0.253469 0.248569 0.265558 0.232404 
+   Substitution rates (ML): 1.715024 3.547399 1.133698 1.497911 4.296128 1.000000 
+
+Final LogLikelihood: -40902.837331
+
+Best ML tree saved to: /home/morelbt/github/raxml-ng/phyldogdata/ExampleData/RaxmlTrees/HBG011026.raxml.bestTree
+Optimized model saved to: /home/morelbt/github/raxml-ng/phyldogdata/ExampleData/RaxmlTrees/HBG011026.raxml.bestModel
+
+Execution log saved to: /home/morelbt/github/raxml-ng/phyldogdata/ExampleData/RaxmlTrees/HBG011026.raxml.log
+
+Analysis started: 06-Dec-2017 22:02:29 / finished: 06-Dec-2017 22:03:06
+
+Elapsed time: 36.949 seconds
+

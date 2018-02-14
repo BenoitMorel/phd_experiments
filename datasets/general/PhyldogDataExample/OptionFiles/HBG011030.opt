@@ -1,0 +1,37 @@
+
+######## First, data files ########
+PATH=/home/morelbt/github/PHYLDOG/ExampleData/FastaFiles/
+RESULT=/home/morelbt/github/PHYLDOG/ExampleData/ResultFiles/
+DATA=HBG011030
+taxaseq.file=/home/morelbt/github/PHYLDOG/ExampleData/LinkFiles/HBG011030.link
+input.sequence.file=/home/morelbt/github/PHYLDOG/ExampleData/FastaFiles/HBG011030.fasta
+input.sequence.format=Fasta
+gene.tree.file=$(RESULT)$(DATA).GeneTree
+output.reconciled.tree.file=$(RESULT)$(DATA).ReconciledTree
+output.duplications.tree.file=$(RESULT)$(DATA).DuplicationTree
+output.losses.tree.file=$(RESULT)$(DATA).LossTree
+output.numbered.tree.file=$(RESULT)$(DATA).NumberedTree
+input.sequence.sites_to_use=all
+input.sequence.max_gap_allowed=100%
+init.gene.tree=bionj
+output.starting.gene.tree.file=$(RESULT)$(DATA).StartingTree
+
+######## Second, model options ########
+alphabet=DNA
+model=GTR(a=1.17322, b=0.27717, c=0.279888, d=0.41831, e=0.344783, theta=0.523374, theta1=0.542411, theta2=0.499195)
+rate_distribution=Gamma(n=4,alpha=1)
+
+######## Finally, optimization options ########
+optimization.topology=yes
+optimization.topology.algorithm_nni.method=fast
+optimization.tolerance=0.01
+optimization.method_DB.nstep=0
+optimization.topology.numfirst=false
+optimization.topology.tolerance.before=100
+optimization.topology.tolerance.during=100
+optimization.max_number_f_eval=1000000
+optimization.final=none
+optimization.verbose=0
+optimization.message_handler=none
+optimization.profiler=none
+optimization.reparametrization=no
