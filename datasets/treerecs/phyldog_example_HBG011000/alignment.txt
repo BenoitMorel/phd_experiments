@@ -1,3 +1,2 @@
 DNA
-FASTA
 HBG011000.fasta
