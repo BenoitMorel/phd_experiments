@@ -1,0 +1,20 @@
+c1 mpi 16 10 ~/github/raxml-ng/bin/raxml-ng-mpi --msa ~/github/phd_experiments/datasets/general/ENSGT00860000133679/fasta_files/ENSGT00860000133679.fa --model GTR --prefix RESULTS_DIR/c1 --seed 1 
+c2 mpi 16 10 ~/github/raxml-ng/bin/raxml-ng-mpi --msa ~/github/phd_experiments/datasets/general/ENSGT00860000133679/fasta_files/ENSGT00860000133679.fa --model GTR --prefix RESULTS_DIR/c2 --seed 1 
+c3 mpi 16 10 ~/github/raxml-ng/bin/raxml-ng-mpi --msa ~/github/phd_experiments/datasets/general/ENSGT00860000133679/fasta_files/ENSGT00860000133679.fa --model GTR --prefix RESULTS_DIR/c3 --seed 1 
+c4 mpi 16 10 ~/github/raxml-ng/bin/raxml-ng-mpi --msa ~/github/phd_experiments/datasets/general/ENSGT00860000133679/fasta_files/ENSGT00860000133679.fa --model GTR --prefix RESULTS_DIR/c4 --seed 1 
+
+#c5 mpi 32 10 ~/github/raxml-ng/bin/raxml-ng-mpi --msa ~/github/phd_experiments/datasets/general/ENSGT00860000133679/fasta_files/ENSGT00860000133679.fa --model GTR --prefix RESULTS_DIR/c5 --seed 1 
+#c6 mpi 32 10 ~/github/raxml-ng/bin/raxml-ng-mpi --msa ~/github/phd_experiments/datasets/general/ENSGT00860000133679/fasta_files/ENSGT00860000133679.fa --model GTR --prefix RESULTS_DIR/c6 --seed 1 
+#c7 mpi 32 10 ~/github/raxml-ng/bin/raxml-ng-mpi --msa ~/github/phd_experiments/datasets/general/ENSGT00860000133679/fasta_files/ENSGT00860000133679.fa --model GTR --prefix RESULTS_DIR/c7 --seed 1 
+#c8 mpi 32 10 ~/github/raxml-ng/bin/raxml-ng-mpi --msa ~/github/phd_experiments/datasets/general/ENSGT00860000133679/fasta_files/ENSGT00860000133679.fa --model GTR --prefix RESULTS_DIR/c8 --seed 1 
+
+c9 mpi 16 5 ~/github/raxml-ng/bin/raxml-ng-mpi --msa ~/github/phd_experiments/datasets/general/ENSGT00860000133679/fasta_files/ENSGT00860000133679.fa --model GTR --prefix RESULTS_DIR/c9 --seed 1 --site-repeats on 
+c10 mpi 16 5 ~/github/raxml-ng/bin/raxml-ng-mpi --msa ~/github/phd_experiments/datasets/general/ENSGT00860000133679/fasta_files/ENSGT00860000133679.fa --model GTR --prefix RESULTS_DIR/c10 --seed 1 --site-repeats on 
+c11 mpi 16 5 ~/github/raxml-ng/bin/raxml-ng-mpi --msa ~/github/phd_experiments/datasets/general/ENSGT00860000133679/fasta_files/ENSGT00860000133679.fa --model GTR --prefix RESULTS_DIR/c11 --seed 1 --site-repeats on 
+c12 mpi 16 5 ~/github/raxml-ng/bin/raxml-ng-mpi --msa ~/github/phd_experiments/datasets/general/ENSGT00860000133679/fasta_files/ENSGT00860000133679.fa --model GTR --prefix RESULTS_DIR/c12 --seed 1 --site-repeats on 
+
+#c13 mpi 32 5 ~/github/raxml-ng/bin/raxml-ng-mpi --msa ~/github/phd_experiments/datasets/general/ENSGT00860000133679/fasta_files/ENSGT00860000133679.fa --model GTR --prefix RESULTS_DIR/c13 --seed 1 --site-repeats on 
+#c14 mpi 32 5 ~/github/raxml-ng/bin/raxml-ng-mpi --msa ~/github/phd_experiments/datasets/general/ENSGT00860000133679/fasta_files/ENSGT00860000133679.fa --model GTR --prefix RESULTS_DIR/c14 --seed 1 --site-repeats on 
+#c15 mpi 32 5 ~/github/raxml-ng/bin/raxml-ng-mpi --msa ~/github/phd_experiments/datasets/general/ENSGT00860000133679/fasta_files/ENSGT00860000133679.fa --model GTR --prefix RESULTS_DIR/c15 --seed 1 --site-repeats on 
+#c16 mpi 32 5 ~/github/raxml-ng/bin/raxml-ng-mpi --msa ~/github/phd_experiments/datasets/general/ENSGT00860000133679/fasta_files/ENSGT00860000133679.fa --model GTR --prefix RESULTS_DIR/c16 --seed 1 --site-repeats on 
+
