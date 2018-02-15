@@ -80,7 +80,7 @@ def redirect_logs(result_dir):
     sys.stdout = open(logs, 'w')
     sys.stderr = open(err, 'w')
 
-def submit_haswell(submit_file_path, command, threads):
+def submit_haswell(submit_file_path, command, threads, debug=False):
   nodes = str((int(threads) - 1) // 16 + 1)
   with open(submit_file_path, "w") as f:
     f.write("#!/bin/bash\n")
@@ -91,10 +91,16 @@ def submit_haswell(submit_file_path, command, threads):
     f.write("#SBATCH --threads-per-core=1\n")
     f.write("#SBATCH --cpus-per-task=1\n")
     f.write("#SBATCH --hint=compute_bound\n")
-    f.write("#SBATCH -t 24:00:00\n")
+    f.write("#SBATCH -t 2:00:00\n")
     f.write("\n")
     f.write(command)
-  subprocess.check_call(["sbatch", "-s" ,submit_file_path])
+  command = []
+  command.append("sbatch")
+  if (debug):
+    command.append("--qos=debug")
+  command.append("-s")
+  command.append(submit_file_path)
+  subprocess.check_call(command)
 
 
 

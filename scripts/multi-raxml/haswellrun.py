@@ -2,29 +2,53 @@ import os
 import sys
 sys.path.insert(0, 'scripts')
 import experiments as exp
-sys.path.insert(0, os.path.join(exp.multiraxml_root, "scripts"))
-import cluster
+import subprocess
+
+# returns the new command_filename
+def copyAndEditCommand(command_filename, resultsdir):
+    newcommand_filename = os.path.join(resultsdir, "command.txt")
+    lines = open(oldcommand_filename, "r").readlines()
+    with open(newcommand_filename, "w") as writer:
+        for line in lines:
+            writer.write(line.replace("RESULTS_DIR", resultsdir))
+    return newcommand_filename
+
+def runCommand(command_filename, resultsdir, ranks):
+    command = []
+    command.append("mpirun")
+    #command.append("--oversubscribe")
+    command.append("-np")
+    command.append("1")
+    command.append(exp.multiraxml_exec)
+    command.append(command_filename)
+    command.append(resultsdir)
+    command.append(str(ranks))
+    print("running " + ' '.join(command))
+
+    submit_path = os.path.join(resultsdir, "submit.sh")
+    exp.submit_haswell(submit_path, " ".join(command), ranks)
 
 datadir = os.path.join(exp.datasets_root, "multi-raxml", "commands")
 
 if (len(sys.argv) != 3):
   datasets = os.listdir(datadir)
-  print("Syntax : python scripts/haswellrun.py command_dir threads_number")
-  print("Suggestions of datasets: ")
-  print('\n'.join(datasets))
+  print("Syntax: python haswell.py dataset ranksNumber")
+  print("  Suggestions of datasets: ")
+  print("  - " + '\n  - '.join(datasets))
   sys.exit(0)
 
-data = sys.argv[1]
-threads = int(sys.argv[2])
-
-resultsdir = exp.create_result_dir(os.path.join("multi-raxml", "haswellrun", data))
-result_msg = "multi-raxml git: \n" + exp.get_git_info(exp.multiraxml_root)
+basedir = sys.argv[1]
+ranks = sys.argv[2]
+datadir = os.path.join(datadir, basedir)
+resultsdir = exp.create_result_dir(os.path.join("multi-raxml", "haswell", basedir + "_" + ranks))
+result_msg = "multi-raxml git: \n" + exp.get_git_info(exp.multiraxml_root) + "\n"
+result_msg += "raxml git: \n" + exp.get_git_info(exp.raxml_root) + "\n"
 exp.write_results_info(resultsdir, result_msg) 
+print("Results will be written in " + resultsdir) 
 
-command = os.path.join(datadir, data, "command.txt")
-warning = os.path.join(datadir, data, "warning.txt")
-exp.display_warning_file(warning)
 
-cluster.duplicateAndRun(command, threads, resultsdir)
+oldcommand_filename = os.path.join(datadir, "command.txt")
+newcommand_filename = copyAndEditCommand(oldcommand_filename, resultsdir)
+runCommand(newcommand_filename, resultsdir, ranks)
 
 
