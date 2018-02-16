@@ -1,0 +1,62 @@
+
+RAxML-NG v. 0.6.0.dev BETA released on 24.01.2018 by The Exelixis Lab.
+Authors: Alexey Kozlov, Alexandros Stamatakis, Diego Darriba, Tomas Flouri, Benoit Morel.
+Latest version: https://github.com/amkozlov/raxml-ng
+Questions/problems/suggestions? Please visit: https://groups.google.com/forum/#!forum/raxml
+
+WARNING: This is a BETA release, please use at your own risk!
+
+RAxML-NG was called as follows:
+
+/home/morelbt/github/raxml-ng/bin/raxml-ng-mpi --msa /home/morelbt/github/phd_experiments/datasets/general/ENSGT00860000133679/fasta_files/ENSGT00860000133679.fa --model GTR --prefix /home/morelbt/github/phd_experiments/results/mpirun/multiple_nodes/mpirun2/banana --seed 1
+
+Analysis options:
+  run mode: ML tree search
+  start tree(s): random
+  random seed: 1
+  tip-inner: ON
+  pattern compression: ON
+  per-rate scalers: OFF
+  site repeats: OFF
+  fast spr radius: AUTO
+  spr subtree cutoff: 1.000000
+  branch lengths: ML estimate (linked)
+  SIMD kernels: AVX2
+  parallelization: MPI (16 ranks)
+
+[00:00:00] Reading alignment from file: /home/morelbt/github/phd_experiments/datasets/general/ENSGT00860000133679/fasta_files/ENSGT00860000133679.fa
+[00:00:00] Loaded alignment with 136 taxa and 140577 sites
+
+WARNING: Fully undetermined columns found: 1
+
+NOTE: Reduced alignment (with gap-only columns removed) was printed to:
+/home/morelbt/github/phd_experiments/results/mpirun/multiple_nodes/mpirun2/banana.raxml.reduced.phy
+
+Alignment comprises 1 partitions and 39934 patterns
+
+Partition 0: noname
+Model: GTR+FO
+Alignment sites / patterns: 140576 / 39934
+Gaps: 89.31 %
+Invariant sites: 1.56 %
+
+
+NOTE: Binary MSA file already exists: /home/morelbt/github/phd_experiments/results/mpirun/multiple_nodes/mpirun2/banana.raxml.rba
+
+[00:00:26] Generating random starting tree(s) with 136 taxa
+[00:00:26] Data distribution: partitions/thread: 1-1, patterns/thread: 2495-2496
+
+Starting ML tree search with 1 distinct starting trees
+
+[00:00:27 -2368246.480050] Initial branch length optimization
+[00:04:16 -1787692.241867] Model parameter optimization (eps = 10.000000)
+[00:07:13 -1761603.949722] AUTODETECT spr round 1 (radius: 5)
+[00:13:22 -1362956.435389] AUTODETECT spr round 2 (radius: 10)
+[00:20:47 -1145220.530169] AUTODETECT spr round 3 (radius: 15)
+[00:29:19 -1054060.203270] AUTODETECT spr round 4 (radius: 20)
+[00:35:52 -1048570.037515] AUTODETECT spr round 5 (radius: 25)
+[00:40:56 -1048568.796907] SPR radius for FAST iterations: 25 (autodetect)
+[00:40:56 -1048568.796907] Model parameter optimization (eps = 3.000000)
+[00:43:39 -1041309.653180] FAST spr round 1 (radius: 25)
+[01:25:49 -1027774.461033] FAST spr round 2 (radius: 25)
+[01:55:37 -1026505.886157] FAST spr round 3 (radius: 25)
