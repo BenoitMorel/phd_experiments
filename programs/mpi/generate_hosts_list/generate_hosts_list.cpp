@@ -4,8 +4,13 @@
 #include <limits.h>
 #include <cstdlib>
 #include <string>
-#include <unordered_set>
+#include <map>
 using namespace std;
+
+void remove_domain(string &str)
+{
+  str = str.substr(0, str.find(".", 0));
+}
 
 void master_main(int argc, char** argv)
 {
@@ -41,12 +46,18 @@ void printers_main(int argc, char** argv)
       0,
       MPI_COMM_WORLD);
   if (!rank) {
-    unordered_set<string> set;
+    map<string, int> nodes;;
     for (unsigned int i = 0; i < world_size; ++i) {
-      set.insert(string(recieve_data + i * MPI_MAX_PROCESSOR_NAME));
+      string node(recieve_data + i * MPI_MAX_PROCESSOR_NAME);
+      remove_domain(node);
+      int size = 0;
+      if (nodes.find(node) != nodes.end()) {
+        size = nodes.at(node);
+      }
+      nodes[node] = ++size;
     }
-    for (auto str: set) {
-      cout << str << endl;
+    for (auto pair: nodes) {
+      cout << pair.first << " slots=" << pair.second << endl;
     }
   }
   delete[] recieve_data;
