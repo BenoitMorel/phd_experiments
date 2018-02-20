@@ -19,6 +19,7 @@ def runCommand(command_filename, resultsdir, ranks):
     command.append("-np")
     command.append("1")
     command.append(exp.multiraxml_exec)
+    command.append(exp.multiraxml_heuristic)
     command.append(command_filename)
     command.append(resultsdir)
     command.append(str(ranks))

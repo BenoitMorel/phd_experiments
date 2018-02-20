@@ -1,4 +1,4 @@
-c1 ~/github/raxml-ng/bin/raxml-ng-mpi--msa ~/github/datasets/ensembl_8880_15/fasta_files/ENSGT00390000000002.fa --model GTR --prefix ~/github/phd_experiments/results/multi-raxml/ensembl_8880_15/ENSGT00390000000002 --site-repeats on 
+c1 ~/github/raxml-ng/bin/raxml-ng-mpi --msa ~/github/datasets/ensembl_8880_15/fasta_files/ENSGT00390000000002.fa --model GTR --prefix ~/github/phd_experiments/results/multi-raxml/ensembl_8880_15/ENSGT00390000000002 --site-repeats on 
 c2 ~/github/raxml-ng/bin/raxml-ng-mpi --msa ~/github/datasets/ensembl_8880_15/fasta_files/ENSGT00390000000013.fa --model GTR --prefix ~/github/phd_experiments/results/multi-raxml/ensembl_8880_15/ENSGT00390000000013 --site-repeats on 
 c3 ~/github/raxml-ng/bin/raxml-ng-mpi --msa ~/github/datasets/ensembl_8880_15/fasta_files/ENSGT00390000000018.fa --model GTR --prefix ~/github/phd_experiments/results/multi-raxml/ensembl_8880_15/ENSGT00390000000018 --site-repeats on 
 c4 ~/github/raxml-ng/bin/raxml-ng-mpi --msa ~/github/datasets/ensembl_8880_15/fasta_files/ENSGT00390000000020.fa --model GTR --prefix ~/github/phd_experiments/results/multi-raxml/ensembl_8880_15/ENSGT00390000000020 --site-repeats on 
