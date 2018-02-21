@@ -38,7 +38,7 @@ if (len(sys.argv) != 3):
 basedir = sys.argv[1]
 ranks = sys.argv[2]
 datadir = os.path.join(datadir, basedir)
-resultsdir = exp.create_result_dir(os.path.join("multi-raxml", "norman", basedir + "_" + ranks))
+resultsdir = exp.create_result_dir(os.path.join("multi-raxml", "normal", basedir + "_" + ranks))
 result_msg = "multi-raxml git: \n" + exp.get_git_info(exp.multiraxml_root) + "\n"
 result_msg += "raxml git: \n" + exp.get_git_info(exp.raxml_root) + "\n"
 exp.write_results_info(resultsdir, result_msg) 
