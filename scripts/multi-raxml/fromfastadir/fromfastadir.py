@@ -12,31 +12,36 @@ datas["sub_ensembl_1000"]         = "~/github/datasets/ensembl_1000_15/fasta_fil
 
 
 def print_help():
-  print("syntax: python fromfastadir_normal.py data ranks mode")
+  print("syntax: python fromfastadir_normal.py data implem cluster_mode ranks ")
   print("  possible datas: ")
   for data in datas:
     print("    " + data)
-  print("  possible modes: ")
+  print("  possible implems; ")
+  print("    --spawn-scheduler")
+  print("    --mpirun-scheduler")
+  print("  possible cluster_modes: ")
   print("    " + "normal")
   print("    " + "haswell")
 
 
 
-if ((len(sys.argv) != 4) or (sys.argv[1] not in datas)):
+if ((len(sys.argv) != 5) or (sys.argv[1] not in datas)):
   print_help()
   sys.exit(0)
 
 data = sys.argv[1]
-ranks = sys.argv[2]
-mode = sys.argv[3]
-isHaswell = (mode == "haswell")
+implementation = sys.argv[2]
+cluster_mode = sys.argv[3]
+ranks = sys.argv[4]
+isHaswell = (cluster_mode == "haswell")
+
 
 runner = os.path.join(exp.multiraxml_root, "scripts", "multiraxml_fromfastadir.py")
 raxmlbin = os.path.join(exp.raxml_root, "bin")
 options = os.path.join(exp.multiraxml_root, "examples", "raxml_options.txt")
 
 fastafiles = datas[data]
-resultsdir = os.path.join(exp.results_root, "multi-raxml", "fromfastadir", mode + "_" + ranks, data)
+resultsdir = os.path.join(exp.results_root, "multi-raxml", "fromfastadir", cluster_mode + "_" + ranks, data)
 resultsdir = exp.create_result_dir(resultsdir)
 result_msg = "multi-raxml git: \n" + exp.get_git_info(exp.multiraxml_root) + "\n"
 result_msg += "raxml git: \n" + exp.get_git_info(exp.raxml_root) + "\n"
@@ -45,6 +50,7 @@ exp.write_results_info(resultsdir, result_msg)
 command = []
 command.append("python")
 command.append(runner)
+command.append(implementation)
 command.append(raxmlbin)
 command.append(fastafiles)
 command.append(resultsdir)

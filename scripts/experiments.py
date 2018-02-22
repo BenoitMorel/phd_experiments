@@ -95,7 +95,7 @@ def submit_haswell(submit_file_path, command, threads, debug=False):
     f.write("#SBATCH --threads-per-core=1\n")
     f.write("#SBATCH --cpus-per-task=1\n")
     f.write("#SBATCH --hint=compute_bound\n")
-    f.write("#SBATCH -t 2:00:00\n")
+    f.write("#SBATCH -t 24:00:00\n")
     f.write("\n")
     f.write(command)
   command = []
