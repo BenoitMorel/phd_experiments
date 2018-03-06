@@ -16,7 +16,7 @@ sequence = sys.argv[2]
 model = sys.argv[3]
 trees_number = int(sys.argv[4])
 
-resultsdir = os.path.join("oldraxml", "generate_parsimony", model, runname)
+resultsdir = os.path.join("oldraxml", "generate_parsimony", runname)
 resultsdir = exp.create_result_dir(resultsdir)
 
 result_msg = "old raxml git: \n" + exp.get_git_info(exp.oldraxml_root) + "\n"

@@ -19,6 +19,7 @@ def print_help():
   print("  possible implems; ")
   print("    --spawn-scheduler")
   print("    --mpirun-scheduler")
+  print("    --split-scheduler")
   print("  possible cluster_modes: ")
   print("    " + "normal")
   print("    " + "haswell")
@@ -35,13 +36,21 @@ cluster_mode = sys.argv[3]
 ranks = sys.argv[4]
 isHaswell = (cluster_mode == "haswell")
 
+implementationKey = ""
+if (implementation == "--spawn-scheduler"):
+  implementationKey = "spawn"
+elif (implementation == "--split-scheduler"):
+  implementationKey = "split"
+else:
+  implementationKey = "mpirun"
+
 
 runner = os.path.join(exp.multiraxml_root, "scripts", "multiraxml_fromfastadir.py")
 raxmlbin = os.path.join(exp.raxml_root, "bin")
 options = os.path.join(exp.multiraxml_root, "examples", "raxml_options.txt")
 
 fastafiles = datas[data]
-resultsdir = os.path.join(exp.results_root, "multi-raxml", "fromfastadir", cluster_mode + "_" + ranks, data)
+resultsdir = os.path.join(exp.results_root, "multi-raxml", "fromfastadir", cluster_mode + "_" + implementationKey + "_" + ranks, data)
 resultsdir = exp.create_result_dir(resultsdir)
 result_msg = "multi-raxml git: \n" + exp.get_git_info(exp.multiraxml_root) + "\n"
 result_msg += "raxml git: \n" + exp.get_git_info(exp.raxml_root) + "\n"

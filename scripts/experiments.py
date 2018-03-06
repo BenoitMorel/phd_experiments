@@ -29,6 +29,8 @@ treerecs_exec = os.path.join(treerecs_root, "build", "bin", "Treerecs")
 multiraxml_root = os.path.join(root, "..", "multi-raxml")
 multiraxml_exec = os.path.join(multiraxml_root, "build", "multi-raxml")
 raxml_root = os.path.join(root, "..", "raxml-ng")
+oldraxml_root = os.path.join(root, "..", "standard-RAxML")
+oldraxml_exec = os.path.join(oldraxml_root, "raxmlHPC-AVX")
 
 # constants
 multiraxml_heuristic = "--spawn-scheduler"
@@ -95,12 +97,16 @@ def submit_haswell(submit_file_path, command, threads, debug=False):
     f.write("#SBATCH --threads-per-core=1\n")
     f.write("#SBATCH --cpus-per-task=1\n")
     f.write("#SBATCH --hint=compute_bound\n")
-    f.write("#SBATCH -t 24:00:00\n")
+    if (int(threads) <= 32):
+      f.write("#SBATCH -t 2:00:00\n")
+    else:
+      f.write("#SBATCH -t 24:00:00\n")
+
     f.write("\n")
     f.write(command)
   command = []
   command.append("sbatch")
-  if (debug):
+  if (int(threads) <= 32):
     command.append("--qos=debug")
   command.append("-s")
   command.append(submit_file_path)
