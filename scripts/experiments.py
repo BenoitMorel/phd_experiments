@@ -24,16 +24,17 @@ results_root = os.path.join(root, "results")
 
 
 # externals
-treerecs_root = os.path.join(root, "..", "Treerecs")
+github_root = os.path.join(root, "..")
+treerecs_root = os.path.join(github_root, "Treerecs")
 treerecs_exec = os.path.join(treerecs_root, "build", "bin", "Treerecs")
-multiraxml_root = os.path.join(root, "..", "multi-raxml")
+multiraxml_root = os.path.join(github_root, "multi-raxml")
 multiraxml_exec = os.path.join(multiraxml_root, "build", "multi-raxml")
-raxml_root = os.path.join(root, "..", "raxml-ng")
-oldraxml_root = os.path.join(root, "..", "standard-RAxML")
+raxml_root = os.path.join(github_root, "raxml-ng")
+oldraxml_root = os.path.join(github_root, "standard-RAxML")
 oldraxml_exec = os.path.join(oldraxml_root, "raxmlHPC-AVX")
-
+bigdatasets_root = os.path.join(github_root, "datasets")
 # constants
-multiraxml_heuristic = "--spawn-scheduler"
+multiraxml_heuristic = "--split-scheduler"
 
 # utils
 def get_git_info(repo_path):
@@ -88,9 +89,10 @@ def redirect_logs(result_dir):
 
 def submit_haswell(submit_file_path, command, threads, debug=False):
   nodes = str((int(threads) - 1) // 16 + 1)
+  logfile = os.path.join(os.path.dirname(submit_file_path), "logs.out")
   with open(submit_file_path, "w") as f:
     f.write("#!/bin/bash\n")
-    f.write("#SBATCH -o " + submit_file_path + ".out" + "\n")
+    f.write("#SBATCH -o " + logfile + "\n")
     f.write("#SBATCH -B 2:8:1\n")
     f.write("#SBATCH -N " + str(nodes) + "\n")
     f.write("#SBATCH -n " + str(threads) + "\n")
