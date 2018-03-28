@@ -1,0 +1,18 @@
+Start: 2018-03-27 13:41:28.348683
+Command: scripts/multi-raxml/fromfastadir.py ensembl haswell 100 512
+
+Experiment git: 
+Git repo: https://github.com/BenoitMorel/phd_experiments.git
+Git branch: master
+Git commit: da43b78b64ad6586bdb597d30f76f052cec1dfbd
+
+multi-raxml git: 
+Git repo: https://github.com/BenoitMorel/multi-raxml.git
+Git branch: master
+Git commit: b7277e1677c95dac38bf2b7fb809a538b55d5255
+
+raxml git: 
+Git repo: https://github.com/amkozlov/raxml-ng.git
+Git branch: dev
+Git commit: e8730ef1deb84166dbbd5bc3beaed80be7039d8a
+
