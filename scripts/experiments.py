@@ -28,13 +28,12 @@ github_root = os.path.join(root, "..")
 treerecs_root = os.path.join(github_root, "Treerecs")
 treerecs_exec = os.path.join(treerecs_root, "build", "bin", "Treerecs")
 multiraxml_root = os.path.join(github_root, "multi-raxml")
-multiraxml_exec = os.path.join(multiraxml_root, "build", "multi-raxml")
 raxml_root = os.path.join(github_root, "raxml-ng")
 oldraxml_root = os.path.join(github_root, "standard-RAxML")
 oldraxml_exec = os.path.join(oldraxml_root, "raxmlHPC-AVX")
 bigdatasets_root = os.path.join(github_root, "datasets")
 # constants
-multiraxml_heuristic = "--split-scheduler"
+mpi_scheduler_heuristic = "--split-scheduler"
 
 # utils
 def get_git_info(repo_path):
@@ -102,7 +101,7 @@ def submit_haswell(submit_file_path, command, threads, debug=False):
     if (int(threads) <= 32):
       f.write("#SBATCH -t 2:00:00\n")
     else:
-      f.write("#SBATCH -t 48:00:00\n")
+      f.write("#SBATCH -t 24:00:00\n")
 
     f.write("\n")
     f.write(command)
