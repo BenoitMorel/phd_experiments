@@ -102,7 +102,7 @@ def submit_haswell(submit_file_path, command, threads, debug=False):
     if (int(threads) <= 32):
       f.write("#SBATCH -t 2:00:00\n")
     else:
-      f.write("#SBATCH -t 24:00:00\n")
+      f.write("#SBATCH -t 48:00:00\n")
 
     f.write("\n")
     f.write(command)

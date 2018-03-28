@@ -62,7 +62,9 @@ command.append(ranks)
 
 if (isHaswell):
   print("executing on haswell: " + " ".join(command))
+  print("")
   print("results will be in " + resultsdir)
+  print("")
   submit_path = os.path.join(resultsdir, "submit.sh")
   exp.submit_haswell(submit_path, " ".join(command), ranks)
 else:
