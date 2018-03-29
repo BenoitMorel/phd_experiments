@@ -9,6 +9,7 @@ datas = {}
 datas["phyldog_example"]  = os.path.join(exp.datasets_root, "general/PhyldogDataExample/FastaFiles/")
 datas["ensembl"]          = os.path.join(exp.bigdatasets_root, "ensembl_8880_15/fasta_files/")
 datas["sub_ensembl_1000"] = os.path.join(exp.bigdatasets_root, "ensembl_1000_15/fasta_files/")
+datas["muscle"] = os.path.join(exp.bigdatasets_root, "eric_tannier/vectorbase_18/MUSCLE/")
 
 
 def print_help():
@@ -40,10 +41,13 @@ options = os.path.join(exp.multiraxml_root, "examples", "raxml_options.txt")
 
 fastafiles = datas[data]
 datakey = data
-resultsdir = os.path.join(exp.results_root, "multi-raxml")
+resultsdir = os.path.join(exp.results_root, "multi-raxml", data)
 if (bootstraps_number != 0):
   resultsdir = os.path.join(resultsdir, "bootstraps_" + str(bootstraps_number))
-resultsdir = os.path.join(resultsdir, cluster_mode + "_" + ranks, data)
+else:
+  resultsdir = os.path.join(resultsdir, "no_bootstraps")
+resultsdir = os.path.join(resultsdir, cluster_mode + "_" + ranks)
+resultsdir = os.path.join(resultsdir, "run")
 resultsdir = exp.create_result_dir(resultsdir)
 result_msg = "multi-raxml git: \n" + exp.get_git_info(exp.multiraxml_root) + "\n"
 result_msg += "raxml git: \n" + exp.get_git_info(exp.raxml_root) + "\n"
