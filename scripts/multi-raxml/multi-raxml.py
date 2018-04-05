@@ -36,7 +36,6 @@ ranks = sys.argv[4]
 isHaswell = (cluster_mode == "haswell")
 implementation = "--split_scheduler"
 runner = os.path.join(exp.multiraxml_root, "multi-raxml", "multi-raxml.py")
-raxmlbin = os.path.join(exp.raxml_root, "bin")
 options = os.path.join(exp.multiraxml_root, "examples", "raxml_options.txt")
 
 fastafiles = datas[data]
@@ -57,7 +56,6 @@ command = []
 command.append("python")
 command.append(runner)
 command.append(implementation)
-command.append(raxmlbin)
 command.append(fastafiles)
 command.append(resultsdir)
 command.append(options)
