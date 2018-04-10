@@ -13,7 +13,7 @@ datas["muscle"] = os.path.join(exp.bigdatasets_root, "eric_tannier/vectorbase_18
 
 
 def print_help():
-  print("syntax: python fromfastadir_normal.py data cluster_mode bs_numbers ranks ")
+  print("syntax: python fromfastadir_normal.py data cluster_mode bs_numbers use_modeltest ranks ")
   print("  possible datas: ")
   for data in datas:
     print("    " + data)
@@ -23,7 +23,7 @@ def print_help():
 
 
 
-if ((len(sys.argv) != 5) or (sys.argv[1] not in datas)):
+if ((len(sys.argv) != 6) or (sys.argv[1] not in datas)):
   print("Error! Syntax should be " )
   print_help()
   sys.exit(0)
@@ -31,20 +31,29 @@ if ((len(sys.argv) != 5) or (sys.argv[1] not in datas)):
 data = sys.argv[1]
 cluster_mode = sys.argv[2]
 bootstraps_number = int(sys.argv[3])
-ranks = sys.argv[4]
+use_modeltest = (int(sys.argv[4]) != 0)
+ranks = sys.argv[5]
+
+
+
 
 isHaswell = (cluster_mode == "haswell")
-implementation = "--split_scheduler"
 runner = os.path.join(exp.multiraxml_root, "multi-raxml", "multi-raxml.py")
-options = os.path.join(exp.multiraxml_root, "examples", "raxml_options.txt")
-
+if (use_modeltest):
+  options = os.path.join(exp.multiraxml_root, "examples", "raxml_options_nomodel.txt")
+else:
+  options = os.path.join(exp.multiraxml_root, "examples", "raxml_options.txt")
+  
 fastafiles = datas[data]
 datakey = data
 resultsdir = os.path.join(exp.results_root, "multi-raxml", data)
+
 if (bootstraps_number != 0):
   resultsdir = os.path.join(resultsdir, "bootstraps_" + str(bootstraps_number))
 else:
   resultsdir = os.path.join(resultsdir, "no_bootstraps")
+if (use_modeltest):
+  resultsdir += "_modeltest"
 resultsdir = os.path.join(resultsdir, cluster_mode + "_" + ranks)
 resultsdir = os.path.join(resultsdir, "run")
 resultsdir = exp.create_result_dir(resultsdir)
@@ -55,13 +64,13 @@ exp.write_results_info(resultsdir, result_msg)
 command = []
 command.append("python")
 command.append(runner)
-command.append(implementation)
-command.append(fastafiles)
-command.append(resultsdir)
-command.append(options)
-command.append(str(bootstraps_number))
-command.append(ranks)
-
+command.append(" -f " + fastafiles)
+command.append(" -o " + resultsdir)
+command.append(" -r " + options)
+command.append(" -b " + str(bootstraps_number))
+command.append(" -c " + ranks)
+if (use_modeltest):
+  command.append(" -m ")
 if (isHaswell):
   print("executing on haswell: " + " ".join(command))
   print("")
