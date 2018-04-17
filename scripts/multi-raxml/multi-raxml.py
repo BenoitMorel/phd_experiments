@@ -9,8 +9,11 @@ datas = {}
 datas["phyldog_example"]  = os.path.join(exp.datasets_root, "general/PhyldogDataExample/FastaFiles/")
 datas["ensembl"]          = os.path.join(exp.bigdatasets_root, "ensembl_8880_15/fasta_files/")
 datas["sub_ensembl_1000"] = os.path.join(exp.bigdatasets_root, "ensembl_1000_15/fasta_files/")
+datas["all"] = os.path.join(exp.bigdatasets_root, "all_1kite/split_alignment")
 datas["muscle"] = os.path.join(exp.bigdatasets_root, "eric_tannier/vectorbase_18/MUSCLE/")
 
+datatypes = {}
+datatypes["all"] = "aa"
 
 def print_help():
   print("syntax: python fromfastadir_normal.py data cluster_mode bs_numbers use_modeltest ranks ")
@@ -36,14 +39,15 @@ ranks = sys.argv[5]
 
 
 
-
+is_aa = (data in datatypes) and (datatypes[data] == "aa")
 isHaswell = (cluster_mode == "haswell")
 runner = os.path.join(exp.multiraxml_root, "multi-raxml", "multi-raxml.py")
-if (use_modeltest):
-  options = os.path.join(exp.multiraxml_root, "examples", "raxml_options_nomodel.txt")
+if (is_aa):
+  options = os.path.join(exp.datasets_root, "multi-raxml", "option_files",  "raxml_global_options_aa.txt")
 else:
-  options = os.path.join(exp.multiraxml_root, "examples", "raxml_options.txt")
-  
+  options = os.path.join(exp.datasets_root, "multi-raxml", "option_files",  "raxml_global_options.txt")
+
+
 fastafiles = datas[data]
 datakey = data
 resultsdir = os.path.join(exp.results_root, "multi-raxml", data)
@@ -64,13 +68,21 @@ exp.write_results_info(resultsdir, result_msg)
 command = []
 command.append("python")
 command.append(runner)
-command.append(" -f " + fastafiles)
-command.append(" -o " + resultsdir)
-command.append(" -r " + options)
-command.append(" -b " + str(bootstraps_number))
-command.append(" -c " + ranks)
+command.append("-a")
+command.append(fastafiles)
+command.append("-o")
+command.append(os.path.join(resultsdir, "multiraxml_run"))
+command.append("-r")
+command.append(options)
+command.append("-b")
+command.append(str(bootstraps_number))
+command.append("-c")
+command.append(ranks)
 if (use_modeltest):
-  command.append(" -m ")
+  command.append("-m")
+if (is_aa):
+  command.append("-d")
+  command.append("aa")
 if (isHaswell):
   print("executing on haswell: " + " ".join(command))
   print("")
