@@ -10,13 +10,15 @@ datas["phyldog_example"]  = os.path.join(exp.datasets_root, "general/PhyldogData
 datas["ensembl"]          = os.path.join(exp.bigdatasets_root, "ensembl_8880_15/fasta_files/")
 datas["sub_ensembl_1000"] = os.path.join(exp.bigdatasets_root, "ensembl_1000_15/fasta_files/")
 datas["all"] = os.path.join(exp.bigdatasets_root, "all_1kite/split_alignment")
+datas["all_filtered"] = os.path.join(exp.bigdatasets_root, "all_1kite/filtered_split_alignment")
 datas["muscle"] = os.path.join(exp.bigdatasets_root, "eric_tannier/vectorbase_18/MUSCLE/")
 
 datatypes = {}
 datatypes["all"] = "aa"
+datatypes["all_filtered"] = "aa"
 
 def print_help():
-  print("syntax: python fromfastadir_normal.py data cluster_mode bs_numbers use_modeltest ranks ")
+  print("syntax: python fromfastadir_normal.py data cluster_mode use_modeltest ranks [starting_trees [bs_trees]]")
   print("  possible datas: ")
   for data in datas:
     print("    " + data)
@@ -26,16 +28,21 @@ def print_help():
 
 
 
-if ((len(sys.argv) != 6) or (sys.argv[1] not in datas)):
+if ((len(sys.argv) not in range(5, 8)) or (sys.argv[1] not in datas)):
   print("Error! Syntax should be " )
   print_help()
   sys.exit(0)
 
 data = sys.argv[1]
 cluster_mode = sys.argv[2]
-bootstraps_number = int(sys.argv[3])
-use_modeltest = (int(sys.argv[4]) != 0)
-ranks = sys.argv[5]
+use_modeltest = (int(sys.argv[3]) != 0)
+ranks = sys.argv[4]
+starting_trees = 0
+if (len(sys.argv) > 5):
+  starting_trees = int(sys.argv[5])
+bootstraps_number = 0
+if (len(sys.argv) > 6):
+  bootstraps_number = int(sys.argv[6])
 
 
 
@@ -56,6 +63,8 @@ if (bootstraps_number != 0):
   resultsdir = os.path.join(resultsdir, "bootstraps_" + str(bootstraps_number))
 else:
   resultsdir = os.path.join(resultsdir, "no_bootstraps")
+if (starting_trees > 0):
+  resultsdir += "_start_" + str(starting_trees)
 if (use_modeltest):
   resultsdir += "_modeltest"
 resultsdir = os.path.join(resultsdir, cluster_mode + "_" + ranks)
@@ -76,6 +85,8 @@ command.append("-r")
 command.append(options)
 command.append("-b")
 command.append(str(bootstraps_number))
+command.append("-s")
+command.append(str(starting_trees))
 command.append("-c")
 command.append(ranks)
 if (use_modeltest):
