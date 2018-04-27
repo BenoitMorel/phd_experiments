@@ -18,7 +18,7 @@ datatypes["all"] = "aa"
 datatypes["all_filtered"] = "aa"
 
 def print_help():
-  print("syntax: python fromfastadir_normal.py data cluster_mode use_modeltest ranks [starting_trees [bs_trees]]")
+  print("syntax: python fromfastadir_normal.py data cluster_mode ranks use_modeltest bs_trees [additional multi-raxml arguments]")
   print("  possible datas: ")
   for data in datas:
     print("    " + data)
@@ -28,21 +28,16 @@ def print_help():
 
 
 
-if ((len(sys.argv) not in range(5, 8)) or (sys.argv[1] not in datas)):
+if ((len(sys.argv) < 6) or (sys.argv[1] not in datas)):
   print("Error! Syntax should be " )
   print_help()
   sys.exit(0)
 
 data = sys.argv[1]
 cluster_mode = sys.argv[2]
-use_modeltest = (int(sys.argv[3]) != 0)
-ranks = sys.argv[4]
-starting_trees = 0
-if (len(sys.argv) > 5):
-  starting_trees = int(sys.argv[5])
-bootstraps_number = 0
-if (len(sys.argv) > 6):
-  bootstraps_number = int(sys.argv[6])
+ranks = sys.argv[3]
+use_modeltest = (int(sys.argv[4]) != 0)
+bootstraps_number = int(sys.argv[5])
 
 
 
@@ -63,10 +58,15 @@ if (bootstraps_number != 0):
   resultsdir = os.path.join(resultsdir, "bootstraps_" + str(bootstraps_number))
 else:
   resultsdir = os.path.join(resultsdir, "no_bootstraps")
-if (starting_trees > 0):
-  resultsdir += "_start_" + str(starting_trees)
 if (use_modeltest):
   resultsdir += "_modeltest"
+
+max_args_number = 6
+
+for i in range(max_args_number, len(sys.argv)):
+  arg = sys.argv[i]
+  resultsdir += "_" + arg  
+  
 resultsdir = os.path.join(resultsdir, cluster_mode + "_" + ranks)
 resultsdir = os.path.join(resultsdir, "run")
 resultsdir = exp.create_result_dir(resultsdir)
@@ -85,8 +85,6 @@ command.append("-r")
 command.append(options)
 command.append("-b")
 command.append(str(bootstraps_number))
-command.append("-s")
-command.append(str(starting_trees))
 command.append("-c")
 command.append(ranks)
 if (use_modeltest):
@@ -94,6 +92,10 @@ if (use_modeltest):
 if (is_aa):
   command.append("-d")
   command.append("aa")
+
+for i in range(max_args_number, len(sys.argv)):
+  command.append(sys.argv[i])
+
 if (isHaswell):
   print("executing on haswell: " + " ".join(command))
   print("")
