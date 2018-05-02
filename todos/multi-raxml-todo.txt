@@ -1,0 +1,9 @@
+Mandatory experiments for the manuscript (main dataset: Ensembl):
+- draw a plot to show that there is a variance in the MSA sizes
+- (RUNNING) run ParGenes on the big dataset with single ML searches only, and show that it scales.
+- (RUNNING) do the same without sorting the commands by increasing size, and show that it does not scale so well
+- (RUNNING) run ParGenes on the big dataset with modeltesting, 10 random and 10 parsimony starting trees, and 100 bootstraps.  (RUNNING
+Optional experiments:
+- try running ParGenes on the big dataset with one core per job. See whether the result is worst (it might not be the case). If the results are not worse, generate a fake set of MSAs to show that splitting jobs between several cores is sometimes pertinent.
+- generate a set of "big" MSAs that cannot be processed with one core each, because of memory constraints. Show that ParGenes handles them correctly.
+- write a script to submit individual jobs to haswell instead of doing everything at once with ParGenes (the issue with this experiment is that it might not prove anything, since it's a matter of being lucky with the cluster queues)
