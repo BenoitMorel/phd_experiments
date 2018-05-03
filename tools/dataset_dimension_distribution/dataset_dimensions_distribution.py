@@ -40,10 +40,10 @@ for name in msa_names:
 default = range(0, len(taxa_array))
 
 fig, ax = plt.subplots()
-ax.scatter(taxa_array, sites_array, marker='x')
+ax.scatter(sites_array, taxa_array, marker='x')
 ax.grid()
-plt.xlabel("taxa")
-plt.ylabel("sites")
+plt.xlabel("sites")
+plt.ylabel("taxa")
 fig.savefig(plot_name + "_sites_taxa.png")
 
 plt.clf()
