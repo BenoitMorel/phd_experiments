@@ -71,7 +71,7 @@ resultsdir = os.path.join(resultsdir, cluster_mode + "_" + ranks)
 resultsdir = os.path.join(resultsdir, "run")
 resultsdir = exp.create_result_dir(resultsdir)
 result_msg = "multi-raxml git: \n" + exp.get_git_info(exp.multiraxml_root) + "\n"
-result_msg += "raxml git: \n" + exp.get_git_info(exp.raxml_root) + "\n"
+#result_msg += "raxml git: \n" + exp.get_git_info(exp.raxml_root) + "\n"
 exp.write_results_info(resultsdir, result_msg) 
 
 command = []
