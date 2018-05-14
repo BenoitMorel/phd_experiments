@@ -75,7 +75,7 @@ result_msg += "raxml git: \n" + exp.get_git_info(exp.raxml_root) + "\n"
 exp.write_results_info(resultsdir, result_msg) 
 
 command = []
-command.append("python")
+command.append("python3")
 command.append(runner)
 command.append("-a")
 command.append(fastafiles)
