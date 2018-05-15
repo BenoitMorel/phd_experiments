@@ -113,8 +113,29 @@ def submit_haswell(submit_file_path, command, threads, debug=False):
   command.append(submit_file_path)
   subprocess.check_call(command)
 
+def submit_magny(submit_file_path, command, threads, debug=False):
+  #nodes = str((int(threads) - 1) // 16 + 1)
+  #logfile = os.path.join(os.path.dirname(submit_file_path), "logs.out")
+  with open(submit_file_path, "w") as f:
+    f.write("#!/bin/bash\n")
+    f.write("#$ -cwd -V\n")                              # Shift directories and export variables
+    f.write("#$ -q bridge.q\n")            # Select the queue
+    f.write("#$ -pe mvapich16 " + str(threads) + "\n")                          # Set the parallel environment
+    f.write("#$ -l h_rt=24:00:00\n")                     # Request the time for the job
+    f.write("#$ -N cyano_bridge\n")
+    f.write("\n")
+    f.write(command)
+  command = []
+  command.append("qsub")
+  #if (int(threads) <= 32):
+  #  command.append("--qos=debug")
+  #command.append("-s")
+  command.append(submit_file_path)
+  subprocess.check_call(command)
+
 
 
   
+
 
 

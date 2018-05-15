@@ -25,6 +25,7 @@ def print_help():
   print("  possible cluster_modes: ")
   print("    " + "normal")
   print("    " + "haswell")
+  print("    " + "magny")
 
 
 
@@ -43,6 +44,7 @@ bootstraps_number = int(sys.argv[5])
 
 is_aa = (data in datatypes) and (datatypes[data] == "aa")
 isHaswell = (cluster_mode == "haswell")
+isMagny = (cluster_mode == "magny")
 runner = os.path.join(exp.multiraxml_root, "multi-raxml", "multi-raxml.py")
 if (is_aa):
   options = os.path.join(exp.datasets_root, "multi-raxml", "option_files",  "raxml_global_options_aa.txt")
@@ -103,6 +105,13 @@ if (isHaswell):
   print("")
   submit_path = os.path.join(resultsdir, "submit.sh")
   exp.submit_haswell(submit_path, " ".join(command), ranks)
+elif (isMagny):
+  print("executing on haswell: " + " ".join(command))
+  print("")
+  print("results will be in " + resultsdir)
+  print("")
+  submit_path = os.path.join(resultsdir, "submit.sh")
+  exp.submit_magny(submit_path, " ".join(command), ranks)
 else:
   print("executing " + " ".join(command))
   subprocess.check_call(command)
