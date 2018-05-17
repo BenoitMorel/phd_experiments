@@ -42,8 +42,10 @@ def get_git_info(repo_path):
   repo = str(subprocess.check_output(["git", "config", "--get", "remote.origin.url"]))[2:-3]
   branch = str(subprocess.check_output(["git", "rev-parse", "--abbrev-ref", "HEAD"]))[2:-3]
   commit = str(subprocess.check_output(["git", "rev-parse", "HEAD"]))[2:-3]
+  diff = "\t\t" + subprocess.check_output(["git", "diff"]).decode("ASCII").replace("\n", "\n\t\t")
   os.chdir(initial_dir)
   result = "Git repo: " + repo + "\nGit branch: " + branch + "\nGit commit: " + commit + "\n"
+  result += "diff:\n " + diff + "\n"
   return result
 
 def write_results_info(resultsdir, msg):

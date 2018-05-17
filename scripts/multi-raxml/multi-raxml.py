@@ -71,11 +71,12 @@ resultsdir = os.path.join(resultsdir, cluster_mode + "_" + ranks)
 resultsdir = os.path.join(resultsdir, "run")
 resultsdir = exp.create_result_dir(resultsdir)
 result_msg = "multi-raxml git: \n" + exp.get_git_info(exp.multiraxml_root) + "\n"
-result_msg += "raxml git: \n" + exp.get_git_info(exp.raxml_root) + "\n"
+result_msg += "raxml git: \n" + exp.get_git_info(os.path.join(exp.multiraxml_root, "raxml-ng")) + "\n"
+result_msg += "modeltest git: \n" + exp.get_git_info(os.path.join(exp.multiraxml_root, "modeltest")) + "\n"
 exp.write_results_info(resultsdir, result_msg) 
 
 command = []
-command.append("python")
+command.append("python3")
 command.append(runner)
 command.append("-a")
 command.append(fastafiles)
