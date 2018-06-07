@@ -6,7 +6,7 @@ import seaborn as sns
 sys.path.insert(0, 'scripts')
 import experiments as exp
 
-def run_treerecs(gene_tree, species_tree, alignment, smap, thresholds_number, output_dir):
+def run_treerecs(gene_tree, species_tree, alignment, smap, thresholds_number, output_dir, cores):
     treerecs_exec = exp.treerecs_exec
     treerecs_output = os.path.join(output_dir, "treerecs_output.newick")
     command = []
@@ -26,6 +26,9 @@ def run_treerecs(gene_tree, species_tree, alignment, smap, thresholds_number, ou
     command.append(thresholds_number)
     command.append("-S")
     command.append(smap)
+    if (cores != 1):
+      command.append("-P")
+      command.append(str(cores))
     print(' '.join(command))
     subprocess.check_call(command)
     return treerecs_output
@@ -87,6 +90,7 @@ def export_family(family_name, thresholds, likelihoods, output_dir):
         plt.tight_layout()
        
     fig.savefig(output)
+    plt.close(fig)
 
 def parse_treerecs_output(treerecs_output, output_dir):
     thresholds = {}
@@ -98,13 +102,14 @@ def parse_treerecs_output(treerecs_output, output_dir):
 
 
 
-def compute_plots(datadir, resultsdir):
+def compute_plots(datadir, resultsdir, cores):
+  ''' Run treerecs and parse results'''
   gene_trees = os.path.join(datadir, "geneTrees.newick")
   species_trees = os.path.join(datadir, "speciesTree.newick")
   alignment = os.path.join(datadir, "alignment.txt")
   smap = os.path.join(datadir, "mapping.txt")
   thresholds_number = "7"
-  run_treerecs(gene_trees, species_trees, alignment, smap, thresholds_number, resultsdir)
+  run_treerecs(gene_trees, species_trees, alignment, smap, thresholds_number, resultsdir, cores)
   treerecs_output = os.path.join(resultsdir, "treerecs_output.newick")
   parse_treerecs_output(treerecs_output, resultsdir)
 
@@ -114,18 +119,21 @@ def compute_plots(datadir, resultsdir):
 
 datadir = os.path.join(exp.datasets_root, "treerecs")
 
-if (len(sys.argv) != 2):
+if (len(sys.argv) != 2) and (len(sys.argv) != 3):
   datasets = os.listdir(datadir)
-  print("Syntax error: dataset required. Suggestions of datasets: ")
+  print("Syntax error: python threshold_likelihoods_plots.py dataset [cores].\n Suggestions of datasets: ")
   print('\n'.join(datasets))
   sys.exit(0)
 
 basedir = sys.argv[1]
+cores = 1
+if len(sys.argv) == 3:
+  cores = int(sys.argv[2])
 datadir = os.path.join(datadir, basedir)
 resultsdir = exp.create_result_dir(os.path.join("treerecs", "threshold_likelihoods_plots", basedir))
 result_msg = "Treerecs git: \n" + exp.get_git_info(exp.treerecs_root)
 exp.write_results_info(resultsdir, result_msg) 
-compute_plots(datadir, resultsdir)
+compute_plots(datadir, resultsdir, cores)
 
 
 
