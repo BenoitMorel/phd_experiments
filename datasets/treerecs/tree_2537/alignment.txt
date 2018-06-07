@@ -1,2 +1,2 @@
-PROT
+LG
 family_149.fasta

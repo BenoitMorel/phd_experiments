@@ -1,4 +1,4 @@
-DNA
+GTR
 fasta/HBG011000.fasta
 fasta/HBG011001.fasta
 fasta/HBG011002.fasta
