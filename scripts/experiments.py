@@ -88,7 +88,7 @@ def redirect_logs(result_dir):
     sys.stdout = open(logs, 'w')
     sys.stderr = open(err, 'w')
 
-def submit_haswell(submit_file_path, command, threads, debug=False):
+def submit_haswell(submit_file_path, command, threads):
   nodes = str((int(threads) - 1) // 16 + 1)
   logfile = os.path.join(os.path.dirname(submit_file_path), "logs.out")
   with open(submit_file_path, "w") as f:
@@ -115,7 +115,7 @@ def submit_haswell(submit_file_path, command, threads, debug=False):
   command.append(submit_file_path)
   subprocess.check_call(command)
 
-def submit_magny(submit_file_path, command, threads, debug=False):
+def submit_magny(submit_file_path, command, threads):
   #nodes = str((int(threads) - 1) // 16 + 1)
   #logfile = os.path.join(os.path.dirname(submit_file_path), "logs.out")
   with open(submit_file_path, "w") as f:
@@ -135,7 +135,17 @@ def submit_magny(submit_file_path, command, threads, debug=False):
   command.append(submit_file_path)
   subprocess.check_call(command)
 
-
+def submit(submit_file_path, command, threads, cluster):
+  if (cluster == "normal"):
+    print(command)
+    subprocess.check_call(command.split(" "))
+  elif (cluster == "haswell"):
+    submit_haswell(submit_file_path, command, threads)
+  elif (cluster == magny):
+    submit_magny(submit_file_path, command, threads)
+  else:
+    print("unknown cluster " + cluster)
+    sys.exit(1)
 
   
 

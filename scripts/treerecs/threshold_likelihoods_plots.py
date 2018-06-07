@@ -100,8 +100,6 @@ def parse_treerecs_output(treerecs_output, output_dir):
     for family in thresholds:
         export_family(family, thresholds, likelihoods, output_dir)
 
-
-
 def compute_plots(datadir, resultsdir, cores):
   ''' Run treerecs and parse results'''
   gene_trees = os.path.join(datadir, "geneTrees.newick")
@@ -114,28 +112,22 @@ def compute_plots(datadir, resultsdir, cores):
   parse_treerecs_output(treerecs_output, resultsdir)
 
 
-
-
-
-datadir = os.path.join(exp.datasets_root, "treerecs")
-
-if (len(sys.argv) != 2) and (len(sys.argv) != 3):
+if len(sys.argv) != 4:
   datasets = os.listdir(datadir)
-  print("Syntax error: python threshold_likelihoods_plots.py dataset [cores].\n Suggestions of datasets: ")
+  print("Syntax error: python threshold_likelihoods_plots.py dataset cores outputdir.\n Suggestions of datasets: ")
   print('\n'.join(datasets))
   sys.exit(0)
 
 basedir = sys.argv[1]
-cores = 1
-if len(sys.argv) == 3:
-  cores = int(sys.argv[2])
-datadir = os.path.join(datadir, basedir)
-resultsdir = exp.create_result_dir(os.path.join("treerecs", "threshold_likelihoods_plots", basedir))
-result_msg = "Treerecs git: \n" + exp.get_git_info(exp.treerecs_root)
-exp.write_results_info(resultsdir, result_msg) 
-compute_plots(datadir, resultsdir, cores)
+cores = int(sys.argv[2])
+output_dir = sys.argv[3]
 
-
+try:
+  os.makedirs(output_dir)
+except:
+  pass
+datadir = os.path.join(exp.datasets_root, "treerecs", basedir)
+compute_plots(datadir, output_dir, cores)
 
 
 
