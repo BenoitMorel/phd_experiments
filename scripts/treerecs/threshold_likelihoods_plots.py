@@ -6,6 +6,8 @@ import seaborn as sns
 sys.path.insert(0, 'scripts')
 import experiments as exp
 
+matplot_available = True
+
 def run_treerecs(gene_tree, species_tree, alignment, smap, thresholds_number, output_dir, cores):
     treerecs_exec = exp.treerecs_exec
     treerecs_output = os.path.join(output_dir, "treerecs_output.newick")
@@ -74,23 +76,31 @@ def fill_dico(lines, thresholds, likelihoods):
 
         
 def export_family(family_name, thresholds, likelihoods, output_dir):
-    sns.set()
-    output = os.path.join(output_dir, "family_" + family_name)
+  global matplot_available
+  if (not matplot_available):
+    return
+  sns.set()
+  output = os.path.join(output_dir, "family_" + family_name)
+  try:
     fig = plt.figure()
-    index = 311
-    for llname, llvalues in likelihoods[family_name].items():
-        plt.subplot(index)
-        index = index + 1
-        plt.plot(thresholds[family_name], llvalues)
-        legend = []
-        legend.append(llname)
-        plt.xlabel('Thresholds')
-        plt.ylabel('LogLikelihood')
-        plt.legend(legend, loc='upper left')
-        plt.tight_layout()
-       
-    fig.savefig(output)
-    plt.close(fig)
+  except:
+    print("[Warning] Could not produce the plots: maybe the display mode is unavailable")
+    matplot_available = False
+    return
+  index = 311
+  for llname, llvalues in likelihoods[family_name].items():
+      plt.subplot(index)
+      index = index + 1
+      plt.plot(thresholds[family_name], llvalues)
+      legend = []
+      legend.append(llname)
+      plt.xlabel('Thresholds')
+      plt.ylabel('LogLikelihood')
+      plt.legend(legend, loc='upper left')
+      plt.tight_layout()
+     
+  fig.savefig(output)
+  plt.close(fig)
 
 def parse_treerecs_output(treerecs_output, output_dir):
     thresholds = {}
