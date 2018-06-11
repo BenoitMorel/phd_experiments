@@ -38,8 +38,8 @@ def run_treerecs(gene_tree, species_tree, alignment, smap, thresholds_number, ou
 #
 # ll_dico[family][threshold][ll_name] = ll
 #   
-# t[family]
-# ll[family[llname]
+# t[family] -> array of thresholds
+# ll[family[llname] -> array of ll 
 def fill_dico(lines, thresholds, likelihoods):
     for line in lines:
         if (not line.startswith(">")):
@@ -102,13 +102,35 @@ def export_family(family_name, thresholds, likelihoods, output_dir):
   fig.savefig(output)
   plt.close(fig)
 
-def parse_treerecs_output(treerecs_output, output_dir):
-    thresholds = {}
-    likelihoods = {}
-    with open(treerecs_output) as f:
-        fill_dico(f.readlines(), thresholds, likelihoods)
+def export_best_thresholds(thresholds, likelihoods, output_file):
+  histogram = {}
+  with open(output_file, "w") as f:
     for family in thresholds:
-        export_family(family, thresholds, likelihoods, output_dir)
+      print(family)
+      print(thresholds[family])
+      print(likelihoods[family]["joint"])
+      threshold_array = thresholds[family]
+      ll_array = likelihoods[family]["joint"]
+      max_index =  max(range(len(ll_array)), key=ll_array.__getitem__)
+      best_threshold_str = str(threshold_array[max_index])
+      f.write(str(family)+ ": " + best_threshold_str + "\n")
+      if (best_threshold_str in histogram):
+        histogram[best_threshold_str] += 1
+      else:
+        histogram[best_threshold_str] = 1
+    f.write("histogram: " + str(histogram) + "\n")
+    print("Wrote the best thresholds in " + output_file) 
+
+
+def parse_treerecs_output(treerecs_output, output_dir):
+  thresholds = {}
+  likelihoods = {}
+  with open(treerecs_output) as f:
+      fill_dico(f.readlines(), thresholds, likelihoods)
+  for family in thresholds:
+      export_family(family, thresholds, likelihoods, output_dir)
+  best_thresholds_file = os.path.join(output_dir, "best_thresholds.txt")
+  export_best_thresholds(thresholds, likelihoods, best_thresholds_file)
 
 def compute_plots(datadir, resultsdir, cores):
   ''' Run treerecs and parse results'''
