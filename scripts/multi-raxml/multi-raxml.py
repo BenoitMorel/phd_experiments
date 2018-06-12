@@ -9,6 +9,7 @@ datas = {}
 datas["phyldog_example"]  = os.path.join(exp.datasets_root, "general/PhyldogDataExample/FastaFiles/")
 datas["ensembl"]          = os.path.join(exp.bigdatasets_root, "ensembl_8880_15/fasta_files/")
 datas["sub_ensembl_1000"] = os.path.join(exp.bigdatasets_root, "ensembl_1000_15/fasta_files/")
+datas["ensembl_buggy"] = os.path.join(exp.bigdatasets_root, "ensembl_MSA_42/fasta_files/")
 datas["all"] = os.path.join(exp.bigdatasets_root, "all_1kite/split_alignment")
 datas["all_filtered"] = os.path.join(exp.bigdatasets_root, "all_1kite/filtered_split_alignment")
 datas["muscle"] = os.path.join(exp.bigdatasets_root, "eric_tannier/vectorbase_18/MUSCLE/")

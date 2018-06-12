@@ -144,6 +144,7 @@ def compute_plots(datadir, resultsdir, cores):
   parse_treerecs_output(treerecs_output, resultsdir)
 
 
+datadir = os.path.join(exp.datasets_root, "treerecs")
 if len(sys.argv) != 4:
   datasets = os.listdir(datadir)
   print("Syntax error: python threshold_likelihoods_plots.py dataset cores outputdir.\n Suggestions of datasets: ")

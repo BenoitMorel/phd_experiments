@@ -1,15 +1,17 @@
 RUNNING:
-/hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/ensembl/bootstraps_100_modeltest_-s_10_-p_10/haswell_1024/run_1
+/hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/muscle/bootstraps_100_modeltest_-s_10_-p_10/haswell_256/run_0
 /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/ensembl/bootstraps_100_modeltest_-s_10_-p_10/haswell_256/run_0
-/hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/muscle/bootstraps_100_modeltest_-s_10_-p_10/haswell_128/run_0
-
-
-
-FAILED assert 14: /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/ensembl/bootstraps_100_modeltest_-s_10_-p_10/haswell_1024/run_0
-NO BUG: /hits/basement/sco/morel/github/phd_experiments/debug/output_32/_32/run_0/
+RESUBMITED WITH SKIPPING ENSGT00900000140842_fa_bs2: /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/ensembl/bootstraps_100_modeltest_-s_10_-p_10/haswell_1024/run_1
+/hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/ensembl/bootstraps_100_modeltest_-s_10_-p_10_--scheduler_onecore/haswell_1024/run_0
 
 
 TO KEEP:
+JUST WITH THE BUGGY MSA: /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/ensembl_buggy/bootstraps_100_modeltest/haswell_32/run_0
+FAILED IN MODELTEST: /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/muscle/bootstraps_100_modeltest_-s_10_-p_10/haswell_128/run_0
+FAILED assert 14: /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/ensembl/bootstraps_100_modeltest_-s_10_-p_10/haswell_1024/run_0
+NO BUG results/launcher/debug_16/run_0/debug.raxml.log
+NO BUG results/launcher/debug_32/run_0/debug.raxml.log
+NO BUG: /hits/basement/sco/morel/github/phd_experiments/results/launcher/debug_32/run_1/launcher_submit.sh
 with heuristic:
 /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/ensembl/no_bootstraps_--experiment-disable-jobs-sorting <- no improvement
 /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/ensembl/no_bootstraps_--scheduler_onecore <- much worse
@@ -21,25 +23,6 @@ with heuristic:
 with job sorting fixed and minimum response / 2
 /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/ensembl/no_bootstraps/haswell_256/run_3
 /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/ensembl/no_bootstraps/haswell_512/run_3
-minimum response / 2
-/hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/ensembl/no_bootstraps/haswell_256/run_2
-/hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/ensembl/no_bootstraps/haswell_512/run_2
-with minimum response:
-/hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/ensembl/no_bootstraps/haswell_512/run_1
-/hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/ensembl/no_bootstraps/haswell_256/run_1
-/hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/ensembl/no_bootstraps/haswell_128/run_1
-
-DONE:
-with maximum throughput:
-/hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/ensembl/no_bootstraps/haswell_128/run_0
-/hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/muscle/no_bootstraps/haswell_64/run_0 
-/hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/muscle/no_bootstraps/haswell_128/run_0
-/hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/muscle/no_bootstraps/haswell_256/run_0
-FAILED:
-/hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/ensembl/no_bootstraps/haswell_256/run_0
-/hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/ensembl/no_bootstraps/haswell_64/run_0
-/hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/ensembl/no_bootstraps/haswell_512/run_0
-
 
 
 

@@ -21,7 +21,9 @@ output_dir = experiments.create_result_dir(output_dir)
 
 submit_file = os.path.join(output_dir, "launcher_submit.sh")
 print("submit file" + submit_file)
-command = "output_dir=" + output_dir + "\n" + "".join(open(command_file).readlines())
+command = "output_dir=" + output_dir + "\n" 
+command += "cores=" + str(cores) + "\n"
+command += "".join(open(command_file).readlines())
 
 if (cluster == "haswell"):
   experiments.submit_haswell(submit_file, command, cores)
