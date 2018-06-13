@@ -20,7 +20,7 @@ output_dir = os.path.join(experiments.results_root, "launcher", output_dir + "_"
 output_dir = experiments.create_result_dir(output_dir)
 
 submit_file = os.path.join(output_dir, "launcher_submit.sh")
-print("submit file" + submit_file)
+print("submit file " + submit_file)
 command = "output_dir=" + output_dir + "\n" 
 command += "cores=" + str(cores) + "\n"
 command += "".join(open(command_file).readlines())

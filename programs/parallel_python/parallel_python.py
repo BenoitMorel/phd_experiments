@@ -6,12 +6,14 @@ import time
 import concurrent.futures as futures
 #import dispy
 import mpi4py.futures as mpi
+from mpi4py import MPI
 
 def slow_function(iterations):
   res = 0.0
   for i in range(0, iterations):
     for j in range(0, 10000):
       res += math.exp(random.random())
+
   print(res)
 
 
@@ -41,40 +43,45 @@ def dispy_process(jobs):
 #    dispy_job()
 
 
-def mpi_process(jobs):
-  executor = mpi.MPIPoolExecutor()
-  for job in jobs:
-    executor.submit(slow_function, job)
-  executor.shutdown()
+def mpi_process(jobs, cores):
+  with mpi.MPIPoolExecutor(cores) as executor:
+    for job in jobs:
+      executor.submit(slow_function, job)
 
 
-if (len(sys.argv) != 4):
-  print("syntax: python parallel_python.py job_size job_number implem")
-  print("Implementations: sequential, futures, dispy, mpi")
-  sys.exit(1)
+def main_fct():
 
-job_size = int(sys.argv[1])
-job_number = int(sys.argv[2])
-implem = sys.argv[3]
-print("Job size: " + str(job_size))
-print("Job number: " + str(job_number))
-print("Implementation: " + implem)
+  if (len(sys.argv) != 5):
+    print("syntax: python parallel_python.py job_size job_number implem cores")
+    print("Implementations: sequential, futures, dispy, mpi")
+    sys.exit(1)
 
-start_time = time.time()
-jobs = [job_size] * job_number
+  job_size = int(sys.argv[1])
+  job_number = int(sys.argv[2])
+  implem = sys.argv[3]
+  cores = int(sys.argv[4])
+  print("Job size: " + str(job_size))
+  print("Job number: " + str(job_number))
+  print("Implementation: " + implem)
+  print("Cores: " + str(cores))
 
-if ("sequential" == implem):
-  sequential_process(jobs)
-elif ("futures" == implem):
-  futures_process(jobs)
-elif ("mpi" == implem):
-  mpi_process(jobs)
-else:
-  print("invalid implem")
-  sys.exit(1)
+  start_time = time.time()
+  jobs = [job_size] * job_number
+
+  if ("sequential" == implem):
+    sequential_process(jobs)
+  elif ("futures" == implem):
+    futures_process(jobs)
+  elif ("mpi" == implem):
+    mpi_process(jobs, cores)
+  else:
+    print("invalid implem")
+    sys.exit(1)
 
 
-elapsed_time = time.time() - start_time
-print("elapsed time " + str(elapsed_time) + "s")
+  elapsed_time = time.time() - start_time
+  print("elapsed time " + str(elapsed_time) + "s")
 
+if __name__ == '__main__':
+  main_fct()
 
