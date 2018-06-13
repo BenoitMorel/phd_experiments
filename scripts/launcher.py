@@ -6,14 +6,14 @@ import sys
 
 
 if (len(sys.argv) != 5):
-  print("Syntax: python scripts/launcher.py command_file cores cluster output_dir")
+  print("Syntax: python scripts/launcher.py command_file cluster cores output_dir")
   print("cluster can be haswell or magny")
   sys.exit(1)
 
 
 command_file = sys.argv[1]
-cores = int(sys.argv[2])
-cluster = sys.argv[3]
+cluster = sys.argv[2]
+cores = int(sys.argv[3])
 output_dir = sys.argv[4]
 
 output_dir = os.path.join(experiments.results_root, "launcher", output_dir + "_" + str(cores), "run")
