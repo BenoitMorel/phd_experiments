@@ -1,0 +1,22 @@
+#################
+#  MULTI RAXML  #
+#################
+Multi-raxml was called as follow:
+/hits/basement/sco/morel/github/phd_experiments/../multi-raxml/multi-raxml/multi-raxml.py -a /hits/basement/sco/morel/github/phd_experiments/../datasets/ensembl_8880_15/fasta_files/ -o /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/ensembl/no_bootstraps_--experiment-disable-jobs-sorting/haswell_512/run_0/multiraxml_run -r /hits/basement/sco/morel/github/phd_experiments/datasets/multi-raxml/option_files/raxml_global_options.txt -b 0 -c 512 --experiment-disable-jobs-sorting
+
+### [0:00:00] end of MSAs initializations
+Calling mpi-scheduler: mpirun -np 512 /hits/basement/sco/morel/github/multi-raxml/mpi-scheduler/build/mpi-scheduler --split-scheduler /hits/basement/sco/morel/github/multi-raxml/multi-raxml/../raxml-ng/bin/raxml-ng-mpi.so /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/ensembl/no_bootstraps_--experiment-disable-jobs-sorting/haswell_512/run_0/multiraxml_run/parse_run/parse_command.txt /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/ensembl/no_bootstraps_--experiment-disable-jobs-sorting/haswell_512/run_0/multiraxml_run/parse_run
+Logs will be redirected to /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/ensembl/no_bootstraps_--experiment-disable-jobs-sorting/haswell_512/run_0/multiraxml_run/parse_run/logs.txt
+### [0:00:36] end of parsing mpi-scheduler run
+analyse_parsed_msas
+Limit taxa: 154
+Average number of taxa: 32.82849099099099
+Max number of taxa: 427
+Average number of sites: 1187.9884009009008
+Max number of sites: 39934
+[Warning] Found 73 invalid MSAs (see /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/ensembl/no_bootstraps_--experiment-disable-jobs-sorting/haswell_512/run_0/multiraxml_run/invalid_msas.txt)
+### [0:00:44] end of anlysing parsing results
+Calling mpi-scheduler: mpirun -np 512 /hits/basement/sco/morel/github/multi-raxml/mpi-scheduler/build/mpi-scheduler --split-scheduler /hits/basement/sco/morel/github/multi-raxml/multi-raxml/../raxml-ng/bin/raxml-ng-mpi.so /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/ensembl/no_bootstraps_--experiment-disable-jobs-sorting/haswell_512/run_0/multiraxml_run/mlsearch_run/mlsearch_command.txt /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/ensembl/no_bootstraps_--experiment-disable-jobs-sorting/haswell_512/run_0/multiraxml_run/mlsearch_run
+Logs will be redirected to /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/ensembl/no_bootstraps_--experiment-disable-jobs-sorting/haswell_512/run_0/multiraxml_run/mlsearch_run/logs.txt
+### [0:36:55] end of mlsearch mpi-scheduler run
+### [0:36:55] END OF THE RUN OF multi-raxml.py

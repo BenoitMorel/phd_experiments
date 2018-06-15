@@ -1,0 +1,9 @@
+<svg  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <svg x="0" y="0" width="500" height="550" >
+    <rect x="0%" y="0%" height="100%" width="100%" style="fill: #ffffff"/>
+  </svg>
+<line x1="0" y1="500" x2="500" y2="500" style="stroke:rgb(0,0,255);stroke-width:3" />
+  <svg x ="0" y="500" width="500" height="40">
+    <text x="0%" y="100%" fill="blue" font-size="35">t = 10913s, lb = 0.163287</text>
+  </svg>
+</svg>

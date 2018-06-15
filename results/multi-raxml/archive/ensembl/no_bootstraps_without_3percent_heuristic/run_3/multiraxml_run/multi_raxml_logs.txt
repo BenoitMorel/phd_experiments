@@ -1,0 +1,17 @@
+#################
+#  MULTI RAXML  #
+#################
+Multi-raxml was called as follow:
+/hits/basement/sco/morel/github/phd_experiments/../multi-raxml/multi-raxml/multi-raxml.py -a /hits/basement/sco/morel/github/phd_experiments/../datasets/ensembl_8880_15/fasta_files/ -o /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/ensembl/no_bootstraps/haswell_512/run_3/multiraxml_run -r /hits/basement/sco/morel/github/phd_experiments/datasets/multi-raxml/option_files/raxml_global_options.txt -b 0 -c 512
+
+### [0:00:00] end of MSAs initializations
+Calling mpi-scheduler: mpirun -np 512 /hits/basement/sco/morel/github/multi-raxml/mpi-scheduler/build/mpi-scheduler --split-scheduler /hits/basement/sco/morel/github/multi-raxml/multi-raxml/../raxml-ng/bin/raxml-ng-mpi.so /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/ensembl/no_bootstraps/haswell_512/run_3/multiraxml_run/parse_run/parse_command.txt /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/ensembl/no_bootstraps/haswell_512/run_3/multiraxml_run/parse_run
+Logs will be redirected to /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/ensembl/no_bootstraps/haswell_512/run_3/multiraxml_run/parse_run/logs.txt
+### [0:00:35] end of parsing mpi-scheduler run
+analyse_parsed_msas
+[Warning] Found 73 invalid MSAs (see /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/ensembl/no_bootstraps/haswell_512/run_3/multiraxml_run/invalid_msas.txt)
+### [0:00:45] end of anlysing parsing results
+Calling mpi-scheduler: mpirun -np 512 /hits/basement/sco/morel/github/multi-raxml/mpi-scheduler/build/mpi-scheduler --split-scheduler /hits/basement/sco/morel/github/multi-raxml/multi-raxml/../raxml-ng/bin/raxml-ng-mpi.so /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/ensembl/no_bootstraps/haswell_512/run_3/multiraxml_run/mlsearch_run/mlsearch_command.txt /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/ensembl/no_bootstraps/haswell_512/run_3/multiraxml_run/mlsearch_run
+Logs will be redirected to /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/ensembl/no_bootstraps/haswell_512/run_3/multiraxml_run/mlsearch_run/logs.txt
+### [0:40:27] end of mlsearch mpi-scheduler run
+### [0:40:27] END OF THE RUN OF multi-raxml.py
