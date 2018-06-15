@@ -2,7 +2,7 @@ RUNNING:
 RESUBMITED WITH SKIPPING ENSGT00900000140842_fa_bs2: /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/ensembl/bootstraps_100_modeltest_-s_10_-p_10/haswell_1024/run_1
 /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/muscle/bootstraps_100_modeltest_-s_10_-p_10/haswell_256/run_1
 /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/ensembl/bootstraps_100_modeltest_-s_10_-p_10_--scheduler_onecore/haswell_1024/run_1
-
+to get the svg plots for onecore: /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/ensembl/no_bootstraps_--scheduler_onecore/haswell_512/run_0
 
 
 TO KEEP:
