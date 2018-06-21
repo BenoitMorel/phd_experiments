@@ -1,7 +1,23 @@
-<svg  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-  <svg x="0" y="0" width="500" height="550" >
-    <rect x="0%" y="0%" height="100%" width="100%" style="fill: #ffffff"/>
-  </svg>
+<svg  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0" y="0" width="600" height="600">
+
+
+ <rect x="0%" y="0%" height="100%" width="100%" style="fill: #ffffff"/>
+
+
+<svg x="0" y="0"> 
+  <text fill="dark" font-size="35" transform="translate(250, 30)">cores</text>
+</svg>
+
+<svg x="0" y="0"> 
+  <text fill="dark" font-size="35" transform="translate(30, 300) rotate(270)">time</text>
+</svg>
+
+<svg x = "50" y="550">
+  <text fill="blue" font-size="30" transform="translate(0, 35)">t = 11749s, lb = 0.165865</text>
+</svg>
+
+<svg x="50" y="50" width="500" height="500" >
+  <rect x="0%" y="0%" height="100%" width="100%" style="fill: #eeeeee"/>
   <svg x="0" y="0.300608" width="0.976562" height="499.7" >
     <rect x="0%" y="0%" height="100%" width="100%" style="fill: #af07ec"/>
   </svg>
@@ -26423,8 +26439,5 @@
   <svg x="229.492" y="54.2671" width="0.976562" height="0.023235" >
     <rect x="0%" y="0%" height="100%" width="100%" style="fill: #5ea2ec"/>
   </svg>
-<line x1="0" y1="500" x2="500" y2="500" style="stroke:rgb(0,0,255);stroke-width:3" />
-  <svg x ="0" y="500" width="500" height="40">
-    <text x="0%" y="100%" fill="blue" font-size="35">t = 11749s, lb = 0.165865</text>
-  </svg>
+</svg>
 </svg>
