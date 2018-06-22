@@ -6,6 +6,7 @@ import subprocess
 
 
 datas = {}
+datas["128"]  = os.path.join(exp.datasets_root, "general/128//FastaFiles/")
 datas["phyldog_example"]  = os.path.join(exp.datasets_root, "general/PhyldogDataExample/FastaFiles/")
 datas["ensembl"]          = os.path.join(exp.bigdatasets_root, "ensembl_8880_15/fasta_files/")
 datas["sub_ensembl_1000"] = os.path.join(exp.bigdatasets_root, "ensembl_1000_15/fasta_files/")
@@ -51,6 +52,7 @@ if (is_aa):
   options = os.path.join(exp.datasets_root, "multi-raxml", "option_files",  "raxml_global_options_aa.txt")
 else:
   options = os.path.join(exp.datasets_root, "multi-raxml", "option_files",  "raxml_global_options.txt")
+options = os.path.join(exp.datasets_root, "multi-raxml", "option_files",  "raxml_global_options_128.txt")
 
 
 fastafiles = datas[data]

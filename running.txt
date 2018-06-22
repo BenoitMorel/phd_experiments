@@ -1,7 +1,13 @@
 RUNNING:
-    restarting with 32 cores to get supportr values... /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/muscle/bootstraps_100_modeltest_-s_10_-p_10/haswell_1024/run_0
-
-
+/hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/ensembl/no_bootstraps/haswell_256/run_0
+/hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/ensembl/no_bootstraps/haswell_512/run_0
+/hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/ensembl/no_bootstraps/haswell_1024/run_0
+/hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/muscle/no_bootstraps/haswell_64/run_0
+/hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/muscle/no_bootstraps/haswell_128/run_0
+/hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/muscle/no_bootstraps/haswell_256/run_0
+/hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/muscle/no_bootstraps/haswell_512/run_0
+/hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/muscle/no_bootstraps/haswell_1024/run_0
+/hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/128/no_bootstraps_-s_1_-p_1/haswell_32/run_0
 
 TO KEEP:
 SUPPORT FAILED: /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/muscle/bootstraps_100_modeltest_-s_10_-p_10/haswell_256/run_1
@@ -30,9 +36,13 @@ PAPER:
     no heuristic: /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/ensembl/no_bootstraps/haswell_512/run_3
     maybe for paper (no job sorting): /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/ensembl/no_bootstraps_--experiment-disable-jobs-sorting <- no improvement
     big run, 25h on 1024 cores: (had to resubmit to skip ENSGT00900000140842_fa_bs2...):  /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/ensembl/bootstraps_100_modeltest_-s_10_-p_10/haswell_1024/run_1
+    /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/muscle/bootstraps_100_modeltest_-s_10_-p_10/haswell_1024/run_0
   MUSCLE
     FAILS AT MODELTEST FOR SOME REASON... /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/muscle/bootstraps_100_modeltest_-s_10_-p_10/haswell_128/run_0
     /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/muscle/bootstraps_100_modeltest_-s_10_-p_10/haswell_256/run_0
     /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/muscle/bootstraps_100_modeltest_-s_10_-p_10/haswell_512/run_0
+SMALL SCALING:
+  /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/muscle/no_bootstraps/haswell_32/run_0
+  /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/ensembl/no_bootstraps/haswell_128/run_0
 
 
