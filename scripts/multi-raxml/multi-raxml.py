@@ -52,7 +52,8 @@ if (is_aa):
   options = os.path.join(exp.datasets_root, "multi-raxml", "option_files",  "raxml_global_options_aa.txt")
 else:
   options = os.path.join(exp.datasets_root, "multi-raxml", "option_files",  "raxml_global_options.txt")
-options = os.path.join(exp.datasets_root, "multi-raxml", "option_files",  "raxml_global_options_128.txt")
+if (data == "128"):
+  options = os.path.join(exp.datasets_root, "multi-raxml", "option_files",  "raxml_global_options_128.txt")
 
 
 fastafiles = datas[data]

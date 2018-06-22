@@ -8,6 +8,7 @@ RUNNING:
 /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/muscle/no_bootstraps/haswell_512/run_0
 /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/muscle/no_bootstraps/haswell_1024/run_0
 /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/128/no_bootstraps_-s_1_-p_1/haswell_32/run_0
+/hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/128/no_bootstraps_-s_10_-p_10/haswell_256/run_0
 
 TO KEEP:
 SUPPORT FAILED: /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/muscle/bootstraps_100_modeltest_-s_10_-p_10/haswell_256/run_1
