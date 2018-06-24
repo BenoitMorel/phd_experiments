@@ -1,4 +1,5 @@
 RUNNING:
+/hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/128/bootstraps_100_-s_25_-p_25/haswell_512/run_0
 /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/ensembl/no_bootstraps/haswell_256/run_0
 /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/ensembl/no_bootstraps/haswell_512/run_0
 /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/ensembl/no_bootstraps/haswell_1024/run_0

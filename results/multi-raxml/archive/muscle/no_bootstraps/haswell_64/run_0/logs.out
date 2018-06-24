@@ -1,0 +1,8 @@
+#################
+#  MULTI RAXML  #
+#################
+Multi-raxml was called as follow:
+/hits/basement/sco/morel/github/phd_experiments/../multi-raxml/multi-raxml/multi-raxml.py -a /hits/basement/sco/morel/github/phd_experiments/../datasets/eric_tannier/vectorbase_18/MUSCLE/ -o /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/muscle/no_bootstraps/haswell_64/run_0/multiraxml_run -r /hits/basement/sco/morel/github/phd_experiments/datasets/multi-raxml/option_files/raxml_global_options.txt -b 0 -c 64
+
+Checkpoint: 0
+Redirecting logs to /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/muscle/no_bootstraps/haswell_64/run_0/multiraxml_run/multi_raxml_logs.txt

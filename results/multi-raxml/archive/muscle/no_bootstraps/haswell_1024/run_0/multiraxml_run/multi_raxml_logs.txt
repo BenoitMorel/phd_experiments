@@ -1,0 +1,26 @@
+#################
+#  MULTI RAXML  #
+#################
+Multi-raxml was called as follow:
+/hits/basement/sco/morel/github/phd_experiments/../multi-raxml/multi-raxml/multi-raxml.py -a /hits/basement/sco/morel/github/phd_experiments/../datasets/eric_tannier/vectorbase_18/MUSCLE/ -o /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/muscle/no_bootstraps/haswell_1024/run_0/multiraxml_run -r /hits/basement/sco/morel/github/phd_experiments/datasets/multi-raxml/option_files/raxml_global_options.txt -b 0 -c 1024
+
+### [0:00:00] end of MSAs initializations
+Calling mpi-scheduler: mpirun -np 1024 /hits/basement/sco/morel/github/multi-raxml/mpi-scheduler/build/mpi-scheduler --split-scheduler /hits/basement/sco/morel/github/multi-raxml/multi-raxml/../raxml-ng/bin/raxml-ng-mpi.so /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/muscle/no_bootstraps/haswell_1024/run_0/multiraxml_run/parse_run/parse_command.txt /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/muscle/no_bootstraps/haswell_1024/run_0/multiraxml_run/parse_run
+Logs will be redirected to /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/muscle/no_bootstraps/haswell_1024/run_0/multiraxml_run/parse_run/logs.txt
+### [0:01:20] end of parsing mpi-scheduler run
+analyse_parsed_msas
+Average number of taxa: 15.004823559279005
+Max number of taxa: 80
+Average number of sites: 1335.6503342641956
+Max number of sites: 16640
+Limit taxa: 21
+Total cost for one ML search: 4463919568
+Worst per cpu cost for one ML search: 760832
+Number of ML searches per MSA: 1
+Recommended number of cores: 1466
+DISCLAIMER!!! Please note this number is a rough estimate only, and can differ on your system.
+### [0:01:34] end of anlysing parsing results
+Calling mpi-scheduler: mpirun -np 1024 /hits/basement/sco/morel/github/multi-raxml/mpi-scheduler/build/mpi-scheduler --split-scheduler /hits/basement/sco/morel/github/multi-raxml/multi-raxml/../raxml-ng/bin/raxml-ng-mpi.so /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/muscle/no_bootstraps/haswell_1024/run_0/multiraxml_run/mlsearch_run/mlsearch_command.txt /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/muscle/no_bootstraps/haswell_1024/run_0/multiraxml_run/mlsearch_run
+Logs will be redirected to /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/muscle/no_bootstraps/haswell_1024/run_0/multiraxml_run/mlsearch_run/logs.txt
+### [0:04:20] end of mlsearch mpi-scheduler run
+### [0:04:20] END OF THE RUN OF multi-raxml.py
