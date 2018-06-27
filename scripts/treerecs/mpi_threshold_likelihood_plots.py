@@ -17,24 +17,26 @@ matplot_available = True
 #   48     for job in jobs:
 #      49       executor.submit(slow_function, job)
 
-def run_treerecs(gene_tree, species_tree, alignments_dir, smap, thresholds_number, output_dir, cores):
+def run_treerecs(species_tree, datadir, smap, thresholds_number, output_dir, cores):
+  alignment_dir = os.path.join(datadir, "split_data", "split_alignments")
+  gene_trees_dir = os.path.join(datadir, "split_data", "split_gene_trees")
   treerecs_output = os.path.join(output_dir, "treerecs_output")
   os.makedirs(treerecs_output)
   with mpi.MPIPoolExecutor(cores) as executor:
-    for alignment in os.listdir(alignments_dir):
+    for alignment in os.listdir(alignment_dir):
       base = os.path.splitext(alignment)[0]
       treerecs_exec = exp.treerecs_exec
-      treerecs_output = os.path.join(treerecs_output, base + ".newick")
+      output = os.path.join(treerecs_output, base)
       command = []
       command.append(treerecs_exec)
       command.append("-g")
-      command.append(gene_tree)
+      command.append(os.path.join(gene_trees_dir, base + ".newick"))
       command.append("-s")
       command.append(species_tree)
       command.append("-o")
-      command.append(treerecs_output)
+      command.append(output)
       command.append("-a")
-      command.append(os.path.join(alignments_dir, alignment))
+      command.append(os.path.join(alignment_dir, alignment))
       command.append("-t")
       command.append("all")
       command.append("--ale-evaluation")
@@ -42,7 +44,7 @@ def run_treerecs(gene_tree, species_tree, alignments_dir, smap, thresholds_numbe
       command.append(thresholds_number)
       command.append("-S")
       command.append(smap)
-      #print(' '.join(command))
+      print(' '.join(command))
       executor.submit(subprocess.check_call, command)
 
 #
@@ -145,14 +147,12 @@ def parse_treerecs_output(treerecs_output, output_dir):
 
 def compute_plots(datadir, resultsdir, cores):
   ''' Run treerecs and parse results'''
-  gene_trees = os.path.join(datadir, "geneTrees.newick")
   species_trees = os.path.join(datadir, "speciesTree.newick")
-  alignment_dir = os.path.join(datadir, "split_alignments")
   smap = os.path.join(datadir, "mapping.txt")
   thresholds_number = "7"
-  run_treerecs(gene_trees, species_trees, alignment_dir, smap, thresholds_number, resultsdir, cores)
+  run_treerecs(species_trees, datadir, smap, thresholds_number, resultsdir, cores)
   treerecs_output = os.path.join(resultsdir, "treerecs_output.newick")
-  #parse_treerecs_output(treerecs_output, resultsdir)
+  parse_treerecs_output(treerecs_output, resultsdir)
 
 def main_fct():
   datadir = os.path.join(exp.datasets_root, "treerecs")

@@ -1,36 +1,16 @@
 RUNNING:
-/hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/128/bootstraps_100_-s_25_-p_25/haswell_512/run_0
+/hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/ensembl/no_bootstraps/haswell_512/run_1
+TO SEE IF I REPRODUCE THE 20s MPI init...: /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/muscle/no_bootstraps/haswell_1024/run_0
+FINISHED:
 /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/ensembl/no_bootstraps/haswell_32/run_0
 /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/ensembl/no_bootstraps/haswell_64/run_0
-/hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/ensembl/no_bootstraps/haswell_128/run_0
 /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/ensembl/no_bootstraps/haswell_256/run_0
-/hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/ensembl/no_bootstraps/haswell_512/run_0
 /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/ensembl/no_bootstraps/haswell_1024/run_0
-/hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/muscle/no_bootstraps/haswell_64/run_0
-/hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/muscle/no_bootstraps/haswell_256/run_0
-/hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/muscle/no_bootstraps/haswell_512/run_0
-/hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/muscle/no_bootstraps/haswell_1024/run_0
-/hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/128/no_bootstraps_-s_1_-p_1/haswell_32/run_0
 /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/128/no_bootstraps_-s_10_-p_10/haswell_256/run_0
+/hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/128/bootstraps_100_-s_25_-p_25/haswell_512/run_0
+/hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/ensembl/no_bootstraps/haswell_128/run_0
+/hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/128/no_bootstraps_-s_1_-p_1/haswell_32/run_0
 
-TO KEEP:
-SUPPORT FAILED: /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/muscle/bootstraps_100_modeltest_-s_10_-p_10/haswell_256/run_1
-ONE CORE TOO SLOW WITH TOO MANY JOBS: /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/ensembl/bootstraps_100_modeltest_-s_10_-p_10_--scheduler_onecore/haswell_1024/run_1
-JUST BUGGY MSA, 128 cores (and it worked): /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/ensembl_buggy/bootstraps_100_modeltest_-s_10_-p_10/haswell_128/run_0
-FAILED BECAUSE NO BS TREE FOR ONE MSA: /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/muscle/bootstraps_100_modeltest_-s_10_-p_10/haswell_256/run_0
-JUST WITH THE BUGGY MSA: /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/ensembl_buggy/bootstraps_100_modeltest/haswell_32/run_0
-FAILED IN MODELTEST: /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/muscle/bootstraps_100_modeltest_-s_10_-p_10/haswell_128/run_0
-FAILED assert 14: /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/ensembl/bootstraps_100_modeltest_-s_10_-p_10/haswell_1024/run_0
-FAILED assert 14: /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/ensembl/bootstraps_100_modeltest_-s_10_-p_10/haswell_256/run_0
-NO BUG results/launcher/debug_16/run_0/debug.raxml.log
-NO BUG results/launcher/debug_32/run_0/debug.raxml.log
-NO BUG: /hits/basement/sco/morel/github/phd_experiments/results/launcher/debug_32/run_1/launcher_submit.sh
-with heuristic:
-/hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/muscle/no_bootstraps/haswell_128/run_1
-/hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/muscle/no_bootstraps/haswell_256/run_1
-/hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/muscle/no_bootstraps/haswell_512/run_1 <- not scaling anymore (but 4min...)
-with job sorting fixed and minimum response / 2
-/hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/ensembl/no_bootstraps/haswell_256/run_3
 
 PAPER:
   HEURISTIC RELEVANCE
