@@ -10,7 +10,7 @@ matplot_available = True
 
 def run_treerecs(gene_tree, species_tree, alignment, smap, thresholds_number, output_dir, cores):
     treerecs_exec = exp.treerecs_exec
-    treerecs_output = os.path.join(output_dir, "treerecs_output.newick")
+    treerecs_output = os.path.join(output_dir, "treerecs_output")
     command = []
     command.append(treerecs_exec)
     command.append("-g")

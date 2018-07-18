@@ -52,8 +52,8 @@ def run_treerecs(species_tree, datadir, smap, thresholds_number, output_dir, cor
 #   
 # t[family] -> array of thresholds
 # ll[family[llname] -> array of ll 
-def fill_dico(lines, thresholds, likelihoods):
-    for line in lines:
+def fill_dico(lines, thresholds, likelihoods):  
+  for line in lines:
         if (not line.startswith(">")):
             continue
         split = line.split(" ")
@@ -137,7 +137,9 @@ def export_best_thresholds(thresholds, likelihoods, output_file):
 def parse_treerecs_output(treerecs_output, output_dir):
   thresholds = {}
   likelihoods = {}
-  with open(treerecs_output) as f:
+  for newick in os.listdir(treerecs_output):
+    print("newick: " + newick)
+    with open(os.path.join(treerecs_output, newick)) as f:
       fill_dico(f.readlines(), thresholds, likelihoods)
   for family in thresholds:
       export_family(family, thresholds, likelihoods, output_dir)
@@ -150,8 +152,8 @@ def compute_plots(datadir, resultsdir, cores):
   species_trees = os.path.join(datadir, "speciesTree.newick")
   smap = os.path.join(datadir, "mapping.txt")
   thresholds_number = "7"
-  run_treerecs(species_trees, datadir, smap, thresholds_number, resultsdir, cores)
-  treerecs_output = os.path.join(resultsdir, "treerecs_output.newick")
+  #run_treerecs(species_trees, datadir, smap, thresholds_number, resultsdir, cores)
+  treerecs_output = os.path.join(resultsdir, "treerecs_output")
   parse_treerecs_output(treerecs_output, resultsdir)
 
 def main_fct():

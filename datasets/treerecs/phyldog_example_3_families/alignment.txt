@@ -1,0 +1,4 @@
+GTR
+fasta/HBG011001.fasta
+fasta/HBG011025.fasta
+fasta/HBG011037.fasta
