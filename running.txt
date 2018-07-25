@@ -1,19 +1,9 @@
 RUNNING:
-  /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/ensembl_1000_2/no_bootstraps/haswell_128/run_0
-  /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/ensembl_1000_2/no_bootstraps_--percentage-jobs-double-cores_0/haswell_128/run_0
-  /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/ensembl_1000_3/no_bootstraps/haswell_128/run_0
-  /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/ensembl_1000_3/no_bootstraps_--percentage-jobs-double-cores_0/haswell_128/run_0
-  /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/ensembl_1000_4/no_bootstraps/haswell_128/run_0
-  /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/ensembl_1000_4/no_bootstraps_--percentage-jobs-double-cores_0/haswell_128/run_0
-  /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/ensembl_1000_5/no_bootstraps/haswell_128/run_0
-  /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/ensembl_1000_5/no_bootstraps_--percentage-jobs-double-cores_0/haswell_128/run_0
+Check that last changes don't introduce bugs:
+  /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/muscle/no_bootstraps/haswell_32/run_0
+  /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/muscle/bootstraps_100_modeltest_-s_10_-p_10/haswell_256/run_1
 
-CANCELLED BUT INTERESTING MAYBE
-  /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/ensembl/no_bootstraps/haswell_512/run_1
-  TO SEE IF I REPRODUCE THE 20s MPI init...: /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/muscle/no_bootstraps/haswell_1024/run_0
-FINISHED:
-
-
+plop
 PAPER:
   HEURISTIC RELEVANCE
     best run 512: /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/ensembl/no_bootstraps/haswell_512/run_4
