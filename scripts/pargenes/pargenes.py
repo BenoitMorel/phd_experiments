@@ -23,7 +23,7 @@ datatypes["all"] = "aa"
 datatypes["all_filtered"] = "aa"
 
 def print_help():
-  print("syntax: python fromfastadir_normal.py data cluster_mode ranks use_modeltest bs_trees [additional multi-raxml arguments]")
+  print("syntax: python fromfastadir_normal.py data cluster_mode ranks use_modeltest bs_trees [additional pargenes arguments]")
   print("  possible datas: ")
   for data in datas:
     print("    " + data)
@@ -50,18 +50,18 @@ bootstraps_number = int(sys.argv[5])
 is_aa = (data in datatypes) and (datatypes[data] == "aa")
 isHaswell = (cluster_mode == "haswell")
 isMagny = (cluster_mode == "magny")
-runner = os.path.join(exp.multiraxml_root, "multi-raxml", "multi-raxml.py")
+runner = os.path.join(exp.pargenes_root, "pargenes", "pargenes.py")
 if (is_aa):
-  options = os.path.join(exp.datasets_root, "multi-raxml", "option_files",  "raxml_global_options_aa.txt")
+  options = os.path.join(exp.datasets_root, "pargenes", "option_files",  "raxml_global_options_aa.txt")
 else:
-  options = os.path.join(exp.datasets_root, "multi-raxml", "option_files",  "raxml_global_options.txt")
+  options = os.path.join(exp.datasets_root, "pargenes", "option_files",  "raxml_global_options.txt")
 if (data == "128"):
-  options = os.path.join(exp.datasets_root, "multi-raxml", "option_files",  "raxml_global_options_128.txt")
+  options = os.path.join(exp.datasets_root, "pargenes", "option_files",  "raxml_global_options_128.txt")
 
 
 fastafiles = datas[data]
 datakey = data
-resultsdir = os.path.join(exp.results_root, "multi-raxml", data)
+resultsdir = os.path.join(exp.results_root, "pargenes", data)
 
 if (bootstraps_number != 0):
   resultsdir = os.path.join(resultsdir, "bootstraps_" + str(bootstraps_number))
@@ -79,9 +79,9 @@ for i in range(max_args_number, len(sys.argv)):
 resultsdir = os.path.join(resultsdir, cluster_mode + "_" + ranks)
 resultsdir = os.path.join(resultsdir, "run")
 resultsdir = exp.create_result_dir(resultsdir)
-result_msg = "multi-raxml git: \n" + exp.get_git_info(exp.multiraxml_root) + "\n"
-result_msg += "raxml git: \n" + exp.get_git_info(os.path.join(exp.multiraxml_root, "raxml-ng")) + "\n"
-result_msg += "modeltest git: \n" + exp.get_git_info(os.path.join(exp.multiraxml_root, "modeltest")) + "\n"
+result_msg = "pargenes git: \n" + exp.get_git_info(exp.pargenes_root) + "\n"
+result_msg += "raxml git: \n" + exp.get_git_info(os.path.join(exp.pargenes_root, "raxml-ng")) + "\n"
+result_msg += "modeltest git: \n" + exp.get_git_info(os.path.join(exp.pargenes_root, "modeltest")) + "\n"
 exp.write_results_info(resultsdir, result_msg) 
 
 command = []
@@ -90,7 +90,7 @@ command.append(runner)
 command.append("-a")
 command.append(fastafiles)
 command.append("-o")
-command.append(os.path.join(resultsdir, "multiraxml_run"))
+command.append(os.path.join(resultsdir, "pargenes_run"))
 command.append("-r")
 command.append(options)
 command.append("-b")
