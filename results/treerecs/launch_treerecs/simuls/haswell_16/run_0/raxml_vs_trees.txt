@@ -1,0 +1,36 @@
+
+## Analysing RAXML trees...
+Average relative RF with true trees: 0.18010348256933387
+4.715127701375246% of the trees exactly match the true trees
+
+## Analysing TREERECS trees...
+Average relative RF with true trees: 0.00017112784361137537
+99.60707269155206% of the trees exactly match the true trees
+
+## Analysing trees_for_threshold_83.txt trees...
+Average relative RF with true trees: 0.008646082345290542
+93.71316306483301% of the trees exactly match the true trees
+
+## Analysing trees_for_threshold_92.txt trees...
+Average relative RF with true trees: 0.00020412209801162618
+99.50884086444007% of the trees exactly match the true trees
+
+## Analysing trees_for_threshold_72.txt trees...
+Average relative RF with true trees: 0.01825945215302224
+83.2023575638507% of the trees exactly match the true trees
+
+## Analysing trees_for_threshold_99.txt trees...
+Average relative RF with true trees: 0.00013334637164522754
+99.70530451866405% of the trees exactly match the true trees
+
+## Analysing trees_for_threshold_39.txt trees...
+Average relative RF with true trees: 0.09347140297040316
+19.05697445972495% of the trees exactly match the true trees
+
+## Analysing trees_for_threshold_0.txt trees...
+Average relative RF with true trees: 0.18010348256933387
+4.715127701375246% of the trees exactly match the true trees
+
+## Analysing trees_for_threshold_56.txt trees...
+Average relative RF with true trees: 0.04200820006013868
+55.79567779960707% of the trees exactly match the true trees
