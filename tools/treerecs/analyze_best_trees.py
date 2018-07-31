@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 class TreeEntry(object):
   def __init__(self):
     self.family = ""
+    self.tree = ""
     self.threshold = 0
     self.ale_ll = 0.0
     self.pll_ll = 0.0
@@ -22,6 +23,7 @@ class AllTreeEntries(object):
   def __init__ (self, treerecs_output):
     self.all_entries = {}
     self.best_entries = {}
+    self.per_threshold_trees = {}
     self.__fill(treerecs_output)
 
   def get_best_thresholds_histogram(self):
@@ -37,6 +39,9 @@ class AllTreeEntries(object):
     family = entry.family
     threshold = entry.threshold
     family_entries = None
+    if (not threshold in self.per_threshold_trees):
+      self.per_threshold_trees[threshold] = []
+    self.per_threshold_trees[threshold].append(entry.tree)
     if (not family in self.all_entries):
       family_entries = {}
       self.all_entries[family] = family_entries
@@ -49,9 +54,10 @@ class AllTreeEntries(object):
     #print("Entry: " + str(entry))
     #print("Best : " + str(self.best_entries[family]))
 
-  def __add_entry_from_line(self, line):
+  def __add_entry_from_line(self, line, tree):
     split = line.split(" ")
     entry = TreeEntry()
+    entry.tree = tree
     for index, val in enumerate(split):
         if (val == "family"):
           entry.family = split[index + 1]
@@ -70,10 +76,20 @@ class AllTreeEntries(object):
 
   def __fill(self, treerecs_output):
     lines = open(treerecs_output).readlines()
+    previous_line = None
     for line in lines:
-      if (line.startswith(">")):
-        self.__add_entry_from_line(line)
+      if (not line.startswith(">")):
+        self.__add_entry_from_line(previous_line, line[:-1])
+      previous_line = line
 
+  def save_per_threshold_trees(self, path, basename):
+    for threshold in self.per_threshold_trees:
+      trees = self.per_threshold_trees[threshold]
+      name = basename + str(int(threshold * 100)) + ".txt"
+      output = os.path.join(path, name)
+      with open(output, "w") as f:
+        for tree in trees:
+          f.write(tree + "\n")
 
 def plot_histogram(histogram, output_file, xlabel, ylabel):
   fig, ax = plt.subplots()
@@ -95,16 +111,15 @@ if (len(sys.argv) != 3):
 treerecs_output = sys.argv[1]
 output = sys.argv[2]
 
-if (os.path.isdir(output)):
-  print("Output file " + output + " already exists")
-  sys.exit(1)
-
 all_entries = AllTreeEntries(treerecs_output)
 
-os.makedirs(output)
+try:
+  os.makedirs(output)
+except:
+  pass
 histo = all_entries.get_best_thresholds_histogram()
 print(sorted(histo.items(), key=lambda x: x[0]))
 plot_histogram(histo, os.path.join(output, "threshold_histogram.png"), "threshold", "best trees number")
-
+all_entries.save_per_threshold_trees(output, "trees_for_threshold_")
 
 
