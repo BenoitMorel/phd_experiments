@@ -1,6 +1,9 @@
 import os
 import sys
 
+import matplotlib.pyplot as plt
+#import seaborn as sns
+
 
 
 class TreeEntry(object):
@@ -55,7 +58,7 @@ class AllTreeEntries(object):
         elif (val == "contraction" and split[index + 1] == "threshold"):
           threshold = split[index + 3][:-1]
           if (threshold == "no"):
-              threshold = "-1.0"
+              threshold = "0.0"
           entry.threshold = float(threshold)
         elif (val == "logLk"):
           if (split[index - 1] == "ALE"):
@@ -71,6 +74,17 @@ class AllTreeEntries(object):
       if (line.startswith(">")):
         self.__add_entry_from_line(line)
 
+
+def plot_histogram(histogram, output_file, xlabel, ylabel):
+  fig, ax = plt.subplots()
+  x = histogram.keys()
+  y = histogram.values()
+  plt.bar(x, y, 0.04)
+  for i,j in zip(x,y):
+        ax.annotate(str(j),xy=(i,j))
+  plt.xlabel(xlabel)
+  plt.ylabel(ylabel)
+  fig.savefig(output_file)
 
 
 if (len(sys.argv) != 3):
@@ -89,7 +103,7 @@ all_entries = AllTreeEntries(treerecs_output)
 os.makedirs(output)
 histo = all_entries.get_best_thresholds_histogram()
 print(sorted(histo.items(), key=lambda x: x[0]))
-
+plot_histogram(histo, os.path.join(output, "threshold_histogram.png"), "threshold", "best trees number")
 
 
 
