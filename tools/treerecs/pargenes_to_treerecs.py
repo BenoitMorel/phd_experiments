@@ -34,13 +34,15 @@ alignment_dir = get_alignment_dir(pargenes_dir)
 print("alignment dir " + alignment_dir)
 msa_list = os.listdir(alignment_dir)
 
-alignments_path = os.path.join(treerecs_dir, "alignments.txt")
-gene_trees_path = os.path.join(treerecs_dir, "gene_trees.newick")
+alignments_path = os.path.join(treerecs_dir, "alignment.txt")
+gene_trees_path = os.path.join(treerecs_dir, "geneTrees.newick")
 
 print(alignments_path)
 
 alignments = open(alignments_path, "w")
 gene_trees = open(gene_trees_path, "w")
+
+alignments.write("GTR\n")
 
 support_dir = os.path.join(pargenes_dir, "supports_run", "results")
 
