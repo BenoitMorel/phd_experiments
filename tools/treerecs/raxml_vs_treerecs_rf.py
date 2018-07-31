@@ -1,0 +1,49 @@
+import sys
+import os
+
+from ete3 import Tree
+
+def get_relative_rf(tree1, tree2):
+  rf = tree1.robinson_foulds(tree2, unrooted_trees=True)
+  return float(rf[0]) / float(rf[1])
+
+def read_list_trees(newick):
+  trees = []
+  for line in open(newick).readlines():
+    if (line.startswith(">")):
+      continue
+    trees.append(Tree(line, format=1))
+  return trees
+
+def build_rf_list(trees1, trees2):
+  rf_list = []
+  for t1, t2 in zip(trees1, trees2):
+    rf_list.append(get_relative_rf(t1, t2))
+  return rf_list
+
+def analyze_correctness(trees1, trees2, name):
+  print("")
+  print("## Analysing " + name + " trees...")
+  rf_list = build_rf_list(trees1, trees2)
+  rf_average = sum(rf_list) / float(len(rf_list))
+  exactness_frequency = rf_list.count(0.0) / float(len(rf_list))
+  print("Average relative RF with true trees: " + str(rf_average))
+  print(str(exactness_frequency * 100) + "% of the trees exactly match the true trees")
+
+treerecs_trees = read_list_trees("/hits/basement/sco/morel/github/phd_experiments/results/treerecs/launch_treerecs/simuls/haswell_16/run_0/treerecs_output.newick.best")
+raxml_trees = read_list_trees("/hits/basement/sco/morel/github/datasets/simuls/geneTrees.newick")
+true_trees = read_list_trees("/hits/basement/sco/morel/github/datasets/simuls/trueGeneTrees.newick")
+
+analyze_correctness(true_trees, raxml_trees, "RAXML")
+analyze_correctness(true_trees, treerecs_trees, "TREERECS")
+
+threshold_trees_dir = "/hits/basement/sco/morel/github/phd_experiments/results/treerecs/launch_treerecs/simuls/haswell_16/run_0/analysis/trees/"
+per_threshold_files = os.listdir(threshold_trees_dir)
+
+for per_threshold_file in per_threshold_files:
+  threshold_trees = read_list_trees(os.path.join(threshold_trees_dir, per_threshold_file))
+  analyze_correctness(true_trees, threshold_trees, per_threshold_file)
+
+
+
+
