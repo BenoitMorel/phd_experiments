@@ -87,6 +87,7 @@ def plot_histogram(histogram, output_file, xlabel, ylabel):
   fig.savefig(output_file)
 
 
+
 if (len(sys.argv) != 3):
   print("Syntax: python analyze_best_trees.py treerecs_output analyze_output_dir")
   sys.exit(1)
