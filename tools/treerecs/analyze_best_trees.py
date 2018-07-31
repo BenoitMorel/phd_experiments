@@ -48,7 +48,7 @@ class AllTreeEntries(object):
       self.best_entries[family] = entry
     else:
       family_entries = self.all_entries[family]
-      if (self.best_entries[family].joint_ll < entry.joint_ll):
+      if (self.best_entries[family].joint_ll <= entry.joint_ll):
         self.best_entries[family] = entry
     family_entries[threshold] = entry
     #print("Entry: " + str(entry))
@@ -110,16 +110,16 @@ if (len(sys.argv) != 3):
 
 treerecs_output = sys.argv[1]
 output = sys.argv[2]
-
+trees_output = os.path.join(output, "trees")
 all_entries = AllTreeEntries(treerecs_output)
 
 try:
-  os.makedirs(output)
+  os.makedirs(trees_output)
 except:
   pass
 histo = all_entries.get_best_thresholds_histogram()
 print(sorted(histo.items(), key=lambda x: x[0]))
 plot_histogram(histo, os.path.join(output, "threshold_histogram.png"), "threshold", "best trees number")
-all_entries.save_per_threshold_trees(output, "trees_for_threshold_")
+all_entries.save_per_threshold_trees(trees_output, "trees_for_threshold_")
 
 
