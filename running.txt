@@ -1,6 +1,4 @@
 RUNNING:
-/hits/basement/sco/morel/github/phd_experiments/results/pargenes/simuls/no_bootstraps/haswell_128/run_0
-/hits/basement/sco/morel/github/phd_experiments/results/pargenes/simuls/bootstraps_100/haswell_512/run_0
 
 PAPER:
   HEURISTIC RELEVANCE

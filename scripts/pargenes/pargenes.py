@@ -10,14 +10,10 @@ datas["128"]  = os.path.join(exp.datasets_root, "general/128//FastaFiles/")
 datas["phyldog_example"]  = os.path.join(exp.datasets_root, "general/PhyldogDataExample/FastaFiles/")
 datas["ensembl"]          = os.path.join(exp.bigdatasets_root, "ensembl_8880_15/fasta_files/")
 datas["simuls"]          = os.path.join(exp.bigdatasets_root, "simuls/alignments/")
+datas["simuls_higher_rate"]          = os.path.join(exp.bigdatasets_root, "simuls_higher_rate/alignments/")
 datas["all"] = os.path.join(exp.bigdatasets_root, "all_1kite/split_alignment")
 datas["all_filtered"] = os.path.join(exp.bigdatasets_root, "all_1kite/filtered_split_alignment")
 datas["muscle"] = os.path.join(exp.bigdatasets_root, "eric_tannier/vectorbase_18/MUSCLE/")
-datas["ensembl_1000_1"] = os.path.join(exp.bigdatasets_root, "ensembl_subsamples", "ensembl_subsample_1000_1/fasta_files/")
-datas["ensembl_1000_2"] = os.path.join(exp.bigdatasets_root, "ensembl_subsamples", "ensembl_subsample_1000_2/fasta_files/")
-datas["ensembl_1000_3"] = os.path.join(exp.bigdatasets_root, "ensembl_subsamples", "ensembl_subsample_1000_3/fasta_files/")
-datas["ensembl_1000_4"] = os.path.join(exp.bigdatasets_root, "ensembl_subsamples", "ensembl_subsample_1000_4/fasta_files/")
-datas["ensembl_1000_5"] = os.path.join(exp.bigdatasets_root, "ensembl_subsamples", "ensembl_subsample_1000_5/fasta_files/")
 
 datatypes = {}
 datatypes["all"] = "aa"

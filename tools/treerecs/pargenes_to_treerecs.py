@@ -21,7 +21,7 @@ def get_alignment_dir(pargenes_dir):
 
 if (len(sys.argv) != 3):
   print("Syntax: python pargenes_to_treerecs.py pargenes_dir treerecs_dir")
-
+  sys.exit(1)
 pargenes_dir = sys.argv[1]
 treerecs_dir = sys.argv[2]
 
