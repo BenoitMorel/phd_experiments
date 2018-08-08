@@ -1,16 +1,10 @@
 RUNNING:
-  CHECK NO CRASH WITHOUT OPENMP
-  /hits/basement/sco/morel/github/phd_experiments/results/treerecs/launch_treerecs/simuls_higher_rate_treesearch/haswell_1/run_0
-  /hits/basement/sco/morel/github/phd_experiments/results/treerecs/launch_treerecs/simuls_higher_rate_treesearch/haswell_1/run_1
-  /hits/basement/sco/morel/github/phd_experiments/results/treerecs/launch_treerecs/simuls_higher_rate_treesearch/haswell_1/run_2
+  no transfers
+  /hits/basement/sco/morel/github/phd_experiments/results/treerecs/launch_treerecs/simuls_higher_rate_treesearch/haswell_16/run_6
+  /hits/basement/sco/morel/github/phd_experiments/results/treerecs/launch_treerecs/simuls_higher_rate_treesearch/haswell_16/run_5
 
-
-  /hits/basement/sco/morel/github/phd_experiments/results/treerecs/launch_treerecs/simuls_higher_rate_treesearch/haswell_16/run_0 # 24h wall time
-  /hits/basement/sco/morel/github/phd_experiments/results/treerecs/launch_treerecs/simuls_higher_rate_treesearch/haswell_16/run_1 # 2h wall time
-  /hits/basement/sco/morel/github/phd_experiments/results/treerecs/launch_treerecs/simuls_higher_rate_treesearch/haswell_16/run_2 # 2h wall time
   
   
   
 TREE SEARCH FINISHED
-  /hits/basement/sco/morel/github/phd_experiments/results/treerecs/launch_treerecs/sub_simuls_higher_rate_treesearch/haswell_16/run_1
-
+  /hits/basement/sco/morel/github/phd_experiments/results/treerecs/launch_treerecs/simuls_higher_rate_treesearch/haswell_16/run_2/treerecs_output.newick
