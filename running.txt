@@ -1,40 +1,16 @@
 RUNNING:
+  CHECK NO CRASH WITHOUT OPENMP
+  /hits/basement/sco/morel/github/phd_experiments/results/treerecs/launch_treerecs/simuls_higher_rate_treesearch/haswell_1/run_0
+  /hits/basement/sco/morel/github/phd_experiments/results/treerecs/launch_treerecs/simuls_higher_rate_treesearch/haswell_1/run_1
+  /hits/basement/sco/morel/github/phd_experiments/results/treerecs/launch_treerecs/simuls_higher_rate_treesearch/haswell_1/run_2
 
-PAPER:
-  HEURISTIC RELEVANCE
-    best run 512: /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/ensembl/no_bootstraps/haswell_512/run_4
-    one core: /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/ensembl/no_bootstraps_--scheduler_onecore/haswell_512/run_0
-    no heuristic: /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/ensembl/no_bootstraps/haswell_512/run_3
-    maybe for paper (no job sorting): /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/ensembl/no_bootstraps_--experiment-disable-jobs-sorting <- no improvement
-FAST SCALING:
-  /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/archive/muscle/no_bootstraps/haswell_32/run_0
-  /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/archive/muscle/no_bootstraps/haswell_64/run_0
-  /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/archive/muscle/no_bootstraps/haswell_128/run_0
-  /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/archive/muscle/no_bootstraps/haswell_256/run_0
-  /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/archive/muscle/no_bootstraps/haswell_512/run_0
-  /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/archive/muscle/no_bootstraps/haswell_1024/run_0
-  
-  /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/ensembl/no_bootstraps/haswell_32/run_0
-  /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/ensembl/no_bootstraps/haswell_64/run_0
-  /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/ensembl/no_bootstraps/haswell_128/run_0
-  /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/ensembl/no_bootstraps/haswell_256/run_0
-  /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/ensembl/no_bootstraps/haswell_256/run_4
-  /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/ensembl/no_bootstraps/haswell_1024/run_0
-FULL JOBS
-    big run, 25h on 1024 cores: (had to resubmit to skip ENSGT00900000140842_fa_bs2...):  /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/ensembl/bootstraps_100_modeltest_-s_10_-p_10/haswell_1024/run_1
-    /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/muscle/bootstraps_100_modeltest_-s_10_-p_10/haswell_1024/run_0
-    FAILS AT MODELTEST FOR SOME REASON... /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/muscle/bootstraps_100_modeltest_-s_10_-p_10/haswell_128/run_0
-    /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/muscle/bootstraps_100_modeltest_-s_10_-p_10/haswell_256/run_0
-    /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/muscle/bootstraps_100_modeltest_-s_10_-p_10/haswell_512/run_0
-ONE MSA:
-  /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/128/no_bootstraps_-s_10_-p_10/haswell_256/run_0
-  /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/128/bootstraps_100_-s_25_-p_25/haswell_512/run_0
-  /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/128/no_bootstraps_-s_1_-p_1/haswell_32/run_0
 
+  /hits/basement/sco/morel/github/phd_experiments/results/treerecs/launch_treerecs/simuls_higher_rate_treesearch/haswell_16/run_0 # 24h wall time
+  /hits/basement/sco/morel/github/phd_experiments/results/treerecs/launch_treerecs/simuls_higher_rate_treesearch/haswell_16/run_1 # 2h wall time
+  /hits/basement/sco/morel/github/phd_experiments/results/treerecs/launch_treerecs/simuls_higher_rate_treesearch/haswell_16/run_2 # 2h wall time
   
-SUBSAMPLING: 
-  /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/ensembl_1000_1/no_bootstraps/haswell_128/run_0
-  /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/ensembl_1000_1/no_bootstraps/haswell_256/run_0
-  /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/ensembl_1000_1/no_bootstraps_--percentage-jobs-double-cores_0/haswell_128/run_0
-  /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/ensembl_1000_1/no_bootstraps_--percentage-jobs-double-cores_0/haswell_256/run_0
+  
+  
+TREE SEARCH FINISHED
+  /hits/basement/sco/morel/github/phd_experiments/results/treerecs/launch_treerecs/sub_simuls_higher_rate_treesearch/haswell_16/run_1
 

@@ -30,8 +30,8 @@ def analyze_correctness(trees1, trees2, name):
   print("Average relative RF with true trees: " + str(rf_average))
   print(str(exactness_frequency * 100) + "% of the trees exactly match the true trees")
 
-if (len(sys.argv) != 5):
-  print("Syntax: python raxml_vs_trecs.py true_trees raxml_trees best_treerecs_trees tree_analysis_dir")
+if (len(sys.argv) != 4 and len(sys.argv) != 5):
+  print("Syntax: python raxml_vs_trecs.py true_trees raxml_trees best_treerecs_trees [tree_analysis_dir]")
   sys.exit(1)
 
 #true_trees = read_list_trees("/hits/basement/sco/morel/github/datasets/simuls/trueGeneTrees.newick")
@@ -41,16 +41,19 @@ if (len(sys.argv) != 5):
 true_trees = read_list_trees(sys.argv[1])
 raxml_trees = read_list_trees(sys.argv[2])
 treerecs_trees = read_list_trees(sys.argv[3])
-threshold_trees_dir = sys.argv[4]
+threshold_trees_dir = 0
+if (len(sys.argv) == 5):
+  threshold_trees_dir = sys.argv[4]
 
 analyze_correctness(true_trees, raxml_trees, "RAXML")
 analyze_correctness(true_trees, treerecs_trees, "TREERECS")
 
-per_threshold_files = os.listdir(threshold_trees_dir)
 
-for per_threshold_file in per_threshold_files:
-  threshold_trees = read_list_trees(os.path.join(threshold_trees_dir, per_threshold_file))
-  analyze_correctness(true_trees, threshold_trees, per_threshold_file)
+if (threshold_trees_dir != 0):
+  per_threshold_files = os.listdir(threshold_trees_dir)
+  for per_threshold_file in per_threshold_files:
+    threshold_trees = read_list_trees(os.path.join(threshold_trees_dir, per_threshold_file))
+    analyze_correctness(true_trees, threshold_trees, per_threshold_file)
 
 
 
