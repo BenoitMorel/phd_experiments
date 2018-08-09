@@ -1,8 +1,6 @@
 RUNNING:
   no transfers
-  /hits/basement/sco/morel/github/phd_experiments/results/treerecs/launch_treerecs/simuls_higher_rate_treesearch/haswell_16/run_6
-  /hits/basement/sco/morel/github/phd_experiments/results/treerecs/launch_treerecs/simuls_higher_rate_treesearch/haswell_16/run_5
-
+  /hits/basement/sco/morel/github/phd_experiments/results/treerecs/launch_treerecs/NNI_firstround_noopt/simuls_higher_rate_treesearch/haswell_16/run_0
   
   
   

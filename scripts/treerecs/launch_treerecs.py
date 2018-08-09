@@ -45,8 +45,8 @@ datasets["simuls_higher_rate"] = os.path.join(exp.bigdatasets_root, "simuls_high
 datasets["sub_simuls_higher_rate"] = os.path.join(exp.bigdatasets_root, "sub_simuls_higher_rate") 
 
 
-if len(sys.argv) != 5:
-  print("Syntax error: python lauch_treerecs.py dataset tree-search cluster  cores.\n Suggestions of datasets: ")
+if len(sys.argv) != 6:
+  print("Syntax error: python lauch_treerecs.py dataset tree-search run_time cluster cores.\n Suggestions of datasets: ")
   for dataset in datasets:
     print("\t" + dataset)
   print("Cluster can be either normal, haswell or magny")
@@ -54,14 +54,15 @@ if len(sys.argv) != 5:
 
 dataset = sys.argv[1]
 tree_search = int(sys.argv[2])
-cluster = sys.argv[3]
-cores = int(sys.argv[4])
+run_name = sys.argv[3]
+cluster = sys.argv[4]
+cores = int(sys.argv[5])
 
 subdir_name = dataset
 if (tree_search != 0):
   subdir_name += "_treesearch"
 
-resultsdir = exp.create_result_dir(os.path.join("treerecs", "launch_treerecs", subdir_name, cluster + "_" + str(cores), "run"))
+resultsdir = exp.create_result_dir(os.path.join("treerecs", "launch_treerecs",run_name, subdir_name, cluster + "_" + str(cores), "run"))
 result_msg = "Treerecs git: \n" + exp.get_git_info(exp.treerecs_root)
 exp.write_results_info(resultsdir, result_msg) 
 
