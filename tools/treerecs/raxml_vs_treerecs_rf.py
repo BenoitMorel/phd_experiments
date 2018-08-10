@@ -3,6 +3,12 @@ import os
 
 from ete3 import Tree
 
+def str_2(ll):
+  return "{0:.2f}".format(ll)
+
+def str_4(ll):
+  return "{0:.4f}".format(ll)
+
 def print_likelihood_sums(treerecs_file):
   ale_ll = 0.0
   pll_ll = 0.0
@@ -16,7 +22,7 @@ def print_likelihood_sums(treerecs_file):
             pll_ll += float(split[index + 2][:-1])
   #print("Total ALE ll: " + str(ale_ll))
   #print("Total PLL ll: " + str(pll_ll))
-  print("Total joint ll: " + str(pll_ll + ale_ll))
+  print("Total joint ll: " + str_2(pll_ll + ale_ll))
 
 def get_relative_rf(tree1, tree2):
   rf = tree1.robinson_foulds(tree2, unrooted_trees=True)
@@ -42,8 +48,8 @@ def analyze_correctness(trees1, trees2, tree2_file, name):
   rf_list = build_rf_list(trees1, trees2)
   rf_average = sum(rf_list) / float(len(rf_list))
   exactness_frequency = rf_list.count(0.0) / float(len(rf_list))
-  print("Average relative RF with true trees: " + str(rf_average))
-  print(str(exactness_frequency * 100) + "% of the trees exactly match the true trees")
+  print("Average relative RF with true trees: " + str_4(rf_average))
+  print(str_2(exactness_frequency * 100) + "% of the trees exactly match the true trees")
   print_likelihood_sums(tree2_file)
 if (len(sys.argv) != 4 and len(sys.argv) != 5):
   print("Syntax: python raxml_vs_trecs.py true_trees raxml_trees best_treerecs_trees [tree_analysis_dir]")

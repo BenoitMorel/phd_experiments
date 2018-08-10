@@ -11,6 +11,8 @@ def get_treerecs_command(gene_tree, species_tree, alignment, smap, thresholds_nu
     treerecs_output = os.path.join(output_dir, "treerecs_output")
     command = []
     command.append(treerecs_exec)
+    command.append("--seed")
+    command.append("42")
     command.append("-g")
     command.append(gene_tree)
     command.append("-s")
