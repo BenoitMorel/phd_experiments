@@ -82,7 +82,7 @@ result_msg += "modeltest git: \n" + exp.get_git_info(os.path.join(exp.pargenes_r
 exp.write_results_info(resultsdir, result_msg) 
 
 command = []
-command.append("python3")
+command.append("python3.6")
 command.append(runner)
 command.append("-a")
 command.append(fastafiles)
