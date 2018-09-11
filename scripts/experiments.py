@@ -89,6 +89,7 @@ def redirect_logs(result_dir):
     sys.stderr = open(err, 'w')
 
 def submit_haswell(submit_file_path, command, threads):
+  threads = int(threads)
   debug = False
   if (threads < 0):
     threads = -threads

@@ -56,6 +56,10 @@ if (data == "128"):
   options = os.path.join(exp.datasets_root, "pargenes", "option_files",  "raxml_global_options_128.txt")
 
 
+additional_options = ""
+if (data == "all_filtered"):
+  additional_options += "--modeltest-global-parameters " + os.path.join(exp.bigdatasets_root, "all_1kite", "modeltest_options.txt")
+
 fastafiles = datas[data]
 datakey = data
 resultsdir = os.path.join(exp.results_root, "pargenes", data)
@@ -99,6 +103,8 @@ if (use_modeltest):
 if (is_aa):
   command.append("-d")
   command.append("aa")
+for additional in additional_options.split(" "):
+  command.append(additional)
 
 for i in range(max_args_number, len(sys.argv)):
   command.append(sys.argv[i])

@@ -1,9 +1,13 @@
 import sys
 import os
 
-
-if (len(sys.argv) !=3):
-  print("usage: python partitions_edition.py input_part output_part")
+"""
+Open a partition file, and add an A after each G[...] 
+to select median gamma rates instead of mean.
+Then output the new partitions into another file
+"""
+if (len(sys.argv) != 3):
+  print("usage: python add_median.py input_part output_part")
   sys.exit(1)
 input_part = sys.argv[1]
 output_part = sys.argv[2]
