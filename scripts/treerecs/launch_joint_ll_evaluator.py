@@ -50,7 +50,7 @@ cluster = sys.argv[4]
 cores = int(sys.argv[5])
 
 
-resultsdir = exp.create_result_dir(os.path.join("treerecs", "launch_treerecs", run_name, dataset, cluster + "_" + str(cores), "run"))
+resultsdir = exp.create_result_dir(os.path.join("treerecs", "launch_joint_likelihood_evaluator", run_name, dataset, cluster + "_" + str(cores), "run"))
 result_msg = "Treerecs git: \n" + exp.get_git_info(exp.treerecs_root)
 exp.write_results_info(resultsdir, result_msg) 
 

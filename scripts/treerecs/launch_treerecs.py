@@ -82,10 +82,10 @@ output_dir = resultsdir
 
 
 
-command = get_treerecs_command(gene_tree, species_tree, alignment, smap, thresholds_number, tree_search, output_dir, abs(cores))
+command = get_treerecs_command(gene_tree, species_tree, alignment, smap, thresholds_number, tree_search, output_dir, cores)
 submit_path = os.path.join(resultsdir, "treerecs_submit.sh")
 print("Results will be in " + resultsdir)
-exp.submit(submit_path, command, abs(cores), cluster) 
+exp.submit(submit_path, command, cores, cluster) 
 
 
 
