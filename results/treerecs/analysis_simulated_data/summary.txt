@@ -1,0 +1,33 @@
+Note: the size of an alignment is taxa*sites
+
+**************************************************
+Comparison with treerecs (with tree search) trees:
+**************************************************
+
+True trees have a better likelihood than Treerecs trees on 45.6% of the trees.
+Treerecs trees have a better likelihood than True trees on 48.7% of the trees.
+True trees have the same likelihood as Treerecs trees on   5.6% of the trees.
+
+true trees  total likelihood:    -3876600.0
+treerecs trees total likelihood: -3879170.0
+True trees have a better total likelihood
+
+Average size of alignments for which true trees are better: 17972
+Average size of alignments for which treerecs trees are better: 8600
+Average size of alignments for which both are the same: 2838
+
+**************************************************
+Comparison with treerecs raxml trees:
+**************************************************
+
+True trees have a better likelihood than raxml trees on 77.1% of the trees.
+raxml trees have a better likelihood than True trees on 18.8% of the trees.
+True trees have the same likelihood as raxml trees on   3.9% of the trees.
+
+Total true  tree ll = -3876600.0
+Total raxml tree ll = -3885440.0
+True trees have a better total likelihood
+
+Average size of alignments for which true trees are better: 15036
+Average size of alignments for which raxml trees are better: 4743
+Average size of alignments for which both are the same: 1247
