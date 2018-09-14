@@ -32,8 +32,19 @@ partitions_count = 0
 log_likelihood = 0.0
 
 lines = open(input_part).readlines()
-for line in lines:
+dico_partitions = {}
+for idx, line in enumerate(lines):
   if (line.startswith("Model:")):
+# first check that we did not treat this partition
+# already (in case of a restart, raxml logs are doubled)
+    line_partition = lines[idx-1]
+    if (not line_partition.startswith("Partition")):
+      print("Error when reading partition")
+      sys.exit(1)
+    partition = line_partition.split(" ")[2]
+    if (partition in dico_partitions):
+      continue
+    dico_partitions[partition] = partition
     model = line.split(" ")[1][:-1]
     models_free_parameters += get_model_free_parameters(model)
     partitions_count += 1
