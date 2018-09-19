@@ -21,6 +21,7 @@ def get_dico_sizes(dimensions_file):
 
 if (len(sys.argv) != 5):
   print("Syntax: python compare_joint_likelihood_evaluator.py true_trees_evaluation other_trees_evaluation other_trees_name (for instance treerecs or raxml) dimensions_file")
+  print("dimensions_file is a file with one line per family, witht he number of sites and the number of taxa")
   sys.exit(1)
 
 

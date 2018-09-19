@@ -24,6 +24,9 @@ def print_likelihood_sums(treerecs_file):
   #print("Total PLL ll: " + str(pll_ll))
   print("Total joint ll: " + str_2(pll_ll + ale_ll))
 
+def get_rf(tree1, tree2):
+  return tree1.robinson_foulds(tree2, unrooted_trees=True)[0]
+
 def get_relative_rf(tree1, tree2):
   rf = tree1.robinson_foulds(tree2, unrooted_trees=True)
   return float(rf[0]) / float(rf[1])
@@ -42,6 +45,12 @@ def read_list_trees(newick):
 def build_rf_list(trees1, trees2):
   rf_list = []
   for t1, t2 in zip(trees1, trees2):
+    rf_list.append(get_rf(t1, t2))
+  return rf_list
+
+def build_relative_rf_list(trees1, trees2):
+  rf_list = []
+  for t1, t2 in zip(trees1, trees2):
     rf_list.append(get_relative_rf(t1, t2))
   return rf_list
 
@@ -51,10 +60,13 @@ def analyze_correctness(trees1, trees2, tree2_file, name):
   if (trees2 == None):
     print("No trees")
     return
+  relative_rf_list = build_relative_rf_list(trees1, trees2)
+  relative_rf_average = sum(relative_rf_list) / float(len(relative_rf_list))
   rf_list = build_rf_list(trees1, trees2)
   rf_average = sum(rf_list) / float(len(rf_list))
   exactness_frequency = rf_list.count(0.0) / float(len(rf_list))
-  print("Average relative RF with true trees: " + str_4(rf_average))
+  print("Average relative RF with true trees: " + str_4(relative_rf_average))
+  print("Average RF with true trees: " + str_4(rf_average))
   print(str_2(exactness_frequency * 100) + "% of the trees exactly match the true trees")
   print_likelihood_sums(tree2_file)
 if (len(sys.argv) != 4 and len(sys.argv) != 5):

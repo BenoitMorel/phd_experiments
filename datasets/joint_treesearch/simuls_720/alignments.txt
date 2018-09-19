@@ -1,0 +1,2 @@
+GTR
+msas/720_pruned.fasta_modified
