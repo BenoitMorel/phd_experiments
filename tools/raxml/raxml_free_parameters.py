@@ -4,7 +4,9 @@ import math
 
 def get_model_free_parameters(model):
   free_parameters = 0
-  if ("+G" in model):
+  #if ("+G4" in model):
+  #  free_parameters += 3
+  if("+G" in model and not model.startswith("LG4M")):
     free_parameters += 1
   if ("+I" in model):
     free_parameters += 1
@@ -71,14 +73,9 @@ else:
   print("Unrecognized brlen " + brlen + ". Aborting.")
   sys.exit(1)
 
-sample_size = sites
-if (free_parameters >= sample_size):
-  print("more free parameters than samples! I will not compute the Akaike scores!")
-  sys.exit(0)
-
 AIC = 2.0 * free_parameters - 2.0 * log_likelihood
-BIC = math.log(sample_size) * free_parameters - 2.0 * log_likelihood
-AICc = AIC + 2.0 * free_parameters * (free_parameters + 1) / (sample_size - free_parameters - 1) 
+BIC = math.log(sites) * free_parameters - 2.0 * log_likelihood
+AICc = AIC + 2.0 * free_parameters * (free_parameters + 1) / (sites - free_parameters - 1) 
 
 print("")
 print("Brlen mode: " + brlen)

@@ -18,7 +18,7 @@ for line in lines:
   if ("+I" in model):
     free_rates += 1
   if ("+F" in model):
-    free_rates += 1
+    free_rates += 19
   if (model.startswith("LG4M")):
     free_rates += 1
   if (model.startswith("LG4X")):
