@@ -20,8 +20,12 @@ lines = open(input_part).readlines()
 with open(output_part, "w") as writer:
   for line in lines:
     split_line = line.split(",")
-    
-    split = split_line[0].split("+")
+    model = split_line[0]
+    if (model == "LG4M"):
+      model = "LG4M+G4"
+    elif (model == "LG4M+I"):
+      model = "LG4M+I+G4"
+    split = model.split("+")
     for idx, elem in enumerate(split):
       if (elem.startswith("G")):
         split[idx] = elem + "A"
