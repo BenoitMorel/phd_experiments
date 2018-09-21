@@ -13,6 +13,10 @@ root = get_parent_path(get_parent_path(os.path.realpath(__file__)))
 # scripts
 scripts_root = os.path.join(root, "scripts")
 
+#tools
+tools_root = os.path.join(root, "tools")
+rf_distance_tool = os.path.join(tools_root, "treerecs", "rf_distance.py")
+
 # programs
 programs_root = os.path.join(root, "programs")
 
@@ -145,7 +149,9 @@ def submit_magny(submit_file_path, command, threads):
 def submit(submit_file_path, command, threads, cluster):
   if (cluster == "normal"):
     print(command)
-    subprocess.check_call(command.split(" "))
+    commands_list = command.split("\n")
+    for subcommand in commands_list:
+      subprocess.check_call(subcommand, shell=True)
   elif (cluster == "haswell"):
     submit_haswell(submit_file_path, command, threads)
   elif (cluster == magny):
