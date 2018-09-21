@@ -1,0 +1,6 @@
+Origin dataset: simuls_higher_rates
+Type: simulated
+Index: 477
+Alignment: 720_pruned.fasta_modified
+Sites: 300 
+Taxa: 211
