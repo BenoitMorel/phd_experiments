@@ -52,9 +52,9 @@ datasets = {}
 for dataset in os.listdir(root_datadir):
   datasets[dataset] = os.path.join(root_datadir, dataset)
 
-
-if len(sys.argv) != 6:
-  print("Syntax error: python lauch_jointsearch.py dataset strategy starting_tree cluster cores.\n Suggestions of datasets: ")
+max_args_number = 6
+if len(sys.argv) < max_args_number:
+  print("Syntax error: python lauch_jointsearch.py dataset strategy starting_tree cluster cores [additional paremeters].\n Suggestions of datasets: ")
   for dataset in datasets:
     print("\t" + dataset)
   print("Cluster can be either normal, haswell or magny")
@@ -71,7 +71,11 @@ cores = int(sys.argv[5])
 if (not (strategy in ["SPR", "NNI", "HYBRID"])):
   print("Unknown search strategy " + strategy)
 
-resultsdir = exp.create_result_dir(os.path.join("JointSearch", dataset, strategy + "_start_" + starting_tree, cluster + "_" + str(cores), "run"))
+resultsdir = os.path.join("JointSearch", dataset, strategy + "_start_" + starting_tree, cluster + "_" + str(cores), "run")
+for i in range(max_args_number, len(sys.argv)):
+  resultsdir += "_" + sys.argv[i]
+
+resultsdir = exp.create_result_dir(resultsdir)
 result_msg = "Treerecs git: \n" + exp.get_git_info(exp.treerecs_root)
 exp.write_results_info(resultsdir, result_msg) 
 
@@ -85,6 +89,8 @@ alignment = os.path.join(datadir, "alignment.msa")
 output_dir = resultsdir 
 
 command = get_tree_search_command(gene_tree, species_tree, alignment, strategy, cores, output_dir)
+for i in range(max_args_number, len(sys.argv)):
+  command += " " + sys.argv[i]
 
 result_tree = os.path.join(output_dir, "join_search.newick") 
 summary = os.path.join(output_dir, "summary.txt")

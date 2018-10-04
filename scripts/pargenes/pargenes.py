@@ -31,7 +31,8 @@ def print_help():
 
 
 
-if ((len(sys.argv) < 6) or (sys.argv[1] not in datas)):
+max_args_number = 6
+if ((len(sys.argv) < max_args_number) or (sys.argv[1] not in datas)):
   print("Error! Syntax should be " )
   print_help()
   sys.exit(0)
@@ -71,7 +72,6 @@ else:
 if (use_modeltest):
   resultsdir += "_modeltest"
 
-max_args_number = 6
 
 for i in range(max_args_number, len(sys.argv)):
   arg = sys.argv[i]
