@@ -36,6 +36,8 @@ treerecs_joint_search_exec = os.path.join(treerecs_root, "build", "bin", "misc",
 joint_search_root = os.path.join(github_root, "JointSearch")
 joint_search_exec = os.path.join(joint_search_root, "build", "bin", "JointTreeSearch")
 pargenes_root = os.path.join(github_root, "pargenes")
+mpischeduler_root = os.path.join(github_root, "MPIScheduler")
+mpischeduler_exec = os.path.join(mpischeduler_root, "build", "mpi-scheduler")
 raxml_root = os.path.join(github_root, "raxml-ng")
 oldraxml_root = os.path.join(github_root, "standard-RAxML")
 oldraxml_exec = os.path.join(oldraxml_root, "raxmlHPC-AVX")
@@ -148,12 +150,16 @@ def submit_magny(submit_file_path, command, threads):
   command.append(submit_file_path)
   subprocess.check_call(command)
 
+def submit_normal(submit_file_path, command):
+    commands_list = command.split("\n")
+    logfile = os.path.join(os.path.dirname(submit_file_path), "logs.out")
+    for subcommand in commands_list:
+      subprocess.check_call(subcommand + " &> " + logfile , shell=True)
+
+
 def submit(submit_file_path, command, threads, cluster):
   if (cluster == "normal"):
-    print(command)
-    commands_list = command.split("\n")
-    for subcommand in commands_list:
-      subprocess.check_call(subcommand, shell=True)
+    submit_normal(submit_file_path, command)
   elif (cluster == "haswell"):
     submit_haswell(submit_file_path, command, threads)
   elif (cluster == magny):

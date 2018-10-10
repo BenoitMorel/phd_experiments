@@ -76,7 +76,7 @@ for i in range(max_args_number, len(sys.argv)):
   resultsdir += "_" + sys.argv[i]
 
 resultsdir = exp.create_result_dir(resultsdir)
-result_msg = "Treerecs git: \n" + exp.get_git_info(exp.treerecs_root)
+result_msg = "JointSearch git: \n" + exp.get_git_info(exp.jointsearch_root)
 exp.write_results_info(resultsdir, result_msg) 
 
 datadir = datasets[dataset]
@@ -107,7 +107,7 @@ command += "\n"
 command += "cat " + summary
 
 
-submit_path = os.path.join(resultsdir, "treerecs_submit.sh")
+submit_path = os.path.join(resultsdir, "jointsearch_submit.sh")
 print("Results will be in " + resultsdir)
 exp.submit(submit_path, command, cores, cluster) 
 
