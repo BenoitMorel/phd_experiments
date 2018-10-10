@@ -3,6 +3,13 @@ import os
 sys.path.insert(0, 'scripts')
 import experiments as exp
 
+#todobenoit this is ugly
+def get_nodes_number(gene_tree_file):
+  lines = open(gene_tree_file).readlines()
+  line = lines[0]
+  return line.count("(")
+
+
 def get_gene_tree(datadir, tree):
   if (tree == "raxml"):
     return os.path.join(datadir, "raxmlGeneTree.newick")
@@ -21,8 +28,12 @@ def generate_scheduler_commands_file(families_dir, starting_tree, strategy, addi
   with open(scheduler_commands_file, "w") as writer:
     for family in os.listdir(families_dir):
       family_path = os.path.join(families_dir, family)
-      writer.write(family + " 1  1 ")
-      writer.write("-g " + get_gene_tree(family_path, starting_tree) + " ")
+      gene_tree = get_gene_tree(family_path, starting_tree)
+      if (len(open(gene_tree).readlines()) == 0):
+        continue
+      tree_size = get_nodes_number(gene_tree)
+      writer.write(family + " " + str(max(1, tree_size / 10)) + " " + str(tree_size) + " ")
+      writer.write("-g " + gene_tree + " ")
       writer.write("-s " + os.path.join(family_path, "speciesTree.newick") +  " ")
       writer.write("-a " + os.path.join(family_path, "alignment.msa") +  " ")
       writer.write("-t 1 ")
@@ -43,8 +54,7 @@ def generate_scheduler_command(command_file, parallelization, cores, scheduler_o
   command += exp.mpischeduler_exec + " "
   command += "--" + parallelization + "-scheduler "
   if (parallelization == "split"):
-    print("cannot find lib for jointsearch")
-    sys.exit(1)
+    command += exp.joint_search_lib + " "
   elif (parallelization == "openmp" or parallelization == "onecore"):
     command += exp.joint_search_exec + " "
   else:
