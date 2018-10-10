@@ -154,7 +154,8 @@ def submit_normal(submit_file_path, command):
     commands_list = command.split("\n")
     logfile = os.path.join(os.path.dirname(submit_file_path), "logs.out")
     for subcommand in commands_list:
-      subprocess.check_call(subcommand + " &> " + logfile , shell=True)
+      #subprocess.check_call(subcommand + " &> " + logfile , shell=True)
+      subprocess.check_call(subcommand, shell=True)
 
 
 def submit(submit_file_path, command, threads, cluster):

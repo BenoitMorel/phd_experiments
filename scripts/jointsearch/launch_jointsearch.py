@@ -22,6 +22,9 @@ def get_tree_search_command(gene_tree, species_tree, alignment, strategy, cores,
     executable = exp.joint_search_exec
     joint_search_output = os.path.join(output_dir, "join_search")
     command = []
+    command.append("mpirun")
+    command.append("-np")
+    command.append(str(cores))
     command.append(executable)
     command.append("-g")
     command.append(gene_tree)
@@ -31,8 +34,6 @@ def get_tree_search_command(gene_tree, species_tree, alignment, strategy, cores,
     command.append(species_tree)
     command.append("--strategy")
     command.append(strategy)
-    command.append("-t")
-    command.append(str(cores))
     command.append("-p")
     command.append(joint_search_output)
     command.append("--verbose")
@@ -54,7 +55,7 @@ for dataset in os.listdir(root_datadir):
 
 max_args_number = 6
 if len(sys.argv) < max_args_number:
-  print("Syntax error: python lauch_jointsearch.py dataset strategy starting_tree cluster cores [additional paremeters].\n Suggestions of datasets: ")
+  print("Syntax error: python lauch_joint_search.py dataset strategy starting_tree cluster cores [additional paremeters].\n Suggestions of datasets: ")
   for dataset in datasets:
     print("\t" + dataset)
   print("Cluster can be either normal, haswell or magny")
@@ -76,7 +77,7 @@ for i in range(max_args_number, len(sys.argv)):
   resultsdir += "_" + sys.argv[i]
 
 resultsdir = exp.create_result_dir(resultsdir)
-result_msg = "JointSearch git: \n" + exp.get_git_info(exp.jointsearch_root)
+result_msg = "JointSearch git: \n" + exp.get_git_info(exp.joint_search_root)
 exp.write_results_info(resultsdir, result_msg) 
 
 datadir = datasets[dataset]
