@@ -36,7 +36,6 @@ def get_tree_search_command(gene_tree, species_tree, alignment, strategy, cores,
     command.append(strategy)
     command.append("-p")
     command.append(joint_search_output)
-    command.append("--verbose")
     return " ".join(command)
 
 def get_compare_rf_command(data_dir, tree, name, output):

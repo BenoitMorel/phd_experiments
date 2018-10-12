@@ -32,11 +32,11 @@ def generate_scheduler_commands_file(families_dir, starting_tree, strategy, addi
       if (len(open(gene_tree).readlines()) == 0):
         continue
       tree_size = get_nodes_number(gene_tree)
-      writer.write(family + " " + str(max(1, tree_size / 10)) + " " + str(tree_size) + " ")
+      #writer.write(family + " " + str(max(1, tree_size / 20)) + " " + str(tree_size) + " ")
+      writer.write(family + " 1 1 ")
       writer.write("-g " + gene_tree + " ")
       writer.write("-s " + os.path.join(family_path, "speciesTree.newick") +  " ")
       writer.write("-a " + os.path.join(family_path, "alignment.msa") +  " ")
-      writer.write("-t 1 ")
       os.makedirs(os.path.join(results_dir, family))
       writer.write("-p " + os.path.join(results_dir, family, "jointsearch") + " ") 
       writer.write("--strategy " + strategy + " ")
