@@ -1,3 +1,14 @@
 
-1 core per job: /home/morelbt/github/phd_experiments/results/MultipleJointSearch/NNI_start_raxml_split/normal_40/run_-c_3
-20 node per core: /home/morelbt/github/phd_experiments/results/MultipleJointSearch/NNI_start_raxml_split/normal_40/run_-c_9
+
+NNI:
+1 core per job: 
+/home/morelbt/github/phd_experiments/results/MultipleJointSearch/NNI_start_raxml_split/normal_40/run_-c_3
+
+20 nodes per core: 
+/home/morelbt/github/phd_experiments/results/MultipleJointSearch/NNI_start_raxml_split/normal_40/run_-c_9
+
+20 nodes per core, hardcoded rates:
+/home/morelbt/github/phd_experiments/results/MultipleJointSearch/NNI_start_raxml_split/normal_40/run_0
+
+
+

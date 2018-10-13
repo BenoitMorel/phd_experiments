@@ -64,7 +64,13 @@ def analyse(dataset_dir, pargenes_dir):
   print("- Treerecs:    " + str(best_treerecs))
   print("- JointSearch: " + str(best_jointsearch))
 
-analyse("/home/morelbt/github/datasets/simuls_higher_rate/families", "/home/morelbt/github/phd_experiments/results/MultipleJointSearch/NNI_start_raxml_split/normal_40/run_-c_9/scheduler_run/")
+if __name__ == '__main__':
+  if (len(sys.argv) != 3):
+    print("Syntax: families_dir pargenes_dir")
+    exit(1)
+  dataset_dir = sys.argv[1]
+  pargenes_dir = sys.argv[1]
+  analyse(dataset_dir, pargenes_dir)
 
 
 

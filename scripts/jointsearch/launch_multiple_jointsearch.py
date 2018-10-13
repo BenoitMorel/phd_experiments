@@ -22,7 +22,7 @@ def get_gene_tree(datadir, tree):
   else:
     return tree
 
-def generate_scheduler_commands_file(families_dir, starting_tree, strategy, additional_arguments, cores, output_dir, scheduler_output_dir):
+def generate_scheduler_commands_file(families_dir, starting_tree, strategy, nodes_per_core, additional_arguments, cores, output_dir, scheduler_output_dir):
   scheduler_commands_file = os.path.join(output_dir, "commands.txt")
   results_dir = os.path.join(scheduler_output_dir, "results")
   with open(scheduler_commands_file, "w") as writer:
@@ -32,8 +32,10 @@ def generate_scheduler_commands_file(families_dir, starting_tree, strategy, addi
       if (len(open(gene_tree).readlines()) == 0):
         continue
       tree_size = get_nodes_number(gene_tree)
-      #writer.write(family + " " + str(max(1, tree_size / 20)) + " " + str(tree_size) + " ")
-      writer.write(family + " 1 1 ")
+      if (0 == nodes_per_core):
+        writer.write(family + " 1 " + str(tree_size) + " ")
+      else:
+        writer.write(family + " " + str(max(1, tree_size / nodes_per_core)) + " " + str(tree_size) + " ")
       writer.write("-g " + gene_tree + " ")
       writer.write("-s " + os.path.join(family_path, "speciesTree.newick") +  " ")
       writer.write("-a " + os.path.join(family_path, "alignment.msa") +  " ")
@@ -65,6 +67,12 @@ def generate_scheduler_command(command_file, parallelization, cores, scheduler_o
   command += "0 "
   return command 
 
+def generate_analyse_command(families_dir, pargenes_dir):
+  command = "python "
+  command += exp.analyse_pargenes_jointsearch_tool + " "
+  command += families_dir + " " +  pargenes_dir
+  return command
+
 max_args_number = 6
 if len(sys.argv) < max_args_number:
   print("Syntax error: python launch_multiple_jointsearch.py strategy starting_tree scheduler_implem cluster cores [additional paremeters].")
@@ -80,11 +88,12 @@ starting_tree = sys.argv[2]
 parallelization = sys.argv[3]
 cluster = sys.argv[4]
 cores = int(sys.argv[5])
+nodes_per_core = 20
 
 if (not (strategy in ["SPR", "NNI", "HYBRID"])):
   print("Unknown search strategy " + strategy)
 
-resultsdir = os.path.join("MultipleJointSearch", strategy + "_start_" + starting_tree + "_" + parallelization, cluster + "_" + str(cores), "run")
+resultsdir = os.path.join("MultipleJointSearch", strategy + "_" + str(nodes_per_core) + "_start_" + starting_tree + "_" + parallelization, cluster + "_" + str(cores), "run")
 for i in range(max_args_number, len(sys.argv)):
   resultsdir += "_" + sys.argv[i]
 
@@ -102,8 +111,10 @@ for i in range(max_args_number, len(sys.argv)):
   additional_arguments += " " + sys.argv[i]
 scheduler_output_dir = os.path.join(output_dir, "scheduler_run")
 os.makedirs(scheduler_output_dir)
-scheduler_commands_file = generate_scheduler_commands_file(families_dir, starting_tree, strategy, additional_arguments, cores, output_dir, scheduler_output_dir)
-command = generate_scheduler_command(scheduler_commands_file, parallelization, cores, scheduler_output_dir)
+scheduler_commands_file = generate_scheduler_commands_file(families_dir, starting_tree, strategy, nodes_per_core, additional_arguments, cores, output_dir, scheduler_output_dir)
+command = generate_scheduler_command(scheduler_commands_file, parallelization, cores,  scheduler_output_dir)
+
+command += "\n" + generate_analyse_command(families_dir, scheduler_output_dir)
 
 submit_path = os.path.join(resultsdir, "jointsearch_scheduler_submit.sh")
 print("Results will be in " + resultsdir)

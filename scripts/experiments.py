@@ -16,6 +16,7 @@ scripts_root = os.path.join(root, "scripts")
 #tools
 tools_root = os.path.join(root, "tools")
 rf_distance_tool = os.path.join(tools_root, "treerecs", "rf_distance.py")
+analyse_pargenes_jointsearch_tool = os.path.join(tools_root, "jointsearch", "analyse_pargenes_results.py")
 
 # programs
 programs_root = os.path.join(root, "programs")
