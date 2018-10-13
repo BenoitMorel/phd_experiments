@@ -69,7 +69,7 @@ if __name__ == '__main__':
     print("Syntax: families_dir pargenes_dir")
     exit(1)
   dataset_dir = sys.argv[1]
-  pargenes_dir = sys.argv[1]
+  pargenes_dir = sys.argv[2]
   analyse(dataset_dir, pargenes_dir)
 
 
