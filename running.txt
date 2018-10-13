@@ -1,8 +1,9 @@
-RUNNING:
-  no transfers
-  /hits/basement/sco/morel/github/phd_experiments/results/treerecs/launch_treerecs/NNI_firstround_noopt/simuls_higher_rate_treesearch/haswell_16/run_0
-  
-  
-  
-TREE SEARCH FINISHED
-  /hits/basement/sco/morel/github/phd_experiments/results/treerecs/launch_treerecs/simuls_higher_rate_treesearch/haswell_16/run_2/treerecs_output.newick
+/hits/basement/sco/morel/github/phd_experiments/results/MultipleJointSearch/NNI_20_start_raxml_split/haswell_64/run_-c_0
+
+/hits/basement/sco/morel/github/phd_experiments/results/MultipleJointSearch/NNI_20_start_raxml_onecore/haswell_64/run_-c_0
+
+/hits/basement/sco/morel/github/phd_experiments/results/MultipleJointSearch/NNI_20_start_raxml_split/haswell_64/run_0
+
+/hits/basement/sco/morel/github/phd_experiments/results/MultipleJointSearch/SPR_20_start_raxml_split/haswell_64/run_-c_0
+
+/hits/basement/sco/morel/github/phd_experiments/results/MultipleJointSearch/NNI_20_start_true_split/haswell_64/run_-c_0
