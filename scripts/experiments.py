@@ -148,17 +148,21 @@ def submit_magny(submit_file_path, command, threads):
   command.append(submit_file_path)
   subprocess.check_call(command)
 
-def submit_normal(submit_file_path, command):
+def submit_normal(submit_file_path, command, log_cout):
     commands_list = command.split("\n")
     logfile = os.path.join(os.path.dirname(submit_file_path), "logs.out")
     for subcommand in commands_list:
-      subprocess.check_call(subcommand + " &>> " + logfile , shell=True)
-      #subprocess.check_call(subcommand, shell=True)
+      if (log_cout):
+        subprocess.check_call(subcommand, shell=True)
+      else:
+        subprocess.check_call(subcommand + " &>> " + logfile , shell=True)
 
 
 def submit(submit_file_path, command, threads, cluster):
   if (cluster == "normal"):
-    submit_normal(submit_file_path, command)
+    submit_normal(submit_file_path, command, False)
+  elif (cluster == "normald"):
+    submit_normal(submit_file_path, command, True)
   elif (cluster == "haswell"):
     submit_haswell(submit_file_path, command, threads, False)
   elif (cluster == "haswelld"):
