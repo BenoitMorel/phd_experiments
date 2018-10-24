@@ -1,9 +1,2 @@
-/hits/basement/sco/morel/github/phd_experiments/results/MultipleJointSearch/NNI_20_start_raxml_split/haswell_64/run_-c_0
-
-/hits/basement/sco/morel/github/phd_experiments/results/MultipleJointSearch/NNI_20_start_raxml_onecore/haswell_64/run_-c_0
-
-/hits/basement/sco/morel/github/phd_experiments/results/MultipleJointSearch/NNI_20_start_raxml_split/haswell_64/run_0
-
-/hits/basement/sco/morel/github/phd_experiments/results/MultipleJointSearch/SPR_20_start_raxml_split/haswell_64/run_-c_0
-
-/hits/basement/sco/morel/github/phd_experiments/results/MultipleJointSearch/NNI_20_start_true_split/haswell_64/run_-c_0
+/hits/basement/sco/morel/github/phd_experiments/results/phyldog_mpischeduler/haswelld_32/run_0
+/hits/basement/sco/morel/github/phd_experiments/results/phyldog_mpischeduler/haswell_32/run_0

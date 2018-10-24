@@ -44,6 +44,8 @@ raxml_root = os.path.join(github_root, "raxml-ng")
 oldraxml_root = os.path.join(github_root, "standard-RAxML")
 oldraxml_exec = os.path.join(oldraxml_root, "raxmlHPC-AVX")
 bigdatasets_root = os.path.join(github_root, "datasets")
+phyldog_root = os.path.join("/home/morelbt/github/PHYLDOG")
+phyldog_light_exec = os.path.join(phyldog_root, "build", "bin", "phyldog_light")
 # constants
 mpi_scheduler_heuristic = "--split-scheduler"
 
