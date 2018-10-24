@@ -2,4 +2,4 @@ build/
 __pycache__/
 *.swp
 *.pyc
-
+results/
