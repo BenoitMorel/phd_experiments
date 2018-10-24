@@ -26,9 +26,12 @@ def analyse(dataset_dir, pargenes_dir):
       true_tree = Tree(os.path.join(family_path, "trueGeneTree.newick"), format=1) 
       raxml_tree = Tree(os.path.join(family_path, "raxmlGeneTree.newick"), format=1)
       treerecs_tree = Tree(os.path.join(family_path, "treerecsGeneTree.newick"), format=1)
-      jointsearch_tree = Tree(os.path.join(pargenes_dir, "results", msa, "jointsearch.newick"), format=1)
-    
     except:
+      continue
+    try:
+      jointsearch_tree = Tree(os.path.join(pargenes_dir, "results", msa, "jointsearch.newick"), format=1)
+    except:
+      print("Could not analyse " + msa)
       continue
     #raxml_rf = get_rf(true_tree, raxml_tree)
     raxml_rrf = get_relative_rf(true_tree, raxml_tree)

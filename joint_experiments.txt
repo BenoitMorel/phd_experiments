@@ -1,4 +1,7 @@
 
+/hits/basement/sco/morel/github/phd_experiments/results/MultipleJointSearch/NNI_20_start_raxml_split_-c/haswell_32/run_0
+
+/hits/basement/sco/morel/github/phd_experiments/results/MultipleJointSearch/NNI_20_start_raxml_split_-c/haswell_64/run_1
 
 NNI:
 1 core per job: 

@@ -93,9 +93,10 @@ nodes_per_core = 20
 if (not (strategy in ["SPR", "NNI", "HYBRID"])):
   print("Unknown search strategy " + strategy)
 
-resultsdir = os.path.join("MultipleJointSearch", strategy + "_" + str(nodes_per_core) + "_start_" + starting_tree + "_" + parallelization, cluster + "_" + str(cores), "run")
+additional_path = ""
 for i in range(max_args_number, len(sys.argv)):
-  resultsdir += "_" + sys.argv[i]
+  additional_path += "_" + sys.argv[i]
+resultsdir = os.path.join("MultipleJointSearch", strategy + "_" + str(nodes_per_core) + "_start_" + starting_tree + "_" + parallelization + additional_path, cluster + "_" + str(cores), "run")
 
 resultsdir = exp.create_result_dir(resultsdir)
 result_msg = "JointSearch git: \n" + exp.get_git_info(exp.joint_search_root)
