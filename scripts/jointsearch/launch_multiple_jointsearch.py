@@ -104,6 +104,7 @@ output_dir = resultsdir
 
 datadir = os.path.join(exp.bigdatasets_root, "simuls_higher_rate")
 families_dir = os.path.join(datadir, "families")
+#families_dir = os.path.join(datadir, "buggy_families")
 
 
 additional_arguments = ""
