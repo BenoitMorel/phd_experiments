@@ -37,5 +37,10 @@ def generate_link_file(gene_tree_path, output_link_path):
 for family in os.listdir(families_dir):
   family_dir = os.path.join(families_dir, family)
   gene_tree_path = os.path.join(family_dir, "raxmlGeneTree.newick")
-  output_link_path = os.path.join(family_dir, "phyldogMapping.link")
+  phyldog_dir = os.path.join(family_dir, "phyldog")
+  try:
+    os.makedirs(phyldog_dir)
+  except:
+    pass
+  output_link_path = os.path.join(phyldog_dir, "phyldogMapping.link")
   generate_link_file(gene_tree_path, output_link_path)

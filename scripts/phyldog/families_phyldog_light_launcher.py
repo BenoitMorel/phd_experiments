@@ -27,7 +27,7 @@ def generate_scheduler_commands_file(dataset_dir, cores, output_dir, scheduler_o
       command.append("species.tree.file=" + os.path.join(dataset_dir, "phyldogSpeciesTree.newick"))
       command.append("gene.tree.file=" + os.path.join(family_dir, "raxmlGeneTree.newick"))
       command.append("input.sequence.file=" + os.path.join(family_dir, "alignment.msa"))
-      command.append("taxaseq.file=" + os.path.join(family_dir, "phyldogMapping.link"))
+      command.append("taxaseq.file=" + os.path.join(family_dir, "phyldog", "phyldogMapping.link"))
       command.append("likelihood.evaluator=LIBPLL2")
       command.append("model=GTR ")
       os.makedirs(os.path.join(results_dir, family))
@@ -68,7 +68,7 @@ result_msg = ""
 exp.write_results_info(resultsdir, result_msg) 
 output_dir = resultsdir 
 
-datadir = os.path.join(exp.bigdatasets_root, "simuls_higher_rate")
+datadir = os.path.join(exp.datasets_root, "families", "simuls_higher_rate")
 
 
 scheduler_output_dir = os.path.join(output_dir, "scheduler_run")
