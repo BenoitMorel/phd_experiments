@@ -18,83 +18,53 @@ def get_nodes(tree1):
 
 def analyse(dataset_dir, pargenes_dir):
   analysed_msas = 0
-  total_raxml_rrf = 0.0
-  total_treerecs_rrf = 0.0
-  total_phyldog_rrf = 0.0
-  total_jointsearch_rrf = 0.0
-  total_raxml_rf = 0.0
-  total_treerecs_rf = 0.0
-  total_phyldog_rf = 0.0
-  total_jointsearch_rf = 0.0
   total_nodes_number = 0
-  true_raxml = 0
-  true_treerecs = 0
-  true_phyldog = 0
-  true_jointsearch = 0
-  best_raxml = 0
-  best_treerecs = 0
-  best_phyldog = 0
-  best_jointsearch = 0
+  methods = ["Raxml-ng", "Treerecs", "Phyldog", "JointSearch"]
+  methods_tree_files = {}
+  methods_tree_files["Raxml-ng"] = "raxmlGeneTree.newick"
+  methods_tree_files["Treerecs"] = "treerecsGeneTree.newick"
+  methods_tree_files["Phyldog"] = os.path.join("phyldog", "phyldog_reconciled.tree")
+  methods_tree_files["JointSearch"] = "jointsearch.newick"
+  total_rrf = {}
+  total_rf = {}
+  true_matches = {}
+  best_tree = {}
+  for method in methods:
+    total_rrf[method] = 0.0
+    total_rf[method] = 0.0
+    true_matches[method] = 0
+    best_tree[method] = 0
   for msa in os.listdir(dataset_dir):   
+    trees = {}
     family_path = os.path.join(dataset_dir, msa)
     try:
       true_tree = Tree(os.path.join(family_path, "trueGeneTree.newick"), format=1) 
-      raxml_tree = Tree(os.path.join(family_path, "raxmlGeneTree.newick"), format=1)
-      treerecs_tree = Tree(os.path.join(family_path, "treerecsGeneTree.newick"), format=1)
-      phyldog_tree = Tree(os.path.join(family_path, "phyldog", "phyldog_reconciled.tree"), format=1)
+      for method in methods:
+        if (method == "JointSearch"):
+          prefix = os.path.join(pargenes_dir, "results", msa)
+        else:
+          prefix = family_path
+        trees[method] = Tree(os.path.join(prefix, methods_tree_files[method]), format=1)
     except:
       continue
-    try:
-      jointsearch_tree = Tree(os.path.join(pargenes_dir, "results", msa, "jointsearch.newick"), format=1)
-    except:
-      print("Could not analyse " + msa)
-      continue
-    #raxml_rf = get_rf(true_tree, raxml_tree)
-    raxml_rf_cell = raxml_tree.robinson_foulds(true_tree, unrooted_trees=True)
-    treerecs_rf_cell = treerecs_tree.robinson_foulds(true_tree, unrooted_trees=True)
-    phyldog_rf_cell = phyldog_tree.robinson_foulds(true_tree, unrooted_trees=True)
-    jointsearch_rf_cell = jointsearch_tree.robinson_foulds(true_tree, unrooted_trees=True)
-    
-    raxml_rrf = float(raxml_rf_cell[0]) / float(raxml_rf_cell[1])
-    treerecs_rrf = float(treerecs_rf_cell[0]) / float(treerecs_rf_cell[1])
-    phyldog_rrf = float(phyldog_rf_cell[0]) / float(phyldog_rf_cell[1])
-    jointsearch_rrf = float(jointsearch_rf_cell[0]) / float(jointsearch_rf_cell[1])
-
-    raxml_rf = float(raxml_rf_cell[0])
-    treerecs_rf = float(treerecs_rf_cell[0])
-    phyldog_rf = float(phyldog_rf_cell[0])
-    jointsearch_rf = float(jointsearch_rf_cell[0])
-    
-    total_nodes_number += raxml_rf_cell[1]
-
-    best_rrf = min(raxml_rrf, treerecs_rrf, jointsearch_rrf, phyldog_rrf)
-    if (best_rrf == raxml_rrf):
-      best_raxml += 1
-    if (best_rrf == treerecs_rrf):
-      best_treerecs += 1
-    if (best_rrf == phyldog_rrf):
-      best_phyldog += 1
-    if (best_rrf == jointsearch_rrf):
-      best_jointsearch += 1
-
-    total_raxml_rrf += raxml_rrf
-    total_treerecs_rrf += treerecs_rrf
-    total_phyldog_rrf += phyldog_rrf
-    total_jointsearch_rrf += jointsearch_rrf
-    total_raxml_rf += raxml_rf
-    total_treerecs_rf += treerecs_rf
-    total_phyldog_rf += phyldog_rf
-    total_jointsearch_rf += jointsearch_rf
-
-    if (raxml_rf_cell[0] == 0):
-      true_raxml += 1
-    if (treerecs_rf_cell[0] == 0):
-      true_treerecs += 1
-    if (phyldog_rf_cell[0] == 0):
-      true_phyldog += 1
-    if (jointsearch_rf_cell[0] == 0):
-      true_jointsearch += 1
+    best_rrf = 1
+    rrf = {}
+    rf = {}
     analysed_msas += 1
+    for method in methods:
+      rf_cell = trees[method].robinson_foulds(true_tree, unrooted_trees=True)
+      rrf[method] = float(rf_cell[0]) / float(rf_cell[1])
+      rf[method] = float(rf_cell[0])
+      best_rrf = min(best_rrf, rrf[method])
+      total_rrf[method] += rrf[method]
+      total_rf[method] += float(rf_cell[0])
+      if (rf_cell[0] == 0):
+        true_matches[method] += 1
+      if (method == methods[0]): #do it only once
+        total_nodes_number += rf_cell[1]
+    for method in methods:
+      if (best_rrf == rrf[method]):
+        best_tree[method] += 1
 
   if (analysed_msas == 0):
     print("did not manage to analyse any MSA")
@@ -102,28 +72,23 @@ def analyse(dataset_dir, pargenes_dir):
   print("Number of gene families: " + str(analysed_msas))
   print("")
   print("Average (over the gene families) relative RF distance to the true trees:")
-  print("- Raxml-ng:   " + str(total_raxml_rrf / float(analysed_msas)))
-  print("- Treerecs:   " + str(total_treerecs_rrf / float(analysed_msas)))
-  print("- Phyldog:   " + str(total_phyldog_rrf / float(analysed_msas)))
-  print("- JointSearch " + str(total_jointsearch_rrf / float(analysed_msas)))
+  for method in methods:
+    print("- " + method + ":\t" + str(total_rrf[method] / float(analysed_msas)))
   print("")
+  
   print("Normalized average (over the gene families) RF distance to the true trees:")
-  print("- Raxml-ng:   " + str(total_raxml_rf / float(total_nodes_number)))
-  print("- Treerecs:   " + str(total_treerecs_rf / float(total_nodes_number)))
-  print("- Phyldog:   " + str(total_phyldog_rf / float(total_nodes_number)))
-  print("- JointSearch " + str(total_jointsearch_rf / float(total_nodes_number)))
+  for method in methods:
+    print("- " + method + ":\t" + str(total_rf[method] / float(total_nodes_number)))
   print("")
+  
   print("Number of gene families for which a method reaches the smallest relative RF to the true trees compared with the other methods:")
-  print("- Raxml:       " + str(best_raxml))
-  print("- Treerecs:    " + str(best_treerecs))
-  print("- Phyldog:    " + str(best_phyldog))
-  print("- JointSearch: " + str(best_jointsearch))
+  for method in methods:
+    print("- " + method + ":\t" + str(best_tree[method]) + "/" + str(analysed_msas))
   print("")
+  
   print("Number of gene families for which a method finds the true tree:")
-  print("- Raxml:       " + str(true_raxml))
-  print("- Treerecs:    " + str(true_treerecs))
-  print("- Phyldog: " + str(true_phyldog))
-  print("- JointSearch: " + str(true_jointsearch))
+  for method in methods:
+    print("- " + method + ":\t" + str(true_matches[method]) + "/" + str(analysed_msas))
 
 if __name__ == '__main__':
   if (len(sys.argv) != 3):

@@ -103,7 +103,7 @@ result_msg = "JointSearch git: \n" + exp.get_git_info(exp.joint_search_root)
 exp.write_results_info(resultsdir, result_msg) 
 output_dir = resultsdir 
 
-datadir = os.path.join(exp.datasets_root, "simuls_higher_rate")
+datadir = os.path.join(exp.datasets_root, "families", "simuls_higher_rate")
 families_dir = os.path.join(datadir, "families")
 #families_dir = os.path.join(datadir, "buggy_families")
 
