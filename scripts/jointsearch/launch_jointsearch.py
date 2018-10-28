@@ -18,7 +18,7 @@ def get_gene_tree(datadir, tree):
     return tree
 
 
-def get_tree_search_command(gene_tree, species_tree, alignment, strategy, cores, output_dir):
+def get_tree_search_command(gene_tree, species_tree, mapping, alignment, strategy, cores, output_dir):
     executable = exp.joint_search_exec
     joint_search_output = os.path.join(output_dir, "join_search")
     command = []
@@ -32,6 +32,8 @@ def get_tree_search_command(gene_tree, species_tree, alignment, strategy, cores,
     command.append(alignment)
     command.append("-s")
     command.append(species_tree)
+    command.append("-m")
+    command.append(mapping)
     command.append("--strategy")
     command.append(strategy)
     command.append("-p")
@@ -83,12 +85,13 @@ datadir = datasets[dataset]
 gene_tree = get_gene_tree(datadir, starting_tree)
 species_tree = os.path.join(datadir, "speciesTree.newick")
 alignment = os.path.join(datadir, "alignment.msa")
+mapping = os.path.join(datadir, "phyldog", "phyldogMapping.link")
 #smap = os.path.join(datadir, "mapping.txt")
 #if (not os.path.isfile(smap)):
 #  smap = ""
 output_dir = resultsdir 
 
-command = get_tree_search_command(gene_tree, species_tree, alignment, strategy, cores, output_dir)
+command = get_tree_search_command(gene_tree, species_tree, mapping, alignment, strategy, cores, output_dir)
 for i in range(max_args_number, len(sys.argv)):
   command += " " + sys.argv[i]
 
