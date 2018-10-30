@@ -38,6 +38,8 @@ def generate_scheduler_commands_file(families_dir, starting_tree, strategy, node
         writer.write(family + " " + str(max(1, int(tree_size / nodes_per_core))) + " " + str(tree_size) + " ")
       writer.write("-g " + gene_tree + " ")
       writer.write("-s " + os.path.join(family_path, "speciesTree.newick") +  " ")
+      mapping = os.path.join(family_path, "phyldog", "phyldogMapping.link")
+      writer.write("-m " + mapping + " ")
       writer.write("-a " + os.path.join(family_path, "alignment.msa") +  " ")
       os.makedirs(os.path.join(results_dir, family))
       writer.write("-p " + os.path.join(results_dir, family, "jointsearch") + " ") 
