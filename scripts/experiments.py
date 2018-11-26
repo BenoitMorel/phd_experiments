@@ -46,6 +46,8 @@ oldraxml_exec = os.path.join(oldraxml_root, "raxmlHPC-AVX")
 bigdatasets_root = os.path.join(github_root, "datasets")
 phyldog_root = os.path.join("/home/morelbt/github/PHYLDOG")
 phyldog_light_exec = os.path.join(phyldog_root, "build", "bin", "phyldog_light")
+zombi_script = os.path.join(github_root, "ZOMBI", "Zombi.py")
+
 # constants
 mpi_scheduler_heuristic = "--split-scheduler"
 
