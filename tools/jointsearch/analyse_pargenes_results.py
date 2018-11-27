@@ -2,6 +2,12 @@ import sys
 import os
 from ete3 import Tree
 
+def read_tree(tree):
+  lines = open(tree).readlines()
+  for line in lines:
+    if (not line.startswith(">")):
+      return Tree(line, format=1)
+  return None
 
 def get_rf(tree1, tree2):
   return tree1.robinson_foulds(tree2, unrooted_trees=True)[0]
@@ -23,7 +29,7 @@ def analyse(dataset_dir, pargenes_dir):
   methods_tree_files = {}
   methods_tree_files["Raxml-ng"] = "raxmlGeneTree.newick"
   methods_tree_files["Treerecs"] = "treerecsGeneTree.newick"
-  methods_tree_files["Phyldog"] = os.path.join("phyldog", "phyldog_reconciled.tree")
+  methods_tree_files["Phyldog"] = "phyldogGeneTree.newick"
   methods_tree_files["JointSearch"] = "jointsearch.newick"
   total_rrf = {}
   total_rf = {}
@@ -44,7 +50,9 @@ def analyse(dataset_dir, pargenes_dir):
           prefix = os.path.join(pargenes_dir, "results", msa)
         else:
           prefix = family_path
-        trees[method] = Tree(os.path.join(prefix, methods_tree_files[method]), format=1)
+        print(method + "  " + os.path.join(prefix, methods_tree_files[method]))
+        trees[method] = read_tree(os.path.join(prefix, methods_tree_files[method]))
+
     except:
       continue
     best_rrf = 1

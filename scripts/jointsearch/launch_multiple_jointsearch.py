@@ -38,7 +38,7 @@ def generate_scheduler_commands_file(families_dir, starting_tree, strategy, node
         writer.write(family + " " + str(max(1, int(tree_size / nodes_per_core))) + " " + str(tree_size) + " ")
       writer.write("-g " + gene_tree + " ")
       writer.write("-s " + os.path.join(family_path, "speciesTree.newick") +  " ")
-      mapping = os.path.join(family_path, "phyldog", "phyldogMapping.link")
+      mapping = os.path.join(family_path, "mapping.link")
       writer.write("-m " + mapping + " ")
       writer.write("-a " + os.path.join(family_path, "alignment.msa") +  " ")
       os.makedirs(os.path.join(results_dir, family))
@@ -77,17 +77,19 @@ def generate_analyse_command(families_dir, pargenes_dir):
 
 max_args_number = 6
 if len(sys.argv) < max_args_number:
-  print("Syntax error: python launch_multiple_jointsearch.py strategy starting_tree scheduler_implem cluster cores [additional paremeters].")
+  print("Syntax error: python launch_multiple_jointsearch.py dataset strategy starting_tree cluster cores [additional paremeters].")
   print("Cluster can be either normal, haswell or magny")
+  print("dataset can be plop or simuls_higher_rate")
   print("strategy: SPR, NNI, HYBRID")
   print("starting_tree: raxml, true, treerecs, random")
-  print("scheduler implem: split, onecore, openmp")
+  #print("scheduler implem: split, onecore, openmp")
   sys.exit(0)
 
 
-strategy = sys.argv[1]
-starting_tree = sys.argv[2]
-parallelization = sys.argv[3]
+dataset = sys.argv[1]
+strategy = sys.argv[2]
+starting_tree = sys.argv[3]
+parallelization = "split" #sys.argv[4]
 cluster = sys.argv[4]
 cores = int(sys.argv[5])
 nodes_per_core = 20
@@ -98,14 +100,14 @@ if (not (strategy in ["SPR", "NNI", "HYBRID"])):
 additional_path = ""
 for i in range(max_args_number, len(sys.argv)):
   additional_path += "_" + sys.argv[i]
-resultsdir = os.path.join("MultipleJointSearch", strategy + "_" + str(nodes_per_core) + "_start_" + starting_tree + "_" + parallelization + additional_path, cluster + "_" + str(cores), "run")
+resultsdir = os.path.join("MultipleJointSearch", dataset, strategy + "_" + str(nodes_per_core) + "_start_" + starting_tree + "_" + parallelization + additional_path, cluster + "_" + str(cores), "run")
 
 resultsdir = exp.create_result_dir(resultsdir)
 result_msg = "JointSearch git: \n" + exp.get_git_info(exp.joint_search_root)
 exp.write_results_info(resultsdir, result_msg) 
 output_dir = resultsdir 
 
-datadir = os.path.join(exp.datasets_root, "families", "simuls_higher_rate")
+datadir = os.path.join(exp.datasets_root, "families", dataset)
 families_dir = os.path.join(datadir, "families")
 #families_dir = os.path.join(datadir, "buggy_families")
 
