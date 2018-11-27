@@ -25,9 +25,4 @@ command = "output_dir=" + output_dir + "\n"
 command += "cores=" + str(cores) + "\n"
 command += "".join(open(command_file).readlines())
 
-if (cluster == "haswell"):
-  experiments.submit_haswell(submit_file, command, cores)
-elif (cluster == "magny"):
-  experiments.submit_magny(submit_file, command, cores)
-else :
-  print("unknown cluster value " + cluster)
+experiments.submit_haswell(submit_file, command, cores, cluster)
