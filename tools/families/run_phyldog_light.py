@@ -1,6 +1,7 @@
 import os
 import sys
 import subprocess
+import shutil
 sys.path.insert(0, 'scripts')
 import experiments as exp
 
@@ -11,14 +12,13 @@ def convertToPhyldogSpeciesTree(speciesTree, phyldogSpeciesTree):
   with open(phyldogSpeciesTree, "w") as output:
     subprocess.check_call(command.split(" "), stdout=output)
 
-def generate_scheduler_commands_file(dataset_dir, cores, output_dir, scheduler_output_dir):
+def generate_scheduler_commands_file(dataset_dir, cores, output_dir):
   families_dir = os.path.join(dataset_dir, "families")
-  results_dir = os.path.join(scheduler_output_dir, "results")
+  results_dir = os.path.join(output_dir, "results")
   scheduler_commands_file = os.path.join(output_dir, "commands.txt")
   speciesTree = os.path.join(dataset_dir, "speciesTree.newick")
   phyldogSpeciesTree = os.path.join(dataset_dir, "phyldogSpeciesTree.newick")
   convertToPhyldogSpeciesTree(speciesTree, phyldogSpeciesTree)
-
   with open(scheduler_commands_file, "w") as writer:
     for family in os.listdir(families_dir):
       family_dir = os.path.join(families_dir, family)
@@ -44,7 +44,7 @@ def generate_scheduler_commands_file(dataset_dir, cores, output_dir, scheduler_o
       writer.write(" ".join(command) + "\n")
   return scheduler_commands_file
      
-def generate_scheduler_command(command_file, cores, scheduler_output_dir):
+def generate_scheduler_command(command_file, cores, output_dir):
   command = ""
   parallelization = "onecore"
   command += "mpirun -np " + str(cores) + " "
@@ -52,24 +52,32 @@ def generate_scheduler_command(command_file, cores, scheduler_output_dir):
   command += "--" + parallelization + "-scheduler "
   command += exp.phyldog_light_exec + " "
   command += command_file + " "
-  command += scheduler_output_dir + " " 
+  command += output_dir + " " 
   command += "0"
   return command 
+
+def extract_phyldog_trees(families_dir):
+  for family in os.listdir(families_dir):
+    phyldogTree = os.path.join(families_dir, family, "phyldog", "phyldog_reconciled.tree")
+    if (os.path.isfile(phyldogTree)):
+      shutil.copyfile(phyldogTree, os.path.join(families_dir, family, "phyldogGeneTree.newick"))
+    else:
+      print("Warning: no phyldog tree for family " + family)
+  
 
 def run_phyldog_light_on_families(dataset_dir, cores):
   output_dir = os.path.join(dataset_dir, "phyldog_run")
   os.makedirs(output_dir)
-  scheduler_output_dir = os.path.join(output_dir, "scheduler")
-  scheduler_commands_file = generate_scheduler_commands_file(dataset_dir, cores, output_dir, scheduler_output_dir)
-  command = generate_scheduler_command(scheduler_commands_file, cores, scheduler_output_dir)
+  scheduler_commands_file = generate_scheduler_commands_file(dataset_dir, cores, output_dir)
+  command = generate_scheduler_command(scheduler_commands_file, cores, output_dir)
   print(command.split(" "))
   subprocess.check_call(command.split(" "))
-
+  extract_phyldog_trees(os.path.join(dataset_dir, "families"))
 
 if (__name__== "__main__"):
   max_args_number = 3
   if len(sys.argv) < max_args_number:
-    print("Syntax error: python families_phyldog_light_launcher.py dataset_dir cores.")
+    print("Syntax error: python run_phyldog_light.py dataset_dir cores.")
     print("Cluster can be either normal, haswell or magny")
     sys.exit(0)
 
