@@ -1,8 +1,11 @@
 import os
 import sys
 import subprocess
+import shutil
 sys.path.insert(0, 'scripts')
+sys.path.insert(0, os.path.join("tools", "phyldog"))
 import experiments as exp
+import link_file_from_gene_tree as phyldog_link
 
 def generate_zombi_species(species, output):
   parameters_dir = os.path.join(output, "parameters")
@@ -90,14 +93,50 @@ def generate_zombi_sequence(sites, output):
   command.append(output)
   subprocess.check_call(command)
 
+def zombi_to_families(zombi, out):
+  new_ali_dir = os.path.join(out, "alignments")
+  new_families_dir = os.path.join(out, "families")
+  os.makedirs(new_ali_dir)
+  os.makedirs(new_families_dir)
+  # species tree
+  species = os.path.join(zombi, "T", "ExtantTree.nwk")
+  new_species = os.path.join(out, "speciesTree.newick")
+  shutil.copyfile(species, new_species)
+  genetrees_dir = os.path.join(zombi, "G", "Gene_trees")
+  alignments_writer = open(os.path.join(new_ali_dir, "alignments.txt"), "w")
+  for genetree_base in os.listdir(genetrees_dir):
+    if (not "pruned" in genetree_base):
+      continue
+    genetree = os.path.join(genetrees_dir, genetree_base)
+    if (os.path.getsize(genetree) < 2):
+      continue
+    family = genetree_base.split("_")[0] + "_pruned"
+    print(family)
+    new_family_dir = os.path.join(new_families_dir, family)
+    os.makedirs(new_family_dir)
+    # species tree
+    shutil.copyfile(new_species, os.path.join(new_family_dir, "speciesTree.newick"))
+    # true trees
+    shutil.copyfile(genetree, os.path.join(new_family_dir, "trueGeneTree.newick"))
+    # alignment
+    alignment_base = family + ".fasta" 
+    alignment = os.path.join(zombi, "S", alignment_base)
+    shutil.copyfile(alignment, os.path.join(new_family_dir, "alignment.msa"))
+    shutil.copyfile(alignment, os.path.join(new_ali_dir, alignment_base))
+    alignments_writer.write(os.path.abspath(os.path.join(new_ali_dir, alignment_base)) + "\n")
+    # link file
+    phyldog_link.generate_link_file(genetree, os.path.join(new_family_dir, "mapping.link"), "_")
+
 
 def generate_zombi(species, families, sites, dupRate, lossRate, transferRate, output):
   os.makedirs(output)
-  parameters_dir = os.path.join(output, "parameters")
+  zombi_output = os.path.join(output, "zombi")
+  parameters_dir = os.path.join(zombi_output, "parameters")
   os.makedirs(parameters_dir)
-  generate_zombi_species(species, output) 
-  generate_zombi_genome(families, dupRate, lossRate, transferRate, output) 
-  generate_zombi_sequence(sites, output)
+  generate_zombi_species(species, zombi_output) 
+  generate_zombi_genome(families, dupRate, lossRate, transferRate, zombi_output) 
+  generate_zombi_sequence(sites, zombi_output)
+  zombi_to_families(zombi_output, output)
 
 if (len(sys.argv) != 8):
   print("Syntax: python generate_zombi.py species families sites dupRate lossRate transferRate output")
@@ -110,4 +149,5 @@ dupRate = float(sys.argv[4])
 lossRate = float(sys.argv[5])
 transferRate = float(sys.argv[6])
 output = sys.argv[7]
+
 generate_zombi(species, families, sites, dupRate, lossRate, transferRate, output)

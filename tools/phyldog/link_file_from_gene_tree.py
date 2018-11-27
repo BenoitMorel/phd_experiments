@@ -3,15 +3,8 @@ import sys
 from ete3 import Tree
 
 
-if (len(sys.argv) != 2):
-  print("syntax: families_dir")
-  exit(1)
 
-
-families_dir = sys.argv[1]
-
-
-def generate_link_file(gene_tree_path, output_link_path):
+def generate_link_file(gene_tree_path, output_link_path, split_character):
   print(gene_tree_path)
   if (len(open(gene_tree_path).readlines()) == 0):
     return
@@ -21,7 +14,7 @@ def generate_link_file(gene_tree_path, output_link_path):
 
   dico = {}
   for leaf in leaves:
-    split = leaf.split("@")
+    split = leaf.split(split_character)
     species = split[0]
     if (not (species in dico)):
       dico[species] = []
@@ -34,13 +27,22 @@ def generate_link_file(gene_tree_path, output_link_path):
       writer.write(";".join(value))
       writer.write("\n")
 
-for family in os.listdir(families_dir):
-  family_dir = os.path.join(families_dir, family)
-  gene_tree_path = os.path.join(family_dir, "raxmlGeneTree.newick")
-  phyldog_dir = os.path.join(family_dir, "phyldog")
-  try:
-    os.makedirs(phyldog_dir)
-  except:
-    pass
-  output_link_path = os.path.join(phyldog_dir, "phyldogMapping.link")
-  generate_link_file(gene_tree_path, output_link_path)
+
+if __name__ == '__main__':
+
+  if (len(sys.argv) != 2):
+    print("syntax: families_dir")
+    exit(1)
+
+  families_dir = sys.argv[1]
+
+  for family in os.listdir(families_dir):
+    family_dir = os.path.join(families_dir, family)
+    gene_tree_path = os.path.join(family_dir, "raxmlGeneTree.newick")
+    phyldog_dir = os.path.join(family_dir, "phyldog")
+    try:
+      os.makedirs(phyldog_dir)
+    except:
+      pass
+    output_link_path = os.path.join(phyldog_dir, "phyldogMapping.link")
+    generate_link_file(gene_tree_path, output_link_path, "@")
