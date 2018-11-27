@@ -50,7 +50,6 @@ def analyse(dataset_dir, pargenes_dir):
           prefix = os.path.join(pargenes_dir, "results", msa)
         else:
           prefix = family_path
-        print(method + "  " + os.path.join(prefix, methods_tree_files[method]))
         trees[method] = read_tree(os.path.join(prefix, methods_tree_files[method]))
 
     except:
