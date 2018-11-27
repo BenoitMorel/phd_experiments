@@ -103,7 +103,7 @@ def zombi_to_families(zombi, out):
   new_species = os.path.join(out, "speciesTree.newick")
   shutil.copyfile(species, new_species)
   genetrees_dir = os.path.join(zombi, "G", "Gene_trees")
-  alignments_writer = open(os.path.join(new_ali_dir, "alignments.txt"), "w")
+  alignments_writer = open(os.path.join(out, "alignments.txt"), "w")
   for genetree_base in os.listdir(genetrees_dir):
     if (not "pruned" in genetree_base):
       continue
