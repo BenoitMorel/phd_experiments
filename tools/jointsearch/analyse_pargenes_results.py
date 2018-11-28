@@ -31,6 +31,9 @@ def analyse(dataset_dir, pargenes_dir):
   methods_tree_files["Treerecs"] = "treerecsGeneTree.newick"
   methods_tree_files["Phyldog"] = "phyldogGeneTree.newick"
   methods_tree_files["JointSearch"] = "jointsearch.newick"
+  methods_trees_number = {}
+  for m in methods:
+    methods_trees_number[m] = 0
   total_rrf = {}
   total_rf = {}
   true_matches = {}
@@ -43,22 +46,32 @@ def analyse(dataset_dir, pargenes_dir):
   for msa in os.listdir(dataset_dir):   
     trees = {}
     family_path = os.path.join(dataset_dir, msa)
-    try:
-      true_tree = Tree(os.path.join(family_path, "trueGeneTree.newick"), format=1) 
-      for method in methods:
-        if (method == "JointSearch"):
-          prefix = os.path.join(pargenes_dir, "results", msa)
-        else:
-          prefix = family_path
+    true_tree = Tree(os.path.join(family_path, "trueGeneTree.newick"), format=1) 
+    for method in methods:
+      if (method == "JointSearch"):
+        prefix = os.path.join(pargenes_dir, "results", msa)
+      else:
+        prefix = family_path
+      try:
         trees[method] = read_tree(os.path.join(prefix, methods_tree_files[method]))
-
-    except:
-      continue
+        methods_trees_number[method] += 1
+      except:
+        trees[method] = None
+    
+    newmethods = []
+    for m in methods:
+      if (methods_trees_number[m] == 0):
+        print("Remove method " + m  + " from analysis")
+      else:
+        newmethods.append(m)
+    methods = newmethods
     best_rrf = 1
     rrf = {}
     rf = {}
     analysed_msas += 1
     for method in methods:
+      if (trees[method] == None):
+        continue
       rf_cell = trees[method].robinson_foulds(true_tree, unrooted_trees=True)
       rrf[method] = float(rf_cell[0]) / float(rf_cell[1])
       rf[method] = float(rf_cell[0])

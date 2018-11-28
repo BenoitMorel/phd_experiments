@@ -76,7 +76,7 @@ def generate_analyse_command(families_dir, pargenes_dir):
   return command
 
 max_args_number = 6
-possibleDatasets = exp.families_datasets_root
+possibleDatasets = os.listdir(exp.families_datasets_root)
 if len(sys.argv) < max_args_number:
   print("Syntax error: python launch_multiple_jointsearch.py dataset strategy starting_tree cluster cores [additional paremeters].")
   print("Possible datasets:")

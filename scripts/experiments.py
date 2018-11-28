@@ -30,7 +30,7 @@ results_root = os.path.join(root, "results")
 # externals
 github_root = os.path.join(root, "..")
 benoit_datasets_root = os.path.join(github_root, "BenoitDatasets")
-families_datasets_root  = os.path.join(github_root, "families")
+families_datasets_root  = os.path.join(benoit_datasets_root, "families")
 treerecs_root = os.path.join(github_root, "Treerecs")
 treerecs_exec = os.path.join(treerecs_root, "build", "bin", "Treerecs")
 joint_likelihood_evaluator_exec = os.path.join(treerecs_root, "build", "bin", "misc", "JointLikelihoodEvaluator")
