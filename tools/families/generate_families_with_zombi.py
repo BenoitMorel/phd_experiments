@@ -70,9 +70,9 @@ def generate_zombi_sequence(sites, output):
   sequence_parameters_file = os.path.join(output, "SequenceTreeParameters.tsv")
   states = ["A", "C", "G", "T"]
   with open(sequence_parameters_file, "w") as writer:
-    writer.write("SCALING 1\n")
+    writer.write("SCALING 0.005\n")
     writer.write("SEQUENCE_SIZE " + str(sites) + "\n")
-    writer.write("SEQUENCE codon\n")
+    writer.write("SEQUENCE nucleotide\n")
     for s1 in states:
       for s2 in states:
         if (s1 != s2):
@@ -129,7 +129,14 @@ def zombi_to_families(zombi, out):
 
 
 def generate_zombi(species, families, sites, dupRate, lossRate, transferRate, output):
+  dirname = "sim_s" + str(species) + "_f" + str(families)
+  dirname += "_d" + str(dupRate) + "_l" + str(lossRate)
+  output = os.path.join(output, dirname)
   os.makedirs(output)
+  with open(os.path.join(output, "zombi_script_params.txt"), "w") as writer:
+    writer.write(str(species) + " " + str(families) + " ")
+    writer.write(str(sites) + " " + str(dupRate) + " ")
+    writer.write(str(lossRate) + " " + str(transferRate) + " " + output)
   zombi_output = os.path.join(output, "zombi")
   parameters_dir = os.path.join(zombi_output, "parameters")
   os.makedirs(parameters_dir)

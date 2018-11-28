@@ -1,2 +1,1 @@
-/hits/basement/sco/morel/github/phd_experiments/results/phyldog_mpischeduler/haswelld_32/run_0
-/hits/basement/sco/morel/github/phd_experiments/results/phyldog_mpischeduler/haswell_32/run_0
+/hits/basement/sco/morel/github/phd_experiments/results/launcher/run_all_benoit_512/run_0/launcher_submit.sh

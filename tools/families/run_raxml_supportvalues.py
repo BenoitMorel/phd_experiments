@@ -18,7 +18,7 @@ def run_pargenes(dataset_dir, pargenes_dir, bs_trees, cores):
   command.append("-c")
   command.append(str(cores))
   command.append("-R")
-  command.append("--model GTR")
+  command.append("--model GTR --blopt nr_safe")
   subprocess.check_call(command)
 
 

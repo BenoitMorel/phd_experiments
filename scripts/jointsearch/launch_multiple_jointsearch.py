@@ -76,10 +76,13 @@ def generate_analyse_command(families_dir, pargenes_dir):
   return command
 
 max_args_number = 6
+possibleDatasets = exp.families_datasets_root
 if len(sys.argv) < max_args_number:
   print("Syntax error: python launch_multiple_jointsearch.py dataset strategy starting_tree cluster cores [additional paremeters].")
+  print("Possible datasets:")
+  for d in possibleDatasets:
+    print("  " + d)
   print("Cluster can be either normal, haswell or magny")
-  print("dataset can be plop or simuls_higher_rate")
   print("strategy: SPR, NNI, HYBRID")
   print("starting_tree: raxml, true, treerecs, random")
   #print("scheduler implem: split, onecore, openmp")
@@ -107,7 +110,7 @@ result_msg = "JointSearch git: \n" + exp.get_git_info(exp.joint_search_root)
 exp.write_results_info(resultsdir, result_msg) 
 output_dir = resultsdir 
 
-datadir = os.path.join(exp.datasets_root, "families", dataset)
+datadir = os.path.join(exp.families_datasets_root, dataset)
 families_dir = os.path.join(datadir, "families")
 #families_dir = os.path.join(datadir, "buggy_families")
 
