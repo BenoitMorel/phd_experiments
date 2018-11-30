@@ -46,7 +46,7 @@ def generate_zombi_genome(families, dupRate, lossRate, transferRate, output):
     writer.write("TRANSLOCATION_EXTENSION f:0.3\n")
     writer.write("REPLACEMENT_TRANSFER 1\n")
     writer.write("INITIAL_GENOME_SIZE " + str(families) + "\n")
-    writer.write("MIN_GENOME_SIZE 10\n")
+    writer.write("MIN_GENOME_SIZE 0\n")
     writer.write("GENE_LENGTH f:100\n")
     writer.write("INTERGENE_LENGTH 100\n")
     writer.write("PSEUDOGENIZATION 0.5\n")
@@ -130,6 +130,7 @@ def zombi_to_families(zombi, out):
 
 def generate_zombi(species, families, sites, dupRate, lossRate, transferRate, output):
   dirname = "sim_s" + str(species) + "_f" + str(families)
+  dirname += "_sites" + str(sites)
   dirname += "_d" + str(dupRate) + "_l" + str(lossRate)
   output = os.path.join(output, dirname)
   os.makedirs(output)

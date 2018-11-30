@@ -64,7 +64,11 @@ def extract_treerecs_trees(families_dir):
   for family in os.listdir(families_dir):
     treerecsTree = os.path.join(families_dir, family, "treerecs", "treerecs_output.newick.best")
     if (os.path.isfile(treerecsTree)):
-      shutil.copyfile(treerecsTree, os.path.join(families_dir, family, "treerecsGeneTree.newick"))
+      lines = open(treerecsTree).readlines()
+      with open(os.path.join(families_dir, family, "treerecsGeneTree.newick"), "w") as writer:
+        for line in lines:
+          if (not line.startswith(">")):
+            writer.write(line)
     else:
       print("Warning: no treerecs tree for family " + family)
   
