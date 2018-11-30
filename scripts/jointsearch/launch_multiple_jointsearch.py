@@ -13,6 +13,8 @@ def get_nodes_number(gene_tree_file):
 def get_gene_tree(datadir, tree):
   if (tree == "raxml"):
     return os.path.join(datadir, "raxmlGeneTree.newick")
+  elif (tree == "raxmls"):
+    return os.path.join(datadir, "raxmlGeneTrees.newick")
   elif (tree == "true"):
     return os.path.join(datadir, "trueGeneTree.newick")
   elif (tree == "treerecs"):
@@ -84,7 +86,7 @@ if len(sys.argv) < max_args_number:
     print("  " + d)
   print("Cluster can be either normal, haswell or magny")
   print("strategy: SPR, NNI, HYBRID")
-  print("starting_tree: raxml, true, treerecs, random")
+  print("starting_tree: raxml, raxmls. true, treerecs, random")
   #print("scheduler implem: split, onecore, openmp")
   sys.exit(0)
 

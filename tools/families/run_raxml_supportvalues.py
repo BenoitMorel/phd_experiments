@@ -37,12 +37,12 @@ def export_pargenes_trees(pargenes_dir, dataset_dir):
   # ml trees
   ml_trees_dir = os.path.join(pargenes_dir, "mlsearch_run", "results")
   for family in os.listdir(ml_trees_dir):
-    family = support_tree.split("_")[0] + "_pruned"
     trees_file = os.path.join(ml_trees_dir, family, "sorted_ml_trees.newick")
-    if (not os.isfile(trees_file)):
+    if (not os.path.isfile(trees_file)):
       trees_file = os.path.join(ml_trees_dir, family, family + ".raxml.bestTree")
+    family = family.split("_")[0] + "_pruned"
     new_raxml_tree = os.path.join(families_dir, family, "raxmlGeneTrees.newick")
-    shutil.copyfile(os.path.join(support_trees_dir, support_tree), new_raxml_tree)
+    shutil.copyfile(trees_file, new_raxml_tree)
   # clean
   garbage_dir = os.path.join(dataset_dir, "garbage")
   try:
@@ -56,7 +56,7 @@ def export_pargenes_trees(pargenes_dir, dataset_dir):
 
 def run_pargenes_and_extract_trees(dataset_dir, starting_trees, bs_trees, cores):
   pargenes_dir = os.path.join(dataset_dir, "pargenes")
-  run_pargenes(dataset_dir, pargenes_dir, starting_trees, bs_trees, cores)
+  #run_pargenes(dataset_dir, pargenes_dir, starting_trees, bs_trees, cores)
   export_pargenes_trees(pargenes_dir, dataset_dir)
 
 if __name__ == "__main__":
