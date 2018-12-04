@@ -87,7 +87,7 @@ datadir = datasets[dataset]
 gene_tree = get_gene_tree(datadir, starting_tree)
 species_tree = os.path.join(datadir, "speciesTree.newick")
 alignment = os.path.join(datadir, "alignment.msa")
-mapping = os.path.join(datadir, "phyldog", "phyldogMapping.link")
+mapping = os.path.join(datadir, "mapping.link")
 #smap = os.path.join(datadir, "mapping.txt")
 #if (not os.path.isfile(smap)):
 #  smap = ""

@@ -27,7 +27,13 @@ def generate_zombi_species(species, output):
   command.append("T")
   command.append(species_parameters_file)
   command.append(output)
-  subprocess.check_call(command)
+  print(command)
+  try:
+    subprocess.check_call(command)
+  except:
+    command[0] = "python3.6"
+    subprocess.check_call(command)
+    
 
 def generate_zombi_genome(families, dupRate, lossRate, transferRate, output):
   parameters_dir = os.path.join(output, "parameters")

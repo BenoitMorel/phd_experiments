@@ -104,7 +104,8 @@ if (is_aa):
   command.append("-d")
   command.append("aa")
 for additional in additional_options.split(" "):
-  command.append(additional)
+  if (len(additional) > 0):
+    command.append(additional)
 
 for i in range(max_args_number, len(sys.argv)):
   command.append(sys.argv[i])

@@ -46,7 +46,10 @@ def analyse(dataset_dir, pargenes_dir):
   for msa in os.listdir(dataset_dir):   
     trees = {}
     family_path = os.path.join(dataset_dir, msa)
-    true_tree = Tree(os.path.join(family_path, "trueGeneTree.newick"), format=1) 
+    try:
+      true_tree = Tree(os.path.join(family_path, "trueGeneTree.newick"), format=1) 
+    except:
+      continue
     for method in methods:
       if (method == "JointSearch"):
         prefix = os.path.join(pargenes_dir, "results", msa)
