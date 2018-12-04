@@ -13,8 +13,11 @@ if __name__ == "__main__":
   starting_trees = sys.argv[2]
   bs_trees = sys.argv[3]
   cores = int(sys.argv[4])
+  print("Run pargenes and extract trees...")
   raxml.run_pargenes_and_extract_trees(dataset_dir, starting_trees, bs_trees, cores)
+  print("Run treerecs...")
   treerecs.run_treerecs_on_families(dataset_dir, cores)
+  print("Run phyldog...")
   phyldog.run_phyldog_light_on_families(dataset_dir, cores)
   
   

@@ -24,6 +24,7 @@ def generate_scheduler_commands_file(dataset_dir, cores, output_dir):
       with open(alignment_descriptor, "w") as ali_writer:
         ali_writer.write("GTR\n" + os.path.abspath(os.path.join(family_dir, "alignment.msa")))
       treerecs_output = os.path.join(treerecs_dir, "treerecs_output")
+      mapping_file = os.path.join(family_dir, "treerecs_mapping.link")
       command = []
       command.append(family)
       command.append("1")
@@ -45,6 +46,10 @@ def generate_scheduler_commands_file(dataset_dir, cores, output_dir):
       command.append("-T")
       command.append("7")
       command.append("--select-best-tree")
+      if(os.path.isfile(mapping_file)):
+        command.append("-s")
+        command.append(mapping_file)
+
       writer.write(" ".join(command) + "\n")
   return scheduler_commands_file
      

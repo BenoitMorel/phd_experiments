@@ -56,7 +56,7 @@ def export_pargenes_trees(pargenes_dir, dataset_dir):
 
 def run_pargenes_and_extract_trees(dataset_dir, starting_trees, bs_trees, cores):
   pargenes_dir = os.path.join(dataset_dir, "pargenes")
-  #run_pargenes(dataset_dir, pargenes_dir, starting_trees, bs_trees, cores)
+  run_pargenes(dataset_dir, pargenes_dir, starting_trees, bs_trees, cores)
   export_pargenes_trees(pargenes_dir, dataset_dir)
 
 if __name__ == "__main__":
