@@ -47,7 +47,7 @@ def generate_scheduler_commands_file(dataset_dir, cores, output_dir):
       command.append("7")
       command.append("--select-best-tree")
       if(os.path.isfile(mapping_file)):
-        command.append("-s")
+        command.append("-S")
         command.append(mapping_file)
 
       writer.write(" ".join(command) + "\n")

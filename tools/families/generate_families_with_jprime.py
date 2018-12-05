@@ -55,6 +55,8 @@ def generate_seqgen_sequence(families, sites, output):
     seqgene_tree = os.path.join(output, str(i) + "_gene.seqgen.tree")
     sequence_file = os.path.join(output, str(i) + ".fasta")
     shutil.copyfile(jprime_tree, seqgene_tree)
+    subprocess.check_call(["sed", "-i", "s/\[[^][]*\]//g", jprime_tree])
+    subprocess.check_call(["sed", "-i", "s/)[^:]*:/):/g", jprime_tree])
     subprocess.check_call(["sed", "-i", "s/\[[^][]*\]//g", seqgene_tree])
     subprocess.check_call(["sed", "-i", "s/)[^:]*:/):/g", seqgene_tree])
     command = []
