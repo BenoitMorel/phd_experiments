@@ -23,7 +23,7 @@ def generate_jprime_species(species, output):
   command.append("0")
   command.append(os.path.join(output, "species"))
   subprocess.check_call(command)
-    
+  print(open(os.path.join(output, "species.pruned.tree")).read()) 
 
 def generate_jprime_genome(families, dupRate, lossRate, transferRate, output):
   for i in range(0, families):
@@ -129,6 +129,7 @@ def generate_jprime(species, families, sites, dupRate, lossRate, transferRate, o
   dirname += "_sites" + str(sites)
   dirname += "_d" + str(dupRate) + "_l" + str(lossRate)
   output = os.path.join(output, dirname)
+  print("Writing output in " + output)
   os.makedirs(output)
   with open(os.path.join(output, "jprime_script_params.txt"), "w") as writer:
     writer.write(str(species) + " " + str(families) + " ")
