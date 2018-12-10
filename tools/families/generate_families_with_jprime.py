@@ -9,7 +9,7 @@ import link_file_from_gene_tree as phyldog_link
 
 
 
-def generate_jprime_species(species, output):
+def generate_jprime_species(species, output, seed):
   print("species tree...")
   species_parameters_file = os.path.join(output, "SpeciesTreeParameters.tsv")
   command = []
@@ -19,13 +19,15 @@ def generate_jprime_species(species, output):
   command.append("HostTreeGen")
   command.append("-nox")
   command.append(str(species))
+  command.append("-s")
+  command.append(str(seed))
   command.append("1")
   command.append("0")
   command.append(os.path.join(output, "species"))
   subprocess.check_call(command)
   print(open(os.path.join(output, "species.pruned.tree")).read()) 
 
-def generate_jprime_genome(families, dupRate, lossRate, transferRate, output):
+def generate_jprime_genome(families, dupRate, lossRate, transferRate, output, seed):
   for i in range(0, families):
     print("gene " + str(i) + "/" + str(families))
     command = []
@@ -35,9 +37,9 @@ def generate_jprime_genome(families, dupRate, lossRate, transferRate, output):
     command.append("GuestTreeGen")
     #command.append("-nox")
     command.append("-max")
-    command.append("500")
+    command.append("5000000")
     command.append("-s")
-    command.append(str(i))
+    command.append(str(i + seed))
     command.append(os.path.join(output, "species.pruned.tree"))
     command.append(str(dupRate))
     command.append(str(lossRate))
@@ -47,7 +49,7 @@ def generate_jprime_genome(families, dupRate, lossRate, transferRate, output):
     
 
   
-def generate_seqgen_sequence(families, sites, output):
+def generate_seqgen_sequence(families, sites, output, seed):
   for i in range(0, families):
     print("sequence " + str(i) + "/" + str(families))
 
@@ -67,6 +69,8 @@ def generate_seqgen_sequence(families, sites, output):
     command.append("GTR")
     command.append("-of")
     command.append(seqgene_tree)
+    command.append("-z")
+    command.append(str(int(i) + int(seed)))
     with open(sequence_file, "w") as writer:
       subprocess.check_call(command, stdout=writer)
 
@@ -121,13 +125,12 @@ def gprime_to_families(gprime, out):
     phyldog_mapping = os.path.join(new_family_dir, "mapping.link")
     treerecs_mapping = os.path.join(new_family_dir, "treerecs_mapping.link")
     build_mapping_file(gprime_mapping, phyldog_mapping, treerecs_mapping)
-    #phyldog_link.generate_link_file(genetree, os.path.join(new_family_dir, "mapping.link"), "_")
 
 
-def generate_jprime(species, families, sites, dupRate, lossRate, transferRate, output):
+def generate_jprime(species, families, sites, dupRate, lossRate, transferRate, output, seed):
   dirname = "jsim_s" + str(species) + "_f" + str(families)
   dirname += "_sites" + str(sites)
-  dirname += "_d" + str(dupRate) + "_l" + str(lossRate)
+  dirname += "_d" + str(dupRate) + "_l" + str(lossRate) + "_seed" + str(seed)
   output = os.path.join(output, dirname)
   print("Writing output in " + output)
   os.makedirs(output)
@@ -135,16 +138,17 @@ def generate_jprime(species, families, sites, dupRate, lossRate, transferRate, o
     writer.write(str(species) + " " + str(families) + " ")
     writer.write(str(sites) + " " + str(dupRate) + " ")
     writer.write(str(lossRate) + " " + str(transferRate) + " " + output)
+    writer.write(" " + str(seed))
   jprime_output = os.path.join(output, "jprime")
   os.makedirs(jprime_output)
-  generate_jprime_species(species, jprime_output) 
-  generate_jprime_genome(families, dupRate, lossRate, transferRate, jprime_output)
-  generate_seqgen_sequence(families, sites, jprime_output)
+  generate_jprime_species(species, jprime_output, seed) 
+  generate_jprime_genome(families, dupRate, lossRate, transferRate, jprime_output, seed)
+  generate_seqgen_sequence(families, sites, jprime_output, seed)
   print("jprime output: " + jprime_output)
   gprime_to_families(jprime_output, output)
 
-if (len(sys.argv) != 8):
-  print("Syntax: python generate_jprime.py species_time_interval families sites dupRate lossRate transferRate output")
+if (len(sys.argv) != 9):
+  print("Syntax: python generate_jprime.py species_time_interval families sites dupRate lossRate transferRate output seed")
   sys.exit(1)
 
 species = int(sys.argv[1])
@@ -154,5 +158,7 @@ dupRate = float(sys.argv[4])
 lossRate = float(sys.argv[5])
 transferRate = float(sys.argv[6])
 output = sys.argv[7]
+seed = int(sys.argv[8])
 
-generate_jprime(species, families, sites, dupRate, lossRate, transferRate, output)
+
+generate_jprime(species, families, sites, dupRate, lossRate, transferRate, output, seed)
