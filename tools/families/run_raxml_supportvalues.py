@@ -33,6 +33,8 @@ def export_pargenes_trees(pargenes_dir, dataset_dir):
       continue
     family = support_tree.split("_")[0] + "_pruned"
     new_raxml_tree = os.path.join(families_dir, family, "raxmlGeneTree.newick")
+    print(os.path.join(support_trees_dir, support_tree))
+    print(new_raxml_tree)
     shutil.copyfile(os.path.join(support_trees_dir, support_tree), new_raxml_tree)
   # ml trees
   ml_trees_dir = os.path.join(pargenes_dir, "mlsearch_run", "results")

@@ -1,0 +1,105 @@
+********************************************
+** alesim_s20_f50_sites250_d1.0_l0.5 **
+********************************************
+
+Average (over the gene families) relative RF distance to the true trees:
+- Raxml-ng: 0.139209604236
+- Treerecs: 0.0386519664884
+- JointSearch:  0.0194101582912
+- Treerecs+JS: 0.0203118537027
+Normalized average (over the gene families) RF distance to the true trees:
+- Raxml-ng: 0.175863847344
+- Treerecs: 0.0809695719443
+- JointSearch:  0.0268179473956
+- Treerecs+JS: 0.0319752449716
+
+********************************************
+** alesim_s20_f50_sites119_d0.6_l0.3  **
+********************************************
+
+Average (over the gene families) relative RF distance to the true trees:
+- Raxml-ng: 0.234943485364
+- Treerecs: 0.0225617579993
+- JointSearch:  0.0332718139272
+- Treerecs+JS: 0.0136357802697
+
+Normalized average (over the gene families) RF distance to the true trees:
+- Raxml-ng: 0.297606659729
+- Treerecs: 0.0520291363163
+- JointSearch:  0.0520291363163
+- Treerecs+JS: 0.0291363163371
+
+********************************************
+** jsim_s27_f100_sites200_d0.2_l0.1_seed6 **
+********************************************
+
+Average (over the gene families) relative RF distance to the true trees:
+- Raxml-ng: 0.368214279245
+- Treerecs: 0.0207533013542
+- JointSearch:  0.0538194471986
+- JS rooted:    0.0594240278032
+- JS dated:     0.0873794935662
+
+Normalized average (over the gene families) RF distance to the true trees:
+- Raxml-ng: 0.356123215627
+- Treerecs: 0.0277986476334
+- JointSearch:  0.0616078136739
+- JS rooted:    0.0691209616829
+- JS dated:     0.0931630353118
+
+
+
+************************
+** simuls_higher_rate **
+************************
+
+Average (over the gene families) relative RF distance to the true trees:
+- Raxml-ng: 0.166628469272
+- Treerecs: 0.117405077214
+- Phyldog:  0.0913035072177
+- JointSearch:  0.0780919565351
+
+Normalized average (over the gene families) RF distance to the true trees:
+- Raxml-ng: 0.140542559649
+- Treerecs: 0.113181117804
+- Phyldog:  0.0748003922118
+- JointSearch:  0.0644814866695
+
+
+********************************************
+**     zsim_s15_f50_d2.0_l1.0             **
+********************************************
+
+Average (over the gene families) relative RF distance to the true trees:
+- Raxml-ng: 0.209817059332
+- Treerecs: 0.0352698959901
+- JointSearch:  0.0556175721361
+- JS dated:     0.0731864784073     
+
+Normalized average (over the gene families) RF distance to the true trees:
+- Raxml-ng: 0.208181154127
+- Treerecs: 0.0401753104456
+- JointSearch:  0.0628195763331
+- JS dated:     0.0810810810811     
+
+
+********************************************
+** jsim_s27_f100_sites200_d2.0_l1.0_seed6 **
+********************************************
+
+
+Average (over the gene families) relative RF distance to the true trees:
+- Raxml-ng: 0.265899818637
+- Treerecs: 0.170442254841
+- JointSearch:  0.152247923572
+- JS dated:     0.162381541146
+
+Normalized average (over the gene families) RF distance to the true trees:
+- Raxml-ng: 0.241028128031
+- Treerecs: 0.143549951503
+- JointSearch:  0.125121241513
+- JS dated:     0.142095053346
+
+
+
+
