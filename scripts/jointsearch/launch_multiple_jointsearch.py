@@ -98,6 +98,8 @@ parallelization = "split" #sys.argv[4]
 cluster = sys.argv[4]
 cores = int(sys.argv[5])
 nodes_per_core = 20
+if (strategy == "SPR"):
+  nodes_per_core = 2
 
 if (not (strategy in ["SPR", "NNI", "HYBRID"])):
   print("Unknown search strategy " + strategy)
