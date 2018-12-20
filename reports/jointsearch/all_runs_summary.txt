@@ -2,22 +2,25 @@
 ** alesim_s20_f50_sites250_d1.0_l0.5 **
 ********************************************
 
+54s
+
 Average (over the gene families) relative RF distance to the true trees:
 - Raxml-ng: 0.139209604236
 - Treerecs: 0.0386519664884
-- JointSearchSPR:  0.0160274381547
+- JointSearchSPR:  0.0177664130436
 - JointSearchNNI:  0.0194101582912
 - Treerecs+JS: 0.0203118537027
 Normalized average (over the gene families) RF distance to the true trees:
 - Raxml-ng: 0.175863847344
 - Treerecs: 0.0809695719443
-- JointSearchSPR:  0.0247550283651
+- JointSearchSPR:  0.026302217638
 - JointSearchNNI:  0.0268179473956
 - Treerecs+JS: 0.0319752449716
 
 ********************************************
 ** alesim_s20_f50_sites119_d0.6_l0.3  **
 ********************************************
+21s 40 cores
 
 Average (over the gene families) relative RF distance to the true trees:
 - Raxml-ng: 0.234943485364
