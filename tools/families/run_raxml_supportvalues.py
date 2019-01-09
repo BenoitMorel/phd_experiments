@@ -31,7 +31,7 @@ def export_pargenes_trees(pargenes_dir, dataset_dir):
   for support_tree in os.listdir(support_trees_dir):
     if (not support_tree.endswith("support")):
       continue
-    family = support_tree.split("_")[0] + "_pruned"
+    family = "_".join(support_tree.split("_")[:-1]) # remove everything after the last _
     new_raxml_tree = os.path.join(families_dir, family, "raxmlGeneTree.newick")
     print(os.path.join(support_trees_dir, support_tree))
     print(new_raxml_tree)
@@ -42,7 +42,7 @@ def export_pargenes_trees(pargenes_dir, dataset_dir):
     trees_file = os.path.join(ml_trees_dir, family, "sorted_ml_trees.newick")
     if (not os.path.isfile(trees_file)):
       trees_file = os.path.join(ml_trees_dir, family, family + ".raxml.bestTree")
-    family = family.split("_")[0] + "_pruned"
+    family = "_".join(family.split("_")[:-1]) # remove everything after the last _
     new_raxml_tree = os.path.join(families_dir, family, "raxmlGeneTrees.newick")
     shutil.copyfile(trees_file, new_raxml_tree)
   # clean
