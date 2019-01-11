@@ -1,3 +1,21 @@
+
+***************************************************
+** alesim_s20_f50_sites400_d1.0_l0.5_t0.5_seed42 **
+***************************************************
+180s normal
+87s rooted
+
+Average (over the gene families) relative RF distance to the true trees:
+- Raxml-ng: 0.117118958913
+- Treerecs: 0.0671814469336
+- JointSearch:  0.0588762983438
+
+Normalized average (over the gene families) RF distance to the true trees:
+- Raxml-ng: 0.152474638795
+- Treerecs: 0.121426375653
+- JointSearch:  0.0765447279434
+
+
 ********************************************
 ** alesim_s20_f50_sites250_d1.0_l0.5 **
 ********************************************

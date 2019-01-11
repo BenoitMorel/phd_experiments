@@ -55,7 +55,7 @@ def generate_seqgen_sequence(families, sites, output, seed):
     
     seqgen_gene_tree = os.path.join(genseq_genes_dir, "gene_" + str(i) + ".newick")
     shutil.copyfile(gene_tree, seqgen_gene_tree)
-    subprocess.check_call(["sed", "-i", "s/[SDL]//g", seqgen_gene_tree])
+    subprocess.check_call(["sed", "-i", "s/[SDLT]//g", seqgen_gene_tree])
     sequence_file = os.path.join(seq_dir, "gene_" + str(i) + ".fasta")
     command = []
     command.append(exp.seq_gen_exec)
@@ -118,7 +118,7 @@ def ale_to_families(ale_dir, out):
     # alignment
     alignment = os.path.join(old_ali_dir, family + ".fasta")
     shutil.copyfile(alignment, os.path.join(new_family_dir, "alignment.msa"))
-    shutil.copyfile(alignment, os.path.join(new_ali_dir, new_family + "fasta"))
+    shutil.copyfile(alignment, os.path.join(new_ali_dir, new_family + ".fasta"))
     alignments_writer.write(os.path.abspath(os.path.join(new_ali_dir, new_family + ".fasta")) + "\n")
     # link file
     phyldog_mapping = os.path.join(new_family_dir, "mapping.link")
@@ -129,7 +129,7 @@ def ale_to_families(ale_dir, out):
 def generate_ale(species, families, sites, dupRate, lossRate, transferRate, output, seed):
   dirname = "alesim_s" + str(species) + "_f" + str(families)
   dirname += "_sites" + str(sites)
-  dirname += "_d" + str(dupRate) + "_l" + str(lossRate) + "_seed" + str(seed)
+  dirname += "_d" + str(dupRate) + "_l" + str(lossRate) + "_t" + str(transferRate) + "_seed" + str(seed)
   output = os.path.join(output, dirname)
   print("Writing output in " + output)
   os.makedirs(output)

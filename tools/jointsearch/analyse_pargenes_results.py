@@ -59,15 +59,18 @@ def analyse(dataset_dir, pargenes_dir):
         trees[method] = read_tree(os.path.join(prefix, methods_tree_files[method]))
         methods_trees_number[method] += 1
       except:
-        trees[method] = None
+        try:
+          trees[method] = read_tree(os.path.join(prefix, methods_tree_files["Raxml-ng"]))
+        except:
+          trees[method] = None
     
-    newmethods = []
-    for m in methods:
-      if (methods_trees_number[m] == 0):
-        print("Remove method " + m  + " from analysis")
-      else:
-        newmethods.append(m)
-    methods = newmethods
+    #newmethods = []
+    #for m in methods:
+    #  if (methods_trees_number[m] == 0):
+    #    print("Remove method " + m  + " from analysis")
+    #  else:
+    #    newmethods.append(m)
+    #methods = newmethods
     best_rrf = 1
     rrf = {}
     rf = {}
@@ -112,6 +115,11 @@ def analyse(dataset_dir, pargenes_dir):
   print("Number of gene families for which a method finds the true tree:")
   for method in methods:
     print("- " + method + ":\t" + str(true_matches[method]) + "/" + str(analysed_msas))
+  print("")
+
+  print("Analysed trees:")
+  for method in methods:
+    print("- " + method + ":\t" + str(methods_trees_number[method]))
 
 if __name__ == '__main__':
   if (len(sys.argv) != 3):
