@@ -19,8 +19,9 @@ def run_pargenes(dataset_dir, pargenes_dir, starting_trees, bs_trees, cores):
   command.append(str(cores))
   command.append("-s")
   command.append(str(starting_trees))
-  command.append("-R")
-  command.append("--model GTR --blopt nr_safe")
+  command.append("-r")
+  command.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), "raxml_command.txt"))
+  command.append("--continue")
   subprocess.check_call(command)
 
 

@@ -25,4 +25,4 @@ command = "output_dir=" + output_dir + "\n"
 command += "cores=" + str(cores) + "\n"
 command += "".join(open(command_file).readlines())
 
-experiments.submit_haswell(submit_file, command, cores, cluster)
+experiments.submit(submit_file, command, cores, cluster)

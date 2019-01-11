@@ -123,8 +123,10 @@ def submit_haswell(submit_file_path, command, threads, debug):
     f.write("#SBATCH --cpus-per-task=1\n")
     f.write("#SBATCH --hint=compute_bound\n")
     if (debug):
+      print("debug on")
       f.write("#SBATCH -t 2:00:00\n")
     else:
+      print("debug of")
       f.write("#SBATCH -t 24:00:00\n")
 
     f.write("\n")
@@ -173,6 +175,7 @@ def submit(submit_file_path, command, threads, cluster):
   elif (cluster == "normald"):
     submit_normal(submit_file_path, command, True)
   elif (cluster == "haswell"):
+    print("no debug mode")
     submit_haswell(submit_file_path, command, threads, False)
   elif (cluster == "haswelld"):
     print("debug mode")
