@@ -50,6 +50,7 @@ def analyse(dataset_dir, pargenes_dir):
       true_tree = Tree(os.path.join(family_path, "trueGeneTree.newick"), format=1) 
     except:
       continue
+    ok = True
     for method in methods:
       if (method == "JointSearch"):
         prefix = os.path.join(pargenes_dir, "results", msa)
@@ -60,10 +61,12 @@ def analyse(dataset_dir, pargenes_dir):
         methods_trees_number[method] += 1
       except:
         try:
-          trees[method] = read_tree(os.path.join(prefix, methods_tree_files["Raxml-ng"]))
+          #trees[method] = read_tree(os.path.join(prefix, methods_tree_files["Raxml-ng"]))
+          trees[method] = Tree(os.path.join(family_path, "trueGeneTree.newick"), format=1)
         except:
           trees[method] = None
-    
+    if (not ok):
+      continue
     #newmethods = []
     #for m in methods:
     #  if (methods_trees_number[m] == 0):
