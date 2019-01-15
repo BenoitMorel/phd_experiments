@@ -107,7 +107,6 @@ def gprime_to_families(gprime, out):
       continue
     family_number = genetree_base.split("_")[0]
     family =  family_number + "_pruned"
-    print(family)
     new_family_dir = os.path.join(new_families_dir, family)
     os.makedirs(new_family_dir)
     # species tree
@@ -116,10 +115,11 @@ def gprime_to_families(gprime, out):
     shutil.copyfile(genetree, os.path.join(new_family_dir, "trueGeneTree.newick"))
     # alignment
     alignment_base = family_number + ".fasta" 
+    new_alignment_base = family + ".fasta"
     alignment = os.path.join(gprime, alignment_base)
     shutil.copyfile(alignment, os.path.join(new_family_dir, "alignment.msa"))
-    shutil.copyfile(alignment, os.path.join(new_ali_dir, alignment_base))
-    alignments_writer.write(os.path.abspath(os.path.join(new_ali_dir, alignment_base)) + "\n")
+    shutil.copyfile(alignment, os.path.join(new_ali_dir, new_alignment_base))
+    alignments_writer.write(os.path.abspath(os.path.join(new_ali_dir, new_alignment_base)) + "\n")
     # link file
     gprime_mapping = os.path.join(gprime, genetree_base[:-4] + "leafmap")
     phyldog_mapping = os.path.join(new_family_dir, "mapping.link")
@@ -130,7 +130,10 @@ def gprime_to_families(gprime, out):
 def generate_jprime(species, families, sites, dupRate, lossRate, transferRate, output, seed):
   dirname = "jsim_s" + str(species) + "_f" + str(families)
   dirname += "_sites" + str(sites)
-  dirname += "_d" + str(dupRate) + "_l" + str(lossRate) + "_seed" + str(seed)
+  dirname += "_d" + str(dupRate) + "_l" + str(lossRate) 
+  if (transferRate != 0.0):
+    dirname += "_t" + str(transferRate)  
+  dirname += "_seed" + str(seed)
   output = os.path.join(output, dirname)
   print("Writing output in " + output)
   os.makedirs(output)

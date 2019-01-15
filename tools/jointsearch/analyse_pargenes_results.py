@@ -32,6 +32,12 @@ def analyse(dataset_dir, pargenes_dir):
   methods_tree_files["Phyldog"] = "phyldogGeneTree.newick"
   methods_tree_files["JointSearch"] = "jointsearch.newick"
   methods_trees_number = {}
+  js_dup = []
+  js_loss = []
+  js_trans = []
+  js_ll = []
+  js_llrec = []
+  js_lllibpll = []
   for m in methods:
     methods_trees_number[m] = 0
   total_rrf = {}
@@ -50,10 +56,10 @@ def analyse(dataset_dir, pargenes_dir):
       true_tree = Tree(os.path.join(family_path, "trueGeneTree.newick"), format=1) 
     except:
       continue
-    ok = True
+    jointsearch_prefix = os.path.join(pargenes_dir, "results", msa)
     for method in methods:
       if (method == "JointSearch"):
-        prefix = os.path.join(pargenes_dir, "results", msa)
+        prefix = jointsearch_prefix
       else:
         prefix = family_path
       try:
@@ -61,19 +67,9 @@ def analyse(dataset_dir, pargenes_dir):
         methods_trees_number[method] += 1
       except:
         try:
-          #trees[method] = read_tree(os.path.join(prefix, methods_tree_files["Raxml-ng"]))
           trees[method] = Tree(os.path.join(family_path, "trueGeneTree.newick"), format=1)
         except:
           trees[method] = None
-    if (not ok):
-      continue
-    #newmethods = []
-    #for m in methods:
-    #  if (methods_trees_number[m] == 0):
-    #    print("Remove method " + m  + " from analysis")
-    #  else:
-    #    newmethods.append(m)
-    #methods = newmethods
     best_rrf = 1
     rrf = {}
     rf = {}
@@ -94,12 +90,30 @@ def analyse(dataset_dir, pargenes_dir):
     for method in methods:
       if (best_rrf == rrf[method]):
         best_tree[method] += 1
-
+    stats_file = os.path.join(jointsearch_prefix, "jointsearch.stats")
+    with open(stats_file) as stats_reader:
+      lines = stats_reader.readlines()
+      js_ll.append(float(lines[0].split(" ")[1][:-1]))
+      js_llrec.append(float(lines[1].split(" ")[1][:-1]))
+      js_lllibpll.append(float(lines[2].split(" ")[1][:-1]))
+      js_dup.append(float(lines[3].split(" ")[1][:-1]))
+      js_loss.append(float(lines[4].split(" ")[1][:-1]))
+      js_trans.append(float(lines[5].split(" ")[1][:-1]))
   if (analysed_msas == 0):
     print("did not manage to analyse any MSA")
     exit(1)
   print("Number of gene families: " + str(analysed_msas))
   print("")
+
+  print("Total joint likelihood: " + str(sum(js_ll)))
+  print("Total libpll  likelihood: " + str(sum(js_lllibpll)))
+  print("Total reconciliation likelihood: " + str(sum(js_llrec)))
+  print("")
+  print("Average D=" + str(sum(js_dup)/float(len(js_dup))))
+  print("Average L=" + str(sum(js_loss)/float(len(js_loss))))
+  print("Average T=" + str(sum(js_trans)/float(len(js_trans))))
+  print("")
+
   print("Average (over the gene families) relative RF distance to the true trees:")
   for method in methods:
     print("- " + method + ":\t" + str(total_rrf[method] / float(analysed_msas)))
