@@ -1,6 +1,7 @@
 import sys
 import os
 from ete3 import Tree
+import numpy
 
 def read_tree(tree):
   lines = open(tree).readlines()
@@ -102,6 +103,16 @@ def analyse(dataset_dir, pargenes_dir):
   if (analysed_msas == 0):
     print("did not manage to analyse any MSA")
     exit(1)
+  
+  print("Rates arrays")
+  print("D:")
+  print(js_dup)
+  print("L:")
+  print(js_loss)
+  print("T:")
+  print(js_trans)
+  print("")
+
   print("Number of gene families: " + str(analysed_msas))
   print("")
 
@@ -109,9 +120,13 @@ def analyse(dataset_dir, pargenes_dir):
   print("Total libpll  likelihood: " + str(sum(js_lllibpll)))
   print("Total reconciliation likelihood: " + str(sum(js_llrec)))
   print("")
-  print("Average D=" + str(sum(js_dup)/float(len(js_dup))))
-  print("Average L=" + str(sum(js_loss)/float(len(js_loss))))
-  print("Average T=" + str(sum(js_trans)/float(len(js_trans))))
+  print("Average D=" + str(numpy.mean(js_dup)))
+  print("Average L=" + str(numpy.mean(js_loss)))
+  print("Average T=" + str(numpy.mean(js_trans)))
+  print("")
+  print("Standard deviation D=" + str(numpy.std(js_dup)))
+  print("Standard deviation L=" + str(numpy.std(js_loss)))
+  print("Standard deviation T=" + str(numpy.std(js_trans)))
   print("")
 
   print("Average (over the gene families) relative RF distance to the true trees:")
