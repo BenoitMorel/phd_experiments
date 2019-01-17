@@ -1,79 +1,65 @@
 WITH TRANSFERS
 
-ancestral1: ancestral correction for uq
-ancestral2: also for uE
-ancstral3: offspring correction
-ancestral4: fix the TL events, no offspring correction
 
 ***************************************************
 ** alesim_s20_f50_sites400_d1.0_l0.5_t0.5_seed42 **
 ***************************************************
-87s rooted
-350s  DTL
+114s  DTL
 
 Average (over the gene families) relative RF distance to the true trees:
 - Raxml-ng:         0.117118958913
 - Treerecs:         0.0671814469336
 - Phyldog:          0.0610487282086
 - JointSearch DL :  0.0588762983438
-- JointSearch DTL:  0.0539301177977
-- JS ancestral  :  0.0496742586767
+- JointSearch DTL:  0.0495096697987
 
 Normalized average (over the gene families) RF distance to the true trees:
 - Raxml-ng:         0.152474638795
 - Treerecs:         0.121426375653
 - Phyldog:          0.094374423609
 - JointSearch DL:   0.0765447279434
-- JointSearch DTL:  0.065478020289
-- JS ancestral  :  0.0633261604673
-- 
+- JointSearch DTL:  0.0617891177375
+
 
 ********************************************
 ** zsim_s15_f50_sites200_d2.0_l1.0_t1.0   **
 ********************************************
 
-DTL rooted: 105s
-DTL ancestral: 138s
+DTL: 13s
 
 Average (over the gene families) relative RF distance to the true trees:
 - Raxml-ng:         0.104731364491
 - Treerecs:         0.128824976323
 - JointSearch DL:   0.117928372558
-- JointSearch DTL:  0.0738816331022
-- JS ancestral   :  0.0786841290279
+- JointSearch DTL:  0.0776730066821
+- JS co-rates    :  0.0727157232061
 
 Normalized average (over the gene families) RF distance to the true trees:
 - Raxml-ng:         0.105433901054
 - Treerecs:         0.137064071371
 - JointSearch DL:   0.122465531225
 - JointSearch DTL:  0.0762368207624
-- JS ancestral   :  0.0770478507705
+- JS co-rates:      0.0754257907543
 
 ************************************************
 ** jsim_s8_f100_sites300_d2.0_l1.0_t0.5_seed6 **
 ************************************************i
 
-DTL: 221s
+DTL: 32s
 
 Average (over the gene families) relative RF distance to the true trees:
 - Raxml-ng: 0.176004375807
 - Treerecs: 0.173454457129
 - Phyldog:  0.0
 - JointSearch DL:  0.174584997488
-- JointSearch DTL: 0.141001991747
-- JS ancestral   : 0.133688385293
+- JointSearch DTL: 0.133688385293
 
 Normalized average (over the gene0.137020968908 families) RF distance to the true trees:
 - Raxml-ng: 0.173897324657
 - Treerecs: 0.179320318149
 - Phyldog:  0.0
 - JointSearch DL:  0.180043383948
-- JointSearch DTL: 0.140997830803  
-- JS ancestral  :  0.134128705712  
-
-
-
-
+- JointSearch DTL: 0.134128705712
 
 
 
@@ -89,7 +75,7 @@ WITHOUT TRANSFERS
 ** alesim_s20_f50_sites250_d1.0_l0.5 **
 ********************************************
 
-54s
+24s
 
 Average (over the gene families) relative RF distance to the true trees:
 - Raxml-ng:        0.139209604236

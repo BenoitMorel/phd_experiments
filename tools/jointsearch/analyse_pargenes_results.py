@@ -36,6 +36,9 @@ def analyse(dataset_dir, pargenes_dir):
   js_dup = []
   js_loss = []
   js_trans = []
+  js_initialll = []
+  js_initialllrec = []
+  js_initiallllibpll = []
   js_ll = []
   js_llrec = []
   js_lllibpll = []
@@ -94,12 +97,15 @@ def analyse(dataset_dir, pargenes_dir):
     stats_file = os.path.join(jointsearch_prefix, "jointsearch.stats")
     with open(stats_file) as stats_reader:
       lines = stats_reader.readlines()
-      js_ll.append(float(lines[0].split(" ")[1][:-1]))
-      js_llrec.append(float(lines[1].split(" ")[1][:-1]))
-      js_lllibpll.append(float(lines[2].split(" ")[1][:-1]))
-      js_dup.append(float(lines[3].split(" ")[1][:-1]))
-      js_loss.append(float(lines[4].split(" ")[1][:-1]))
-      js_trans.append(float(lines[5].split(" ")[1][:-1]))
+      js_initialll.append(float(lines[0].split(" ")[1][:-1]))
+      js_initialllrec.append(float(lines[1].split(" ")[1][:-1]))
+      js_initiallllibpll.append(float(lines[2].split(" ")[1][:-1]))
+      js_ll.append(float(lines[3].split(" ")[1][:-1]))
+      js_llrec.append(float(lines[4].split(" ")[1][:-1]))
+      js_lllibpll.append(float(lines[5].split(" ")[1][:-1]))
+      js_dup.append(float(lines[6].split(" ")[1][:-1]))
+      js_loss.append(float(lines[7].split(" ")[1][:-1]))
+      js_trans.append(float(lines[8].split(" ")[1][:-1]))
   if (analysed_msas == 0):
     print("did not manage to analyse any MSA")
     exit(1)
@@ -116,6 +122,10 @@ def analyse(dataset_dir, pargenes_dir):
   print("Number of gene families: " + str(analysed_msas))
   print("")
 
+  print("Total initial joint likelihood: " + str(sum(js_initialll)))
+  print("Total initial libpll  likelihood: " + str(sum(js_initiallllibpll)))
+  print("Total initial reconciliation likelihood: " + str(sum(js_initialllrec)))
+  print("")
   print("Total joint likelihood: " + str(sum(js_ll)))
   print("Total libpll  likelihood: " + str(sum(js_lllibpll)))
   print("Total reconciliation likelihood: " + str(sum(js_llrec)))
