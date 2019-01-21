@@ -81,16 +81,17 @@ Average (over the gene families) relative RF distance to the true trees:
 - Raxml-ng:        0.139209604236
 - Treerecs:        0.0386519664884
 - Phyldog:         0.0244567815894
-- JointSearch DL:  0.0177664130436
-- JointSearch DTL: 0.0412982146483 
-- JS ancestral3:   0.0395061745664
+- JointSearch DL:  0.017849850674
+- Dated:           0.017002384385
+- JointSearch DTL: 0.0383163478446 
+
 Normalized average (over the gene families) RF distance to the true trees:
 - Raxml-ng:        0.175863847344
 - Treerecs:        0.0809695719443
 - Phyldog:         0.0412583806086
-- JointSearch DL:  0.026302217638
-- JointSearch DTL: 0.0680763280041
-- JS ancestral3:   0.0634347601857
+- JointSearch DL:  0.0268179473956
+- Dated:           0.026302217638
+- JointSearch DTL: 0.0618875709128
 
 ********************************************
 ** alesim_s20_f50_sites119_d0.6_l0.3  **
@@ -102,6 +103,7 @@ Average (over the gene families) relative RF distance to the true trees:
 - Treerecs: 0.0225617579993
 - Phyldog:  0.0404344389291
 - JointSearch:  0.0152993712027
+- JointSearch Dated:0.0155246960657 
 - JointSearch DTL: 0.0372496027022
 
 Normalized average (over the gene families) RF distance to the true trees:
@@ -109,6 +111,7 @@ Normalized average (over the gene families) RF distance to the true trees:
 - Treerecs:       0.0520291363163
 - Phyldog:        0.0728407908429
 - JointSearch:    0.0239334027055
+- JointSearch Dated: 0.0249739854318
 - JointSearchDTL :0.0811654526535
 
 ********************************************
@@ -119,11 +122,13 @@ Average (over the gene families) relative RF distance to the true trees:
 - Raxml-ng: 0.368214279245
 - Treerecs: 0.0207533013542
 - JointSearch: 0.0156534088274
+- JS Dated: 0.023420524454
 
 Normalized average (over the gene families) RF distance to the true trees:
 - Raxml-ng: 0.356123215627
 - Treerecs: 0.0277986476334
 - JointSearch: 0.0210368144252
+- JS Dated: 0.0330578512397
 
 ********************************************
 ** jsim_s27_f100_sites200_d2.0_l1.0_seed6 **
@@ -171,10 +176,11 @@ Average (over the gene families) relative RF distance to the true trees:
 - Raxml-ng: 0.209817059332
 - Treerecs: 0.0352698959901
 - JointSearch: 0.0210906777855
+- Dated:       0.0240587219472
 
 Normalized average (over the gene families) RF distance to the true trees:
 - Raxml-ng: 0.208181154127
 - Treerecs: 0.0401753104456
 - JointSearch: 0.0306793279766
-
+- Dated:       0.0321402483565
 
