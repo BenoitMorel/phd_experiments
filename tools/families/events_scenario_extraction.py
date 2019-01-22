@@ -11,6 +11,18 @@ def read_tree(tree_filename):
   return None
 
 
+def extract_events_from_treerecs(dataset_dir):
+  families_dir = os.path.join(dataset_dir, "families")
+  for family in os.listdir(families_dir):
+    treerecs_newick = os.path.join(families_dir, family, "treerecs", "treerecs_output.newick.best")
+    writer = open(os.path.join(families_dir, family, "treerecsEvents.txt"), "w")
+    line = open(treerecs_newick).readlines()[0]
+    temp = line.split(",")[1]
+    duplications = temp.split("=")[1][1:]
+    writer.write("S:0\n")
+    writer.write("D:" + str(duplications) + "\n")
+    writer.write("T:0\n")
+
 def extract_events_from_ale(dataset_dir):
   trees_dir = os.path.join(dataset_dir, "ale", "gene_trees")
   families_dir = os.path.join(dataset_dir, "families")
@@ -79,6 +91,8 @@ if (__name__ == "__main__"):
     extract_events_from_ale(dataset_dir)
   elif( simulation_type == "jprime"):
     extract_events_from_jprime(dataset_dir)
+  elif( simulation_type == "treerecs"):
+    extract_events_from_treerecs(dataset_dir)
   elif(simulation_type == "zombi"):
     pass
   else:

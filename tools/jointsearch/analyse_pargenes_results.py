@@ -22,8 +22,35 @@ def get_nodes(tree1):
   return rf[1]
 
 
+def analyse_events(dataset_dir, jointsearch_scheduler_dir):
+  event_types = ["S", "D", "T"]
+  trueEvents = {}
+  jsEvents = {}
+  for event_type in event_types:
+    trueEvents[event_type] = [] 
+    jsEvents[event_type] = []
 
-def analyse(dataset_dir, pargenes_dir):
+  for msa in os.listdir(dataset_dir):   
+    true_events_lines = open(os.path.join(dataset_dir, msa, "trueEvents.txt")).readlines()
+    trueEvents["S"].append(int(true_events_lines[0].split(":")[1][:-1]))
+    trueEvents["D"].append(int(true_events_lines[1].split(":")[1][:-1]))
+    trueEvents["T"].append(int(true_events_lines[2].split(":")[1][:-1]))
+    
+
+    js_events_file = os.path.join(jointsearch_scheduler_dir, "results", msa, "jointsearch.events")
+    js_events_lines = open(js_events_file).readlines()
+    jsEvents["S"].append(int(true_events_lines[0].split(":")[1][:-1])) # + int(true_events_lines[1].split(":")[1][:-1]))
+    jsEvents["D"].append(int(js_events_lines[2].split(":")[1][:-1]))
+    jsEvents["T"].append(int(js_events_lines[3].split(":")[1][:-1]))
+    
+  print(trueEvents["S"])
+  print(jsEvents["S"])
+  print(trueEvents["D"])
+  print(jsEvents["D"])
+  print(trueEvents["T"])
+  print(jsEvents["T"])
+
+def analyse(dataset_dir, jointsearch_scheduler_dir):
   analysed_msas = 0
   total_nodes_number = 0
   methods = ["Raxml-ng", "Treerecs", "Phyldog", "JointSearch"]
@@ -60,7 +87,7 @@ def analyse(dataset_dir, pargenes_dir):
       true_tree = Tree(os.path.join(family_path, "trueGeneTree.newick"), format=1) 
     except:
       continue
-    jointsearch_prefix = os.path.join(pargenes_dir, "results", msa)
+    jointsearch_prefix = os.path.join(jointsearch_scheduler_dir, "results", msa)
     for method in methods:
       if (method == "JointSearch"):
         prefix = jointsearch_prefix
@@ -163,13 +190,15 @@ def analyse(dataset_dir, pargenes_dir):
   for method in methods:
     print("- " + method + ":\t" + str(methods_trees_number[method]))
 
+  analyse_events(dataset_dir, jointsearch_scheduler_dir)
+
 if __name__ == '__main__':
   if (len(sys.argv) != 3):
-    print("Syntax: families_dir pargenes_dir")
+    print("Syntax: families_dir jointsearch_scheduler_dir")
     exit(1)
   dataset_dir = sys.argv[1]
-  pargenes_dir = sys.argv[2]
-  analyse(dataset_dir, pargenes_dir)
+  jointsearch_scheduler_dir = sys.argv[2]
+  analyse(dataset_dir, jointsearch_scheduler_dir)
 
 
 
