@@ -4,9 +4,10 @@ import subprocess
 import shutil
 sys.path.insert(0, 'scripts')
 sys.path.insert(0, os.path.join("tools", "phyldog"))
+sys.path.insert(0, os.path.join("tools", "families"))
 import experiments as exp
 import link_file_from_gene_tree as phyldog_link
-
+import events_scenario_extraction as extract
 
 
   
@@ -124,7 +125,11 @@ def ale_to_families(ale_dir, out):
     phyldog_mapping = os.path.join(new_family_dir, "mapping.link")
     treerecs_mapping = os.path.join(new_family_dir, "treerecs_mapping.link")
     build_mapping_file(genetree, phyldog_mapping, treerecs_mapping)
-
+    #event files
+    try:
+      extract.extract_events_from_ale(out)
+    except:
+      print("failed to extract true event file")
 
 def generate_ale(species, families, sites, dupRate, lossRate, transferRate, output, seed):
   dirname = "alesim_s" + str(species) + "_f" + str(families)
