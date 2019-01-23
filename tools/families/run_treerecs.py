@@ -3,7 +3,9 @@ import sys
 import subprocess
 import shutil
 sys.path.insert(0, 'scripts')
+sys.path.insert(0, os.path.join("tools", "families"))
 import experiments as exp
+import events_scenario_extraction as extract
 
 def generate_scheduler_commands_file(dataset_dir, cores, output_dir):
   families_dir = os.path.join(dataset_dir, "families")
@@ -75,8 +77,7 @@ def extract_treerecs_trees(families_dir):
           if (not line.startswith(">")):
             writer.write(line)
     else:
-      print("Warning: no treerecs tree for family " + family)
-  
+      print("Warning: no treerecs tree for family " + family)  
 
 def run_treerecs_on_families(dataset_dir, cores):
   output_dir = os.path.join(dataset_dir, "treerecs_run")
@@ -86,6 +87,7 @@ def run_treerecs_on_families(dataset_dir, cores):
   print(command.split(" "))
   subprocess.check_call(command.split(" "))
   extract_treerecs_trees(os.path.join(dataset_dir, "families"))
+  extract.extract_events_from_treerecs(dataset_dir)
   
 if (__name__== "__main__"):
   max_args_number = 3
@@ -98,5 +100,4 @@ if (__name__== "__main__"):
   dataset_dir = sys.argv[1]
   cores = int(sys.argv[2])
   run_treerecs_on_families(dataset_dir, cores)
-
 

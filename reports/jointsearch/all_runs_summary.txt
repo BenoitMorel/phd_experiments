@@ -2,7 +2,7 @@ WITH TRANSFERS
 
 
 ***************************************************
-** alesim_s20_f50_sites400_d1.0_l0.5_t0.5_seed42 **
+** old_DTL_alesim_s20_f50_sites400_d1.0_l0.5_t0.5_seed42 **
 ***************************************************
 114s  DTL
 
@@ -21,8 +21,18 @@ Normalized average (over the gene families) RF distance to the true trees:
 - JointSearch DTL:  0.0617891177375
 
 
+
+- Raxml-ng: 0.14139013366
+- Treerecs: 0.0682143003524
+- Phyldog:  0.0
+- JointSearch:  0.0424279051358
+- JointSearch:  0.0378450642508
+
+
+
+
 ********************************************
-** zsim_s15_f50_sites200_d2.0_l1.0_t1.0   **
+** DTL_zsim_s15_f50_sites200_d2.0_l1.0_t1.0   **
 ********************************************
 
 DTL: 13s
@@ -30,34 +40,36 @@ DTL: 13s
 Average (over the gene families) relative RF distance to the true trees:
 - Raxml-ng:         0.104731364491
 - Treerecs:         0.128824976323
+- Phyldog:          0.140429627841
 - JointSearch DL:   0.117928372558
 - JointSearch DTL:  0.0776730066821
-- JS co-rates    :  0.0727157232061
 
 Normalized average (over the gene families) RF distance to the true trees:
 - Raxml-ng:         0.105433901054
 - Treerecs:         0.137064071371
+- Phyldog:          0.151662611517
 - JointSearch DL:   0.122465531225
 - JointSearch DTL:  0.0762368207624
-- JS co-rates:      0.0754257907543
 
 ************************************************
-** jsim_s8_f100_sites300_d2.0_l1.0_t0.5_seed6 **
+** DTL_jsim_s8_f100_sites300_d2.0_l1.0_t0.5_seed6 **
 ************************************************i
+
+phyldog: TextTools::toDouble(). Invalid number specification: H26
 
 DTL: 32s
 
 Average (over the gene families) relative RF distance to the true trees:
 - Raxml-ng: 0.176004375807
 - Treerecs: 0.173454457129
-- Phyldog:  0.0
+- Phyldog:  0.203011634549
 - JointSearch DL:  0.174584997488
 - JointSearch DTL: 0.133688385293
 
 Normalized average (over the gene0.137020968908 families) RF distance to the true trees:
 - Raxml-ng: 0.173897324657
 - Treerecs: 0.179320318149
-- Phyldog:  0.0
+- Phyldog:  0.2143890094
 - JointSearch DL:  0.180043383948
 - JointSearch DTL: 0.134128705712
 
@@ -71,8 +83,8 @@ Normalized average (over the gene0.137020968908 families) RF distance to the tru
 
 WITHOUT TRANSFERS
 
-********************************************
-** alesim_s20_f50_sites250_d1.0_l0.5 **
+****************************************************************************************
+** DL_alesim_s20_f50_sites250_d1.0_l0.5 **
 ********************************************
 
 24s
@@ -93,8 +105,25 @@ Normalized average (over the gene families) RF distance to the true trees:
 - Dated:           0.026302217638
 - JointSearch DTL: 0.0618875709128
 
+Duplication event count vectors (normalized distances with true vectors)
+- Treerecs       :  euclidean = 0.4907  squared = 0.2408  hamming = 0.2979
+- Phyldog        :  euclidean = 0.2007  squared = 0.0403  hamming = 0.2766
+- JointSearch    :  euclidean = 0.0563  squared = 0.0032  hamming = 0.1489
+
+
 ********************************************
-** alesim_s20_f50_sites119_d0.6_l0.3  **
+** DL_alesim_s30_f50_sites119_d2.0_l1.0
+********************************************
+
+********************************************
+** DL_jsim_s27_f100_sites1000_d2.0_l1.0_seed6
+********************************************
+
+
+
+
+********************************************
+** DL_alesim_s20_f50_sites119_d0.6_l0.3  **
 ********************************************
 21s 40 cores
 
@@ -114,38 +143,59 @@ Normalized average (over the gene families) RF distance to the true trees:
 - JointSearch Dated: 0.0249739854318
 - JointSearchDTL :0.0811654526535
 
+Duplication event count vectors (normalized distances with true vectors)
+- Treerecs       :  euclidean = 0.2973  squared = 0.0884  hamming = 0.1111
+- Phyldog        :  euclidean = 0.1859  squared = 0.0346  hamming = 0.3778
+- JointSearch    :  euclidean = 0.0588  squared = 0.0035  hamming = 0.1556
+
+
+
 ********************************************
-** jsim_s27_f100_sites200_d0.2_l0.1_seed6 **
+** DL_jsim_s27_f100_sites200_d0.2_l0.1_seed6 **
 ********************************************
 
 Average (over the gene families) relative RF distance to the true trees:
 - Raxml-ng: 0.368214279245
 - Treerecs: 0.0207533013542
+- Phyldog:  0.0634576064112
 - JointSearch: 0.0156534088274
 - JS Dated: 0.023420524454
 
 Normalized average (over the gene families) RF distance to the true trees:
 - Raxml-ng: 0.356123215627
 - Treerecs: 0.0277986476334
+- Phyldog:  0.0743801652893
 - JointSearch: 0.0210368144252
 - JS Dated: 0.0330578512397
 
+Duplication event count vectors (normalized distances with true vectors)
+- Treerecs       :  euclidean = 0.0202  hamming = 0.0404
+- Phyldog        :  euclidean = 0.1237  hamming = 0.2828
+- JointSearch    :  euclidean = 0.0226  hamming = 0.0505
+
+
 ********************************************
-** jsim_s27_f100_sites200_d2.0_l1.0_seed6 **
+** DL_jsim_s27_f100_sites200_d2.0_l1.0_seed6 **
 ********************************************
 
 
 Average (over the gene families) relative RF distance to the true trees:
 - Raxml-ng: 0.265899818637
 - Treerecs: 0.170442254841
+- Phyldog:  0.16761103834
 - JointSearch: 0.14667234328 
 
 Normalized average (over the gene families) RF distance to the true trees:
 - Raxml-ng: 0.241028128031
 - Treerecs: 0.143549951503
+- Phyldog:  0.143549951503
 - JointSearch: 0.114936954413
 
+Duplication event count vectors (normalized distances with true vectors)
 
+- Treerecs       :  euclidean = 0.1312  hamming = 0.3298
+- Phyldog        :  euclidean = 0.0940  hamming = 0.3617
+- JointSearch    :  euclidean = 0.0714  hamming = 0.2979
 
 
 
@@ -159,17 +209,15 @@ Average (over the gene families) relative RF distance to the true trees:
 - Treerecs: 0.117405077214
 - Phyldog:  0.0913035072177
 - JointSearch: 0.0766531739334
-- JS ancestor1: 0.0980600157075
 
 Normalized average (over the gene families) RF distance to the true trees:
 - Raxml-ng: 0.140542559649
 - Treerecs: 0.113181117804
 - Phyldog:  0.0748003922118
 - JointSearch:  0.0648550217117
-- JS ancstor1: 0.0850259139936
 
 ********************************************
-**     zsim_s15_f50_d2.0_l1.0             **
+**     DL_zsim_s15_f50_d2.0_l1.0             **
 ********************************************
 
 Average (over the gene families) relative RF distance to the true trees:

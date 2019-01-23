@@ -2,6 +2,7 @@ import sys
 import os
 from ete3 import Tree
 import numpy
+import math
 
 def read_tree(tree):
   lines = open(tree).readlines()
@@ -22,33 +23,90 @@ def get_nodes(tree1):
   return rf[1]
 
 
+def hamming(v1, v2):
+  dist = 0
+  zipVector = zip(v1, v2)
+  for member in zipVector:
+    if (member[0] != member[1]):
+      dist += 1
+  return float(dist) / float(len(v1))
+
+def squared(v1, v2):
+  quar_distance = 0
+  zipVector = zip(v1, v2)
+  for member in zipVector:
+    quar_distance += (member[1] - member[0]) ** 2
+  return float(quar_distance) / float(len(v1) ** 2)
+
+def euclidean (v1, v2):
+  quar_distance = 0
+  zipVector = zip(v1, v2)
+  for member in zipVector:
+    quar_distance += (member[1] - member[0]) ** 2
+  return math.sqrt(quar_distance) / float(len(v1))
+
+
+def fstr(a):
+  return "{0:.4f}".format(a)
+
+def align(method):
+  return method + " " * (15 - len(method))
+
 def analyse_events(dataset_dir, jointsearch_scheduler_dir):
   event_types = ["S", "D", "T"]
-  trueEvents = {}
-  jsEvents = {}
-  for event_type in event_types:
-    trueEvents[event_type] = [] 
-    jsEvents[event_type] = []
+  methods = ["True", "Treerecs", "Phyldog", "JointSearch"]
+  suffixes = {}
+  prefixes = {}
+  prefixes["True"] = dataset_dir
+  suffixes["True"] = "trueEvents.txt"
+  prefixes["Treerecs"] = dataset_dir
+  suffixes["Treerecs"] =  "treerecsEvents.txt"
+  prefixes["Phyldog"] = dataset_dir
+  suffixes["Phyldog"] = "phyldogEvents.txt" 
+  prefixes["JointSearch"] = os.path.join(jointsearch_scheduler_dir, "results")
+  suffixes["JointSearch"] = "jointsearch.events"
 
-  for msa in os.listdir(dataset_dir):   
-    true_events_lines = open(os.path.join(dataset_dir, msa, "trueEvents.txt")).readlines()
-    trueEvents["S"].append(int(true_events_lines[0].split(":")[1][:-1]))
-    trueEvents["D"].append(int(true_events_lines[1].split(":")[1][:-1]))
-    trueEvents["T"].append(int(true_events_lines[2].split(":")[1][:-1]))
-    
+  events = {}
+  for method in methods:
+    events[method] = {}
+    for event_type in event_types:
+      events[method][event_type] = [] 
 
-    js_events_file = os.path.join(jointsearch_scheduler_dir, "results", msa, "jointsearch.events")
-    js_events_lines = open(js_events_file).readlines()
-    jsEvents["S"].append(int(true_events_lines[0].split(":")[1][:-1])) # + int(true_events_lines[1].split(":")[1][:-1]))
-    jsEvents["D"].append(int(js_events_lines[2].split(":")[1][:-1]))
-    jsEvents["T"].append(int(js_events_lines[3].split(":")[1][:-1]))
-    
-  print(trueEvents["S"])
-  print(jsEvents["S"])
-  print(trueEvents["D"])
-  print(jsEvents["D"])
-  print(trueEvents["T"])
-  print(jsEvents["T"])
+  for msa in os.listdir(dataset_dir): 
+    for method in methods:
+      event_file = None
+      try:
+        events_file = os.path.join(prefixes[method], msa, suffixes[method])
+        events_lines = open(events_file).readlines()
+        if (len(events_lines) == 0 or len(events_lines[0]) == 0):
+          continue
+      except:
+        continue
+      events[method]["S"].append(int(events_lines[0].split(":")[1][:-1]))
+      if (method == "JointSearch"):
+        events[method]["D"].append(int(events_lines[2].split(":")[1][:-1]))
+        events[method]["T"].append(int(events_lines[3].split(":")[1][:-1]))
+      else:
+        events[method]["D"].append(int(events_lines[1].split(":")[1][:-1]))
+        events[method]["T"].append(int(events_lines[2].split(":")[1][:-1]))
+
+  print("Duplications: ")
+  for method in methods:
+    if (len(events[method]["D"]) == 0):
+      continue
+    print(method + " " + str(events[method]["D"]))
+
+
+  print("Duplication event count vectors (normalized distances with true vectors)")
+  for method in methods:
+    if (method == "True"):
+      continue
+    v1 = events[method]["D"]
+    v2 = events["True"]["D"]
+    if (len(v1) != len(v2)):
+      continue
+    print("- " + align(method) + ":  euclidean = " + fstr(euclidean(v1, v2)) + "  hamming = " + fstr(hamming(v1, v2)))
+
 
 def analyse(dataset_dir, jointsearch_scheduler_dir):
   analysed_msas = 0
@@ -189,6 +247,7 @@ def analyse(dataset_dir, jointsearch_scheduler_dir):
   print("Analysed trees:")
   for method in methods:
     print("- " + method + ":\t" + str(methods_trees_number[method]))
+  print("")
 
   analyse_events(dataset_dir, jointsearch_scheduler_dir)
 

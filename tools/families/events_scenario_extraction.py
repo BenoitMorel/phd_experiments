@@ -10,6 +10,18 @@ def read_tree(tree_filename):
       return Tree(line, format=1)
   return None
 
+def extract_events_from_phyldog(dataset_dir):
+  families_dir = os.path.join(dataset_dir, "families")
+  for family in os.listdir(families_dir):
+    phyldog_newick = os.path.join(families_dir, family, "phyldogGeneTree.newick")
+    writer = open(os.path.join(families_dir, family, "phyldogEvents.txt"), "w")
+    line = open(phyldog_newick).readlines()[0]
+    duplications = line.count("Ev=D")
+    writer.write("S:0\n")
+    writer.write("D:" + str(duplications) + "\n")
+    writer.write("T:0\n")
+
+
 
 def extract_events_from_treerecs(dataset_dir):
   families_dir = os.path.join(dataset_dir, "families")
@@ -93,6 +105,8 @@ if (__name__ == "__main__"):
     extract_events_from_jprime(dataset_dir)
   elif( simulation_type == "treerecs"):
     extract_events_from_treerecs(dataset_dir)
+  elif( simulation_type == "phyldog"):
+    extract_events_from_phyldog(dataset_dir)
   elif(simulation_type == "zombi"):
     pass
   else:

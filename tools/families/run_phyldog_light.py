@@ -3,11 +3,13 @@ import sys
 import subprocess
 import shutil
 sys.path.insert(0, 'scripts')
+sys.path.insert(0, os.path.join("tools", "families"))
+import events_scenario_extraction as extract
 import experiments as exp
 
 
 def convertToPhyldogSpeciesTree(speciesTree, phyldogSpeciesTree):
-  command = "sed s/)n[0123456789]*/)/g " + speciesTree #+ " > " + phyldogSpeciesTree
+  command = "sed s/)[nH][0123456789]*/)/g " + speciesTree #+ " > " + phyldogSpeciesTree
   print(command.split(" "))
   with open(phyldogSpeciesTree, "w") as output:
     subprocess.check_call(command.split(" "), stdout=output)
@@ -73,6 +75,7 @@ def run_phyldog_light_on_families(dataset_dir, cores):
   print(command.split(" "))
   subprocess.check_call(command.split(" "))
   extract_phyldog_trees(os.path.join(dataset_dir, "families"))
+  extract.extract_events_from_phyldog(dataset_dir)
 
 if (__name__== "__main__"):
   max_args_number = 3
