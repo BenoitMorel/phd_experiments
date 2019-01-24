@@ -52,6 +52,13 @@ def fstr(a):
 def align(method):
   return method + " " * (15 - len(method))
 
+def printDistances(events, method, event_type):
+  v1 = events[method][event_type]
+  v2 = events["True"][event_type]
+  if (len(v1) != len(v2)):
+    return 
+  print("- " + align(method) + ":  euclidean = " + fstr(euclidean(v1, v2)) + "  hamming = " + fstr(hamming(v1, v2)))
+
 def analyse_events(dataset_dir, jointsearch_scheduler_dir):
   event_types = ["S", "D", "T"]
   methods = ["True", "Treerecs", "Phyldog", "JointSearch"]
@@ -85,28 +92,42 @@ def analyse_events(dataset_dir, jointsearch_scheduler_dir):
       events[method]["S"].append(int(events_lines[0].split(":")[1][:-1]))
       if (method == "JointSearch"):
         events[method]["D"].append(int(events_lines[2].split(":")[1][:-1]))
-        events[method]["T"].append(int(events_lines[3].split(":")[1][:-1]))
+        events[method]["T"].append(int(events_lines[3].split(":")[1][:-1]) + int(events_lines[4].split(":")[1][:-1]))
       else:
         events[method]["D"].append(int(events_lines[1].split(":")[1][:-1]))
         events[method]["T"].append(int(events_lines[2].split(":")[1][:-1]))
 
+  transferPresent = (sum(events["True"]["T"]) != 0) or (sum(events["JointSearch"]["T"]) != 0)
+  
   print("Duplications: ")
   for method in methods:
     if (len(events[method]["D"]) == 0):
       continue
     print(method + " " + str(events[method]["D"]))
+  print("")
 
+  if (transferPresent):
+    print("Transfers: ")
+    for method in methods:
+      if (len(events[method]["T"]) == 0):
+        continue
+      print(method + " " + str(events[method]["T"]))
+  print("")
 
   print("Duplication event count vectors (normalized distances with true vectors)")
   for method in methods:
     if (method == "True"):
       continue
-    v1 = events[method]["D"]
-    v2 = events["True"]["D"]
-    if (len(v1) != len(v2)):
-      continue
-    print("- " + align(method) + ":  euclidean = " + fstr(euclidean(v1, v2)) + "  hamming = " + fstr(hamming(v1, v2)))
+    printDistances(events, method, "D")
+  print("")
 
+  if (transferPresent):
+    print("Transfer event count vectors (normalized distances with true vectors)")
+    for method in methods:
+      if (method == "True"):
+        continue
+      printDistances(events, method, "T")
+  print("")
 
 def analyse(dataset_dir, jointsearch_scheduler_dir):
   analysed_msas = 0
@@ -255,6 +276,7 @@ if __name__ == '__main__':
   if (len(sys.argv) != 3):
     print("Syntax: families_dir jointsearch_scheduler_dir")
     exit(1)
+  print(" ".join(sys.argv))
   dataset_dir = sys.argv[1]
   jointsearch_scheduler_dir = sys.argv[2]
   analyse(dataset_dir, jointsearch_scheduler_dir)
