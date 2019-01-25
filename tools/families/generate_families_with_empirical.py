@@ -36,11 +36,12 @@ def generate_mapping_file(input_tree_file, mapping_file, treerecs_mapping_file):
     for gene in genes:
       treerecs_writer.write(species + " " + gene + "\n")
 
-def generate_families_with_empirical(msas_dir, trees_dir, dataset_dir):
+def generate_families_with_empirical(msas_dir, trees_dir, species_tree, dataset_dir):
   families_dir = os.path.join(dataset_dir, "families")
   all_alignments_dir = os.path.join(dataset_dir, "alignments")
   mymakedirs(families_dir)
   mymakedirs(all_alignments_dir)
+  shutil.copy(species_tree, os.path.join(dataset_dir, "speciesTree.newick"))
   trees_dico = {}
   for tree in os.listdir(trees_dir):
     family_name = tree.split(".")[0]
@@ -60,17 +61,19 @@ def generate_families_with_empirical(msas_dir, trees_dir, dataset_dir):
     shutil.copy(tree_source, tree_dest)
     shutil.copy(msa_source, os.path.join(all_alignments_dir, msa))
     generate_mapping_file(tree_source, mapping_file, treerecs_mapping_file)
+    shutil.copy(species_tree, os.path.join(family_path, "speciesTree.newick"))
 
 
 
 print("For now, this script should only work for cyano dataset")
-if (len(sys.argv) != 4):
-  print("Syntax: python generate_families_with_empirical.py msas_dir trees_dir dataset_diri")
+if (len(sys.argv) != 5):
+  print("Syntax: python generate_families_with_empirical.py msas_dir trees_dir species_tree dataset_diri")
   exit(1)
 
 msas_dir = sys.argv[1]
 trees_dir = sys.argv[2]
-dataset_dir = sys.argv[3]
-generate_families_with_empirical(msas_dir, trees_dir, dataset_dir)
+species_tree = sys.argv[3]
+dataset_dir = sys.argv[4]
+generate_families_with_empirical(msas_dir, trees_dir, species_tree, dataset_dir)
 
 

@@ -5,7 +5,7 @@ import shutil
 sys.path.insert(0, 'scripts')
 import experiments as exp
 
-def run_pargenes(dataset_dir, pargenes_dir, starting_trees, bs_trees, cores):
+def run_pargenes(dataset_dir, pargenes_dir, is_dna, starting_trees, bs_trees, cores):
   command = []
   command.append("python")
   command.append(exp.pargenes_script)
@@ -19,8 +19,14 @@ def run_pargenes(dataset_dir, pargenes_dir, starting_trees, bs_trees, cores):
   command.append(str(cores))
   command.append("-s")
   command.append(str(starting_trees))
-  command.append("-r")
-  command.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), "raxml_command.txt"))
+  if (is_dna):
+    command.append("-r")
+    command.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), "raxml_command.txt"))
+  else:
+    command.append("-d")
+    command.append("aa")
+    command.append("-r")
+    command.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), "raxml_command_prot.txt"))
   command.append("--continue")
   subprocess.check_call(command)
 
@@ -57,19 +63,20 @@ def export_pargenes_trees(pargenes_dir, dataset_dir):
       print("Cleaning family " + family)
       shutil.move(os.path.join(families_dir, family), garbage_dir)
 
-def run_pargenes_and_extract_trees(dataset_dir, starting_trees, bs_trees, cores):
+def run_pargenes_and_extract_trees(dataset_dir, is_dna, starting_trees, bs_trees, cores):
   pargenes_dir = os.path.join(dataset_dir, "pargenes")
-  run_pargenes(dataset_dir, pargenes_dir, starting_trees, bs_trees, cores)
+  run_pargenes(dataset_dir, pargenes_dir, is_dna, starting_trees, bs_trees, cores)
   export_pargenes_trees(pargenes_dir, dataset_dir)
 
 if __name__ == "__main__":
-  if (len(sys.argv) != 5):
-    print("syntax: python run_raxml_supportvalues.py dataset_dir starting_trees bs_trees cores")
+  if (len(sys.argv) != 6):
+    print("syntax: python run_raxml_supportvalues.py dataset_dir is_dna starting_trees bs_trees cores")
     sys.exit(1)
   dataset = sys.argv[1]
-  starting_trees = sys.argv[2]
-  bs_trees = sys.argv[3]
-  cores = int(sys.argv[4])
-  run_pargenes_and_extract_trees(dataset, starting_trees, bs_trees, cores)
+  is_dna = sys.argv[2]
+  starting_trees = sys.argv[3]
+  bs_trees = sys.argv[4]
+  cores = int(sys.argv[5])
+  run_pargenes_and_extract_trees(dataset, is_dna, starting_trees, bs_trees, cores)
 
   
