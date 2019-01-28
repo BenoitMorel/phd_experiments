@@ -34,7 +34,7 @@ def generate_mapping_file(input_tree_file, mapping_file, treerecs_mapping_file):
     writer.write(";".join(genes))
     writer.write("\n")
     for gene in genes:
-      treerecs_writer.write(species + " " + gene + "\n")
+      treerecs_writer.write(gene + " " + species + "\n")
 
 def generate_families_with_empirical(msas_dir, trees_dir, species_tree, dataset_dir):
   families_dir = os.path.join(dataset_dir, "families")
