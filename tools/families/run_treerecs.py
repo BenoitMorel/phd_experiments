@@ -7,12 +7,14 @@ sys.path.insert(0, os.path.join("tools", "families"))
 import experiments as exp
 import events_scenario_extraction as extract
 
-def generate_scheduler_commands_file(dataset_dir, cores, output_dir):
+def generate_scheduler_commands_file(dataset_dir, is_dna, cores, output_dir):
   families_dir = os.path.join(dataset_dir, "families")
   results_dir = os.path.join(output_dir, "results")
   scheduler_commands_file = os.path.join(output_dir, "commands.txt")
   speciesTree = os.path.join(dataset_dir, "speciesTree.newick")
-  
+  model = "GTR"
+  if (not is_dna):
+    model = "DAYHOFF"
   with open(scheduler_commands_file, "w") as writer:
     for family in os.listdir(families_dir):
       family_dir = os.path.join(families_dir, family)
@@ -24,7 +26,7 @@ def generate_scheduler_commands_file(dataset_dir, cores, output_dir):
       
       alignment_descriptor = os.path.join(treerecs_dir, "alignment_descriptor.txt")
       with open(alignment_descriptor, "w") as ali_writer:
-        ali_writer.write("GTR\n" + os.path.abspath(os.path.join(family_dir, "alignment.msa")))
+        ali_writer.write(model + "\n" + os.path.abspath(os.path.join(family_dir, "alignment.msa")))
       treerecs_output = os.path.join(treerecs_dir, "treerecs_output")
       mapping_file = os.path.join(family_dir, "treerecs_mapping.link")
       command = []
@@ -58,7 +60,7 @@ def generate_scheduler_commands_file(dataset_dir, cores, output_dir):
 def generate_scheduler_command(command_file, cores, output_dir):
   command = ""
   parallelization = "onecore"
-  command += "mpirun -np " + str(cores) + " "
+  command += "mpirun -np 4" + " "
   command += exp.mpischeduler_exec + " "
   command += "--" + parallelization + "-scheduler "
   command += exp.treerecs_exec + " "
@@ -79,10 +81,10 @@ def extract_treerecs_trees(families_dir):
     else:
       print("Warning: no treerecs tree for family " + family)  
 
-def run_treerecs_on_families(dataset_dir, cores):
+def run_treerecs_on_families(dataset_dir, is_dna, cores):
   output_dir = os.path.join(dataset_dir, "treerecs_run")
   os.makedirs(output_dir)
-  scheduler_commands_file = generate_scheduler_commands_file(dataset_dir, cores, output_dir)
+  scheduler_commands_file = generate_scheduler_commands_file(dataset_dir, is_dna, cores, output_dir)
   command = generate_scheduler_command(scheduler_commands_file, cores, output_dir)
   print(command.split(" "))
   subprocess.check_call(command.split(" "))
@@ -90,14 +92,16 @@ def run_treerecs_on_families(dataset_dir, cores):
   extract.extract_events_from_treerecs(dataset_dir)
   
 if (__name__== "__main__"):
-  max_args_number = 3
+  max_args_number = 4
   if len(sys.argv) < max_args_number:
-    print("Syntax error: python run_treerecs dataset_dir cores.")
+    print("Syntax error: python run_treerecs dataset_dir is_dna cores.")
     print("Cluster can be either normal, haswell or magny")
     sys.exit(0)
 
 
   dataset_dir = sys.argv[1]
-  cores = int(sys.argv[2])
-  run_treerecs_on_families(dataset_dir, cores)
+  is_dna = int(sys.argv[2]) != 0
+  cores = int(sys.argv[3])
+
+  run_treerecs_on_families(dataset_dir, is_dna, cores)
 

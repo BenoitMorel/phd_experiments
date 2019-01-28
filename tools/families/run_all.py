@@ -15,10 +15,15 @@ if __name__ == "__main__":
   bs_trees = sys.argv[4]
   cores = int(sys.argv[5])
   print("Run pargenes and extract trees...")
+  sys.stdout.flush()
   raxml.run_pargenes_and_extract_trees(dataset_dir, is_dna, starting_trees, bs_trees, cores)
+  sys.stdout.flush()
   print("Run treerecs...")
-  treerecs.run_treerecs_on_families(dataset_dir, cores)
+  sys.stdout.flush()
+  treerecs.run_treerecs_on_families(dataset_dir, is_dna, cores)
+  sys.stdout.flush()
   print("Run phyldog...")
+  sys.stdout.flush()
   phyldog.run_phyldog_light_on_families(dataset_dir, cores)
   
   
