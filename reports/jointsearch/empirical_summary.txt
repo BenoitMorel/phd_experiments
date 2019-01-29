@@ -1,0 +1,21 @@
+
+
+
+
+Cyano simulated
+
+Average (over the gene families) relative RF distance to the true trees:
+- Raxml-ng: 0.210568931255
+- Treerecs: 0.151918571824 (161s on 40 cores)
+- Phyldog:  0.16039065528  (750s on 40 cores)
+- JointSearch LG DL :  0.143220561438 (750s on 40 cores)
+- JointSearch LG DTL : 0.114512054384 (2655s on 40 cores)
+
+Normalized average (over the gene families) RF distance to the true trees:
+- Raxml-ng: 0.207324182522
+- Treerecs: 0.152949281891
+- Phyldog:  0.162912713975
+- JointSearch LG DL:  0.144734750119
+- JointSearch LG DTL: 0.115692405533
+
+

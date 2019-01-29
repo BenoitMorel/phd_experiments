@@ -60,7 +60,7 @@ def generate_scheduler_commands_file(dataset_dir, is_dna, cores, output_dir):
 def generate_scheduler_command(command_file, cores, output_dir):
   command = ""
   parallelization = "onecore"
-  command += "mpirun -np 4" + " "
+  command += "mpirun -np " + str(cores) + " "
   command += exp.mpischeduler_exec + " "
   command += "--" + parallelization + "-scheduler "
   command += exp.treerecs_exec + " "

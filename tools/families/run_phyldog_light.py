@@ -14,7 +14,7 @@ def convertToPhyldogSpeciesTree(speciesTree, phyldogSpeciesTree):
   with open(phyldogSpeciesTree, "w") as output:
     subprocess.check_call(command.split(" "), stdout=output)
 
-def generate_scheduler_commands_file(dataset_dir, cores, output_dir):
+def generate_scheduler_commands_file(dataset_dir, is_dna, cores, output_dir):
   families_dir = os.path.join(dataset_dir, "families")
   results_dir = os.path.join(output_dir, "results")
   scheduler_commands_file = os.path.join(output_dir, "commands.txt")
@@ -37,8 +37,14 @@ def generate_scheduler_commands_file(dataset_dir, cores, output_dir):
       command.append("gene.tree.file=" + os.path.join(family_dir, "raxmlGeneTree.newick"))
       command.append("input.sequence.file=" + os.path.join(family_dir, "alignment.msa"))
       command.append("taxaseq.file=" + os.path.join(family_dir, "mapping.link"))
-      command.append("likelihood.evaluator=LIBPLL2")
-      command.append("model=GTR ")
+      #command.append("likelihood.evaluator=LIBPLL2")
+      command.append("likelihood.evaluator=PLL")
+      if (is_dna):
+        command.append("model=GTR")
+      else:
+        command.append("model=LG08")
+      if (not is_dna):
+        command.append("alphabet=Protein")
       os.makedirs(os.path.join(results_dir, family))
       command.append("output.file=" + os.path.join(family_dir, "phyldog", "phyldog"))
       #command.append("output.file=" + os.path.join(results_dir, family, "phyldog"))
@@ -67,10 +73,10 @@ def extract_phyldog_trees(families_dir):
       print("Warning: no phyldog tree for family " + family)
   
 
-def run_phyldog_light_on_families(dataset_dir, cores):
+def run_phyldog_light_on_families(dataset_dir, is_dna, cores):
   output_dir = os.path.join(dataset_dir, "phyldog_run")
   os.makedirs(output_dir)
-  scheduler_commands_file = generate_scheduler_commands_file(dataset_dir, cores, output_dir)
+  scheduler_commands_file = generate_scheduler_commands_file(dataset_dir, is_dna, cores, output_dir)
   command = generate_scheduler_command(scheduler_commands_file, cores, output_dir)
   print(command.split(" "))
   subprocess.check_call(command.split(" "))
@@ -78,14 +84,15 @@ def run_phyldog_light_on_families(dataset_dir, cores):
   extract.extract_events_from_phyldog(dataset_dir)
 
 if (__name__== "__main__"):
-  max_args_number = 3
+  max_args_number = 4
   if len(sys.argv) < max_args_number:
-    print("Syntax error: python run_phyldog_light.py dataset_dir cores.")
+    print("Syntax error: python run_phyldog_light.py dataset_dir is_dna cores.")
     print("Cluster can be either normal, haswell or magny")
     sys.exit(0)
 
 
   dataset_dir = sys.argv[1]
-  cores = int(sys.argv[2])
-  run_phyldog_light_on_families(dataset_dir, cores)
+  is_dna = int(sys.argv[2]) != 0
+  cores = int(sys.argv[3])
+  run_phyldog_light_on_families(dataset_dir, is_dna, cores)
 

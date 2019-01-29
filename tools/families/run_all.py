@@ -24,7 +24,7 @@ if __name__ == "__main__":
   sys.stdout.flush()
   print("Run phyldog...")
   sys.stdout.flush()
-  phyldog.run_phyldog_light_on_families(dataset_dir, cores)
+  phyldog.run_phyldog_light_on_families(dataset_dir, is_dna, cores)
   
   
 

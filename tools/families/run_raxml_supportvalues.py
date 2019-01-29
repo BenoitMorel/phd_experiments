@@ -27,6 +27,8 @@ def run_pargenes(dataset_dir, pargenes_dir, is_dna, starting_trees, bs_trees, co
     command.append("aa")
     command.append("-r")
     command.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), "raxml_command_prot.txt"))
+  command.append("--scheduler")
+  command.append("onecore")
   command.append("--continue")
   subprocess.check_call(command)
 
@@ -49,7 +51,11 @@ def export_pargenes_trees(pargenes_dir, dataset_dir):
       trees_file = os.path.join(ml_trees_dir, family, family + ".raxml.bestTree")
     family = "_".join(family.split("_")[:-1]) # remove everything after the last _
     new_raxml_tree = os.path.join(families_dir, family, "raxmlGeneTrees.newick")
-    shutil.copyfile(trees_file, new_raxml_tree)
+    try:
+      shutil.copyfile(trees_file, new_raxml_tree)
+    except:
+      print("Cannot copy " + trees_file + " to " + new_raxml_tree)
+      pass
   # clean
   garbage_dir = os.path.join(dataset_dir, "garbage")
   try:
