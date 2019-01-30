@@ -61,7 +61,7 @@ def generate_scheduler_command(command_file, parallelization, cores, scheduler_o
   command += "--" + parallelization + "-scheduler "
   if (parallelization == "split"):
     command += exp.joint_search_lib + " "
-  elif (parallelization == "openmp" or parallelization == "onecore"):
+  elif (parallelization == "openmp" or parallelization == "onecore" or parallelization == "fork"):
     command += exp.joint_search_exec + " "
   else:
     print("Unknown scheduler parallelization " + parallelization)

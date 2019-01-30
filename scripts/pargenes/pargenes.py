@@ -48,7 +48,7 @@ bootstraps_number = int(sys.argv[5])
 is_aa = (data in datatypes) and (datatypes[data] == "aa")
 isHaswell = (cluster_mode == "haswell")
 isMagny = (cluster_mode == "magny")
-runner = os.path.join(exp.pargenes_root, "pargenes", "pargenes.py")
+runner = os.path.join(exp.pargenes_root, "pargenes", "pargenes-mpi.py")
 if (is_aa):
   options = os.path.join(exp.datasets_root, "pargenes", "option_files",  "raxml_global_options_aa.txt")
 else:
