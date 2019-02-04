@@ -3,7 +3,9 @@ import sys
 import subprocess
 import shutil
 sys.path.insert(0, 'scripts')
+sys.path.insert(0, 'tools/raxml/')
 import experiments as exp
+import raxml_get_tca_score as tca
 
 def run_pargenes(dataset_dir, pargenes_dir, is_dna, starting_trees, bs_trees, cores):
   command = []
@@ -35,6 +37,22 @@ def run_pargenes(dataset_dir, pargenes_dir, is_dna, starting_trees, bs_trees, co
 
 def export_pargenes_trees(pargenes_dir, dataset_dir):
   families_dir = os.path.join(dataset_dir, "families")
+  # tca scores
+  concatenated_dir = os.path.join(pargenes_dir, "concatenated_bootstraps")
+  for concatenation in os.listdir(concatenated_dir):
+    family = "_".join(concatenation.split("_")[:-1]) # remove everything after the last
+    tca_score = 0.0
+    try:
+      tca_score = tca.get_tca(os.path.join(concatenated_dir, concatenation), family)
+    except:
+      print("failed to extract tca score for " + concatenation)
+      continue
+    try:
+      output = os.path.join(families_dir, family, "tca.txt")
+      open(output, "w").write(str(tca))
+    except:
+      continue
+  return
   # support trees
   support_trees_dir = os.path.join(pargenes_dir, "supports_run", "results")
   for support_tree in os.listdir(support_trees_dir):
@@ -56,6 +74,7 @@ def export_pargenes_trees(pargenes_dir, dataset_dir):
     except:
       print("Cannot copy " + trees_file + " to " + new_raxml_tree)
       pass
+    
   # clean
   garbage_dir = os.path.join(dataset_dir, "garbage")
   try:
