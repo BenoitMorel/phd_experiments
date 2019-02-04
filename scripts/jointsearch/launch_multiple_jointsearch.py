@@ -128,7 +128,10 @@ command = generate_scheduler_command(scheduler_commands_file, parallelization, c
 command += "\n" + generate_analyse_command(families_dir, scheduler_output_dir)
 
 submit_path = os.path.join(resultsdir, "jointsearch_scheduler_submit.sh")
+
+print(command)
 print("Results will be in " + resultsdir)
+
 exp.submit(submit_path, command, cores, cluster) 
 
 

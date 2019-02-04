@@ -228,8 +228,10 @@ def analyse(dataset_dir, jointsearch_scheduler_dir):
     print("did not manage to analyse any MSA")
     exit(1)
   
-  if (len(tca_scores) != 0):
+  if (len(good_tca_scores) != 0):
     print("average and min tca for raxml trees that match true trees: " + str(numpy.mean(good_tca_scores)) + " " + str(min(good_tca_scores)) + " (on " + str(len(good_tca_scores)) + " elements)")
+  if (len(bad_tca_scores) != 0):
+
     print("average and max tca for raxml trees that DO NOT match true trees: " + str(numpy.mean(bad_tca_scores)) + " " + str(max(bad_tca_scores)) + " (on " + str(len(bad_tca_scores)) + " elements)")
 
   print("Rates arrays")

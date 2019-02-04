@@ -36,7 +36,6 @@ def run_pargenes(dataset_dir, pargenes_dir, is_dna, starting_trees, bs_trees, co
 
 
 def export_pargenes_trees(pargenes_dir, dataset_dir):
-  print("plop")
   families_dir = os.path.join(dataset_dir, "families")
   # tca scores
   concatenated_dir = os.path.join(pargenes_dir, "concatenated_bootstraps")
@@ -53,8 +52,6 @@ def export_pargenes_trees(pargenes_dir, dataset_dir):
       open(output, "w").write(str(tca_score))
     except:
       continue
-    print("exported ")
-  return
   # support trees
   support_trees_dir = os.path.join(pargenes_dir, "supports_run", "results")
   for support_tree in os.listdir(support_trees_dir):
