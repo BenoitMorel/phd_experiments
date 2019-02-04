@@ -17,6 +17,8 @@ Average (over the gene families) relative RF distance to the true trees:
 **  sub_t0.1_s0.2_cyano_empirical
 *************************************
 
+10% most trusted trees, sample 20% of the sites
+
 Average (over the gene families) relative RF distance to the true trees:
 - Raxml-ng: 0.398582625766
 - Treerecs: 0.27279473817
@@ -27,6 +29,8 @@ Average (over the gene families) relative RF distance to the true trees:
 *************************************
 **  sub_t0.05_s0.5_cyano_empirical
 *************************************
+
+5% most trusted trees, sample 50% of the sites
 
 Average (over the gene families) relative RF distance to the true trees:
 - Raxml-ng: 0.201747045703

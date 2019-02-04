@@ -52,6 +52,7 @@ def export_pargenes_trees(pargenes_dir, dataset_dir):
       open(output, "w").write(str(tca_score))
     except:
       continue
+  return
   # support trees
   support_trees_dir = os.path.join(pargenes_dir, "supports_run", "results")
   for support_tree in os.listdir(support_trees_dir):
@@ -87,7 +88,7 @@ def export_pargenes_trees(pargenes_dir, dataset_dir):
 
 def run_pargenes_and_extract_trees(dataset_dir, is_dna, starting_trees, bs_trees, cores):
   pargenes_dir = os.path.join(dataset_dir, "pargenes")
-  run_pargenes(dataset_dir, pargenes_dir, is_dna, starting_trees, bs_trees, cores)
+  #run_pargenes(dataset_dir, pargenes_dir, is_dna, starting_trees, bs_trees, cores)
   export_pargenes_trees(pargenes_dir, dataset_dir)
 
 if __name__ == "__main__":

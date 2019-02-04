@@ -10,8 +10,10 @@ def convert(phyldog_filename, treerecs_filename):
       for gene in genes:
         f.write(gene + " " + species + "\n")
 
-if (3 != len(sys.argv)):
-  print("Syntax: python phyldogToTreerecsMap.py phyldog_filename treerecs_filename")
-  sys.exit()
-convert(sys.argv[1], sys.argv[2])
+if (__name__ == "__main__"):
+
+  if (3 != len(sys.argv)):
+    print("Syntax: python phyldogToTreerecsMap.py phyldog_filename treerecs_filename")
+    sys.exit()
+  convert(sys.argv[1], sys.argv[2])
 
