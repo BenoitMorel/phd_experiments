@@ -55,7 +55,7 @@ def align(method):
 def printDistances(events, method, event_type):
   v1 = events[method][event_type]
   v2 = events["True"][event_type]
-  if (len(v1) != len(v2)):
+  if (len(v1) != len(v2) or len(v1) == 0):
     return 
   print("- " + align(method) + ":  euclidean = " + fstr(euclidean(v1, v2)) + "  hamming = " + fstr(hamming(v1, v2)))
 
@@ -154,6 +154,9 @@ def analyse(dataset_dir, jointsearch_scheduler_dir):
   total_rf = {}
   true_matches = {}
   best_tree = {}
+  tca_scores = {}
+  good_tca_scores = []
+  bad_tca_scores = []
   for method in methods:
     total_rrf[method] = 0.0
     total_rf[method] = 0.0
@@ -162,6 +165,11 @@ def analyse(dataset_dir, jointsearch_scheduler_dir):
   for msa in os.listdir(dataset_dir):   
     trees = {}
     family_path = os.path.join(dataset_dir, msa)
+    tca_path = os.path.join(family_path, "tca.txt")
+    try:
+      tca_scores[msa] = float(open(tca_path).readlines()[0])
+    except:
+      pass
     try:
       true_tree = Tree(os.path.join(family_path, "trueGeneTree.newick"), format=1) 
     except:
@@ -200,6 +208,10 @@ def analyse(dataset_dir, jointsearch_scheduler_dir):
     for method in methods:
       if (best_rrf == rrf[method]):
         best_tree[method] += 1
+    if (rf["Raxml-ng"] == 0.0):
+      good_tca_scores.append(tca_scores[msa])
+    else:
+      bad_tca_scores.append(tca_scores[msa])
     stats_file = os.path.join(jointsearch_prefix, "jointsearch.stats")
     with open(stats_file) as stats_reader:
       lines = stats_reader.readlines()
@@ -216,6 +228,10 @@ def analyse(dataset_dir, jointsearch_scheduler_dir):
     print("did not manage to analyse any MSA")
     exit(1)
   
+  if (len(tca_scores) != 0):
+    print("average and min tca for raxml trees that match true trees: " + str(numpy.mean(good_tca_scores)) + " " + str(min(good_tca_scores)) + " (on " + str(len(good_tca_scores)) + " elements)")
+    print("average and max tca for raxml trees that DO NOT match true trees: " + str(numpy.mean(bad_tca_scores)) + " " + str(max(bad_tca_scores)) + " (on " + str(len(bad_tca_scores)) + " elements)")
+
   print("Rates arrays")
   print("D:")
   print(js_dup)
