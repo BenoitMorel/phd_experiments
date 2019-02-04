@@ -98,21 +98,22 @@ def analyse_events(dataset_dir, jointsearch_scheduler_dir):
         events[method]["T"].append(int(events_lines[2].split(":")[1][:-1]))
 
   transferPresent = (sum(events["True"]["T"]) != 0) or (sum(events["JointSearch"]["T"]) != 0)
-  
-  print("Duplications: ")
-  for method in methods:
-    if (len(events[method]["D"]) == 0):
-      continue
-    print(method + " " + str(events[method]["D"]))
-  print("")
-
-  if (transferPresent):
-    print("Transfers: ")
+ 
+  if (False):
+    print("Duplications: ")
     for method in methods:
-      if (len(events[method]["T"]) == 0):
+      if (len(events[method]["D"]) == 0):
         continue
-      print(method + " " + str(events[method]["T"]))
-  print("")
+      print(method + " " + str(events[method]["D"]))
+    print("")
+
+    if (transferPresent):
+      print("Transfers: ")
+      for method in methods:
+        if (len(events[method]["T"]) == 0):
+          continue
+        print(method + " " + str(events[method]["T"]))
+    print("")
 
   print("Duplication event count vectors (normalized distances with true vectors)")
   for method in methods:
@@ -234,34 +235,34 @@ def analyse(dataset_dir, jointsearch_scheduler_dir):
 
     print("average and max tca for raxml trees that DO NOT match true trees: " + str(numpy.mean(bad_tca_scores)) + " " + str(max(bad_tca_scores)) + " (on " + str(len(bad_tca_scores)) + " elements)")
 
-  print("Rates arrays")
-  print("D:")
-  print(js_dup)
-  print("L:")
-  print(js_loss)
-  print("T:")
-  print(js_trans)
-  print("")
+  #print("Rates arrays")
+  #print("D:")
+  #print(js_dup)
+  #print("L:")
+  #print(js_loss)
+  #print("T:")
+  #print(js_trans)
+  #print("")
 
   print("Number of gene families: " + str(analysed_msas))
   print("")
 
-  print("Total initial joint likelihood: " + str(sum(js_initialll)))
-  print("Total initial libpll  likelihood: " + str(sum(js_initiallllibpll)))
-  print("Total initial reconciliation likelihood: " + str(sum(js_initialllrec)))
-  print("")
-  print("Total joint likelihood: " + str(sum(js_ll)))
-  print("Total libpll  likelihood: " + str(sum(js_lllibpll)))
-  print("Total reconciliation likelihood: " + str(sum(js_llrec)))
-  print("")
+  #print("Total initial joint likelihood: " + str(sum(js_initialll)))
+  #print("Total initial libpll  likelihood: " + str(sum(js_initiallllibpll)))
+  #print("Total initial reconciliation likelihood: " + str(sum(js_initialllrec)))
+  #print("")
+  #print("Total joint likelihood: " + str(sum(js_ll)))
+  #print("Total libpll  likelihood: " + str(sum(js_lllibpll)))
+  #print("Total reconciliation likelihood: " + str(sum(js_llrec)))
+  #print("")
   print("Average D=" + str(numpy.mean(js_dup)))
   print("Average L=" + str(numpy.mean(js_loss)))
   print("Average T=" + str(numpy.mean(js_trans)))
   print("")
-  print("Standard deviation D=" + str(numpy.std(js_dup)))
-  print("Standard deviation L=" + str(numpy.std(js_loss)))
-  print("Standard deviation T=" + str(numpy.std(js_trans)))
-  print("")
+  #print("Standard deviation D=" + str(numpy.std(js_dup)))
+  #print("Standard deviation L=" + str(numpy.std(js_loss)))
+  #print("Standard deviation T=" + str(numpy.std(js_trans)))
+  #print("")
 
   print("Average (over the gene families) relative RF distance to the true trees:")
   for method in methods:
@@ -283,10 +284,10 @@ def analyse(dataset_dir, jointsearch_scheduler_dir):
     print("- " + method + ":\t" + str(true_matches[method]) + "/" + str(analysed_msas))
   print("")
 
-  print("Analysed trees:")
-  for method in methods:
-    print("- " + method + ":\t" + str(methods_trees_number[method]))
-  print("")
+  #print("Analysed trees:")
+  #for method in methods:
+  #  print("- " + method + ":\t" + str(methods_trees_number[method]))
+  #print("")
 
   analyse_events(dataset_dir, jointsearch_scheduler_dir)
 
