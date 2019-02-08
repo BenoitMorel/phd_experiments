@@ -4,7 +4,7 @@ from ete3 import Tree
 import numpy
 import math
 
-def read_tree(tree):
+def read_tree(tree)
   lines = open(tree).readlines()
   for line in lines:
     if (not line.startswith(">")):
@@ -133,12 +133,20 @@ def analyse_events(dataset_dir, jointsearch_scheduler_dir):
 def analyse(dataset_dir, jointsearch_scheduler_dir):
   analysed_msas = 0
   total_nodes_number = 0
-  methods = ["Raxml-ng", "Treerecs", "Phyldog", "JointSearch"]
+  methods = ["True", "Raxml-ng", "Treerecs", "Phyldog", "JointSearch"]
   methods_tree_files = {}
+  methods_tree_files["True"] = "trueGeneTree.newick"
   methods_tree_files["Raxml-ng"] = "raxmlGeneTree.newick"
   methods_tree_files["Treerecs"] = "treerecsGeneTree.newick"
   methods_tree_files["Phyldog"] = "phyldogGeneTree.newick"
   methods_tree_files["JointSearch"] = "jointsearch.newick"
+  methods_to_compare = []
+  methods_to_compare.append(("True", "Raxml-ng"))
+  methods_to_compare.append(("True", "Treerecs"))
+  methods_to_compare.append(("True", "Phyldog"))
+  methods_to_compare.append(("True", "JointSearch"))
+  methods_to_compare.append(("JointSearch", "Raxml-ng"))
+  methods_to_compare.append(("JointSearch", "Treerecs"))
   methods_trees_number = {}
   js_dup = []
   js_loss = []
@@ -152,29 +160,17 @@ def analyse(dataset_dir, jointsearch_scheduler_dir):
   for m in methods:
     methods_trees_number[m] = 0
   total_rrf = {}
-  total_rf = {}
-  true_matches = {}
   best_tree = {}
-  tca_scores = {}
-  good_tca_scores = []
-  bad_tca_scores = []
   for method in methods:
-    total_rrf[method] = 0.0
-    total_rf[method] = 0.0
-    true_matches[method] = 0
     best_tree[method] = 0
+  for method_pair in methods_to_compare:
+    method1 = method_pair[0]
+    method2 = method_pair[1]
+    methods_key = method1 + " - " + method2
+    total_rrf[methods_key] = 0.0
   for msa in os.listdir(dataset_dir):   
     trees = {}
     family_path = os.path.join(dataset_dir, msa)
-    tca_path = os.path.join(family_path, "tca.txt")
-    try:
-      tca_scores[msa] = float(open(tca_path).readlines()[0])
-    except:
-      pass
-    try:
-      true_tree = Tree(os.path.join(family_path, "trueGeneTree.newick"), format=1) 
-    except:
-      continue
     jointsearch_prefix = os.path.join(jointsearch_scheduler_dir, "results", msa)
     for method in methods:
       if (method == "JointSearch"):
@@ -191,28 +187,28 @@ def analyse(dataset_dir, jointsearch_scheduler_dir):
           trees[method] = None
     best_rrf = 1
     rrf = {}
-    rf = {}
     analysed_msas += 1
-    for method in methods:
-      if (trees[method] == None):
+    for method_pair in methods_to_compare:
+      method1 = method_pair[0]
+      method2 = method_pair[1]
+      methods_key = method1 + " - " + method2
+      if (trees[method1] == None or trees[method2] == None):
         continue
-      rf_cell = trees[method].robinson_foulds(true_tree, unrooted_trees=True)
-      rrf[method] = float(rf_cell[0]) / float(rf_cell[1])
-      rf[method] = float(rf_cell[0])
-      best_rrf = min(best_rrf, rrf[method])
-      total_rrf[method] += rrf[method]
-      total_rf[method] += float(rf_cell[0])
-      if (rf_cell[0] == 0):
-        true_matches[method] += 1
-      if (method == methods[0]): #do it only once
-        total_nodes_number += rf_cell[1]
-    for method in methods:
-      if (best_rrf == rrf[method]):
-        best_tree[method] += 1
-    if (rf["Raxml-ng"] == 0.0):
-      good_tca_scores.append(tca_scores[msa])
-    else:
-      bad_tca_scores.append(tca_scores[msa])
+      rf_cell = trees[method1].robinson_foulds(trees[method2], unrooted_trees=True)
+      rrf[methods_key] = float(rf_cell[0]) / float(rf_cell[1])
+      if (method1 == "True" or method2 == "True"):
+        best_rrf = min(best_rrf, rrf[methods_key])
+      total_rrf[methods_key] += rrf[methods_key]
+    for method_pair in methods_to_compare:
+      method1 = method_pair[0]
+      method2 = method_pair[1]
+      methods_key = method1 + " - " + method2
+      if (method1 == "True"):
+        if (best_rrf == rrf[methods_key]):
+          best_tree[method2] += 1
+      elif (method2 == "True"):
+        if (best_rrf == rrf[methods_key]):
+          best_tree[method1] += 1
     stats_file = os.path.join(jointsearch_prefix, "jointsearch.stats")
     with open(stats_file) as stats_reader:
       lines = stats_reader.readlines()
@@ -229,11 +225,6 @@ def analyse(dataset_dir, jointsearch_scheduler_dir):
     print("did not manage to analyse any MSA")
     exit(1)
   
-  if (len(good_tca_scores) != 0):
-    print("average and min tca for raxml trees that match true trees: " + str(numpy.mean(good_tca_scores)) + " " + str(min(good_tca_scores)) + " (on " + str(len(good_tca_scores)) + " elements)")
-  if (len(bad_tca_scores) != 0):
-
-    print("average and max tca for raxml trees that DO NOT match true trees: " + str(numpy.mean(bad_tca_scores)) + " " + str(max(bad_tca_scores)) + " (on " + str(len(bad_tca_scores)) + " elements)")
 
   #print("Rates arrays")
   #print("D:")
@@ -264,30 +255,22 @@ def analyse(dataset_dir, jointsearch_scheduler_dir):
   #print("Standard deviation T=" + str(numpy.std(js_trans)))
   #print("")
 
-  print("Average (over the gene families) relative RF distance to the true trees:")
-  for method in methods:
-    print("- " + method + ":\t" + str(total_rrf[method] / float(analysed_msas)))
+  print("Average (over the gene families) relative RF distances:")
+  for method_pair in methods_to_compare:
+    method1 = method_pair[0]
+    method2 = method_pair[1]
+    methods_key = method1 + " - " + method2
+    print("- " + methods_key + ":\t" + str(total_rrf[methods_key] / float(analysed_msas)))
   print("")
   
-  print("Normalized average (over the gene families) RF distance to the true trees:")
-  for method in methods:
-    print("- " + method + ":\t" + str(total_rf[method] / float(total_nodes_number)))
-  print("")
   
   print("Number of gene families for which a method reaches the smallest relative RF to the true trees compared with the other methods:")
   for method in methods:
+    if (method == "True"):
+      continue
     print("- " + method + ":\t" + str(best_tree[method]) + "/" + str(analysed_msas))
   print("")
   
-  print("Number of gene families for which a method finds the true tree:")
-  for method in methods:
-    print("- " + method + ":\t" + str(true_matches[method]) + "/" + str(analysed_msas))
-  print("")
-
-  #print("Analysed trees:")
-  #for method in methods:
-  #  print("- " + method + ":\t" + str(methods_trees_number[method]))
-  #print("")
 
   analyse_events(dataset_dir, jointsearch_scheduler_dir)
 

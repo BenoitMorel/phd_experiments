@@ -14,6 +14,9 @@ def extract_events_from_phyldog(dataset_dir):
   families_dir = os.path.join(dataset_dir, "families")
   for family in os.listdir(families_dir):
     phyldog_newick = os.path.join(families_dir, family, "phyldogGeneTree.newick")
+    if (not os.path.isfile(phyldog_newick)):
+        print("skipping " + family)
+        continue
     writer = open(os.path.join(families_dir, family, "phyldogEvents.txt"), "w")
     line = open(phyldog_newick).readlines()[0]
     duplications = line.count("Ev=D")
