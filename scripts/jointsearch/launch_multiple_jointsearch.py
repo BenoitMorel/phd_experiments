@@ -5,7 +5,10 @@ import experiments as exp
 
 #todobenoit this is ugly
 def get_nodes_number(gene_tree_file):
-  lines = open(gene_tree_file).readlines()
+  try:
+    lines = open(gene_tree_file).readlines()
+  except:
+    return 40
   line = lines[0]
   return line.count("(")
 
@@ -20,7 +23,7 @@ def get_gene_tree(datadir, tree):
   elif (tree == "treerecs"):
     return os.path.join(datadir, "treerecsGeneTree.newick")
   elif (tree == "random"):
-    return os.path.join(datadir, "randomGeneTree.newick")
+    return "__random__";
   else:
     return tree
 
@@ -31,7 +34,7 @@ def generate_scheduler_commands_file(families_dir, starting_tree, strategy, node
     for family in os.listdir(families_dir):
       family_path = os.path.join(families_dir, family)
       gene_tree = get_gene_tree(family_path, starting_tree)
-      if (len(open(gene_tree).readlines()) == 0):
+      if (gene_tree != "__random__" and len(open(gene_tree).readlines()) == 0):
         continue
       tree_size = get_nodes_number(gene_tree)
       if (0 == nodes_per_core):

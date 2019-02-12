@@ -38,15 +38,16 @@ def convert_to_notung_tree(input_tree, input_species_tree, mapping_file, notung_
 def back_convert_notung_tree(notung_tree, notung_mapping, output_tree):
   command = []
   command.append("sed")
-  command.append("-i")
   command.append("-e")
   command.append("s/\\[[^][]*\\]//g")
   command.append(notung_tree)
-  subprocess.check_call(command)
+  
+  with open(output_tree, "w") as writer:
+    subprocess.check_call(command, stdout=writer)
   back_mapping = {}
   with open(notung_mapping, 'rb') as f:
     back_mapping = pickle.load(f)
-  tree = read_tree(notung_tree)
+  tree = read_tree(output_tree)
   good_leaves = []
   for leaf in tree.get_leaves():
     if (not "LOST" in leaf.name):

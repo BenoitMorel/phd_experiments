@@ -15,7 +15,7 @@ def get_gene_tree(datadir, tree):
   elif (tree == "treerecs"):
     return os.path.join(datadir, "treerecsGeneTree.newick")
   elif (tree == "random"):
-    return os.path.join(datadir, "randomGeneTree.newick")
+    return "__random__";
   else:
     return tree
 
