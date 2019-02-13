@@ -127,9 +127,11 @@ def gprime_to_families(gprime, out):
     build_mapping_file(gprime_mapping, phyldog_mapping, treerecs_mapping)
 
 
-def generate_jprime(species, families, sites, model, dupRate, lossRate, transferRate, output, seed):
+def generate_jprime(species, families, sites, model, bl_factor, dupRate, lossRate, transferRate, output, seed):
   dirname = "jsim_s" + str(species) + "_f" + str(families)
   dirname += "_sites" + str(sites)
+  dirname += "_" + model
+  dirname += "_bl" + str(bl_factor)
   dirname += "_d" + str(dupRate) + "_l" + str(lossRate) 
   if (transferRate != 0.0):
     dirname += "_t" + str(transferRate)  
@@ -139,7 +141,8 @@ def generate_jprime(species, families, sites, model, dupRate, lossRate, transfer
   os.makedirs(output)
   with open(os.path.join(output, "jprime_script_params.txt"), "w") as writer:
     writer.write(str(species) + " " + str(families) + " ")
-    writer.write(str(sites) + " " + str(model) + " " + str(dupRate) + " ")
+    writer.write(str(sites) + " " + str(model) + " ")
+    writer.write(str(bl_factor)+ " " + str(dupRate) + " ")
     writer.write(str(lossRate) + " " + str(transferRate) + " " + output)
     writer.write(" " + str(seed))
   jprime_output = os.path.join(output, "jprime")
@@ -164,6 +167,6 @@ lossRate = float(sys.argv[6])
 transferRate = float(sys.argv[7])
 output = sys.argv[8]
 seed = int(sys.argv[9])
+bl_factor = 1.0
 
-
-generate_jprime(species, families, sites, model, dupRate, lossRate, transferRate, output, seed)
+generate_jprime(species, families, sites, model, bl_factor, dupRate, lossRate, transferRate, output, seed)
