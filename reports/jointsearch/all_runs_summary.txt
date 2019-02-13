@@ -159,14 +159,12 @@ Average (over the gene families) relative RF distance to the true trees:
 - Treerecs: 0.0207533013542
 - Phyldog:  0.0634576064112
 - JointSearch: 0.0156534088274
-- JS Dated: 0.023420524454
 
 Normalized average (over the gene families) RF distance to the true trees:
 - Raxml-ng: 0.356123215627
 - Treerecs: 0.0277986476334
 - Phyldog:  0.0743801652893
 - JointSearch: 0.0210368144252
-- JS Dated: 0.0330578512397
 
 Duplication event count vectors (normalized distances with true vectors)
 - Treerecs       :  euclidean = 0.0202  hamming = 0.0404

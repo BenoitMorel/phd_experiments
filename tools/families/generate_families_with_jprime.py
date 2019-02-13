@@ -6,8 +6,7 @@ sys.path.insert(0, 'scripts')
 sys.path.insert(0, os.path.join("tools", "phyldog"))
 import experiments as exp
 import link_file_from_gene_tree as phyldog_link
-
-
+import sequence_model
 
 def generate_jprime_species(species, output, seed):
   print("species tree...")
@@ -49,7 +48,9 @@ def generate_jprime_genome(families, dupRate, lossRate, transferRate, output, se
     
 
   
-def generate_seqgen_sequence(families, sites, output, seed):
+def generate_seqgen_sequence(families, sites, model, output, seed):
+  model_samples = sequence_model.get_model_samples(model)
+  seqgen_model_cmd_samples = [sequence_model.model_to_seqgen_cmd(m) for m in model_samples]
   for i in range(0, families):
     print("sequence " + str(i) + "/" + str(families))
 
@@ -65,12 +66,11 @@ def generate_seqgen_sequence(families, sites, output, seed):
     command.append(exp.seq_gen_exec)
     command.append("-l")
     command.append(str(sites))
-    command.append("-m")
-    command.append("GTR")
     command.append("-of")
     command.append(seqgene_tree)
     command.append("-z")
     command.append(str(int(i) + int(seed)))
+    command.extend(seqgen_model_cmd_samples[i % len(seqgen_model_cmd_samples)])
     with open(sequence_file, "w") as writer:
       subprocess.check_call(command, stdout=writer)
 
@@ -127,7 +127,7 @@ def gprime_to_families(gprime, out):
     build_mapping_file(gprime_mapping, phyldog_mapping, treerecs_mapping)
 
 
-def generate_jprime(species, families, sites, dupRate, lossRate, transferRate, output, seed):
+def generate_jprime(species, families, sites, model, dupRate, lossRate, transferRate, output, seed):
   dirname = "jsim_s" + str(species) + "_f" + str(families)
   dirname += "_sites" + str(sites)
   dirname += "_d" + str(dupRate) + "_l" + str(lossRate) 
@@ -139,29 +139,31 @@ def generate_jprime(species, families, sites, dupRate, lossRate, transferRate, o
   os.makedirs(output)
   with open(os.path.join(output, "jprime_script_params.txt"), "w") as writer:
     writer.write(str(species) + " " + str(families) + " ")
-    writer.write(str(sites) + " " + str(dupRate) + " ")
+    writer.write(str(sites) + " " + str(model) + " " + str(dupRate) + " ")
     writer.write(str(lossRate) + " " + str(transferRate) + " " + output)
     writer.write(" " + str(seed))
   jprime_output = os.path.join(output, "jprime")
   os.makedirs(jprime_output)
   generate_jprime_species(species, jprime_output, seed) 
   generate_jprime_genome(families, dupRate, lossRate, transferRate, jprime_output, seed)
-  generate_seqgen_sequence(families, sites, jprime_output, seed)
+  generate_seqgen_sequence(families, sites, model, jprime_output, seed)
   print("jprime output: " + jprime_output)
   gprime_to_families(jprime_output, output)
 
-if (len(sys.argv) != 9):
-  print("Syntax: python generate_jprime.py species_time_interval families sites dupRate lossRate transferRate output seed")
-  sys.exit(1)
+if (len(sys.argv) != 10 or not (sys.argv[4] in sequence_model.get_model_sample_names())):
+  print("Syntax: python generate_jprime.py species_time_interval families sites model dupRate lossRate transferRate output seed")
+  print("model should be one of " + str(sequence_model.get_model_sample_names()))
+  exit(1)
 
 species = int(sys.argv[1])
 families = int(sys.argv[2])
 sites = int(sys.argv[3])
-dupRate = float(sys.argv[4])
-lossRate = float(sys.argv[5])
-transferRate = float(sys.argv[6])
-output = sys.argv[7]
-seed = int(sys.argv[8])
+model = sys.argv[4]
+dupRate = float(sys.argv[5])
+lossRate = float(sys.argv[6])
+transferRate = float(sys.argv[7])
+output = sys.argv[8]
+seed = int(sys.argv[9])
 
 
-generate_jprime(species, families, sites, dupRate, lossRate, transferRate, output, seed)
+generate_jprime(species, families, sites, model, dupRate, lossRate, transferRate, output, seed)
