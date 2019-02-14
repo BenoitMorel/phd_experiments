@@ -22,6 +22,8 @@ for method in methods:
 
 plt.xlabel('Sites')
 plt.ylabel('RF distance')
+plt.title("24 species, bl factor = 1, D=1.0 L=0.5")
 plt.legend()
+
 plt.show()
 
