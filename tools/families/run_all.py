@@ -3,7 +3,7 @@ import sys
 import run_raxml_supportvalues as raxml
 import run_treerecs as treerecs
 import run_phyldog_light as phyldog
-
+import run_notung as notung
 
 if __name__ == "__main__":
   if (len(sys.argv) != 6):
@@ -25,6 +25,10 @@ if __name__ == "__main__":
   print("Run phyldog...")
   sys.stdout.flush()
   phyldog.run_phyldog_light_on_families(dataset_dir, is_dna, cores)
+  print("Run notung...")
+  sys.stdout.flush()
+  threshold = 50
+  notung.run_notung_on_families(dataset_dir, threshold, cores)
   
   
 
