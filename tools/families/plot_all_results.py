@@ -131,11 +131,26 @@ datasets_rf_dico = {}
 for dataset in datasets:
   datasets_rf_dico[dataset] = get_results(dataset)
 
+
+
 params_value_dico_sites = {}
 params_value_dico_sites["species"] = "8"
 params_value_dico_sites["dup_rates"] = "1.0"
 params_value_dico_sites["bl"] = "1.0"
-plot(datasets_rf_dico, "sites", params_value_dico_sites, "/home/morelbt/github/phd_experiments/sites.png")
+plot(datasets_rf_dico, "sites", params_value_dico_sites, "sites.png")
+
+params_value_dico_sites = {}
+params_value_dico_sites["species"] = "8"
+params_value_dico_sites["sites"] = "500"
+params_value_dico_sites["bl"] = "1.0"
+plot(datasets_rf_dico, "dup_rates", params_value_dico_sites, "rates.png")
+
+params_value_dico_sites = {}
+params_value_dico_sites["species"] = "8"
+params_value_dico_sites["sites"] = "500"
+params_value_dico_sites["dup_rates"] = "0.5"
+plot(datasets_rf_dico, "bl", params_value_dico_sites, "bl.png")
+
 
 
 
