@@ -4,9 +4,12 @@ import subprocess
 import shutil
 sys.path.insert(0, 'scripts')
 sys.path.insert(0, os.path.join("tools", "phyldog"))
+sys.path.insert(0, os.path.join("tools", "trees"))
 import experiments as exp
 import link_file_from_gene_tree as phyldog_link
 import sequence_model
+import rescale_bl
+
 
 def generate_jprime_species(species, output, seed):
   print("species tree...")
@@ -53,21 +56,14 @@ def generate_seqgen_sequence(families, sites, model, output, seed):
   seqgen_model_cmd_samples = [sequence_model.model_to_seqgen_cmd(m) for m in model_samples]
   for i in range(0, families):
     print("sequence " + str(i) + "/" + str(families))
-
     jprime_tree = os.path.join(output, str(i) + "_gene.pruned.tree")
-    seqgene_tree = os.path.join(output, str(i) + "_gene.seqgen.tree")
     sequence_file = os.path.join(output, str(i) + ".fasta")
-    shutil.copyfile(jprime_tree, seqgene_tree)
-    subprocess.check_call(["sed", "-i", "s/\[[^][]*\]//g", jprime_tree])
-    subprocess.check_call(["sed", "-i", "s/)[^:]*:/):/g", jprime_tree])
-    subprocess.check_call(["sed", "-i", "s/\[[^][]*\]//g", seqgene_tree])
-    subprocess.check_call(["sed", "-i", "s/)[^:]*:/):/g", seqgene_tree])
     command = []
     command.append(exp.seq_gen_exec)
     command.append("-l")
     command.append(str(sites))
     command.append("-of")
-    command.append(seqgene_tree)
+    command.append(jprime_tree)
     command.append("-z")
     command.append(str(int(i) + int(seed)))
     command.extend(seqgen_model_cmd_samples[i % len(seqgen_model_cmd_samples)])
@@ -126,6 +122,13 @@ def gprime_to_families(gprime, out):
     treerecs_mapping = os.path.join(new_family_dir, "treerecs_mapping.link")
     build_mapping_file(gprime_mapping, phyldog_mapping, treerecs_mapping)
 
+def rescale_trees(jprime_output, families, bl_factor):
+  for i in range(0, families):
+    tree = os.path.join(jprime_output, str(i) + "_gene.pruned.tree")
+    subprocess.check_call(["sed", "-i", "s/\[[^][]*\]//g", tree])
+    subprocess.check_call(["sed", "-i", "s/)[^:]*:/):/g", tree])
+    rescale_bl.rescale_bl(tree, tree, bl_factor)
+    subprocess.check_call(["sed", "-i", "s/1:/:/g", tree])
 
 def generate_jprime(species, families, sites, model, bl_factor, dupRate, lossRate, transferRate, output, seed):
   dirname = "jsim_s" + str(species) + "_f" + str(families)
@@ -149,11 +152,12 @@ def generate_jprime(species, families, sites, model, bl_factor, dupRate, lossRat
   os.makedirs(jprime_output)
   generate_jprime_species(species, jprime_output, seed) 
   generate_jprime_genome(families, dupRate, lossRate, transferRate, jprime_output, seed)
+  rescale_trees(jprime_output, families, bl_factor)
   generate_seqgen_sequence(families, sites, model, jprime_output, seed)
   print("jprime output: " + jprime_output)
   gprime_to_families(jprime_output, output)
 
-if (len(sys.argv) != 10 or not (sys.argv[4] in sequence_model.get_model_sample_names())):
+if (len(sys.argv) != 11 or not (sys.argv[4] in sequence_model.get_model_sample_names())):
   print("Syntax: python generate_jprime.py species_time_interval families sites model dupRate lossRate transferRate output seed")
   print("model should be one of " + str(sequence_model.get_model_sample_names()))
   exit(1)
@@ -162,11 +166,11 @@ species = int(sys.argv[1])
 families = int(sys.argv[2])
 sites = int(sys.argv[3])
 model = sys.argv[4]
-dupRate = float(sys.argv[5])
-lossRate = float(sys.argv[6])
-transferRate = float(sys.argv[7])
-output = sys.argv[8]
-seed = int(sys.argv[9])
-bl_factor = 1.0
+bl_factor = float(sys.argv[5])
+dupRate = float(sys.argv[6])
+lossRate = float(sys.argv[7])
+transferRate = float(sys.argv[8])
+output = sys.argv[9]
+seed = int(sys.argv[10])
 
 generate_jprime(species, families, sites, model, bl_factor, dupRate, lossRate, transferRate, output, seed)

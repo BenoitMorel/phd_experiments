@@ -47,6 +47,7 @@ def generate_scheduler_commands_file(dataset_dir, is_dna, cores, output_dir):
         command.append("alphabet=Protein")
       os.makedirs(os.path.join(results_dir, family))
       command.append("output.file=" + os.path.join(family_dir, "phyldog", "phyldog"))
+      command.append("branch.expected.numbers.optimization=average")
       #command.append("output.file=" + os.path.join(results_dir, family, "phyldog"))
       #print(" ".join(command))
       writer.write(" ".join(command) + "\n")
