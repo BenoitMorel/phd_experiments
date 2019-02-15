@@ -128,7 +128,7 @@ def rescale_trees(jprime_output, families, bl_factor):
     subprocess.check_call(["sed", "-i", "s/\[[^][]*\]//g", tree])
     subprocess.check_call(["sed", "-i", "s/)[^:]*:/):/g", tree])
     rescale_bl.rescale_bl(tree, tree, bl_factor)
-    subprocess.check_call(["sed", "-i", "s/1:/:/g", tree])
+    subprocess.check_call(["sed", "-i", "s/)1:/):/g", tree])
 
 def generate_jprime(species, families, sites, model, bl_factor, dupRate, lossRate, transferRate, output, seed):
   dirname = "jsim_s" + str(species) + "_f" + str(families)

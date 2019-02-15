@@ -133,21 +133,21 @@ def analyse_events(dataset_dir, jointsearch_scheduler_dir):
 def analyse(dataset_dir, jointsearch_scheduler_dir):
   analysed_msas = 0
   total_nodes_number = 0
-  methods = ["True", "Raxml-ng", "Treerecs", "Phyldog", "Notung", "JointSearch"]
+  methods = ["True", "RAxML-NG", "Treerecs", "Phyldog", "Notung", "JointSearch"]
   methods_tree_files = {}
   methods_tree_files["True"] = "trueGeneTree.newick"
-  methods_tree_files["Raxml-ng"] = "raxmlGeneTree.newick"
+  methods_tree_files["RAxML-NG"] = "raxmlGeneTree.newick"
   methods_tree_files["Treerecs"] = "treerecsGeneTree.newick"
   methods_tree_files["Phyldog"] = "phyldogGeneTree.newick"
   methods_tree_files["Notung"] = "notungGeneTree.newick"
   methods_tree_files["JointSearch"] = "jointsearch.newick"
   methods_to_compare = []
-  methods_to_compare.append(("True", "Raxml-ng"))
+  methods_to_compare.append(("True", "RAxML-NG"))
   methods_to_compare.append(("True", "Treerecs"))
   methods_to_compare.append(("True", "Phyldog"))
   methods_to_compare.append(("True", "Notung"))
   methods_to_compare.append(("True", "JointSearch"))
-  methods_to_compare.append(("JointSearch", "Raxml-ng"))
+  methods_to_compare.append(("JointSearch", "RAxML-NG"))
   methods_to_compare.append(("JointSearch", "Treerecs"))
   methods_trees_number = {}
   js_dup = []
