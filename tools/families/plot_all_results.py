@@ -10,21 +10,21 @@ import subprocess
 sys.path.insert(0, 'scripts')
 import experiments as exp
 
-possible_species = ["8"]
-possible_sites = ["250", "500", "1000", "1500"] 
-possible_bl = ["0.5", "1.0", "2.0", "4.0"]
-possible_dup_rates = ["1.0", "0.5", "0.1"]
+#possible_species = ["25, 41"]
+#possible_sites = ["250", "500", "1000", "1500"] 
+#possible_bl = ["0.5", "1.0", "2.0", "4.0"]
+#possible_dup_rates = ["1.0", "0.5", "0.1"]
 
-possible_parameters = {}
-possible_parameters["species"] = possible_species 
-possible_parameters["sites"] = possible_sites 
-possible_parameters["bl"] = possible_bl
-possible_parameters["dup_rates"] = possible_dup_rates
+#possible_parameters = {}
+#possible_parameters["species"] = possible_species 
+#possible_parameters["sites"] = possible_sites 
+#possible_parameters["bl"] = possible_bl
+#possible_parameters["dup_rates"] = possible_dup_rates
 
 
 def parameters_to_dataset(species, sites, bl, dup_rate):
   loss_rate = str(float(rates) / 2.0)
-  return "jsim_s" + species + "_f50_sites" + sites + "_dna4_bl" + bl + "_d" + dup_rate + "_" + loss_rate + "_seed42"
+  return "jsim_s" + species + "_f50_sites" + sites + "_dna4_bl" + bl + "_d" + dup_rate + "_" + loss_rate
 
 def get_param_from_dataset_name(parameter, dataset):
   if (parameter == "species"):
@@ -42,16 +42,15 @@ def get_available_datasets(prefix):
   res = []
   for dataset in os.listdir(exp.families_datasets_root):
     try:
-      ok = True
       if (not dataset.startswith(prefix)):
         continue
-      for parameter in possible_parameters:
-        if (not get_param_from_dataset_name(parameter, dataset) in possible_parameters[parameter]):
-          ok = False
-          continue
-      if (ok):
-        res.append(dataset)
-      pass
+      #ok = True
+      #for parameter in possible_parameters:
+        #if (not get_param_from_dataset_name(parameter, dataset) in possible_parameters[parameter]):
+          #ok = False
+          #continue
+      #if (ok):
+      res.append(dataset)
     except:
       continue
   return res
@@ -69,7 +68,7 @@ def get_rf_from_logs(logs):
   return dico
 
 def get_results(dataset):
-  analyse_script = os.path.join(exp.tools_root, "families", "analyse_dataset.py")
+  analyse_script = os.path.join(exp.tools_root, "families", "analyze_dataset.py")
   families_path = os.path.join(exp.benoit_datasets_root, "families", dataset, "families")
   results_path = os.path.join(exp.results_root, "MultipleJointSearch", dataset, "SPR_2_start_raxml_split", "normald_40", "run_0", "scheduler_run")
   cmd = []
@@ -97,29 +96,48 @@ def get_datasets_to_plot(datasets_rf_dico, fixed_params_dico):
 
 
 def plot(datasets_rf_dico, x_param, fixed_params_dico, output):
+  for_presentation = False
   datasets_to_plot = get_datasets_to_plot(datasets_rf_dico, fixed_params_dico)
   datasets_to_plot.sort(key = lambda t: float(get_param_from_dataset_name(x_param, t)))
   df = pd.DataFrame()
   f, ax = plt.subplots(1)
-  ax.set_ylim(ymin=0)
+ 
   
-  methods = []
+  methods = ["RAxML-NG", "Notung", "Phyldog", "Treerecs", "JointSearch"]
   fake_df = {}
   fake_df[x_param] = []
+  for method in methods:
+    fake_df[method] = []
   for dataset in datasets_to_plot:
     fake_df[x_param].append(float(get_param_from_dataset_name(x_param, dataset)))
     rf_dico = datasets_rf_dico[dataset]
     for method in rf_dico:
       if (not method in methods):
-        methods.append(method)
-        fake_df[method] = []
+        print("Unknown method " + method)
       fake_df[method].append(float(rf_dico[method]))
   for elem in fake_df:
     df[elem] = fake_df[elem]
   
   for method in methods:
-    plt.plot(x_param, method, data=df, marker='x', linewidth=2)
-
+    style = "solid"
+    caption_label = method
+    if (for_presentation):
+      if (method == "RAxML-NG"):
+        caption_label = "Old, likelihood"
+        style = "dashed"
+      elif (method == "Treerecs"):
+        caption_label = "New, parsimony+likelihood"
+        style = "dashed"
+      elif (method == "Notung"):
+        caption_label = "New, parsimony"
+        style = "dashed"
+      elif (method == "JointSearch"):
+        caption_label = "New, likelihood"
+      else:
+        continue
+    plt.plot(x_param, method, data=df, marker='x', linestyle = style, linewidth=2, label = caption_label)
+  if (not for_presentation):
+    ax.set_ylim(bottom=0)
   plt.xlabel(x_param)
   plt.ylabel('RF distance')
   plt.legend()
@@ -134,22 +152,28 @@ for dataset in datasets:
 
 
 params_value_dico_sites = {}
-params_value_dico_sites["species"] = "8"
+params_value_dico_sites["species"] = "25"
 params_value_dico_sites["dup_rates"] = "1.0"
 params_value_dico_sites["bl"] = "1.0"
 plot(datasets_rf_dico, "sites", params_value_dico_sites, "sites.png")
 
 params_value_dico_sites = {}
-params_value_dico_sites["species"] = "8"
+params_value_dico_sites["species"] = "25"
 params_value_dico_sites["sites"] = "500"
 params_value_dico_sites["bl"] = "1.0"
 plot(datasets_rf_dico, "dup_rates", params_value_dico_sites, "rates.png")
 
 params_value_dico_sites = {}
-params_value_dico_sites["species"] = "8"
+params_value_dico_sites["species"] = "25"
 params_value_dico_sites["sites"] = "500"
 params_value_dico_sites["dup_rates"] = "0.5"
 plot(datasets_rf_dico, "bl", params_value_dico_sites, "bl.png")
+
+params_value_dico_sites = {}
+params_value_dico_sites["sites"] = "500"
+params_value_dico_sites["dup_rates"] = "0.5"
+params_value_dico_sites["bl"] = "1.0"
+plot(datasets_rf_dico, "species", params_value_dico_sites, "species.png")
 
 
 
