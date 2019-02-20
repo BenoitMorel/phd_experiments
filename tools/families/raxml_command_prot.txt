@@ -1,1 +1,1 @@
---model LG4X --blopt nr_safe 
+--model LG --blopt nr_safe 

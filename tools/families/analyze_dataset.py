@@ -197,6 +197,9 @@ def analyse(dataset_dir, jointsearch_scheduler_dir):
       if (trees[method1] == None or trees[method2] == None):
         continue
       rf_cell = trees[method1].robinson_foulds(trees[method2], unrooted_trees=True)
+      if (rf_cell[1] == 0):
+        print("null cell for " + methods_key + " " + msa)
+        exit(1)
       rrf[methods_key] = float(rf_cell[0]) / float(rf_cell[1])
       if (method1 == "True" or method2 == "True"):
         best_rrf = min(best_rrf, rrf[methods_key])

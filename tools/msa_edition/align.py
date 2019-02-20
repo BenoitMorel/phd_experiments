@@ -8,6 +8,7 @@ def align(input_msa, output_msa, aligner):
   command = []
   command.append(exp.mafft_exec)
   command.append(input_msa)
+  print(input_msa)
   with open(output_msa, "w") as writer:
     subprocess.check_call(command, stdout=writer)
 

@@ -8,7 +8,8 @@ def fasta_to_mapping(input_fasta, output_mapping):
       continue
     split = line[1:].split("_")
     gene = split[0]
-    species = split[1][:-1]
+    species = split[1]
+    species = species.replace("\n", "")
     if (not species in dico):
       dico[species] = []
     dico[species].append(gene + "_" + species)
