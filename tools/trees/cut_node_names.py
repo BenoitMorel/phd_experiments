@@ -7,8 +7,6 @@ def shorten_obj(o):
 def cut_node_names(input_tree, output_tree):
   s = open(input_tree).read()
   res = re.sub("[A-Za-z0-9_]*", shorten_obj, s)
-  print(s)
-  print(res)
   with open(output_tree, "w") as writer:
     writer.write(res)
 
