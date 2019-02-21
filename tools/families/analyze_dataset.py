@@ -174,6 +174,7 @@ def analyse(dataset_dir, jointsearch_scheduler_dir):
     trees = {}
     family_path = os.path.join(dataset_dir, msa)
     jointsearch_prefix = os.path.join(jointsearch_scheduler_dir, "results", msa)
+    ok = True
     for method in methods:
       if (method == "JointSearch"):
         prefix = jointsearch_prefix
@@ -184,17 +185,25 @@ def analyse(dataset_dir, jointsearch_scheduler_dir):
         methods_trees_number[method] += 1
       except:
         try:
+          print("Cannot read " + method + " tree for " + msa)
           trees[method] = Tree(os.path.join(family_path, "trueGeneTree.newick"), format=1)
         except:
+          print("Cannot read true tree for " + msa)
           trees[method] = None
+          ok = False
+    if (not ok):
+      print("continue")
+      continue
     best_rrf = 1
     rrf = {}
     analysed_msas += 1
+    print("analyzed " + msa)
     for method_pair in methods_to_compare:
       method1 = method_pair[0]
       method2 = method_pair[1]
       methods_key = method1 + " - " + method2
       if (trees[method1] == None or trees[method2] == None):
+        print("error " + msa + " " + methods_key)
         continue
       rf_cell = trees[method1].robinson_foulds(trees[method2], unrooted_trees=True)
       if (rf_cell[1] == 0):

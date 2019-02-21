@@ -1,26 +1,26 @@
 import re
 import sys
+from ete3 import Tree
 
-def shorten_obj_keep_first(o):
-  return o.group(0).split("_")[0]
+def read_tree(tree):
+  lines = open(tree).readlines()
+  for line in lines:
+    if (not line.startswith(">")):
+      return Tree(line, format=1)
+  return None
 
-def shorten_obj_remove_last(o):
-  return "_".join(o.group(0).split("_")[:-1])
+def cut_keep_first_elems(input_tree, output_tree, separator, keep_number):
+  tree = read_tree(input_tree)
+  for leaf in tree.get_leaves():
+    leaf.name = separator.join(leaf.name.split(separator)[0:keep_number])
+  tree.write(outfile = output_tree) 
 
-def cut_node_names(input_tree, output_tree, keep_first):
-  s = open(input_tree).read()
-  if (keep_first):
-    res = re.sub("[A-Za-z0-9_]*", shorten_obj_keep_first, s)
-  else:
-    res = re.sub("[A-Za-z0-9_]*", shorten_obj_remove_last, s)
-  with open(output_tree, "w") as writer:
-    writer.write(res)
 
-if (__name__ == "__main__"):
-  if (len(sys.argv) != 3):
-    print("Syntax: input_tree output_tree")
-    exit(1)
-  cut_node_names(sys.argv[1], sys.argv[2])
+#if (__name__ == "__main__"):
+#  if (len(sys.argv) != 3):
+#    print("Syntax: input_tree output_tree")
+#    exit(1)
+#  cut_node_names(sys.argv[1], sys.argv[2])
 
 
 

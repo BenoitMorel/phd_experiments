@@ -43,7 +43,7 @@ def extract_species_tree(swiss_dataset, output_dataset):
   species_tree = os.path.join(output_dataset, "speciesTree.newick")
   nhx_to_newick.nhx_to_newick(nhx_species_tree, unresolved_species_tree)
   make_binary.make_binary(unresolved_species_tree, species_tree)
-  cut_node_names.cut_node_names(species_tree, species_tree, True)
+  cut_node_names.cut_keep_first_elems(species_tree, species_tree, "_", 1)
   return species_tree
 
 def remove_fasta_comments(swiss_alignment, output_alignment):
@@ -53,26 +53,49 @@ def remove_fasta_comments(swiss_alignment, output_alignment):
     for line in lines:
       if (line.startswith(">")):
         ok = True
-        sp = line.split("|")
-        if (len(sp) != 1):
-          line = ">" +  sp[-1].split(" ")[0]
-          print(line) 
       if (ok):
         writer.write(line + "\n")
 
-def extract_sequence(swiss_alignment, output_alignment, species_leaves):
+def extract_sequence(swiss_alignment, output_alignment, species_leaves, id_to_name):
   remove_fasta_comments(swiss_alignment, output_alignment)
   seq = SeqGroup(output_alignment)
   new_seq = SeqGroup()
   for entry in seq.get_entries():
     name = entry[0]
-    species = name.split("_")[1]
+    pipe_split = name.split("|")
+    if (len(pipe_split) > 1):
+      name = pipe_split[2].split(" ")[0]
+      id_to_name[pipe_split[1]] = name
+    underscore_split = name.split("_")
+    species = underscore_split[1]
+    name = "_".join(underscore_split[0:2]) 
     if (not species in species_leaves):
       # get rid of genes mapped to species
       # that are not in the species tree
       continue
-    new_seq.set_seq(entry[0], entry[1])
+    new_seq.set_seq(name, entry[1])
+  print("seqs: " + str(len(new_seq.get_entries())))
   new_seq.write("fasta", output_alignment)
+    
+def extract_id_to_name(swiss_sequence_id, id_to_name):
+  lines = open(swiss_sequence_id).readlines()
+  for line in lines:
+    line = line.replace("\n", "")
+    space_split = line.split(" ")
+    name = space_split[0]
+    for substr in space_split[1:]:
+      comma_split = substr.split(",")
+      for identifier in comma_split:
+        if (not identifier in id_to_name):
+          id_to_name[identifier] = name
+
+def apply_id_to_name(id_to_name, input_tree, output_tree):
+  tree = read_tree(input_tree)
+  print("leaves: " + str(len(tree.get_leaves())))
+  for leaf in tree.get_leaves():
+    leaf.name = id_to_name[leaf.name.split("_")[-1]] 
+  with open(output_tree, "w") as writer:
+    tree.write(outfile = output_tree)
 
 def extract_family(swiss_dataset, family, species_tree, output_dataset):
   print("Treating " + family)
@@ -99,18 +122,25 @@ def extract_family(swiss_dataset, family, species_tree, output_dataset):
   exp.try_make_dir(family_path)  
   shutil.copyfile(species_tree, os.path.join(family_path, "speciesTree.newick"))
   species_leaves = get_leaf_names(species_tree)
-  print(species_leaves)
 
+  # alignment
+  id_to_name = {}
+  extract_sequence(swiss_alignment, family_alignment_unaligned, species_leaves, id_to_name)
+  #print(id_to_name)
+  align.align(family_alignment_unaligned, family_alignment, "MAFFT")
+  shutil.copyfile(family_alignment, pargenes_alignment)
+ 
+
+  #if (len(id_to_name) > 1):
+  #  extract_id_to_name(swiss_sequence_id, id_to_name)
   # true tree
   nhx_to_newick.nhx_to_newick(swiss_consensus_tree, true_tree)
   lines = open(true_tree).readlines()
   open(true_tree, "w").write(lines[0])
-  cut_node_names.cut_node_names(true_tree, true_tree, False)
-
-  # alignment
-  extract_sequence(swiss_alignment, family_alignment_unaligned, species_leaves)
-  align.align(family_alignment_unaligned, family_alignment, "MAFFT")
-  shutil.copyfile(family_alignment, pargenes_alignment)
+  #if (len(id_to_name) == 0):
+  cut_node_names.cut_keep_first_elems(true_tree, true_tree, "_", 2)
+  #else:
+  #apply_id_to_name(id_to_name, true_tree, true_tree)
   
   # mapping
   fasta_to_mapping.fasta_to_mapping(family_alignment, family_mapping)
@@ -121,9 +151,12 @@ def swiss_to_family(swiss_dataset, output_dataset):
   species_tree = extract_species_tree(swiss_dataset, output_dataset)
   alignments_path = os.path.join(output_dataset, "alignments")
   exp.try_make_dir(alignments_path)
-  for family in os.listdir(swiss_dataset):
-    if (family.startswith("ST0") and family != "ST012" and family != "ST007"):
-      extract_family(swiss_dataset, family, species_tree, output_dataset)
+ 
+  good_families = ["ST001", "ST003", "ST009"]
+  forbidden_families = ["ST012", "ST006", "ST007", "ST004"]
+  for family in good_families:
+    #if (family.startswith("ST0") and (not family in forbidden_families)):
+    extract_family(swiss_dataset, family, species_tree, output_dataset)
  
 
 swiss_dataset = os.path.join(exp.benoit_datasets_root, "families/reference_genes/original_files")
