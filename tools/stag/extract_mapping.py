@@ -27,7 +27,13 @@ def extract_from_dataset(dataset, output):
     for species in dico:
       for gene in dico[species]:
         writer.write(gene + " " + species + "\n")
-      #writer.write(species + " " + " ".join(dico[species]) + "\n")
+
+
+def extract(input_path, output):
+  if (os.path.isfile(input_path)):
+    extract_from_species_tree(input_path, output)
+  else:
+    extract_from_dataset(input_path, output)
 
 
 if (__name__ == "__main__"):
@@ -35,10 +41,6 @@ if (__name__ == "__main__"):
     print("Syntax: python extract_mapping.py [species_tree, dataset] output_mapping")
     exit(1)
 
-  if (os.path.isfile(sys.argv[1])):
-    extract_from_species_tree(sys.argv[1], sys.argv[2])
-  else:
-    extract_from_dataset(sys.argv[1], sys.argv[2])
-
+  extract(sys.argv[1], sys.argv[2])
 
 

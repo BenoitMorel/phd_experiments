@@ -5,7 +5,7 @@ import shutil
 
 def extract(dataset, method_tag):
   families_path = os.path.join(dataset, "families")
-  stag_path = os.path.join(dataset, "stag_" + method_tag + "_gene_trees")
+  stag_path = os.path.join(dataset, "stag", method_tag + "_gene_trees")
   try:
     os.makedirs(stag_path)
   except:
@@ -14,7 +14,7 @@ def extract(dataset, method_tag):
     gene_tree = os.path.join(families_path, family, method_tag + "GeneTree.newick")
     dest = os.path.join(stag_path, family + ".newick")
     shutil.copyfile(gene_tree, dest)
-
+  return stag_path
 
 if (__name__ == "__main__"):
   if (len(sys.argv) != 3):

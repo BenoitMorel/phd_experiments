@@ -4,6 +4,7 @@ import run_raxml_supportvalues as raxml
 import run_treerecs as treerecs
 import run_phyldog_light as phyldog
 import run_notung as notung
+import run_stag
 
 if __name__ == "__main__":
   if (len(sys.argv) != 6):
@@ -29,6 +30,6 @@ if __name__ == "__main__":
   sys.stdout.flush()
   threshold = 50
   notung.run_notung_on_families(dataset_dir, threshold, cores)
-  
-  
+  print("Run stag...")
+  run_stag.run_stag(dataset_dir)
 
