@@ -57,6 +57,7 @@ ale_simul_exec = os.path.join(ale_root, "build", "bin", "simulation")
 seq_gen_exec = os.path.join(github_root, "Seq-Gen-1.3.4", "source", "seq-gen")
 notung_jar = os.path.join(github_root, "Notung-2.9", "Notung-2.9.jar")
 mafft_exec = os.path.join(github_root, "mafft", "bin", "mafft")
+stag_script = os.path.join(github_root, "STAG", "stag", "stag.py")
 # constants
 mpi_scheduler_heuristic = "--split-scheduler"
 
