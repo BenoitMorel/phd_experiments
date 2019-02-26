@@ -42,7 +42,7 @@ def extract_species_tree(swiss_dataset, output_dataset):
   unresolved_species_tree = os.path.join(output_dataset, "unresolvedSpeciesTree.newick")
   species_tree = os.path.join(output_dataset, "speciesTree.newick")
   nhx_to_newick.nhx_to_newick(nhx_species_tree, unresolved_species_tree)
-  make_binary.make_binary(unresolved_species_tree, species_tree)
+  make_binary.make_binary(unresolved_species_tree, species_tree, 41)
   cut_node_names.cut_keep_first_elems(species_tree, species_tree, "_", 1)
   return species_tree
 
@@ -135,8 +135,6 @@ def extract_family(swiss_dataset, family, species_tree, output_dataset):
   #  extract_id_to_name(swiss_sequence_id, id_to_name)
   # true tree
   nhx_to_newick.nhx_to_newick(swiss_consensus_tree, true_tree)
-  lines = open(true_tree).readlines()
-  open(true_tree, "w").write(lines[0])
   #if (len(id_to_name) == 0):
   cut_node_names.cut_keep_first_elems(true_tree, true_tree, "_", 2)
   #else:
@@ -152,15 +150,13 @@ def swiss_to_family(swiss_dataset, output_dataset):
   alignments_path = os.path.join(output_dataset, "alignments")
   exp.try_make_dir(alignments_path)
  
-  good_families = ["ST001", "ST003", "ST009"]
-  forbidden_families = ["ST012", "ST006", "ST007", "ST004"]
+  good_families = ["ST001", "ST002", "ST003", "ST004", "ST005", "ST007", "ST009", "ST011"]
   for family in good_families:
-    #if (family.startswith("ST0") and (not family in forbidden_families)):
     extract_family(swiss_dataset, family, species_tree, output_dataset)
  
 
-swiss_dataset = os.path.join(exp.benoit_datasets_root, "families/reference_genes/original_files")
-output_dataset = os.path.join(exp.benoit_datasets_root, "families/reference_genes/")
+swiss_dataset = os.path.join(exp.benoit_datasets_root, "families/swiss/original_files")
+output_dataset = os.path.join(exp.benoit_datasets_root, "families/swiss/")
 
 swiss_to_family(swiss_dataset, output_dataset)
 

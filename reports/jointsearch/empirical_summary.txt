@@ -1,3 +1,16 @@
+**********************
+** Swiss
+**********************
+
+57s
+Average (over the gene families) relative RF distances:
+- True - RAxML-NG:  0.223424861981
+- True - Treerecs:  0.113677483055
+- True - Phyldog: 0.130946484545
+- True - Notung:  0.160501416367
+- True - JointSearch: 0.114806749963
+- JointSearch - RAxML-NG: 0.165568958967
+- JointSearch - Treerecs: 0.0291369047619
 
 
 

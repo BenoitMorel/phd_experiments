@@ -3,25 +3,15 @@ import os
 from ete3 import Tree
 import numpy
 import math
-
-def read_tree(tree):
-  lines = open(tree).readlines()
-  for line in lines:
-    if (not line.startswith(">")):
-      return Tree(line, format=1)
-  return None
-
-def get_rf(tree1, tree2):
-  return tree1.robinson_foulds(tree2, unrooted_trees=True)[0]
-
-def get_relative_rf(tree1, tree2):
-  rf = tree1.robinson_foulds(tree2, unrooted_trees=True)
-  return float(rf[0]) / float(rf[1])
+sys.path.insert(0, os.path.join("tools", "trees"))
+from read_tree import read_tree
+from rf_distance import ete3_rf
+from rf_distance import get_relative_rf
+from rf_distance import get_rf
 
 def get_nodes(tree1):
-  rf = tree1.robinson_foulds(tree1, unrooted_trees=True)
+  rf = ete3_rf(tree1, tree1)
   return rf[1]
-
 
 def hamming(v1, v2):
   dist = 0
@@ -205,11 +195,12 @@ def analyse(dataset_dir, jointsearch_scheduler_dir):
       if (trees[method1] == None or trees[method2] == None):
         print("error " + msa + " " + methods_key)
         continue
-      rf_cell = trees[method1].robinson_foulds(trees[method2], unrooted_trees=True)
+      rf_cell = ete3_rf(trees[method1], trees[method2])
       if (rf_cell[1] == 0):
         print("null cell for " + methods_key + " " + msa)
         exit(1)
       rrf[methods_key] = float(rf_cell[0]) / float(rf_cell[1])
+      print(methods_key + " " + str(rrf[methods_key]) + " " + str(rf_cell[0]))
       if (method1 == "True" or method2 == "True"):
         best_rrf = min(best_rrf, rrf[methods_key])
       total_rrf[methods_key] += rrf[methods_key]
