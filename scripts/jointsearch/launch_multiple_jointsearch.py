@@ -1,8 +1,10 @@
 import sys
 import os
 sys.path.insert(0, 'scripts')
+sys.path.insert(0, 'tools/msa_edition')
 import experiments as exp
 import exp_jointsearch_utils as utils
+import msa_analyzer
 
 def generate_scheduler_commands_file(families_dir, starting_tree, strategy, nodes_per_core, additional_arguments, cores, output_dir, scheduler_output_dir):
   scheduler_commands_file = os.path.join(output_dir, "commands.txt")
@@ -13,7 +15,8 @@ def generate_scheduler_commands_file(families_dir, starting_tree, strategy, node
       gene_tree = utils.get_gene_tree(family_path, starting_tree)
       if (gene_tree != "__random__" and len(open(gene_tree).readlines()) == 0):
         continue
-      tree_size = utils.get_nodes_number(gene_tree)
+      alignment =  os.path.join(family_path, "alignment.msa")
+      tree_size = msa_analyzer.get_taxa_number(alignment)
       if (0 == nodes_per_core):
         writer.write(family + " 1 " + str(tree_size) + " ")
       else:
@@ -22,7 +25,7 @@ def generate_scheduler_commands_file(families_dir, starting_tree, strategy, node
       writer.write("-s " + os.path.join(family_path, "speciesTree.newick") +  " ")
       mapping = os.path.join(family_path, "mapping.link")
       writer.write("-m " + mapping + " ")
-      writer.write("-a " + os.path.join(family_path, "alignment.msa") +  " ")
+      writer.write("-a " + alignment +  " ")
       os.makedirs(os.path.join(results_dir, family))
       writer.write("-p " + os.path.join(results_dir, family, "jointsearch") + " ") 
       writer.write("--strategy " + strategy + " ")
