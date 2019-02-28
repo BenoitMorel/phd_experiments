@@ -3,6 +3,12 @@ import sys
 sys.path.insert(0, 'scripts')
 import experiments as exp
 
+def get_possible_gene_trees():
+  return ["raxml", "raxmls", "true", "treerecs", "random"]
+
+def get_possible_strategies():
+  return ["SPR", "EVAL"]
+
 def get_gene_tree(datadir, tree):
   if (tree == "raxml"):
     return os.path.join(datadir, "raxmlGeneTree.newick")
@@ -17,6 +23,20 @@ def get_gene_tree(datadir, tree):
   else:
     return tree
 
+def check_inputs(starting_tree, strategy):
+  if (not (strategy in get_possible_strategies())):
+    print("Unknown search strategy " + strategy)
+    exit(1)
+  if (not (starting_tree in get_possible_gene_trees())):
+    print("Unknown starting tree " + starting_tree)
+    exit(1)
+
+def get_jointsearch_datasets():
+  root_datadir = os.path.join(exp.datasets_root, "joint_search")
+  datasets = {}
+  for dataset in os.listdir(root_datadir):
+    datasets[dataset] = os.path.join(root_datadir, dataset)
+  return datasets
 
 def get_jointsearch_command(gene_tree, species_tree, mapping, alignment, strategy, cores, output_dir, is_gprof, additional_arguments):
     executable = exp.joint_search_exec

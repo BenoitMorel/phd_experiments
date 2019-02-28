@@ -33,9 +33,7 @@ def launch_jointsearch(is_gprof):
   cluster = sys.argv[4]
   cores = int(sys.argv[5])
   additional_arguments = sys.argv[max_args_number:]
-
-  if (not (strategy in ["SPR", "NNI", "HYBRID"])):
-    print("Unknown search strategy " + strategy)
+  utils.check_inputs(starting_tree, strategy)
 
   resultsdir = os.path.join("JointSearch", dataset, strategy + "_start_" + starting_tree, cluster + "_" + str(cores), "run")
   resultsdir = exp.create_result_dir(resultsdir, additional_arguments)
@@ -47,12 +45,11 @@ def launch_jointsearch(is_gprof):
   species_tree = os.path.join(datadir, "speciesTree.newick")
   alignment = os.path.join(datadir, "alignment.msa")
   mapping = os.path.join(datadir, "mapping.link")
-  output_dir = resultsdir 
 
-  command = utils.get_jointsearch_command(gene_tree, species_tree, mapping, alignment, strategy, cores, output_dir, is_gprof, additional_arguments)
+  command = utils.get_jointsearch_command(gene_tree, species_tree, mapping, alignment, strategy, cores, resultsdir, is_gprof, additional_arguments)
 
-  result_tree = os.path.join(output_dir, "join_search.newick") 
-  summary = os.path.join(output_dir, "summary.txt")
+  result_tree = os.path.join(resultsdir, "join_search.newick") 
+  summary = os.path.join(resultsdir, "summary.txt")
 
 
   command += "\n"
