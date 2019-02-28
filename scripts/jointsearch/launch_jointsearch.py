@@ -17,19 +17,14 @@ def get_compare_rf_command(data_dir, tree, name, output):
 
 
 def launch_jointsearch(is_gprof):
-  root_datadir = os.path.join(exp.datasets_root, "joint_search")
-  datasets = {}
-  for dataset in os.listdir(root_datadir):
-    datasets[dataset] = os.path.join(root_datadir, dataset)
-
+  datasets = utils.get_jointsearch_datasets()
   max_args_number = 6
   if len(sys.argv) < max_args_number:
     print("Syntax error: python lauch_joint_search.py dataset strategy starting_tree cluster cores [additional paremeters].\n Suggestions of datasets: ")
     for dataset in datasets:
       print("\t" + dataset)
-    print("Cluster can be either normal, haswell or magny")
-    print("strategy: SPR, NNI, HYBRID")
-    print("starting_tree: raxml, raxmls, true, treerecs, random")
+    print("strategy: " + ",".join(utils.get_possible_strategies()))
+    print("starting_tree: " + ",".join(utils.get_possible_gene_trees()))
     sys.exit(0)
 
   dataset = sys.argv[1]
