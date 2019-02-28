@@ -2,30 +2,7 @@ import sys
 import os
 sys.path.insert(0, 'scripts')
 import experiments as exp
-
-#todobenoit this is ugly
-def get_nodes_number(gene_tree_file):
-  try:
-    lines = open(gene_tree_file).readlines()
-  except:
-    return 40
-  line = lines[0]
-  return line.count("(")
-
-
-def get_gene_tree(datadir, tree):
-  if (tree == "raxml"):
-    return os.path.join(datadir, "raxmlGeneTree.newick")
-  elif (tree == "raxmls"):
-    return os.path.join(datadir, "raxmlGeneTrees.newick")
-  elif (tree == "true"):
-    return os.path.join(datadir, "trueGeneTree.newick")
-  elif (tree == "treerecs"):
-    return os.path.join(datadir, "treerecsGeneTree.newick")
-  elif (tree == "random"):
-    return "__random__";
-  else:
-    return tree
+import exp_jointsearch_utils as utils
 
 def generate_scheduler_commands_file(families_dir, starting_tree, strategy, nodes_per_core, additional_arguments, cores, output_dir, scheduler_output_dir):
   scheduler_commands_file = os.path.join(output_dir, "commands.txt")
@@ -33,10 +10,10 @@ def generate_scheduler_commands_file(families_dir, starting_tree, strategy, node
   with open(scheduler_commands_file, "w") as writer:
     for family in os.listdir(families_dir):
       family_path = os.path.join(families_dir, family)
-      gene_tree = get_gene_tree(family_path, starting_tree)
+      gene_tree = utils.get_gene_tree(family_path, starting_tree)
       if (gene_tree != "__random__" and len(open(gene_tree).readlines()) == 0):
         continue
-      tree_size = get_nodes_number(gene_tree)
+      tree_size = utils.get_nodes_number(gene_tree)
       if (0 == nodes_per_core):
         writer.write(family + " 1 " + str(tree_size) + " ")
       else:

@@ -15,7 +15,7 @@ scripts_root = os.path.join(root, "scripts")
 
 #tools
 tools_root = os.path.join(root, "tools")
-rf_distance_tool = os.path.join(tools_root, "treerecs", "rf_distance.py")
+rf_distance_tool = os.path.join(tools_root, "trees", "rf_distance.py")
 analyse_pargenes_jointsearch_tool = os.path.join(tools_root, "families", "analyze_dataset.py")
 
 # programs
@@ -38,6 +38,7 @@ joint_likelihood_evaluator_exec = os.path.join(treerecs_root, "build", "bin", "m
 treerecs_joint_search_exec = os.path.join(treerecs_root, "build", "bin", "misc", "jointTreeSearch")
 joint_search_root = os.path.join(github_root, "JointSearch")
 joint_search_exec = os.path.join(joint_search_root, "build", "bin", "JointSearch")
+joint_search_gprof_exec = os.path.join(joint_search_root, "gprof_build", "bin", "JointSearch")
 joint_search_lib = os.path.join(joint_search_root, "build_lib", "src", "libJointSearch.so")
 pargenes_root = os.path.join(github_root, "pargenes")
 pargenes_script = os.path.join(pargenes_root, "pargenes", "pargenes-hpc.py")
@@ -98,8 +99,11 @@ def display_warning_file(warning_filename):
     print("# End of warning file  #")
     print("########################")
 
-def create_result_dir(suffix):
-  base = os.path.join(results_root, suffix) + "_"
+def create_result_dir(suffix, additional_args = []):
+  base = os.path.join(results_root, suffix) 
+  for arg in additional_args:
+    base += "_" + arg
+  base += "_"
   result_dir = ""
   for i in range(0, 10000):
     result_dir = base + str(i)
