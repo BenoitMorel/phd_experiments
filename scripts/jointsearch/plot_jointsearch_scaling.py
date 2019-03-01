@@ -27,8 +27,10 @@ def run(dataset, strategy, starting_tree, cluster, cores, additional_arguments, 
   tree_size = msa_analyzer.get_taxa_number(alignment)
   print("Taxa number: " + str(tree_size))
   runs_number = 5
-  for i in range(1, runs_number + 1):
+  for i in reversed(range(0, runs_number + 1)):
     c = (cores * i) // runs_number
+    if (c == 0):
+      c = 1
     run_dir = os.path.join(resultsdir, "cores_" + str(c))
     os.makedirs(run_dir)
     command = utils.get_jointsearch_command(gene_tree, species_tree, mapping, alignment, strategy, c, run_dir, False, additional_arguments).split(" ")
