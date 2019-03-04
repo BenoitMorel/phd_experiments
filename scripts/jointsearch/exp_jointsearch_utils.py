@@ -38,10 +38,12 @@ def get_jointsearch_datasets():
     datasets[dataset] = os.path.join(root_datadir, dataset)
   return datasets
 
-def get_jointsearch_command(gene_tree, species_tree, mapping, alignment, strategy, cores, output_dir, is_gprof, additional_arguments):
+def get_jointsearch_command(gene_tree, species_tree, mapping, alignment, strategy, cores, output_dir, mode, additional_arguments):
     executable = exp.joint_search_exec
-    if (is_gprof):
+    if (mode == "gprof"):
       executable = exp.joint_search_gprof_exec
+    elif (mode == "scalasca"):
+      executable = exp.joint_search_scalasca_exec
     joint_search_output = os.path.join(output_dir, "join_search")
     command = []
     command.append("mpirun")

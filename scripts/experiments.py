@@ -39,6 +39,7 @@ treerecs_joint_search_exec = os.path.join(treerecs_root, "build", "bin", "misc",
 joint_search_root = os.path.join(github_root, "JointSearch")
 joint_search_exec = os.path.join(joint_search_root, "build", "bin", "JointSearch")
 joint_search_gprof_exec = os.path.join(joint_search_root, "gprof_build", "bin", "JointSearch")
+joint_search_scalasca_exec = os.path.join(joint_search_root, "scalasca_build", "bin", "JointSearch")
 joint_search_lib = os.path.join(joint_search_root, "build_lib", "src", "libJointSearch.so")
 pargenes_root = os.path.join(github_root, "pargenes")
 pargenes_script = os.path.join(pargenes_root, "pargenes", "pargenes-hpc.py")

@@ -16,7 +16,7 @@ def get_compare_rf_command(data_dir, tree, name, output):
 
 
 
-def launch_jointsearch(is_gprof):
+def launch_jointsearch(mode):
   datasets = utils.get_jointsearch_datasets()
   max_args_number = 6
   if len(sys.argv) < max_args_number:
@@ -46,7 +46,7 @@ def launch_jointsearch(is_gprof):
   alignment = os.path.join(datadir, "alignment.msa")
   mapping = os.path.join(datadir, "mapping.link")
 
-  command = utils.get_jointsearch_command(gene_tree, species_tree, mapping, alignment, strategy, cores, resultsdir, is_gprof, additional_arguments)
+  command = utils.get_jointsearch_command(gene_tree, species_tree, mapping, alignment, strategy, cores, resultsdir, mode, additional_arguments)
 
   result_tree = os.path.join(resultsdir, "join_search.newick") 
   summary = os.path.join(resultsdir, "summary.txt")
@@ -69,6 +69,6 @@ def launch_jointsearch(is_gprof):
 
 
 if (__name__ == "__main__"): 
-  launch_jointsearch(False)
+  launch_jointsearch("normal")
 
 

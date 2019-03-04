@@ -66,9 +66,13 @@ then
   echo ""
   echo "Found a X session. Scalasca GUI has been installed"
 else
+  echo ""
+  echo ""
   echo "Did not find a X session. Scalasca GUI has NOT been installed"
-if
+  echo "If this machine does not support X, you can profile your programs on it, and then scp the output files to another machine, with the GUI installed. There is also a way to produce text profiling (see scalasca documentation) without the GUI"
+fi
 
+echo ""
 echo "Please add the following directory to your path:"
 echo "$install_prefix/bin"
 
