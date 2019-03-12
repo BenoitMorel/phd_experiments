@@ -187,7 +187,7 @@ def analyse(dataset_dir, jointsearch_scheduler_dir):
     best_rrf = 1
     rrf = {}
     analysed_msas += 1
-    print("analyzed " + msa)
+    #print("analyzed " + msa)
     for method_pair in methods_to_compare:
       method1 = method_pair[0]
       method2 = method_pair[1]
@@ -200,7 +200,7 @@ def analyse(dataset_dir, jointsearch_scheduler_dir):
         print("null cell for " + methods_key + " " + msa)
         exit(1)
       rrf[methods_key] = float(rf_cell[0]) / float(rf_cell[1])
-      print(methods_key + " " + str(rrf[methods_key]) + " " + str(rf_cell[0]))
+      #print(methods_key + " " + str(rrf[methods_key]) + " " + str(rf_cell[0]))
       if (method1 == "True" or method2 == "True"):
         best_rrf = min(best_rrf, rrf[methods_key])
       total_rrf[methods_key] += rrf[methods_key]
@@ -247,7 +247,7 @@ def analyse(dataset_dir, jointsearch_scheduler_dir):
   #print("Total initial libpll  likelihood: " + str(sum(js_initiallllibpll)))
   #print("Total initial reconciliation likelihood: " + str(sum(js_initialllrec)))
   #print("")
-  #print("Total joint likelihood: " + str(sum(js_ll)))
+  print("Total joint likelihood: " + str(sum(js_ll)))
   #print("Total libpll  likelihood: " + str(sum(js_lllibpll)))
   #print("Total reconciliation likelihood: " + str(sum(js_llrec)))
   #print("")

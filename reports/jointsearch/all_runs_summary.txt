@@ -55,9 +55,10 @@ Normalized average (over the gene families) RF distance to the true trees:
 ** DTL_jsim_s8_f100_sites300_d2.0_l1.0_t0.5_seed6 **
 ************************************************i
 
-phyldog: TextTools::toDouble(). Invalid number specification: H26
 
-DTL: 32s
+DTL: 91s
+ll = -810840.3
+ll = -811018.68
 
 Average (over the gene families) relative RF distance to the true trees:
 - Raxml-ng: 0.176004375807

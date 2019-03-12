@@ -20,7 +20,9 @@ def generate_scheduler_commands_file(families_dir, starting_tree, strategy, node
       if (0 == nodes_per_core):
         writer.write(family + " 1 " + str(tree_size) + " ")
       else:
-        writer.write(family + " " + str(max(1, int(tree_size / nodes_per_core))) + " " + str(tree_size) + " ")
+        max_cores = 16
+        cores = max(min(int(tree_size / nodes_per_core), max_cores), 1)
+        writer.write(family + " " + str(cores) + " " + str(tree_size) + " ")
       writer.write("-g " + gene_tree + " ")
       writer.write("-s " + os.path.join(family_path, "speciesTree.newick") +  " ")
       mapping = os.path.join(family_path, "mapping.link")
