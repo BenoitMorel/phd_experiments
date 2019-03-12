@@ -1,5 +1,6 @@
 import sys
 import os
+import subprocess
 sys.path.insert(0, 'scripts')
 import experiments as exp
 import exp_jointsearch_utils as utils
@@ -10,21 +11,28 @@ def build_generax_families_file(dataset, starting_tree, output):
   families_dir = os.path.join(dataset, "families")
   with open(output, "w") as writer:
     writer.write("[FAMILIES]\n")
+    plop = 0
     for family in os.listdir(families_dir):
+      
       family_path = os.path.join(families_dir, family)
-      writer.write(family + "\n")
+      writer.write("- " + family + "\n")
       writer.write("G: " + utils.get_gene_tree(family_path, starting_tree) + "\n")
       writer.write("A: " + utils.get_alignment_file(family_path) + "\n")
       writer.write("M: " + utils.get_mapping_file(family_path) + "\n")
 
-def run_generax(dataset, strategy, generax_families_file, cores, additional_arguments, resultsdir):
-  pass 
+def run_generax(datadir, strategy, generax_families_file, cores, additional_arguments, resultsdir):
+  species_tree = os.path.join(datadir, "speciesTree.newick")
+  mode = "normal"
+  command = utils.get_generax_command(generax_families_file, species_tree, strategy, additional_arguments, resultsdir, mode, cores)
+  print(command)
+  subprocess.check_call(command.split(" "))
+
 
 def run(dataset, strategy, starting_tree, cores, additional_arguments, resultsdir):
   datadir = datasets[dataset]
   generax_families_file = os.path.join(resultsdir, "generax_families.txt")
   build_generax_families_file(datadir, starting_tree, generax_families_file)
-  run_generax(dataset, strategy, generax_families_file, cores, additional_arguments, resultsdir)
+  run_generax(datadir, strategy, generax_families_file, cores, additional_arguments, resultsdir)
 
 def launch(dataset, strategy, starting_tree, cluster, cores, additional_arguments):
   command = ["python"]
