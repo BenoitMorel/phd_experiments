@@ -18,7 +18,7 @@ def run_and_get_time(command):
   return elapsed
 
 
-def run(dataset, strategy, starting_tree, cluster, cores, additional_arguments, resultsdir):
+def run(dataset, strategy, starting_tree, cores, additional_arguments, resultsdir):
   datadir = datasets[dataset]
   gene_tree = utils.get_gene_tree(datadir, starting_tree)
   species_tree = os.path.join(datadir, "speciesTree.newick")
@@ -43,7 +43,7 @@ def launch(dataset, strategy, starting_tree, cluster, cores, additional_argument
   command.append("--exprun")
   resultsdir = os.path.join("JointSearchScaling", dataset, strategy + "_start_" + starting_tree, "run")
   resultsdir = exp.create_result_dir(resultsdir, additional_arguments)
-  result_msg = "JointSearch git: \n" + exp.get_git_info(exp.joint_search_root)
+  result_msg = "GeneRax git: \n" + exp.get_git_info(exp.joint_search_root)
   exp.write_results_info(resultsdir, result_msg) 
   submit_path = os.path.join(resultsdir, "submit.sh")
   command.append(resultsdir)
@@ -73,7 +73,7 @@ additional_arguments = sys.argv[min_args_number:]
 utils.check_inputs(starting_tree, strategy)
 
 if (is_run):
-  run(dataset, strategy, starting_tree, cluster, cores, additional_arguments, resultsdir)
+  run(dataset, strategy, starting_tree, cores, additional_arguments, resultsdir)
 else:
   launch(dataset, strategy, starting_tree, cluster, cores, additional_arguments)
 

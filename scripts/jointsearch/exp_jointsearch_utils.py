@@ -23,6 +23,12 @@ def get_gene_tree(datadir, tree):
   else:
     return tree
 
+def get_mapping_file(datadir):
+  return os.path.join(datadir, "mapping.link")
+
+def get_alignment_file(datadir):
+  return os.path.join(datadir, "alignment.msa")
+
 def check_inputs(starting_tree, strategy):
   if (not (strategy in get_possible_strategies())):
     print("Unknown search strategy " + strategy)
@@ -33,6 +39,13 @@ def check_inputs(starting_tree, strategy):
 
 def get_jointsearch_datasets():
   root_datadir = os.path.join(exp.datasets_root, "joint_search")
+  datasets = {}
+  for dataset in os.listdir(root_datadir):
+    datasets[dataset] = os.path.join(root_datadir, dataset)
+  return datasets
+
+def get_generax_datasets():
+  root_datadir = os.path.join(exp.benoit_datasets_root, "families")
   datasets = {}
   for dataset in os.listdir(root_datadir):
     datasets[dataset] = os.path.join(root_datadir, dataset)
