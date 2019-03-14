@@ -49,7 +49,7 @@ def printDistances(events, method, event_type):
     return 
   print("- " + align(method) + ":  euclidean = " + fstr(euclidean(v1, v2)) + "  hamming = " + fstr(hamming(v1, v2)))
 
-def analyse_events(dataset_dir, jointsearch_scheduler_dir):
+def analyse_events(dataset_dir, analyze_dir):
   event_types = ["S", "D", "T"]
   methods = ["True", "Treerecs", "Phyldog", "JointSearch"]
   suffixes = {}
@@ -60,7 +60,7 @@ def analyse_events(dataset_dir, jointsearch_scheduler_dir):
   suffixes["Treerecs"] =  "treerecsEvents.txt"
   prefixes["Phyldog"] = dataset_dir
   suffixes["Phyldog"] = "phyldogEvents.txt" 
-  prefixes["JointSearch"] = os.path.join(jointsearch_scheduler_dir, "results")
+  prefixes["JointSearch"] = os.path.join(analyze_dir, "results")
   suffixes["JointSearch"] = "jointsearch.events"
 
   events = {}
@@ -119,26 +119,29 @@ def analyse_events(dataset_dir, jointsearch_scheduler_dir):
         continue
       printDistances(events, method, "T")
   print("")
+  
+methods_tree_files = {}
+methods_tree_files["True"] = "trueGeneTree.newick"
+methods_tree_files["RAxML-NG"] = "raxmlGeneTree.newick"
+methods_tree_files["Treerecs"] = "treerecsGeneTree.newick"
+methods_tree_files["Phyldog"] = "phyldogGeneTree.newick"
+methods_tree_files["Notung"] = "notungGeneTree.newick"
+methods_tree_files["JointSearch"] = "jointsearch.newick"
+methods_tree_files["GeneRax"] = "geneTree.newick"
 
-def analyse(dataset_dir, jointsearch_scheduler_dir):
+def get_gene_tree(method, dataset_dir, analyze_dir, msa):
+  if (method == "JointSearch"):
+    prefix = os.path.join(analyze_dir, "results", msa)
+  elif (method == "GeneRax"):
+    prefix = os.path.join(analyze_dir, msa)
+  else:
+    prefix = os.path.join(dataset_dir, msa)
+  return read_tree(os.path.join(prefix, methods_tree_files[method]))
+
+def analyse(dataset_dir, analyze_dir, benched_method = "JointSearch"):
   analysed_msas = 0
   total_nodes_number = 0
-  methods = ["True", "RAxML-NG", "Treerecs", "Phyldog", "Notung", "JointSearch"]
-  methods_tree_files = {}
-  methods_tree_files["True"] = "trueGeneTree.newick"
-  methods_tree_files["RAxML-NG"] = "raxmlGeneTree.newick"
-  methods_tree_files["Treerecs"] = "treerecsGeneTree.newick"
-  methods_tree_files["Phyldog"] = "phyldogGeneTree.newick"
-  methods_tree_files["Notung"] = "notungGeneTree.newick"
-  methods_tree_files["JointSearch"] = "jointsearch.newick"
-  methods_to_compare = []
-  methods_to_compare.append(("True", "RAxML-NG"))
-  methods_to_compare.append(("True", "Treerecs"))
-  methods_to_compare.append(("True", "Phyldog"))
-  methods_to_compare.append(("True", "Notung"))
-  methods_to_compare.append(("True", "JointSearch"))
-  methods_to_compare.append(("JointSearch", "RAxML-NG"))
-  methods_to_compare.append(("JointSearch", "Treerecs"))
+  methods = ["True", "RAxML-NG", "Treerecs", "Phyldog", "Notung", benched_method]
   methods_trees_number = {}
   js_dup = []
   js_loss = []
@@ -149,6 +152,14 @@ def analyse(dataset_dir, jointsearch_scheduler_dir):
   js_ll = []
   js_llrec = []
   js_lllibpll = []
+  methods_to_compare = []
+  methods_to_compare.append(("True", "RAxML-NG"))
+  methods_to_compare.append(("True", "Treerecs"))
+  methods_to_compare.append(("True", "Phyldog"))
+  methods_to_compare.append(("True", "Notung"))
+  methods_to_compare.append(("True", benched_method))
+  methods_to_compare.append((benched_method, "RAxML-NG"))
+  methods_to_compare.append((benched_method, "Treerecs"))
   for m in methods:
     methods_trees_number[m] = 0
   total_rrf = {}
@@ -163,44 +174,31 @@ def analyse(dataset_dir, jointsearch_scheduler_dir):
   for msa in os.listdir(dataset_dir):   
     trees = {}
     family_path = os.path.join(dataset_dir, msa)
-    jointsearch_prefix = os.path.join(jointsearch_scheduler_dir, "results", msa)
-    ok = True
+    jointsearch_prefix = os.path.join(analyze_dir, "results", msa)
+    invalid_methods = []
     for method in methods:
-      if (method == "JointSearch"):
-        prefix = jointsearch_prefix
-      else:
-        prefix = family_path
-      try:
-        trees[method] = read_tree(os.path.join(prefix, methods_tree_files[method]))
-        methods_trees_number[method] += 1
+      try: 
+        trees[method] = get_gene_tree(method, dataset_dir, analyze_dir, msa)
       except:
-        try:
-          print("Cannot read " + method + " tree for " + msa)
-          trees[method] = Tree(os.path.join(family_path, "trueGeneTree.newick"), format=1)
-        except:
-          print("Cannot read true tree for " + msa)
-          trees[method] = None
-          ok = False
-    if (not ok):
-      print("continue")
-      continue
+        print("Cannot read " + method + " tree for " + msa)
+        invalid_methods.append(method)
+    for method in invalid_methods:
+      methods.remove(method)
+      methods_to_compare = [p for p in methods_to_compare if (p[0] != method and p[1] != method)]
+      print("Missing tree for " + method)
+      print("This method will be excluded")
     best_rrf = 1
     rrf = {}
     analysed_msas += 1
-    #print("analyzed " + msa)
     for method_pair in methods_to_compare:
       method1 = method_pair[0]
       method2 = method_pair[1]
       methods_key = method1 + " - " + method2
-      if (trees[method1] == None or trees[method2] == None):
-        print("error " + msa + " " + methods_key)
-        continue
       rf_cell = ete3_rf(trees[method1], trees[method2])
       if (rf_cell[1] == 0):
         print("null cell for " + methods_key + " " + msa)
         exit(1)
       rrf[methods_key] = float(rf_cell[0]) / float(rf_cell[1])
-      #print(methods_key + " " + str(rrf[methods_key]) + " " + str(rf_cell[0]))
       if (method1 == "True" or method2 == "True"):
         best_rrf = min(best_rrf, rrf[methods_key])
       total_rrf[methods_key] += rrf[methods_key]
@@ -215,17 +213,20 @@ def analyse(dataset_dir, jointsearch_scheduler_dir):
         if (best_rrf == rrf[methods_key]):
           best_tree[method1] += 1
     stats_file = os.path.join(jointsearch_prefix, "jointsearch.stats")
-    with open(stats_file) as stats_reader:
-      lines = stats_reader.readlines()
-      js_initialll.append(float(lines[0].split(" ")[1][:-1]))
-      js_initialllrec.append(float(lines[1].split(" ")[1][:-1]))
-      js_initiallllibpll.append(float(lines[2].split(" ")[1][:-1]))
-      js_ll.append(float(lines[3].split(" ")[1][:-1]))
-      js_llrec.append(float(lines[4].split(" ")[1][:-1]))
-      js_lllibpll.append(float(lines[5].split(" ")[1][:-1]))
-      js_dup.append(float(lines[6].split(" ")[1][:-1]))
-      js_loss.append(float(lines[7].split(" ")[1][:-1]))
-      js_trans.append(float(lines[8].split(" ")[1][:-1]))
+    try:
+      with open(stats_file) as stats_reader:
+        lines = stats_reader.readlines()
+        js_initialll.append(float(lines[0].split(" ")[1][:-1]))
+        js_initialllrec.append(float(lines[1].split(" ")[1][:-1]))
+        js_initiallllibpll.append(float(lines[2].split(" ")[1][:-1]))
+        js_ll.append(float(lines[3].split(" ")[1][:-1]))
+        js_llrec.append(float(lines[4].split(" ")[1][:-1]))
+        js_lllibpll.append(float(lines[5].split(" ")[1][:-1]))
+        js_dup.append(float(lines[6].split(" ")[1][:-1]))
+        js_loss.append(float(lines[7].split(" ")[1][:-1]))
+        js_trans.append(float(lines[8].split(" ")[1][:-1]))
+    except:
+      pass
   if (analysed_msas == 0):
     print("did not manage to analyse any MSA")
     exit(1)
@@ -243,22 +244,23 @@ def analyse(dataset_dir, jointsearch_scheduler_dir):
   print("Number of gene families: " + str(analysed_msas))
   print("")
 
-  #print("Total initial joint likelihood: " + str(sum(js_initialll)))
-  #print("Total initial libpll  likelihood: " + str(sum(js_initiallllibpll)))
-  #print("Total initial reconciliation likelihood: " + str(sum(js_initialllrec)))
-  #print("")
-  print("Total joint likelihood: " + str(sum(js_ll)))
-  #print("Total libpll  likelihood: " + str(sum(js_lllibpll)))
-  #print("Total reconciliation likelihood: " + str(sum(js_llrec)))
-  #print("")
-  print("Average D=" + str(numpy.mean(js_dup)))
-  print("Average L=" + str(numpy.mean(js_loss)))
-  print("Average T=" + str(numpy.mean(js_trans)))
-  print("")
-  #print("Standard deviation D=" + str(numpy.std(js_dup)))
-  #print("Standard deviation L=" + str(numpy.std(js_loss)))
-  #print("Standard deviation T=" + str(numpy.std(js_trans)))
-  #print("")
+  if (len(js_ll) > 0):
+    #print("Total initial joint likelihood: " + str(sum(js_initialll)))
+    #print("Total initial libpll  likelihood: " + str(sum(js_initiallllibpll)))
+    #print("Total initial reconciliation likelihood: " + str(sum(js_initialllrec)))
+    #print("")
+    print("Total joint likelihood: " + str(sum(js_ll)))
+    #print("Total libpll  likelihood: " + str(sum(js_lllibpll)))
+    #print("Total reconciliation likelihood: " + str(sum(js_llrec)))
+    #print("")
+    print("Average D=" + str(numpy.mean(js_dup)))
+    print("Average L=" + str(numpy.mean(js_loss)))
+    print("Average T=" + str(numpy.mean(js_trans)))
+    print("")
+    #print("Standard deviation D=" + str(numpy.std(js_dup)))
+    #print("Standard deviation L=" + str(numpy.std(js_loss)))
+    #print("Standard deviation T=" + str(numpy.std(js_trans)))
+    #print("")
 
   print("Average (over the gene families) relative RF distances:")
   for method_pair in methods_to_compare:
@@ -277,16 +279,19 @@ def analyse(dataset_dir, jointsearch_scheduler_dir):
   print("")
   
 
-  analyse_events(dataset_dir, jointsearch_scheduler_dir)
+  analyse_events(dataset_dir, analyze_dir)
 
 if __name__ == '__main__':
-  if (len(sys.argv) != 3):
-    print("Syntax: families_dir jointsearch_scheduler_dir")
+  if (len(sys.argv) < 3):
+    print("Syntax: families_dir analyze_dir [method]")
     exit(1)
   print(" ".join(sys.argv))
   dataset_dir = sys.argv[1]
-  jointsearch_scheduler_dir = sys.argv[2]
-  analyse(dataset_dir, jointsearch_scheduler_dir)
+  analyze_dir = sys.argv[2]
+  method = "JointSearch"
+  if (len(sys.argv) > 3):
+    method = sys.argv[3]
+  analyse(dataset_dir, analyze_dir, method)
 
 
 
