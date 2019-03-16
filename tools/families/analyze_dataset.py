@@ -153,13 +153,13 @@ def analyse(dataset_dir, analyze_dir, benched_method = "JointSearch"):
   js_llrec = []
   js_lllibpll = []
   methods_to_compare = []
+  methods_to_compare.append((benched_method, "RAxML-NG"))
+  methods_to_compare.append((benched_method, "Treerecs"))
   methods_to_compare.append(("True", "RAxML-NG"))
   methods_to_compare.append(("True", "Treerecs"))
   methods_to_compare.append(("True", "Phyldog"))
   methods_to_compare.append(("True", "Notung"))
   methods_to_compare.append(("True", benched_method))
-  methods_to_compare.append((benched_method, "RAxML-NG"))
-  methods_to_compare.append((benched_method, "Treerecs"))
   for m in methods:
     methods_trees_number[m] = 0
   total_rrf = {}
