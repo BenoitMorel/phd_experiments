@@ -21,6 +21,10 @@ def build_generax_families_file(dataset, starting_tree, output):
       writer.write("G: " + utils.get_gene_tree(family_path, starting_tree) + "\n")
       writer.write("A: " + utils.get_alignment_file(family_path) + "\n")
       writer.write("M: " + utils.get_mapping_file(family_path) + "\n")
+      if (starting_tree != "random"):
+        raxml_model = utils.get_raxml_model(family_path)
+        if (os.path.isfile(raxml_model)):
+          writer.write("L: " + raxml_model + "\n")
 
 def run_generax(datadir, strategy, generax_families_file, mode, cores, additional_arguments, resultsdir):
   species_tree = os.path.join(datadir, "speciesTree.newick")

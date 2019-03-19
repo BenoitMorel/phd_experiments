@@ -29,6 +29,8 @@ def get_mapping_file(datadir):
 def get_alignment_file(datadir):
   return os.path.join(datadir, "alignment.msa")
 
+def get_raxml_model(datadir):
+  return os.path.join(datadir, "raxmlBestModel.txt")
 
 def check_inputs(starting_tree, strategy):
   if (not (strategy in get_possible_strategies())):

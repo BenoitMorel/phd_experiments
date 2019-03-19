@@ -62,6 +62,7 @@ def export_pargenes_trees(pargenes_dir, dataset_dir):
   ml_trees_dir = os.path.join(pargenes_dir, "mlsearch_run", "results")
   for family in os.listdir(ml_trees_dir):
     trees_file = os.path.join(ml_trees_dir, family, "sorted_ml_trees.newick")
+    best_model = os.path.join(ml_trees_dir, family, family + ".raxml.bestModel")
     if (not os.path.isfile(trees_file)):
       trees_file = os.path.join(ml_trees_dir, family, family + ".raxml.bestTree")
     family = "_".join(family.split("_")[:-1]) # remove everything after the last _
@@ -71,7 +72,8 @@ def export_pargenes_trees(pargenes_dir, dataset_dir):
     except:
       print("Cannot copy " + trees_file + " to " + new_raxml_tree)
       pass
-    
+    new_best_model = os.path.join(families_dir, family, "raxmlBestModel.txt")
+    shutil.copyfile(best_model, new_best_model)
   # clean
   garbage_dir = os.path.join(dataset_dir, "garbage")
   try:
@@ -89,6 +91,16 @@ def run_pargenes_and_extract_trees(dataset_dir, is_dna, starting_trees, bs_trees
   export_pargenes_trees(pargenes_dir, dataset_dir)
 
 if __name__ == "__main__":
+  for dataset in os.listdir(sys.argv[1]):
+    dataset = os.path.join(sys.argv[1], dataset)
+    print(dataset)
+    try:
+      run_pargenes_and_extract_trees(dataset, "1", "10", "100", 40)
+      print("ok")
+    except:
+      print("ko")
+  exit(0) 
+  
   if (len(sys.argv) != 6):
     print("syntax: python run_raxml_supportvalues.py dataset_dir is_dna starting_trees bs_trees cores")
     sys.exit(1)
@@ -97,6 +109,7 @@ if __name__ == "__main__":
   starting_trees = sys.argv[3]
   bs_trees = sys.argv[4]
   cores = int(sys.argv[5])
+  
   run_pargenes_and_extract_trees(dataset, is_dna, starting_trees, bs_trees, cores)
 
   
