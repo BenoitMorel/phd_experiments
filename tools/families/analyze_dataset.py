@@ -21,21 +21,56 @@ methods_tree_files["Treerecs"] = "treerecsGeneTree.newick"
 methods_tree_files["Phyldog"] = "phyldogGeneTree.newick"
 methods_tree_files["Notung"] = "notungGeneTree.newick"
 methods_tree_files["JointSearch"] = "jointsearch.newick"
-methods_tree_files["GeneRax"] = "geneTree.newick"
+
+class AlignedPrinter:
+  def __init__(self):
+    self._lefts = []
+    self._rights = []
+
+  def add(self, left, right):
+    self._lefts.append(left)
+    self._rights.append(right)
+
+  def display(self):
+    max_chars = 0
+    for l in self._lefts:
+      max_chars = max(max_chars, len(l))
+    for i in range(0, len(self._lefts)):
+      l = self._lefts[i]
+      r = self._rights[i]
+      to_print = l + " " * (max_chars - len(l) + 1) + r
+      print(to_print)
 
 def get_gene_tree(method, dataset_dir, analyze_dir, msa):
+  tree_path = ""
   if (method == "JointSearch"):
-    prefix = os.path.join(analyze_dir, "results", msa)
-  elif (method == "GeneRax"):
-    prefix = os.path.join(analyze_dir, msa)
+    tree_path  = os.path.join(analyze_dir, "results", msa, methods_tree_files[method])
   else:
+    if (method in methods_tree_files):
+      tree_path = os.path.join(dataset_dir, msa, methods_tree_files[method])
+    else:
+      tree_path = os.path.join(dataset_dir, msa, "results", method + ".newick") 
     prefix = os.path.join(dataset_dir, msa)
-  return read_tree(os.path.join(prefix, methods_tree_files[method]))
+  if (not os.path.isfile(tree_path)):
+    print("File " + tree_path + " does not exist")
+  return read_tree(tree_path)
+
+def add_ran_methods(methods, dataset_dir, benched_method):
+  runs_dir = os.path.join(dataset_dir, os.listdir(dataset_dir)[0], "results")
+  for method in os.listdir(runs_dir):
+    method = method.split(".")[0]
+    if (method != benched_method):
+      methods.append(method)
+
+
 
 def analyze(dataset_dir, analyze_dir, benched_method = "JointSearch"):
+  print("To re-run: python " + os.path.realpath(__file__) + " " + dataset_dir + " " + analyze_dir + " " + benched_method)
   analyzed_msas = 0
   total_nodes_number = 0
-  methods = ["True", "RAxML-NG", "Treerecs", "Phyldog", "Notung", benched_method]
+  methods = ["True", "RAxML-NG", "Treerecs", "Phyldog", "Notung"]
+  add_ran_methods(methods, dataset_dir, benched_method)
+  methods.append(benched_method)
   methods_trees_number = {}
   js_initialll = []
   js_initialllrec = []
@@ -44,13 +79,12 @@ def analyze(dataset_dir, analyze_dir, benched_method = "JointSearch"):
   js_llrec = []
   js_lllibpll = []
   methods_to_compare = []
-  methods_to_compare.append((benched_method, "RAxML-NG"))
-  methods_to_compare.append((benched_method, "Treerecs"))
-  methods_to_compare.append(("True", "RAxML-NG"))
-  methods_to_compare.append(("True", "Treerecs"))
-  methods_to_compare.append(("True", "Phyldog"))
-  methods_to_compare.append(("True", "Notung"))
-  methods_to_compare.append(("True", benched_method))
+  #methods_to_compare.append((benched_method, "RAxML-NG"))
+  #methods_to_compare.append((benched_method, "Treerecs"))
+  for method in methods:
+    if (method == "True"):
+      continue
+    methods_to_compare.append(("True", method))
   for m in methods:
     methods_trees_number[m] = 0
   total_rrf = {}
@@ -71,7 +105,6 @@ def analyze(dataset_dir, analyze_dir, benched_method = "JointSearch"):
       try: 
         trees[method] = get_gene_tree(method, dataset_dir, analyze_dir, msa)
       except:
-        print("Cannot read " + method + " tree for " + msa)
         invalid_methods.append(method)
     for method in invalid_methods:
       methods.remove(method)
@@ -134,19 +167,23 @@ def analyze(dataset_dir, analyze_dir, benched_method = "JointSearch"):
     #print("")
 
   print("Average (over the gene families) relative RF distances:")
+  rrf_printer = AlignedPrinter()
   for method_pair in methods_to_compare:
     method1 = method_pair[0]
     method2 = method_pair[1]
     methods_key = method1 + " - " + method2
-    print("- " + methods_key + ":\t" + str(total_rrf[methods_key] / float(analyzed_msas)))
+    rrf_printer.add("- " + methods_key + ":",  str(total_rrf[methods_key] / float(analyzed_msas)))
+  rrf_printer.display()
   print("")
   
   
   print("Number of gene families for which a method reaches the smallest relative RF to the true trees compared with the other methods:")
+  best_printer = AlignedPrinter()
   for method in methods:
     if (method == "True"):
       continue
-    print("- " + method + ":\t" + str(best_tree[method]) + "/" + str(analyzed_msas))
+    best_printer.add("- " + method + ":",  str(best_tree[method]) + "/" + str(analyzed_msas))
+  best_printer.display()
   print("")
   
 

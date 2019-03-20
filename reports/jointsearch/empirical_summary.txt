@@ -25,9 +25,9 @@ Average (over the gene families) relative RF distance to the true trees:
 - Phyldog:  0.16039065528  (750s on 40 cores)
 - JointSearch LG DL :  0.143220561438 (750s on 40 cores)
 - JointSearch LG DTL : 0.114512054384 (2655s on 40 cores)
-- GeneRax LG DL: 
-- GeneRax LG DTL: 
-- GeneRax LG random DL: 
+- GeneRax LG DL: 0.130364656646  (5min)
+- GeneRax LG DTL: 0.139969560378 (18min)
+- GeneRax LG random DL: 0.210600621367 
 
 *************************************
 **  sub_t0.1_s0.2_cyano_empirical

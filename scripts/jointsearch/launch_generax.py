@@ -6,6 +6,7 @@ sys.path.insert(0, 'tools/families')
 import analyze_dataset
 import experiments as exp
 import exp_jointsearch_utils as utils
+import shutil
 
 datasets = utils.get_generax_datasets()
 
@@ -55,14 +56,39 @@ def checkAndDelete(arg, arguments):
     return True
   return False
 
+def getAndDelete(arg, arguments, default_value):
+  if (arg in arguments):
+    index = arguments.index(arg)
+    res = arguments[index + 1]
+    del arguments[index + 1]
+    del arguments[index]
+    return res
+  else:
+    return default_value
+
+def extract_trees(data_family_dir, results_family_dir, prefix):
+  results_dir = os.path.join(results_family_dir, "results")
+  for msa in os.listdir(results_dir):
+    output_msa_dir = os.path.join(data_family_dir, msa, "results")
+    try:
+      os.mkdir(output_msa_dir)
+    except:
+      pass
+    source = os.path.join(results_dir, msa, "geneTree.newick")
+    dest = os.path.join(output_msa_dir, prefix + ".newick")
+    shutil.copy(source, dest)
+
+
 def run(dataset, strategy, starting_tree, cores, additional_arguments, resultsdir):
   is_protein = checkAndDelete("--protein", additional_arguments)
+  run_name = getAndDelete("--run", additional_arguments, "lastRun") 
   mode = get_mode_from_additional_arguments(additional_arguments)
   datadir = datasets[dataset]
   generax_families_file = os.path.join(resultsdir, "generax_families.txt")
   build_generax_families_file(datadir, starting_tree, is_protein, generax_families_file)
   run_generax(datadir, strategy, generax_families_file, mode, cores, additional_arguments, resultsdir)
-  analyze_dataset.analyse(os.path.join(datadir, "families"), os.path.join(resultsdir, "generax"), "GeneRax")
+  extract_trees(os.path.join(datadir, "families"), os.path.join(resultsdir, "generax"), run_name)
+  analyze_dataset.analyze(os.path.join(datadir, "families"), os.path.join(resultsdir, "generax"), run_name)
   print("Output in " + resultsdir)
 
 def launch(dataset, strategy, starting_tree, cluster, cores, additional_arguments):
@@ -76,7 +102,7 @@ def launch(dataset, strategy, starting_tree, cluster, cores, additional_argument
   submit_path = os.path.join(resultsdir, "submit.sh")
   command.append(resultsdir)
   exp.submit(submit_path, " ".join(command), cores, cluster) 
-
+  
 
 if (__name__ == "__main__"): 
   is_run = ("--exprun" in sys.argv)

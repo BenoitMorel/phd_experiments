@@ -56,9 +56,9 @@ def generate_scheduler_command(command_file, parallelization, cores, scheduler_o
   command += "0"
   return command 
 
-def generate_analyse_command(families_dir, pargenes_dir):
+def generate_analyze_command(families_dir, pargenes_dir):
   command = "python "
-  command += exp.analyse_pargenes_jointsearch_tool + " "
+  command += exp.analyze_pargenes_jointsearch_tool + " "
   command += families_dir + " " +  pargenes_dir
   return command
 
@@ -110,7 +110,7 @@ os.makedirs(scheduler_output_dir)
 scheduler_commands_file = generate_scheduler_commands_file(families_dir, starting_tree, strategy, nodes_per_core, additional_arguments, cores, output_dir, scheduler_output_dir)
 command = generate_scheduler_command(scheduler_commands_file, parallelization, cores,  scheduler_output_dir)
 
-command += "\n" + generate_analyse_command(families_dir, scheduler_output_dir)
+command += "\n" + generate_analyze_command(families_dir, scheduler_output_dir)
 
 submit_path = os.path.join(resultsdir, "jointsearch_scheduler_submit.sh")
 
