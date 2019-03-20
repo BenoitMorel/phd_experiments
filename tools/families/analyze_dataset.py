@@ -20,7 +20,6 @@ methods_tree_files["RAxML-NG"] = "raxmlGeneTree.newick"
 methods_tree_files["Treerecs"] = "treerecsGeneTree.newick"
 methods_tree_files["Phyldog"] = "phyldogGeneTree.newick"
 methods_tree_files["Notung"] = "notungGeneTree.newick"
-methods_tree_files["JointSearch"] = "jointsearch.newick"
 
 class AlignedPrinter:
   def __init__(self):
@@ -41,16 +40,13 @@ class AlignedPrinter:
       to_print = l + " " * (max_chars - len(l) + 1) + r
       print(to_print)
 
-def get_gene_tree(method, dataset_dir, analyze_dir, msa):
+def get_gene_tree(method, dataset_dir, msa):
   tree_path = ""
-  if (method == "JointSearch"):
-    tree_path  = os.path.join(analyze_dir, "results", msa, methods_tree_files[method])
+  if (method in methods_tree_files):
+    tree_path = os.path.join(dataset_dir, msa, methods_tree_files[method])
   else:
-    if (method in methods_tree_files):
-      tree_path = os.path.join(dataset_dir, msa, methods_tree_files[method])
-    else:
-      tree_path = os.path.join(dataset_dir, msa, "results", method + ".newick") 
-    prefix = os.path.join(dataset_dir, msa)
+    tree_path = os.path.join(dataset_dir, msa, "results", method + ".newick") 
+  prefix = os.path.join(dataset_dir, msa)
   if (not os.path.isfile(tree_path)):
     print("File " + tree_path + " does not exist")
   return read_tree(tree_path)
@@ -59,13 +55,13 @@ def add_ran_methods(methods, dataset_dir, benched_method):
   runs_dir = os.path.join(dataset_dir, os.listdir(dataset_dir)[0], "results")
   for method in os.listdir(runs_dir):
     method = method.split(".")[0]
-    if (method != benched_method):
+    if (method != benched_method and method != "lastRun"):
       methods.append(method)
 
 
 
-def analyze(dataset_dir, analyze_dir, benched_method = "JointSearch"):
-  print("To re-run: python " + os.path.realpath(__file__) + " " + dataset_dir + " " + analyze_dir + " " + benched_method)
+def analyze(dataset_dir, benched_method = "JointSearch"):
+  print("To re-run: python " + os.path.realpath(__file__) + " " + dataset_dir + " " + benched_method)
   analyzed_msas = 0
   total_nodes_number = 0
   methods = ["True", "RAxML-NG", "Treerecs", "Phyldog", "Notung"]
@@ -79,8 +75,6 @@ def analyze(dataset_dir, analyze_dir, benched_method = "JointSearch"):
   js_llrec = []
   js_lllibpll = []
   methods_to_compare = []
-  #methods_to_compare.append((benched_method, "RAxML-NG"))
-  #methods_to_compare.append((benched_method, "Treerecs"))
   for method in methods:
     if (method == "True"):
       continue
@@ -99,11 +93,10 @@ def analyze(dataset_dir, analyze_dir, benched_method = "JointSearch"):
   for msa in os.listdir(dataset_dir):   
     trees = {}
     family_path = os.path.join(dataset_dir, msa)
-    jointsearch_prefix = os.path.join(analyze_dir, "results", msa)
     invalid_methods = []
     for method in methods:
       try: 
-        trees[method] = get_gene_tree(method, dataset_dir, analyze_dir, msa)
+        trees[method] = get_gene_tree(method, dataset_dir, msa)
       except:
         invalid_methods.append(method)
     for method in invalid_methods:
@@ -136,18 +129,6 @@ def analyze(dataset_dir, analyze_dir, benched_method = "JointSearch"):
       elif (method2 == "True"):
         if (best_rrf == rrf[methods_key]):
           best_tree[method1] += 1
-    stats_file = os.path.join(jointsearch_prefix, "jointsearch.stats")
-    try:
-      with open(stats_file) as stats_reader:
-        lines = stats_reader.readlines()
-        js_initialll.append(float(lines[0].split(" ")[1][:-1]))
-        js_initialllrec.append(float(lines[1].split(" ")[1][:-1]))
-        js_initiallllibpll.append(float(lines[2].split(" ")[1][:-1]))
-        js_ll.append(float(lines[3].split(" ")[1][:-1]))
-        js_llrec.append(float(lines[4].split(" ")[1][:-1]))
-        js_lllibpll.append(float(lines[5].split(" ")[1][:-1]))
-    except:
-      pass
   if (analyzed_msas == 0):
     print("did not manage to analyze any MSA")
     exit(1)
@@ -189,16 +170,15 @@ def analyze(dataset_dir, analyze_dir, benched_method = "JointSearch"):
 
 
 if __name__ == '__main__':
-  if (len(sys.argv) < 3):
-    print("Syntax: families_dir analyze_dir [method]")
+  if (len(sys.argv) < 2):
+    print("Syntax: families_dir [method]")
     exit(1)
   print(" ".join(sys.argv))
   dataset_dir = sys.argv[1]
-  analyze_dir = sys.argv[2]
   method = "JointSearch"
-  if (len(sys.argv) > 3):
-    method = sys.argv[3]
-  analyze(dataset_dir, analyze_dir, method)
+  if (len(sys.argv) > 2):
+    method = sys.argv[2]
+  analyze(dataset_dir, method)
 
 
 

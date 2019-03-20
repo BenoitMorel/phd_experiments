@@ -10,17 +10,6 @@ import subprocess
 sys.path.insert(0, 'scripts')
 import experiments as exp
 
-#possible_species = ["25, 41"]
-#possible_sites = ["250", "500", "1000", "1500"] 
-#possible_bl = ["0.5", "1.0", "2.0", "4.0"]
-#possible_dup_rates = ["1.0", "0.5", "0.1"]
-
-#possible_parameters = {}
-#possible_parameters["species"] = possible_species 
-#possible_parameters["sites"] = possible_sites 
-#possible_parameters["bl"] = possible_bl
-#possible_parameters["dup_rates"] = possible_dup_rates
-
 
 def parameters_to_dataset(species, sites, bl, dup_rate):
   loss_rate = str(float(rates) / 2.0)
@@ -44,12 +33,6 @@ def get_available_datasets(prefix):
     try:
       if (not dataset.startswith(prefix)):
         continue
-      #ok = True
-      #for parameter in possible_parameters:
-        #if (not get_param_from_dataset_name(parameter, dataset) in possible_parameters[parameter]):
-          #ok = False
-          #continue
-      #if (ok):
       res.append(dataset)
     except:
       continue

@@ -16,7 +16,7 @@ scripts_root = os.path.join(root, "scripts")
 #tools
 tools_root = os.path.join(root, "tools")
 rf_distance_tool = os.path.join(tools_root, "trees", "rf_distance.py")
-analyse_pargenes_jointsearch_tool = os.path.join(tools_root, "families", "analyze_dataset.py")
+analyze_pargenes_jointsearch_tool = os.path.join(tools_root, "families", "analyze_dataset.py")
 
 # programs
 programs_root = os.path.join(root, "programs")
@@ -207,4 +207,19 @@ def try_make_dir(dir_name):
   except:
     pass
 
+def checkAndDelete(arg, arguments):
+  if (arg in arguments):
+    arguments.remove(arg)
+    return True
+  return False
+
+def getAndDelete(arg, arguments, default_value):
+  if (arg in arguments):
+    index = arguments.index(arg)
+    res = arguments[index + 1]
+    del arguments[index + 1]
+    del arguments[index]
+    return res
+  else:
+    return default_value
 

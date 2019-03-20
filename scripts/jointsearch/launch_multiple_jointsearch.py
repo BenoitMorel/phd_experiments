@@ -2,9 +2,17 @@ import sys
 import os
 sys.path.insert(0, 'scripts')
 sys.path.insert(0, 'tools/msa_edition')
+sys.path.insert(0, 'tools/families')
+import analyze_dataset
 import experiments as exp
 import exp_jointsearch_utils as utils
 import msa_analyzer
+import subprocess
+import shutil
+
+parallelization = "split"
+nodes_per_core = 2
+datasets = utils.get_generax_datasets()
 
 def generate_scheduler_commands_file(families_dir, starting_tree, strategy, nodes_per_core, additional_arguments, cores, output_dir, scheduler_output_dir):
   scheduler_commands_file = os.path.join(output_dir, "commands.txt")
@@ -31,7 +39,7 @@ def generate_scheduler_commands_file(families_dir, starting_tree, strategy, node
       os.makedirs(os.path.join(results_dir, family))
       writer.write("-p " + os.path.join(results_dir, family, "jointsearch") + " ") 
       writer.write("--strategy " + strategy + " ")
-      writer.write(additional_arguments + " ")
+      writer.write(" ".join(additional_arguments) + " ")
       writer.write("\n")
 
   return scheduler_commands_file
@@ -54,7 +62,7 @@ def generate_scheduler_command(command_file, parallelization, cores, scheduler_o
   command += command_file + " "
   command += scheduler_output_dir + " " 
   command += "0"
-  return command 
+  return command.split(" ")
 
 def generate_analyze_command(families_dir, pargenes_dir):
   command = "python "
@@ -62,63 +70,76 @@ def generate_analyze_command(families_dir, pargenes_dir):
   command += families_dir + " " +  pargenes_dir
   return command
 
-max_args_number = 6
-possibleDatasets = os.listdir(exp.families_datasets_root)
-if len(sys.argv) < max_args_number:
-  print("Syntax error: python launch_multiple_jointsearch.py dataset strategy starting_tree cluster cores [additional paremeters].")
-  print("Possible datasets:")
-  for d in possibleDatasets:
-    print("  " + d)
-  print("Cluster can be either normal, haswell or magny")
-  print("strategy: SPR, NNI, HYBRID")
-  print("starting_tree: raxml, raxmls. true, treerecs, random")
-  #print("scheduler implem: split, onecore, openmp")
-  sys.exit(0)
+def extract_trees(data_family_dir, results_family_dir, prefix):
+  results_dir = os.path.join(results_family_dir, "results")
+  for msa in os.listdir(results_dir):
+    output_msa_dir = os.path.join(data_family_dir, msa, "results")
+    try:
+      os.mkdir(output_msa_dir)
+    except:
+      pass
+    source = os.path.join(results_dir, msa, "jointsearch.newick")
+    dest = os.path.join(output_msa_dir, prefix + ".newick")
+    shutil.copy(source, dest)
 
 
-dataset = sys.argv[1]
-strategy = sys.argv[2]
-starting_tree = sys.argv[3]
-parallelization = "split" #sys.argv[4]
-cluster = sys.argv[4]
-cores = int(sys.argv[5])
-nodes_per_core = 2
-
-if (not (strategy in ["SPR", "NNI", "HYBRID"])):
-  print("Unknown search strategy " + strategy)
-
-additional_path = ""
-for i in range(max_args_number, len(sys.argv)):
-  additional_path += "_" + sys.argv[i]
-resultsdir = os.path.join("MultipleJointSearch", dataset, strategy + "_" + str(nodes_per_core) + "_start_" + starting_tree + "_" + parallelization + additional_path, cluster + "_" + str(cores), "run")
-
-resultsdir = exp.create_result_dir(resultsdir)
-result_msg = "JointSearch git: \n" + exp.get_git_info(exp.joint_search_root)
-exp.write_results_info(resultsdir, result_msg) 
-output_dir = resultsdir 
-
-datadir = os.path.join(exp.families_datasets_root, dataset)
-families_dir = os.path.join(datadir, "families")
-#families_dir = os.path.join(datadir, "buggy_families")
+def launch(dataset, strategy, starting_tree, cluster, cores, additional_arguments):
+  command = ["python"]
+  command.extend(sys.argv)
+  command.append("--exprun")
+  resultsdir = os.path.join("MultipleJointSearch", dataset, strategy + "_start_" + starting_tree, "run")
+  resultsdir = exp.create_result_dir(resultsdir, additional_arguments)
+  result_msg = "GeneRax git: \n" + exp.get_git_info(exp.joint_search_root)
+  exp.write_results_info(resultsdir, result_msg) 
+  submit_path = os.path.join(resultsdir, "submit.sh")
+  command.append(resultsdir)
+  exp.submit(submit_path, " ".join(command), cores, cluster) 
 
 
-additional_arguments = ""
-for i in range(max_args_number, len(sys.argv)):
-  additional_arguments += " " + sys.argv[i]
-scheduler_output_dir = os.path.join(output_dir, "scheduler_run")
-os.makedirs(scheduler_output_dir)
-scheduler_commands_file = generate_scheduler_commands_file(families_dir, starting_tree, strategy, nodes_per_core, additional_arguments, cores, output_dir, scheduler_output_dir)
-command = generate_scheduler_command(scheduler_commands_file, parallelization, cores,  scheduler_output_dir)
+def run(dataset, strategy, starting_tree, cores, additional_arguments, resultsdir):
+  is_protein = exp.checkAndDelete("--protein", additional_arguments)
+  run_name = exp.getAndDelete("--run", additional_arguments, "lastRun") 
+  #mode = get_mode_from_additional_arguments(additional_arguments)
+  datadir = datasets[dataset]
+  families_dir = os.path.join(datadir, "families")
+  scheduler_output_dir = os.path.join(resultsdir, "scheduler_run")
+  os.makedirs(scheduler_output_dir)
+  scheduler_commands_file = generate_scheduler_commands_file(families_dir, starting_tree, strategy, nodes_per_core, additional_arguments, cores, resultsdir, scheduler_output_dir)
+  command = generate_scheduler_command(scheduler_commands_file, parallelization, cores,  scheduler_output_dir)
+  print("Running " + " ".join(command))
+  subprocess.check_call(command)
+  extract_trees(os.path.join(datadir, "families"), os.path.join(resultsdir, "scheduler_run"), run_name)
+  analyze_dataset.analyze(families_dir, run_name)
+  print("Output in " + resultsdir)
 
-command += "\n" + generate_analyze_command(families_dir, scheduler_output_dir)
+if (__name__ == "__main__"): 
+  is_run = ("--exprun" in sys.argv)
+  resultsdir = ""
+  if (is_run):
+    resultsdir = sys.argv[-1]
+    sys.argv = sys.argv[:-2]
+  
+  min_args_number = 6
+  min_args_number = 6
+  if (len(sys.argv) < min_args_number):
+    print("Syntax error: python " + os.path.basename(__file__) + "  dataset strategy starting_tree cluster cores [additional paremeters].\n Suggestions of datasets: ")
+    for dataset in datasets:
+      print("\t" + dataset)
+    print("strategy: " + ",".join(utils.get_possible_strategies()))
+    print("starting_tree: " + ",".join(utils.get_possible_gene_trees()))
+    sys.exit(1)
+  
+  dataset = sys.argv[1]
+  strategy = sys.argv[2]
+  starting_tree = sys.argv[3]
+  cluster = sys.argv[4]
+  cores = int(sys.argv[5])
+  additional_arguments = sys.argv[min_args_number:]
+  utils.check_inputs(starting_tree, strategy)
 
-submit_path = os.path.join(resultsdir, "jointsearch_scheduler_submit.sh")
-
-print(command)
-print("Results will be in " + resultsdir)
-
-exp.submit(submit_path, command, cores, cluster) 
-
-
+  if (is_run):
+    run(dataset, strategy, starting_tree, cores, additional_arguments, resultsdir)
+  else:
+    launch(dataset, strategy, starting_tree, cluster, cores, additional_arguments)
 
 
