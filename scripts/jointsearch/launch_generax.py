@@ -9,7 +9,7 @@ import exp_jointsearch_utils as utils
 
 datasets = utils.get_generax_datasets()
 
-def build_generax_families_file(dataset, starting_tree, output):
+def build_generax_families_file(dataset, starting_tree, is_protein, output):
   families_dir = os.path.join(dataset, "families")
   with open(output, "w") as writer:
     writer.write("[FAMILIES]\n")
@@ -25,6 +25,11 @@ def build_generax_families_file(dataset, starting_tree, output):
         raxml_model = utils.get_raxml_model(family_path)
         if (os.path.isfile(raxml_model)):
           writer.write("L: " + raxml_model + "\n")
+        else:
+          if (is_protein):
+            writer.write("L: LG\n")
+          else:
+            writer.write("L: GTR\n")
 
 def run_generax(datadir, strategy, generax_families_file, mode, cores, additional_arguments, resultsdir):
   species_tree = os.path.join(datadir, "speciesTree.newick")
@@ -43,11 +48,18 @@ def get_mode_from_additional_arguments(additional_arguments):
     additional_arguments.remove("--gprof")
   return mode
 
+def checkAndDelete(arg, arguments):
+  if (arg in arguments):
+    arguments.remove(arg)
+    return True
+  return False
+
 def run(dataset, strategy, starting_tree, cores, additional_arguments, resultsdir):
+  is_protein = checkAndDelete("--protein", additional_arguments)
   mode = get_mode_from_additional_arguments(additional_arguments)
   datadir = datasets[dataset]
   generax_families_file = os.path.join(resultsdir, "generax_families.txt")
-  build_generax_families_file(datadir, starting_tree, generax_families_file)
+  build_generax_families_file(datadir, starting_tree, is_protein, generax_families_file)
   run_generax(datadir, strategy, generax_families_file, mode, cores, additional_arguments, resultsdir)
   analyze_dataset.analyse(os.path.join(datadir, "families"), os.path.join(resultsdir, "generax"), "GeneRax")
   print("Output in " + resultsdir)
