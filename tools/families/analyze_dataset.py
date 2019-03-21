@@ -8,6 +8,7 @@ from read_tree import read_tree
 from rf_distance import ete3_rf
 from rf_distance import get_relative_rf
 from rf_distance import get_rf
+import concurrent.futures
 
 def get_nodes(tree1):
   rf = ete3_rf(tree1, tree1)
@@ -53,15 +54,19 @@ def get_gene_tree(method, dataset_dir, msa):
 
 def add_ran_methods(methods, dataset_dir, benched_method):
   runs_dir = os.path.join(dataset_dir, os.listdir(dataset_dir)[0], "results")
+  if (not os.path.isdir(runs_dir)):
+    return
   for method in os.listdir(runs_dir):
     method = method.split(".")[0]
     if (method != benched_method and method != "lastRun"):
       methods.append(method)
 
-def analyze_msa(msa, dataset_dir, methods, methods_to_compare, total_rrf, best_tree):
+def analyze_msa(params):
+  msa, dataset_dir, methods, methods_to_compare = params
   trees = {}
   family_path = os.path.join(dataset_dir, msa)
   invalid_methods = []
+  best_tree = {}
   for method in methods:
     try: 
       trees[method] = get_gene_tree(method, dataset_dir, msa)
@@ -85,18 +90,18 @@ def analyze_msa(msa, dataset_dir, methods, methods_to_compare, total_rrf, best_t
     rrf[methods_key] = float(rf_cell[0]) / float(rf_cell[1])
     if (method1 == "True" or method2 == "True"):
       best_rrf = min(best_rrf, rrf[methods_key])
-    total_rrf[methods_key] += rrf[methods_key]
   for method_pair in methods_to_compare:
     method1 = method_pair[0]
     method2 = method_pair[1]
     methods_key = method1 + " - " + method2
     if (method1 == "True"):
       if (best_rrf == rrf[methods_key]):
-        best_tree[method2] += 1
+        best_tree[method2] = 1
     elif (method2 == "True"):
       if (best_rrf == rrf[methods_key]):
-        best_tree[method1] += 1
-  
+        best_tree[method1] = 1
+  return rrf, best_tree
+
 def analyze(dataset_dir, benched_method = ""):
   print("To re-run: python " + os.path.realpath(__file__) + " " + dataset_dir + " " + benched_method)
   analyzed_msas = 0
@@ -122,9 +127,19 @@ def analyze(dataset_dir, benched_method = ""):
     method2 = method_pair[1]
     methods_key = method1 + " - " + method2
     total_rrf[methods_key] = 0.0
-  for msa in os.listdir(dataset_dir):   
-    analyze_msa(msa,  dataset_dir, methods, methods_to_compare, total_rrf, best_tree)
-    analyzed_msas += 1
+  analyze_msa_params = []
+  for msa in os.listdir(dataset_dir):  
+    analyze_msa_params.append((msa, dataset_dir, methods, methods_to_compare))
+  with concurrent.futures.ProcessPoolExecutor() as executor:
+    for rrf, bt in executor.map(analyze_msa, analyze_msa_params):
+  #for params in analyze_msa_params:
+      #rrf, bt = analyze_msa(params)
+      #rrf, bt = analyze_msa(msa,  dataset_dir, methods, methods_to_compare)
+      for m in total_rrf:
+        total_rrf[m] += rrf[m]
+      for m in bt:
+        best_tree[m] += bt[m]
+      analyzed_msas += 1
   if (analyzed_msas == 0):
     print("did not manage to analyze any MSA")
     exit(1)

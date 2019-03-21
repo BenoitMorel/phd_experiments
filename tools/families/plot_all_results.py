@@ -89,7 +89,7 @@ def get_datasets_to_plot(datasets_rf_dico, fixed_params_dico):
   return datasets_to_plot
 
 
-def plot(datasets_rf_dico, x_param, fixed_params_dico, output):
+def plot(datasets_rf_dico, x_param, fixed_params_dico, x_label, output):
   datasets_to_plot = get_datasets_to_plot(datasets_rf_dico, fixed_params_dico)
   datasets_to_plot.sort(key = lambda t: float(get_param_from_dataset_name(x_param, t)))
   df = pd.DataFrame()
@@ -114,10 +114,9 @@ def plot(datasets_rf_dico, x_param, fixed_params_dico, output):
   
   for method in methods:
     style = "solid"
-    caption_label = method
-    plt.plot(x_param, method, data=df, marker='x', linestyle = style, linewidth=2, label = caption_label)
+    plt.plot(x_param, method, data=df, marker='x', linestyle = style, linewidth=2, label = method)
     ax.set_ylim(bottom=0)
-  plt.xlabel(x_param)
+  plt.xlabel(x_label[x_param])
   plt.ylabel('RF distance')
   plt.legend()
   plt.savefig(output)
@@ -132,41 +131,48 @@ for dataset in datasets:
     datasets_rf_dico[dataset] = get_results(dataset)
 
 
+x_label = {}
+x_label["species"] = "Number of taxa in the species tree"
+x_label["dup_rates"] = "Duplication rate"
+x_label["bl"] = "Gene tree branch length multiplier"
+x_label["dl_ratio"] = "Ratio between duplication and loss rates"
+x_label["sites"] = "Number of sites"
+
 
 params_value_dico_sites = {}
 params_value_dico_sites["species"] = "25"
 params_value_dico_sites["dup_rates"] = "1.0"
 params_value_dico_sites["bl"] = "1.0"
 params_value_dico_sites["dl_ratio"] = "2.0"
-plot(datasets_rf_dico, "sites", params_value_dico_sites, "sites.png")
+plot(datasets_rf_dico, "sites", params_value_dico_sites, x_label,  "sites.png")
 
 params_value_dico_sites = {}
 params_value_dico_sites["species"] = "25"
 params_value_dico_sites["sites"] = "500"
 params_value_dico_sites["bl"] = "1.0"
 params_value_dico_sites["dl_ratio"] = "2.0"
-plot(datasets_rf_dico, "dup_rates", params_value_dico_sites, "rates.png")
+plot(datasets_rf_dico, "dup_rates", params_value_dico_sites, x_label, "rates.png")
 
 params_value_dico_sites = {}
 params_value_dico_sites["species"] = "25"
 params_value_dico_sites["sites"] = "500"
 params_value_dico_sites["dup_rates"] = "0.5"
 params_value_dico_sites["dl_ratio"] = "2.0"
-plot(datasets_rf_dico, "bl", params_value_dico_sites, "bl.png")
+plot(datasets_rf_dico, "bl", params_value_dico_sites, x_label, "bl.png")
 
 params_value_dico_sites = {}
 params_value_dico_sites["sites"] = "500"
 params_value_dico_sites["dup_rates"] = "0.5"
 params_value_dico_sites["bl"] = "1.0"
 params_value_dico_sites["dl_ratio"] = "2.0"
-plot(datasets_rf_dico, "species", params_value_dico_sites, "species.png")
+plot(datasets_rf_dico, "species", params_value_dico_sites, x_label, "species.png")
 
 params_value_dico_sites = {}
 params_value_dico_sites["species"] = "25"
 params_value_dico_sites["sites"] = "500"
 params_value_dico_sites["dup_rates"] = "0.5"
 params_value_dico_sites["bl"] = "1.0"
-plot(datasets_rf_dico, "dl_ratio", params_value_dico_sites, "dl_ratio.png")
+plot(datasets_rf_dico, "dl_ratio", params_value_dico_sites, x_label, "dl_ratio.png")
 
 
 
