@@ -25,18 +25,21 @@ def analyze_polytomies(tree):
       else:
         print("    some children in this polytomy are internal nodes")
       print("    number of taxa under the polytomy: " + str(len(node.get_leaves())))
+
 def analyze_tree(tree_file):
   tree = read_tree(tree_file)
   analyze_dimensions(tree)
   analyze_polytomies(tree)
-  
+ 
+def get_tree_taxa_number(tree_file):
+  return len(read_tree(tree_file).get_leaves())
 
 if (__name__ == "__main__"):
-   if (len(sys.argv) != 2): 
-     print("Syntax: python " + os.path.basename(__file__) + " tree_file") 
-     exit(1)
+  if (len(sys.argv) != 2): 
+    print("Syntax: python " + os.path.basename(__file__) + " tree_file") 
+    exit(1)
 
-tree_file = sys.argv[1]
-analyze_tree(tree_file)
+  tree_file = sys.argv[1]
+  analyze_tree(tree_file)
 
 

@@ -9,6 +9,7 @@ import experiments as exp
 import link_file_from_gene_tree as phyldog_link
 import sequence_model
 import rescale_bl
+import analyze_tree
 
 
 def generate_jprime_species(species, output, seed):
@@ -130,16 +131,21 @@ def rescale_trees(jprime_output, families, bl_factor):
     rescale_bl.rescale_bl(tree, tree, bl_factor)
     subprocess.check_call(["sed", "-i", "s/)1:/):/g", tree])
 
-def generate_jprime(species, families, sites, model, bl_factor, dupRate, lossRate, transferRate, output, seed):
-  dirname = "jsim_s" + str(species) + "_f" + str(families)
+def get_output(species, families, sites, model, bl_factor, dupRate, lossRate, transferRate):
+  dirname = "jsim"
+  if (float(transferRate) != 0.0):
+    dirname += "dtl"
+  dirname += "_s" + str(species) + "_f" + str(families)
   dirname += "_sites" + str(sites)
   dirname += "_" + model
   dirname += "_bl" + str(bl_factor)
   dirname += "_d" + str(dupRate) + "_l" + str(lossRate) 
   if (transferRate != 0.0):
     dirname += "_t" + str(transferRate)  
-  dirname += "_seed" + str(seed)
-  output = os.path.join(output, dirname)
+  return dirname
+
+def generate_jprime(species, families, sites, model, bl_factor, dupRate, lossRate, transferRate, root_output, seed):
+  output = os.path.join(root_output, "jprime_temp")
   print("Writing output in " + output)
   os.makedirs(output)
   with open(os.path.join(output, "jprime_script_params.txt"), "w") as writer:
@@ -156,23 +162,31 @@ def generate_jprime(species, families, sites, model, bl_factor, dupRate, lossRat
   generate_seqgen_sequence(families, sites, model, jprime_output, seed)
   print("jprime output: " + jprime_output)
   gprime_to_families(jprime_output, output)
+  
+  species_nodes = analyze_tree.get_tree_taxa_number(os.path.join(jprime_output, "species.pruned.tree")) * 2 - 1
+  new_output = os.path.join(root_output, get_output(species_nodes, families, sites, model, bl_factor, dupRate, lossRate, transferRate))
+  shutil.move(output, new_output)
+  print("Final output directory: " + new_output)
+  print("")
 
-if (len(sys.argv) != 11 or not (sys.argv[4] in sequence_model.get_model_sample_names())):
-  if (len(sys.argv) != 11):
-    print("Invalid number of parameters")
-  print("Syntax: python generate_jprime.py species_time_interval families sites model bl_scaler dupRate lossRate transferRate output seed")
-  print("model should be one of " + str(sequence_model.get_model_sample_names()))
-  exit(1)
+if (__name__ == "__main__"): 
 
-species = int(sys.argv[1])
-families = int(sys.argv[2])
-sites = int(sys.argv[3])
-model = sys.argv[4]
-bl_factor = float(sys.argv[5])
-dupRate = float(sys.argv[6])
-lossRate = float(sys.argv[7])
-transferRate = float(sys.argv[8])
-output = sys.argv[9]
-seed = int(sys.argv[10])
+  if (len(sys.argv) != 11 or not (sys.argv[4] in sequence_model.get_model_sample_names())):
+    if (len(sys.argv) != 11):
+      print("Invalid number of parameters")
+    print("Syntax: python generate_jprime.py species_time_interval families sites model bl_scaler dupRate lossRate transferRate output seed")
+    print("model should be one of " + str(sequence_model.get_model_sample_names()))
+    exit(1)
 
-generate_jprime(species, families, sites, model, bl_factor, dupRate, lossRate, transferRate, output, seed)
+  species = int(sys.argv[1])
+  families = int(sys.argv[2])
+  sites = int(sys.argv[3])
+  model = sys.argv[4]
+  bl_factor = float(sys.argv[5])
+  dupRate = float(sys.argv[6])
+  lossRate = float(sys.argv[7])
+  transferRate = float(sys.argv[8])
+  output = sys.argv[9]
+  seed = int(sys.argv[10])
+
+  generate_jprime(species, families, sites, model, bl_factor, dupRate, lossRate, transferRate, output, seed)

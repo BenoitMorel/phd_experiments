@@ -48,8 +48,8 @@ def get_gene_tree(method, dataset_dir, msa):
   else:
     tree_path = os.path.join(dataset_dir, msa, "results", method + ".newick") 
   prefix = os.path.join(dataset_dir, msa)
-  if (not os.path.isfile(tree_path)):
-    print("File " + tree_path + " does not exist")
+  #if (not os.path.isfile(tree_path)):
+  #  print("File " + tree_path + " does not exist")
   return read_tree(tree_path)
 
 def add_ran_methods(methods, dataset_dir, benched_method):
@@ -75,8 +75,6 @@ def analyze_msa(params):
   for method in invalid_methods:
     methods.remove(method)
     methods_to_compare = [p for p in methods_to_compare if (p[0] != method and p[1] != method)]
-    print("Missing tree for " + method)
-    print("This method will be excluded")
   best_rrf = 1
   rrf = {}
   for method_pair in methods_to_compare:
@@ -100,7 +98,7 @@ def analyze_msa(params):
     elif (method2 == "True"):
       if (best_rrf == rrf[methods_key]):
         best_tree[method1] = 1
-  return rrf, best_tree
+  return rrf, best_tree, invalid_methods
 
 def analyze(dataset_dir, benched_method = ""):
   print("To re-run: python " + os.path.realpath(__file__) + " " + dataset_dir + " " + benched_method)
@@ -131,11 +129,16 @@ def analyze(dataset_dir, benched_method = ""):
   for msa in os.listdir(dataset_dir):  
     analyze_msa_params.append((msa, dataset_dir, methods, methods_to_compare))
   with concurrent.futures.ProcessPoolExecutor() as executor:
-    for rrf, bt in executor.map(analyze_msa, analyze_msa_params):
-  #for params in analyze_msa_params:
-      #rrf, bt = analyze_msa(params)
-      #rrf, bt = analyze_msa(msa,  dataset_dir, methods, methods_to_compare)
-      for m in total_rrf:
+    for rrf, bt, invalid_methods in executor.map(analyze_msa, analyze_msa_params):
+      for method in invalid_methods:
+        if (not method in methods):
+          continue
+        methods.remove(method)
+        methods_to_compare = [p for p in methods_to_compare if (p[0] != method and p[1] != method)]
+        del best_tree[method]
+        print("Missing tree for " + method)
+        print("This method will be excluded")
+      for m in rrf:
         total_rrf[m] += rrf[m]
       for m in bt:
         best_tree[m] += bt[m]

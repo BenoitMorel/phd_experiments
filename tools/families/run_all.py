@@ -6,15 +6,7 @@ import run_phyldog_light as phyldog
 import run_notung as notung
 import run_stag
 
-if __name__ == "__main__":
-  if (len(sys.argv) != 6):
-    print("syntax: python run_raxml_all.py dataset_dir is_dna starting_trees bs_trees cores")
-    sys.exit(1)
-  dataset_dir = sys.argv[1]
-  is_dna = (int(sys.argv[2]) != 0)
-  starting_trees = sys.argv[3]
-  bs_trees = sys.argv[4]
-  cores = int(sys.argv[5])
+def run_reference_methods(dataset_dir, is_dna, starting_trees, bs_trees, cores):
   print("Run pargenes and extract trees...")
   sys.stdout.flush()
   raxml.run_pargenes_and_extract_trees(dataset_dir, is_dna, starting_trees, bs_trees, cores)
@@ -31,3 +23,14 @@ if __name__ == "__main__":
   threshold = 50
   notung.run_notung_on_families(dataset_dir, threshold, cores)
 
+
+if __name__ == "__main__":
+  if (len(sys.argv) != 6):
+    print("syntax: python run_raxml_all.py dataset_dir is_dna starting_trees bs_trees cores")
+    sys.exit(1)
+  dataset_dir = sys.argv[1]
+  is_dna = (int(sys.argv[2]) != 0)
+  starting_trees = sys.argv[3]
+  bs_trees = sys.argv[4]
+  cores = int(sys.argv[5])
+  run_reference_methods(dataset_dir, is_dna, starting_trees, bs_trees, cores)
