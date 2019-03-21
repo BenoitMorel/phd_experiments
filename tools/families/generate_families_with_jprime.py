@@ -158,7 +158,9 @@ def generate_jprime(species, families, sites, model, bl_factor, dupRate, lossRat
   gprime_to_families(jprime_output, output)
 
 if (len(sys.argv) != 11 or not (sys.argv[4] in sequence_model.get_model_sample_names())):
-  print("Syntax: python generate_jprime.py species_time_interval families sites model dupRate lossRate transferRate output seed")
+  if (len(sys.argv) != 11):
+    print("Invalid number of parameters")
+  print("Syntax: python generate_jprime.py species_time_interval families sites model bl_scaler dupRate lossRate transferRate output seed")
   print("model should be one of " + str(sequence_model.get_model_sample_names()))
   exit(1)
 

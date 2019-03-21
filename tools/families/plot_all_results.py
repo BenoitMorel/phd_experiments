@@ -24,6 +24,14 @@ def get_param_from_dataset_name(parameter, dataset):
     return dataset.split("_")[5][2:]
   elif (parameter == "dup_rates"):
     return dataset.split("_")[6][1:]
+  elif (parameter == "loss_rates"):
+    return dataset.split("_")[7][1:]
+  elif (parameter == "dl_ratio"):
+    d = get_param_from_dataset_name("dup_rates", dataset)
+    l = get_param_from_dataset_name("loss_rates", dataset)
+    res =  str(float(d)/float(l))
+    print(dataset + " " + res)
+    return res
   else:
     return "invalid"
 
@@ -51,16 +59,19 @@ def get_rf_from_logs(logs):
   return dico
 
 def get_results(dataset):
-  analyse_script = os.path.join(exp.tools_root, "families", "analyze_dataset.py")
-  families_path = os.path.join(exp.benoit_datasets_root, "families", dataset, "families")
-  results_path = os.path.join(exp.results_root, "MultipleJointSearch", dataset, "SPR_2_start_raxml_split", "normald_40", "run_0", "scheduler_run")
-  cmd = []
-  cmd.append("python")
-  cmd.append(analyse_script)
-  cmd.append(families_path)
-  cmd.append(results_path)
-  logs = subprocess.check_output(cmd)
-  return get_rf_from_logs(logs) 
+  try:
+    analyse_script = os.path.join(exp.tools_root, "families", "analyze_dataset.py")
+    families_path = os.path.join(exp.benoit_datasets_root, "families", dataset, "families")
+    cmd = []
+    cmd.append("python")
+    cmd.append(analyse_script)
+    cmd.append(families_path)
+    logs = subprocess.check_output(cmd)
+    return get_rf_from_logs(logs) 
+  except:
+    print("Failed to get RF distances from dataset " + dataset)
+    return None
+
 
 
 def get_datasets_to_plot(datasets_rf_dico, fixed_params_dico):
@@ -79,14 +90,13 @@ def get_datasets_to_plot(datasets_rf_dico, fixed_params_dico):
 
 
 def plot(datasets_rf_dico, x_param, fixed_params_dico, output):
-  for_presentation = False
   datasets_to_plot = get_datasets_to_plot(datasets_rf_dico, fixed_params_dico)
   datasets_to_plot.sort(key = lambda t: float(get_param_from_dataset_name(x_param, t)))
   df = pd.DataFrame()
   f, ax = plt.subplots(1)
  
   
-  methods = ["RAxML-NG", "Notung", "Phyldog", "Treerecs", "JointSearch"]
+  methods = ["RAxML-NG", "Notung", "Phyldog", "Treerecs", "GeneRax-Raxml", "GeneRax-Random"]
   fake_df = {}
   fake_df[x_param] = []
   for method in methods:
@@ -97,6 +107,7 @@ def plot(datasets_rf_dico, x_param, fixed_params_dico, output):
     for method in rf_dico:
       if (not method in methods):
         print("Unknown method " + method)
+        continue
       fake_df[method].append(float(rf_dico[method]))
   for elem in fake_df:
     df[elem] = fake_df[elem]
@@ -104,33 +115,21 @@ def plot(datasets_rf_dico, x_param, fixed_params_dico, output):
   for method in methods:
     style = "solid"
     caption_label = method
-    if (for_presentation):
-      if (method == "RAxML-NG"):
-        caption_label = "Old, likelihood"
-        style = "dashed"
-      elif (method == "Treerecs"):
-        caption_label = "New, parsimony+likelihood"
-        style = "dashed"
-      elif (method == "Notung"):
-        caption_label = "New, parsimony"
-        style = "dashed"
-      elif (method == "JointSearch"):
-        caption_label = "New, likelihood"
-      else:
-        continue
     plt.plot(x_param, method, data=df, marker='x', linestyle = style, linewidth=2, label = caption_label)
-  if (not for_presentation):
     ax.set_ylim(bottom=0)
   plt.xlabel(x_param)
   plt.ylabel('RF distance')
   plt.legend()
   plt.savefig(output)
+  print("Saving result in " + output)
   plt.close()
 
 datasets = get_available_datasets("jsim")
 datasets_rf_dico = {}
 for dataset in datasets:
-  datasets_rf_dico[dataset] = get_results(dataset)
+  res = get_results(dataset)
+  if (res != None):
+    datasets_rf_dico[dataset] = get_results(dataset)
 
 
 
@@ -138,25 +137,36 @@ params_value_dico_sites = {}
 params_value_dico_sites["species"] = "25"
 params_value_dico_sites["dup_rates"] = "1.0"
 params_value_dico_sites["bl"] = "1.0"
+params_value_dico_sites["dl_ratio"] = "2.0"
 plot(datasets_rf_dico, "sites", params_value_dico_sites, "sites.png")
 
 params_value_dico_sites = {}
 params_value_dico_sites["species"] = "25"
 params_value_dico_sites["sites"] = "500"
 params_value_dico_sites["bl"] = "1.0"
+params_value_dico_sites["dl_ratio"] = "2.0"
 plot(datasets_rf_dico, "dup_rates", params_value_dico_sites, "rates.png")
 
 params_value_dico_sites = {}
 params_value_dico_sites["species"] = "25"
 params_value_dico_sites["sites"] = "500"
 params_value_dico_sites["dup_rates"] = "0.5"
+params_value_dico_sites["dl_ratio"] = "2.0"
 plot(datasets_rf_dico, "bl", params_value_dico_sites, "bl.png")
 
 params_value_dico_sites = {}
 params_value_dico_sites["sites"] = "500"
 params_value_dico_sites["dup_rates"] = "0.5"
 params_value_dico_sites["bl"] = "1.0"
+params_value_dico_sites["dl_ratio"] = "2.0"
 plot(datasets_rf_dico, "species", params_value_dico_sites, "species.png")
+
+params_value_dico_sites = {}
+params_value_dico_sites["species"] = "25"
+params_value_dico_sites["sites"] = "500"
+params_value_dico_sites["dup_rates"] = "0.5"
+params_value_dico_sites["bl"] = "1.0"
+plot(datasets_rf_dico, "dl_ratio", params_value_dico_sites, "dl_ratio.png")
 
 
 
