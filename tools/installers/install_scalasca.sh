@@ -51,13 +51,18 @@ install_cube_gui() {
   cd cubegui-4.4.2
   # here, the configure command might need something like
   # ../configure -with-cubelib-config=$install_prefix/bin
-  install
+  mkdir build
+  cd build
+  ../configure --prefix=$install_prefix -with-cubelib-config=$install_prefix/bin
+  make -j 10
+  make install
+  cd ..
   cd ..
 }
 
-install_scalasca
-install_scorep
-install_cube
+#install_scalasca
+#install_scorep
+#install_cube
 
 if xhost >& /dev/null ; 
 then 
