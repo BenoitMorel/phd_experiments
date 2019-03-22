@@ -24,6 +24,8 @@ def generate_jprime_species(species, output, seed):
   command.append(str(species))
   command.append("-s")
   command.append(str(seed))
+  command.append("-min")
+  command.append("5")
   command.append("1")
   command.append("0")
   command.append(os.path.join(output, "species"))
@@ -163,7 +165,7 @@ def generate_jprime(species, families, sites, model, bl_factor, dupRate, lossRat
   print("jprime output: " + jprime_output)
   gprime_to_families(jprime_output, output)
   
-  species_nodes = analyze_tree.get_tree_taxa_number(os.path.join(jprime_output, "species.pruned.tree")) * 2 - 1
+  species_nodes = analyze_tree.get_tree_taxa_number(os.path.join(jprime_output, "species.pruned.tree"))
   new_output = os.path.join(root_output, get_output(species_nodes, families, sites, model, bl_factor, dupRate, lossRate, transferRate))
   shutil.move(output, new_output)
   print("Final output directory: " + new_output)

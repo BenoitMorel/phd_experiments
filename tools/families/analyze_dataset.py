@@ -67,13 +67,15 @@ def analyze_msa(params):
   family_path = os.path.join(dataset_dir, msa)
   invalid_methods = []
   best_tree = {}
+  
   for method in methods:
     try: 
       trees[method] = get_gene_tree(method, dataset_dir, msa)
     except:
       invalid_methods.append(method)
   for method in invalid_methods:
-    methods.remove(method)
+    if (method in methods):
+      methods.remove(method)
     methods_to_compare = [p for p in methods_to_compare if (p[0] != method and p[1] != method)]
   best_rrf = 1
   rrf = {}
@@ -128,16 +130,12 @@ def analyze(dataset_dir, benched_method = ""):
   analyze_msa_params = []
   for msa in os.listdir(dataset_dir):  
     analyze_msa_params.append((msa, dataset_dir, methods, methods_to_compare))
-  with concurrent.futures.ProcessPoolExecutor() as executor:
+  with concurrent.futures.ProcessPoolExecutor(1) as executor:
+    total_invalid_methods = []
     for rrf, bt, invalid_methods in executor.map(analyze_msa, analyze_msa_params):
       for method in invalid_methods:
-        if (not method in methods):
-          continue
-        methods.remove(method)
-        methods_to_compare = [p for p in methods_to_compare if (p[0] != method and p[1] != method)]
-        del best_tree[method]
-        print("Missing tree for " + method)
-        print("This method will be excluded")
+        if (not method in total_invalid_methods):
+          total_invalid_methods.append(method)
       for m in rrf:
         total_rrf[m] += rrf[m]
       for m in bt:
@@ -146,6 +144,11 @@ def analyze(dataset_dir, benched_method = ""):
   if (analyzed_msas == 0):
     print("did not manage to analyze any MSA")
     exit(1)
+        
+  for method in total_invalid_methods:
+    methods.remove(method)
+    methods_to_compare = [p for p in methods_to_compare if (p[0] != method and p[1] != method)]
+    #del best_tree[method]
   
 
   print("Number of gene families: " + str(analyzed_msas))
