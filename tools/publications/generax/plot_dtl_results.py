@@ -22,7 +22,7 @@ def plot(datasets_rf_dico, x_param, fixed_params_dico, x_label, output):
   f, ax = plt.subplots(1)
  
   
-  methods = ["RAxML-NG", "Notung", "Phyldog", "Treerecs", "GeneRax-DL-Raxml", "GeneRax-DL-Random"]#, "GeneRax-DTL-Raxml", "GeneRax-DTL-Random"]
+  methods = ["RAxML-NG", "Notung", "Phyldog", "Treerecs", "GeneRax-DL-Random", "GeneRax-DTL-Random"]
   fake_df = {}
   fake_df[x_param] = []
   for method in methods:
@@ -31,9 +31,6 @@ def plot(datasets_rf_dico, x_param, fixed_params_dico, x_label, output):
     print(float(common.get_param_from_dataset_name(x_param,     dataset)))
     fake_df[x_param].append(float(common.get_param_from_dataset_name(x_param, dataset)))
     rf_dico = datasets_rf_dico[dataset]
-    for method in methods:
-      if (not method in rf_dico):
-        print("Warning: missing data for method " + method + " and dataset " + dataset)
     for method in rf_dico:
       if (not method in methods):
         print("Unknown method " + method)
@@ -59,7 +56,7 @@ def plot(datasets_rf_dico, x_param, fixed_params_dico, x_label, output):
 
 if (__name__ == "__main__"): 
 
-  datasets = common.get_available_datasets("jsim_")
+  datasets = common.get_available_datasets("jsimdtl_")
   datasets_rf_dico = {}
   index = 0
   total = len(datasets)
@@ -74,32 +71,34 @@ if (__name__ == "__main__"):
 
   x_label = {}
   x_label["species"] = "Number of taxa in the species tree"
-  x_label["dup_rate"] = "Duplication rate"
+  x_label["dup_rate"] = "Average DTL rate"
   x_label["bl"] = "Gene tree branch length multiplier"
-  x_label["dl_ratio"] = "Ratio between duplication and loss rates"
+  x_label["dl_ratio"] = "Ratio between duplication and loss rates (loss rate is fixed)"
   x_label["sites"] = "Number of sites"
-
+  x_label["tl_ratio"] = "Ratio between transfer and loss rates (loss rate is fixed"
   
   default_species = "19"
-  default_dup_rate = "0.5"
+  default_dup_rate = "0.25"
   default_bl = "1.0"
-  default_dl_ratio = "2.0"
+  default_dl_ratio = "1.0"
   default_sites = "500"
+  default_tl_ratio = "1.0"
+
 
   params_value_dico_sites = {}
   params_value_dico_sites["species"] = default_species
   params_value_dico_sites["dup_rate"] = default_dup_rate
+  params_value_dico_sites["tl_ratio"] = default_tl_ratio
   params_value_dico_sites["bl"] = default_bl
   params_value_dico_sites["dl_ratio"] = default_dl_ratio
   params_value_dico_sites["sites"] = default_sites
   
-  plot(datasets_rf_dico, "sites", params_value_dico_sites, x_label,  "sites.png")
-  plot(datasets_rf_dico, "dup_rate", params_value_dico_sites, x_label, "rates.png")
-  plot(datasets_rf_dico, "bl", params_value_dico_sites, x_label, "bl.png")
-  plot(datasets_rf_dico, "species", params_value_dico_sites, x_label, "species.png")
-  plot(datasets_rf_dico, "dl_ratio", params_value_dico_sites, x_label, "dl_ratio.png")
+  plot(datasets_rf_dico, "tl_ratio", params_value_dico_sites, x_label,  "transfers_dtl.png")
+  plot(datasets_rf_dico, "sites", params_value_dico_sites, x_label,  "sites_dtl.png")
+  plot(datasets_rf_dico, "dup_rate", params_value_dico_sites, x_label,  "dtl_rates_multiplier_dtl.png")
 
-  
+
+
 
 
 
