@@ -77,8 +77,8 @@ if (__name__ == "__main__"):
   x_label["sites"] = "Number of sites"
   x_label["tl_ratio"] = "Ratio between transfer and loss rates (loss rate is fixed"
   
-  default_species = "19"
-  default_dup_rate = "0.25"
+  default_species = "16"
+  default_dup_rate = "0.15"
   default_bl = "1.0"
   default_dl_ratio = "1.0"
   default_sites = "500"
@@ -93,8 +93,9 @@ if (__name__ == "__main__"):
   params_value_dico_sites["dl_ratio"] = default_dl_ratio
   params_value_dico_sites["sites"] = default_sites
   
-  plot(datasets_rf_dico, "tl_ratio", params_value_dico_sites, x_label,  "transfers_dtl.png")
   plot(datasets_rf_dico, "sites", params_value_dico_sites, x_label,  "sites_dtl.png")
+  plot(datasets_rf_dico, "species", params_value_dico_sites, x_label,  "species_dtl.png")
+  plot(datasets_rf_dico, "tl_ratio", params_value_dico_sites, x_label,  "transfers_dtl.png")
   plot(datasets_rf_dico, "dup_rate", params_value_dico_sites, x_label,  "dtl_rates_multiplier_dtl.png")
 
 

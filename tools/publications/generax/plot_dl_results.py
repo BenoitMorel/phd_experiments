@@ -92,12 +92,14 @@ if (__name__ == "__main__"):
   params_value_dico_sites["bl"] = default_bl
   params_value_dico_sites["dl_ratio"] = default_dl_ratio
   params_value_dico_sites["sites"] = default_sites
-  
+  params_value_dico_sites["families"] = "100"
+
   plot(datasets_rf_dico, "sites", params_value_dico_sites, x_label,  "sites.png")
   plot(datasets_rf_dico, "dup_rate", params_value_dico_sites, x_label, "rates.png")
   plot(datasets_rf_dico, "bl", params_value_dico_sites, x_label, "bl.png")
   plot(datasets_rf_dico, "species", params_value_dico_sites, x_label, "species.png")
   plot(datasets_rf_dico, "dl_ratio", params_value_dico_sites, x_label, "dl_ratio.png")
+  plot(datasets_rf_dico, "families", params_value_dico_sites, x_label, "families.png")
 
   
 

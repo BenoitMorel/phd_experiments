@@ -20,9 +20,13 @@ jsim_species_to_params = {}
 
 jsim_species_to_params[5] = (3, 2)
 jsim_species_to_params[10] = (3, 13)
+jsim_species_to_params[12] = (3, 9)
+jsim_species_to_params[14] = (3, 17)
 jsim_species_to_params[19] = (3, 11)
 jsim_species_to_params[27] = (3, 12)
 jsim_species_to_params[41] = (3, 4)
+
+jsim_species_to_params[16] = (3, 6)
 
 
 
@@ -59,6 +63,9 @@ def get_param_from_dataset_name(parameter, dataset):
 
 
 def run_generax(dataset, starting_tree, with_transfers, run_name, is_dna):
+  print("*************************************")
+  print("Run genrax for " + dataset)
+  print("*************************************")
   command = []
   command.append("python")
   command.append("/home/morelbt/github/phd_experiments/scripts/jointsearch/launch_generax.py")
@@ -79,6 +86,9 @@ def run_generax(dataset, starting_tree, with_transfers, run_name, is_dna):
 
 
 def generate_dataset(dataset):
+  print("*************************************")
+  print("Run generate dataset for " + dataset)
+  print("*************************************")
   species = get_param_from_dataset_name("species", dataset)
   species_internal, seed = jsim_species_to_params[int(species)]
   families = int(get_param_from_dataset_name("families", dataset))
@@ -87,11 +97,14 @@ def generate_dataset(dataset):
   bl_factor = float(get_param_from_dataset_name("bl", dataset))
   d = get_param_from_dataset_name("dup_rate", dataset)
   l = get_param_from_dataset_name("loss_rate", dataset)
-  t = get_param_from_dataset_name("tl_ratio", dataset)
+  t = get_param_from_dataset_name("transfer_rate", dataset)
   output = "../BenoitDatasets/families"
   jprime.generate_jprime(species_internal, families, sites, model, bl_factor, d, l, t, output, seed) 
 
 def run_reference_methods(dataset):
+  print("*************************************")
+  print("Run reference methods for " + dataset)
+  print("*************************************")
   dataset_dir = os.path.join("../BenoitDatasets/families", dataset)
   is_dna = 1
   starting_trees = 10

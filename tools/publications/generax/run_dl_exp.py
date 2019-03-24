@@ -40,13 +40,21 @@ def add_species():
   datasets.append("jsim_s27_f100_sites500_dna4_bl1.0_d0.5_l0.25_t0.0")
   datasets.append("jsim_s41_f100_sites500_dna4_bl1.0_d0.5_l0.25_t0.0")
 
+def add_families():
+  datasets.append("jsim_s19_f50_sites500_dna4_bl1.0_d0.5_l0.25_t0.0")
+  datasets.append("jsim_s19_f200_sites500_dna4_bl1.0_d0.5_l0.25_t0.0")
+  datasets.append("jsim_s19_f500_sites500_dna4_bl1.0_d0.5_l0.25_t0.0")
+  datasets.append("jsim_s19_f1000_sites500_dna4_bl1.0_d0.5_l0.25_t0.0")
+  datasets.append("jsim_s19_f1500_sites500_dna4_bl1.0_d0.5_l0.25_t0.0")
+#  datasets.append("jsim_s19_f2000_sites500_dna4_bl1.0_d0.5_l0.25_t0.0")
 
 #add_fixed_point()
-add_bl()
-add_sites()
-add_rates_multiplier()
-add_dl_ratio()
+#add_bl()
+#add_sites()
+#add_rates_multiplier()
+#add_dl_ratio()
 #add_species()
+add_families()
 
 #common.generate_all_datasets(datasets)
 common.run_all_reference_methods(datasets)
