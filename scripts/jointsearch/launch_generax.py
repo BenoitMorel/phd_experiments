@@ -68,6 +68,9 @@ def run(dataset, strategy, starting_tree, cores, additional_arguments, resultsdi
   is_protein = exp.checkAndDelete("--protein", additional_arguments)
   run_name = exp.getAndDelete("--run", additional_arguments, "lastRun") 
   mode = get_mode_from_additional_arguments(additional_arguments)
+  if (not dataset in datasets):
+    print("Error: " + dataset + " is not in " + str(datasets))
+    exit(1)
   datadir = datasets[dataset]
   generax_families_file = os.path.join(resultsdir, "generax_families.txt")
   build_generax_families_file(datadir, starting_tree, is_protein, generax_families_file)

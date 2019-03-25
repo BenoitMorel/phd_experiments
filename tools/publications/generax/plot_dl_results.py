@@ -78,7 +78,7 @@ if (__name__ == "__main__"):
   x_label["bl"] = "Gene tree branch length multiplier"
   x_label["dl_ratio"] = "Ratio between duplication and loss rates"
   x_label["sites"] = "Number of sites"
-
+  x_label["families"] = "Number of gene families"
   
   default_species = "19"
   default_dup_rate = "0.5"
