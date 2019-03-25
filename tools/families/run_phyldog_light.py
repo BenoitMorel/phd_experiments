@@ -2,6 +2,8 @@ import os
 import sys
 import subprocess
 import shutil
+import time
+import runtimes
 sys.path.insert(0, 'scripts')
 sys.path.insert(0, os.path.join("tools", "families"))
 import events_scenario_extraction as extract
@@ -80,7 +82,11 @@ def run_phyldog_light_on_families(dataset_dir, is_dna, cores):
   scheduler_commands_file = generate_scheduler_commands_file(dataset_dir, is_dna, cores, output_dir)
   command = generate_scheduler_command(scheduler_commands_file, cores, output_dir)
   print(command.split(" "))
+  start = time.time()
   subprocess.check_call(command.split(" "))
+  runtimes.save_elapsed_time(dataset_dir, "Phyldog", (time.time() - start)) 
+  extract_phyldog_trees(os.path.join(dataset_dir, "families"))
+  extract.extract_events_from_phyldog(dataset_dir)
   extract_phyldog_trees(os.path.join(dataset_dir, "families"))
   extract.extract_events_from_phyldog(dataset_dir)
 

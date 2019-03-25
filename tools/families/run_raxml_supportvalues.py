@@ -6,6 +6,8 @@ sys.path.insert(0, 'scripts')
 sys.path.insert(0, 'tools/raxml/')
 import experiments as exp
 import raxml_get_tca_score as tca
+import time
+import runtimes
 
 def run_pargenes(dataset_dir, pargenes_dir, is_dna, starting_trees, bs_trees, cores):
   command = []
@@ -87,7 +89,9 @@ def export_pargenes_trees(pargenes_dir, dataset_dir):
 
 def run_pargenes_and_extract_trees(dataset_dir, is_dna, starting_trees, bs_trees, cores):
   pargenes_dir = os.path.join(dataset_dir, "pargenes")
+  start = time.time()
   run_pargenes(dataset_dir, pargenes_dir, is_dna, starting_trees, bs_trees, cores)
+  runtimes.save_elapsed_time(dataset_dir, "RAxML-NG", (time.time() - start)) 
   export_pargenes_trees(pargenes_dir, dataset_dir)
 
 if __name__ == "__main__":

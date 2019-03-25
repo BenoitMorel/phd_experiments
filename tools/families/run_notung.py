@@ -8,6 +8,8 @@ sys.path.insert(0, os.path.join("tools", "notung"))
 import experiments as exp
 import events_scenario_extraction as extract
 import convert_to_notung_tree
+import time
+import runtimes
   
 def generate_notung_files(dataset_dir):
   families_dir = os.path.join(dataset_dir, "families")
@@ -79,7 +81,9 @@ def run_notung_on_families(dataset_dir, threshold, cores):
   scheduler_commands_file = generate_scheduler_commands_file(dataset_dir,  threshold, cores, output_dir)
   command = generate_scheduler_command(scheduler_commands_file, cores, output_dir)
   print(command.split(" "))
+  start = time.time()
   subprocess.check_call(command.split(" "))
+  runtimes.save_elapsed_time(dataset_dir, "Notung", (time.time() - start)) 
   back_convert_notung_files(dataset_dir)
 
 
