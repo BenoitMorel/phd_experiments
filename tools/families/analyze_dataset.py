@@ -52,14 +52,14 @@ def get_gene_tree(method, dataset_dir, msa):
   #  print("File " + tree_path + " does not exist")
   return read_tree(tree_path)
 
-def add_ran_methods(methods, dataset_dir, benched_method):
+def add_ran_methods(methods, dataset_dir):
   runs_dir = os.path.join(dataset_dir, os.listdir(dataset_dir)[0], "results")
   if (not os.path.isdir(runs_dir)):
     return
   for method in os.listdir(runs_dir):
     method = method.split(".")[0]
-    if (method != benched_method and method != "lastRun"):
-      methods.append(method)
+    #if (method != "lastRun"):
+    methods.append(method)
 
 def analyze_msa(params):
   msa, dataset_dir, methods, methods_to_compare = params
@@ -107,9 +107,7 @@ def analyze(dataset_dir, benched_method = ""):
   analyzed_msas = 0
   total_nodes_number = 0
   methods = ["True", "RAxML-NG", "Treerecs", "Phyldog", "Notung"]
-  add_ran_methods(methods, dataset_dir, benched_method)
-  if (len(benched_method) > 0):
-    methods.append(benched_method)
+  add_ran_methods(methods, dataset_dir)
   methods_trees_number = {}
   methods_to_compare = []
   for method in methods:
@@ -160,7 +158,10 @@ def analyze(dataset_dir, benched_method = ""):
     method1 = method_pair[0]
     method2 = method_pair[1]
     methods_key = method1 + " - " + method2
-    rrf_printer.add("- " + methods_key + ":",  str(total_rrf[methods_key] / float(analyzed_msas)))
+    arrow = ""
+    if (method1 == "True" and method2 == benched_method):
+      arrow = " <-- "
+    rrf_printer.add("- " + methods_key + ":",  str(total_rrf[methods_key] / float(analyzed_msas)) + arrow)
   rrf_printer.display()
   print("")
   
