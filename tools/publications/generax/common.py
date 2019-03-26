@@ -159,10 +159,13 @@ def get_rf_from_logs(logs):
 
 def get_timings(dataset):
   dico = {}
-  lines = open(os.path.join(dataset, "runtimes.txt")).readlines()
-  for line in lines:
-    split = line.replace("\n", "").split(" ")
-    dico[split[0]] = split[1]
+  try:
+    lines = open(os.path.join(exp.benoit_datasets_root, "families", dataset, "runtimes.txt")).readlines()
+    for line in lines:
+      split = line.replace("\n", "").split(" ")
+      dico[split[0]] = split[1]
+  except:
+    pass
   return dico
 
 def get_results(dataset):

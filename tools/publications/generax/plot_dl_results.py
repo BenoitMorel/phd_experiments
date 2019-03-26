@@ -33,18 +33,12 @@ if (__name__ == "__main__"):
   x_label["sites"] = "Number of sites"
   x_label["families"] = "Number of gene families"
   
-  default_species = "19"
-  default_dup_rate = "0.5"
-  default_bl = "1.0"
-  default_dl_ratio = "2.0"
-  default_sites = "500"
-
   params_value_dico_sites = {}
-  params_value_dico_sites["species"] = default_species
-  params_value_dico_sites["dup_rate"] = default_dup_rate
-  params_value_dico_sites["bl"] = default_bl
-  params_value_dico_sites["dl_ratio"] = default_dl_ratio
-  params_value_dico_sites["sites"] = default_sites
+  params_value_dico_sites["species"] = "19"
+  params_value_dico_sites["dup_rate"] = "0.5"
+  params_value_dico_sites["bl"] = "1.0"
+  params_value_dico_sites["dl_ratio"] = "2.0"
+  params_value_dico_sites["sites"] = "500"
   params_value_dico_sites["families"] = "100"
 
   common_plots.plot(datasets_rf_dico, "sites", params_value_dico_sites, methods, x_label,  "sites.png")
