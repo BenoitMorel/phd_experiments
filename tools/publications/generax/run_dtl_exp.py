@@ -26,19 +26,26 @@ def add_transfers():
   datasets.append("jsimdtl_s16_f100_sites500_dna4_bl1.0_d0.15_l0.15_t0.4")
 
 def add_species():
-  #datasets.append("jsimdtl_s5_f100_sites500_dna4_bl1.0_d0.15_l0.15_t0.15")
-  #datasets.append("jsimdtl_s10_f100_sites500_dna4_bl1.0_d0.15_l0.15_t0.15")
-  #datasets.append("jsimdtl_s12_f100_sites500_dna4_bl1.0_d0.15_l0.15_t0.15")
-  #datasets.append("jsimdtl_s14_f100_sites500_dna4_bl1.0_d0.15_l0.15_t0.15")
+  datasets.append("jsimdtl_s5_f100_sites500_dna4_bl1.0_d0.15_l0.15_t0.15")
+  datasets.append("jsimdtl_s10_f100_sites500_dna4_bl1.0_d0.15_l0.15_t0.15")
+  datasets.append("jsimdtl_s12_f100_sites500_dna4_bl1.0_d0.15_l0.15_t0.15")
+  datasets.append("jsimdtl_s14_f100_sites500_dna4_bl1.0_d0.15_l0.15_t0.15")
   datasets.append("jsimdtl_s19_f100_sites500_dna4_bl1.0_d0.15_l0.15_t0.15")
   datasets.append("jsimdtl_s27_f100_sites500_dna4_bl1.0_d0.15_l0.15_t0.15")
   datasets.append("jsimdtl_s41_f100_sites500_dna4_bl1.0_d0.15_l0.15_t0.15")
+
+def add_small():
+  datasets.append("jsimdtl_s5_f5_sites50_dna4_bl1.0_d0.15_l0.15_t0.15")
+  datasets.append("jsimdtl_s5_f10_sites50_dna4_bl1.0_d0.15_l0.15_t0.15")
+  datasets.append("jsimdtl_s5_f15_sites50_dna4_bl1.0_d0.15_l0.15_t0.15")
+
 
 #add_fixed_point()
 #add_sites()
 #add_dtl_rates_scaler()
 #add_transfers()
-add_species()
+#add_species()
+add_small()
 
 common.generate_all_datasets(datasets)
 common.run_all_reference_methods(datasets)

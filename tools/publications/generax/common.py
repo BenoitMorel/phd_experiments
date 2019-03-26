@@ -63,9 +63,6 @@ def get_param_from_dataset_name(parameter, dataset):
 
 
 def run_generax(dataset, starting_tree, with_transfers, run_name, is_dna):
-  print("*************************************")
-  print("Run genrax for " + dataset)
-  print("*************************************")
   command = []
   command.append("python")
   command.append("/home/morelbt/github/phd_experiments/scripts/jointsearch/launch_generax.py")
@@ -81,14 +78,11 @@ def run_generax(dataset, starting_tree, with_transfers, run_name, is_dna):
   command.append(run_name)
   if (not is_dna):
     command.append("--protein")
-  print("Running " + " ".join(command))
+  print("-> Running " + " ".join(command))
   subprocess.check_call(command)
 
 
 def generate_dataset(dataset):
-  print("*************************************")
-  print("Run generate dataset for " + dataset)
-  print("*************************************")
   species = get_param_from_dataset_name("species", dataset)
   species_internal, seed = jsim_species_to_params[int(species)]
   families = int(get_param_from_dataset_name("families", dataset))
@@ -110,7 +104,13 @@ def run_reference_methods(dataset):
   starting_trees = 10
   bs_trees = 100
   cores = 40
+  save_sdtout = sys.stdout
+  redirected_file = os.path.join(dataset_dir, "run_all.txt")
+  print("Redirected logs to " + redirected_file)
+  sys.stdout = open(redirected_file, "w")
   run_all.run_reference_methods(dataset_dir, is_dna, starting_trees, bs_trees, cores)
+  sys.stdout = save_sdtout
+  print("End of run_all")
 
 def run_all_reference_methods(datasets):
   for dataset in datasets:
@@ -118,6 +118,9 @@ def run_all_reference_methods(datasets):
 
 def run_all_generax(datasets, raxml = True, random = True):
   for dataset in datasets:
+    print("*************************************")
+    print("Run generate dataset for " + dataset)
+    print("*************************************")
     is_dna = (not dataset in protein_datasets)
     if (raxml):
       run_generax(dataset, "raxml", False, "GeneRax-DL-Raxml", is_dna)
@@ -151,6 +154,15 @@ def get_rf_from_logs(logs):
       method = split[3][:-1]
       rf = split[-1]
       dico[method] = rf
+  return dico
+
+
+def get_timings(dataset):
+  dico = {}
+  lines = open(os.path.join(dataset, "runtimes.txt")).readlines()
+  for line in lines:
+    split = line.replace("\n", "").split(" ")
+    dico[split[0]] = split[1]
   return dico
 
 def get_results(dataset):

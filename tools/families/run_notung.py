@@ -82,7 +82,7 @@ def run_notung_on_families(dataset_dir, threshold, cores):
   command = generate_scheduler_command(scheduler_commands_file, cores, output_dir)
   print(command.split(" "))
   start = time.time()
-  subprocess.check_call(command.split(" "))
+  subprocess.check_call(command.split(" "), stdout = sys.stdout)
   runtimes.save_elapsed_time(dataset_dir, "Notung", (time.time() - start)) 
   back_convert_notung_files(dataset_dir)
 
