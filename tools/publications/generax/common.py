@@ -7,6 +7,7 @@ import experiments as exp
 
 sys.path.insert(0, os.path.join("tools", "families"))
 import generate_families_with_jprime as jprime
+import run_raxml_supportvalues as raxml
 import run_all
 
 # couples of (species interval, seed) to get a given number of species node
@@ -107,10 +108,21 @@ def run_reference_methods(dataset):
   save_sdtout = sys.stdout
   redirected_file = os.path.join(dataset_dir, "run_all.txt")
   print("Redirected logs to " + redirected_file)
+  sys.stdout.flush()
   sys.stdout = open(redirected_file, "w")
   run_all.run_reference_methods(dataset_dir, is_dna, starting_trees, bs_trees, cores)
   sys.stdout = save_sdtout
   print("End of run_all")
+  sys.stdout.flush()
+
+def run_all_raxml_light(datasets):
+  for dataset in datasets:
+    dataset_dir = os.path.join("../BenoitDatasets/families", dataset)
+    is_dna = 1
+    starting_trees = 1
+    bs_trees = 0
+    cores = 40
+    raxml.run_pargenes_and_extract_trees(dataset_dir, is_dna, starting_trees, bs_trees, cores, "RAxML-light", False)
 
 def run_all_reference_methods(datasets):
   for dataset in datasets:
@@ -157,7 +169,7 @@ def get_rf_from_logs(logs):
   return dico
 
 
-def get_timings(dataset):
+def get_runtimes(dataset):
   dico = {}
   try:
     lines = open(os.path.join(exp.benoit_datasets_root, "families", dataset, "runtimes.txt")).readlines()

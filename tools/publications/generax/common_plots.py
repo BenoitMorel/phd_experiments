@@ -52,3 +52,17 @@ def plot(datasets_rf_dico, x_param, fixed_params_dico, methods, x_label, output)
   print("Saving result in " + output)
   plt.close()
 
+
+class Plotter(object):
+  def __init__(self, datasets_rf_dico, datasets_runtimes_dico, fixed_parameters, methods, x_labels, prefix):
+    self.datasets_rf_dico = datasets_rf_dico
+    self.datasets_runtimes_dico = datasets_runtimes_dico
+    self.fixed_parameters = fixed_parameters
+    self.methods = methods
+    self.x_labels = x_labels
+    self.prefix = prefix
+  
+  def __call__(self, parameter):
+    plot(self.datasets_rf_dico, parameter, self.fixed_parameters, self.methods, self.x_labels,  self.prefix + "_rf_" + parameter + ".png")
+    plot(self.datasets_runtimes_dico, parameter, self.fixed_parameters, self.methods, self.x_labels, self.prefix + "_runtimes_" +  parameter + ".png")
+
