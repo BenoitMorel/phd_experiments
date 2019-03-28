@@ -207,7 +207,6 @@ def get_datasets_to_plot(datasets_rf_dico, fixed_params_dico, x_param):
         continue
       dataset_param_value = get_param_from_dataset_name(fixed_param, dataset)
       if (dataset_param_value != fixed_params_dico[fixed_param]):
-        print("No: " + fixed_param + " " + dataset_param_value)
         ok = False
         continue
     if (ok):

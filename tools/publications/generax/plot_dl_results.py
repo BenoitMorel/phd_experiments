@@ -20,42 +20,46 @@ if (__name__ == "__main__"):
   x_labels["families"] = "Number of gene families"
   x_labels["tl_ratio"] = "Ratio between transfer and loss rates (loss rate is fixed"
   
-  methods = ["RAxML-NG", "Notung", "Phyldog", "Treerecs", "GeneRax-DL-Raxml", "GeneRax-DL-Random"]#, "GeneRax-DTL-Raxml", "GeneRax-DTL-Random"]
+  methods_dl_rf = ["RAxML-NG", "Notung", "Phyldog", "Treerecs", "GeneRax-DL-Raxml", "GeneRax-DL-Random"]
+  methods_dl_runtimes = ["RAxML-light", "Notung", "Phyldog", "Treerecs", "GeneRax-DL-Raxml", "GeneRax-DL-Random"]
+  methods_dtl_rf = ["RAxML-NG", "Notung", "Phyldog", "Treerecs", "GeneRax-DL-Random", "GeneRax-DTL-Random"]
+  methods_dtl_runtimes = ["RAxML-light", "Notung", "Phyldog", "Treerecs", "GeneRax-DL-Random", "GeneRax-DTL-Random"]
+  
+  params_to_plot_dl = ["sites", "dup_rate", "bl", "dl_ratio", "species", "families"]
+  params_to_plot_dtl = ["sites", "dup_rate", "bl", "species", "tl_ratio"]
+
+
   prefix = "jsim_"
   datasets_rf_dico = common.get_metrics_for_datasets(prefix, "average_rrf")
   datasets_runtimes_dico = common.get_metrics_for_datasets(prefix, "runtimes")
-  params_value_dico_sites = {}
-  params_value_dico_sites["species"] = "19"
-  params_value_dico_sites["dup_rate"] = "0.5"
-  params_value_dico_sites["bl"] = "1.0"
-  params_value_dico_sites["dl_ratio"] = "2.0"
-  params_value_dico_sites["sites"] = "500"
-  params_value_dico_sites["families"] = "100"
-  plotter = common_plots.Plotter(datasets_rf_dico, datasets_runtimes_dico, params_value_dico_sites, methods, x_labels, "dl")
-  plotter("sites")
-  plotter("dup_rate")
-  plotter("bl")
-  plotter("dl_ratio")
-  plotter("species")
-  plotter("families")
+  fixed_params = {}
+  fixed_params["species"] = "19"
+  fixed_params["dup_rate"] = "0.5"
+  fixed_params["bl"] = "1.0"
+  fixed_params["dl_ratio"] = "2.0"
+  fixed_params["sites"] = "500"
+  fixed_params["families"] = "100"
+  plotter_rf = common_plots.Plotter(datasets_rf_dico, fixed_params, methods_dl_rf, x_labels, "dl_rf")
+  plotter_runtimes = common_plots.Plotter(datasets_runtimes_dico, fixed_params, methods_dl_runtimes, x_labels, "dl_runtimes")
+  for param in params_to_plot_dl:
+    plotter_rf(param)
+    plotter_runtimes(param)
 
-  methods = ["RAxML-NG", "Notung", "Phyldog", "Treerecs", "GeneRax-DL-Random", "GeneRax-DTL-Random"]
   prefix = "jsimdtl_"
   datasets_rf_dico = common.get_metrics_for_datasets(prefix, "average_rrf")
   datasets_runtimes_dico = common.get_metrics_for_datasets(prefix, "runtimes")
-  params_value_dico_sites = {}
-  params_value_dico_sites["species"] = "16"
-  params_value_dico_sites["dup_rate"] = "0.15"
-  params_value_dico_sites["tl_ratio"] = "1.0"
-  params_value_dico_sites["bl"] = "1.0"
-  params_value_dico_sites["dl_ratio"] = "1.0"
-  params_value_dico_sites["sites"] = "500"
-  plotter = common_plots.Plotter(datasets_rf_dico, datasets_runtimes_dico, params_value_dico_sites, methods, x_labels, "dtl")
-  plotter("sites")
-  plotter("species")
-  plotter("tl_ratio")
-  plotter("dup_rate")
-  plotter("bl")
+  fixed_params = {}
+  fixed_params["species"] = "16"
+  fixed_params["dup_rate"] = "0.15"
+  fixed_params["tl_ratio"] = "1.0"
+  fixed_params["bl"] = "1.0"
+  fixed_params["dl_ratio"] = "1.0"
+  fixed_params["sites"] = "500"
+  plotter_rf = common_plots.Plotter(datasets_rf_dico, fixed_params, methods_dtl_rf, x_labels, "dtl_rf")
+  plotter_runtimes = common_plots.Plotter(datasets_runtimes_dico, fixed_params, methods_dtl_runtimes, x_labels, "dtl_runtimes")
+  for param in params_to_plot_dtl:
+    plotter_rf(param)
+    plotter_runtimes(param)
 
 
 
