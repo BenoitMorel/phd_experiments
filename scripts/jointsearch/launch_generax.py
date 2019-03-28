@@ -80,7 +80,7 @@ def run(dataset, strategy, starting_tree, cores, additional_arguments, resultsdi
   run_generax(datadir, strategy, generax_families_file, mode, cores, additional_arguments, resultsdir)
   runtimes.save_elapsed_time(datadir, run_name, (time.time() - start)) 
   extract_trees(os.path.join(datadir, "families"), os.path.join(resultsdir, "generax"), run_name)
-  analyze_dataset.analyze(os.path.join(datadir, "families"), run_name)
+  analyze_dataset.analyze(datadir, run_name)
   print("Output in " + resultsdir)
 
 def launch(dataset, strategy, starting_tree, cluster, cores, additional_arguments):

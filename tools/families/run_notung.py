@@ -9,7 +9,7 @@ import experiments as exp
 import events_scenario_extraction as extract
 import convert_to_notung_tree
 import time
-import runtimes
+import saved_metrics
   
 def generate_notung_files(dataset_dir):
   families_dir = os.path.join(dataset_dir, "families")
@@ -83,7 +83,7 @@ def run_notung_on_families(dataset_dir, threshold, cores):
   print(command.split(" "))
   start = time.time()
   subprocess.check_call(command.split(" "), stdout = sys.stdout)
-  runtimes.save_elapsed_time(dataset_dir, "Notung", (time.time() - start)) 
+  saved_metrics.save_metric(dataset_dir, "Notung", (time.time() - start), "runtimes") 
   back_convert_notung_files(dataset_dir)
 
 

@@ -29,7 +29,6 @@ def add_species():
   datasets.append("jsimdtl_s5_f100_sites500_dna4_bl1.0_d0.15_l0.15_t0.15")
   datasets.append("jsimdtl_s10_f100_sites500_dna4_bl1.0_d0.15_l0.15_t0.15")
   datasets.append("jsimdtl_s12_f100_sites500_dna4_bl1.0_d0.15_l0.15_t0.15")
-  datasets.append("jsimdtl_s14_f100_sites500_dna4_bl1.0_d0.15_l0.15_t0.15")
   datasets.append("jsimdtl_s19_f100_sites500_dna4_bl1.0_d0.15_l0.15_t0.15")
   datasets.append("jsimdtl_s27_f100_sites500_dna4_bl1.0_d0.15_l0.15_t0.15")
   datasets.append("jsimdtl_s41_f100_sites500_dna4_bl1.0_d0.15_l0.15_t0.15")

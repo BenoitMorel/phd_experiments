@@ -9,6 +9,7 @@ sys.path.insert(0, os.path.join("tools", "families"))
 import generate_families_with_jprime as jprime
 import run_raxml_supportvalues as raxml
 import run_all
+import saved_metrics
 
 # couples of (species interval, seed) to get a given number of species node
 jsim_species_to_params = {}
@@ -177,17 +178,17 @@ def get_runtimes(dataset):
       split = line.replace("\n", "").split(" ")
       dico[split[0]] = split[1]
   except:
-    pass
+    return None
   return dico
 
 def get_results(dataset):
   try:
     analyse_script = os.path.join(exp.tools_root, "families", "analyze_dataset.py")
-    families_path = os.path.join(exp.benoit_datasets_root, "families", dataset, "families")
+    dataset_path = os.path.join(exp.benoit_datasets_root, "families", dataset)
     cmd = []
     cmd.append("python")
     cmd.append(analyse_script)
-    cmd.append(families_path)
+    cmd.append(dataset_path)
     logs = subprocess.check_output(cmd)
     return get_rf_from_logs(logs) 
   except:
@@ -213,4 +214,16 @@ def get_datasets_to_plot(datasets_rf_dico, fixed_params_dico, x_param):
       datasets_to_plot.append(dataset)
   return datasets_to_plot
 
-
+def get_metrics_for_datasets(datasets_prefix, metric_name):
+  datasets = get_available_datasets(datasets_prefix)
+  datasets_rf_dico = {}
+  datasets_runtimes_dico = {}
+  total = len(datasets)
+  for dataset in datasets:
+    #if (metric_name == "average_rrf"):
+    #  get_results(dataset)
+    dataset_dir = os.path.join(exp.families_datasets_root, dataset)
+    res = saved_metrics.get_metrics(dataset_dir, metric_name)
+    if (res != None):
+      datasets_rf_dico[dataset] = res
+  return datasets_rf_dico

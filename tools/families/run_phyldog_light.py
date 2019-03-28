@@ -3,7 +3,7 @@ import sys
 import subprocess
 import shutil
 import time
-import runtimes
+import saved_metrics
 sys.path.insert(0, 'scripts')
 sys.path.insert(0, os.path.join("tools", "families"))
 import events_scenario_extraction as extract
@@ -84,7 +84,7 @@ def run_phyldog_light_on_families(dataset_dir, is_dna, cores):
   print(command.split(" "))
   start = time.time()
   subprocess.check_call(command.split(" "), stdout = sys.stdout)
-  runtimes.save_elapsed_time(dataset_dir, "Phyldog", (time.time() - start)) 
+  saved_metrics.save_metric(dataset_dir, "Phyldog", (time.time() - start), "runtimes") 
   extract_phyldog_trees(os.path.join(dataset_dir, "families"))
   extract.extract_events_from_phyldog(dataset_dir)
   extract_phyldog_trees(os.path.join(dataset_dir, "families"))
