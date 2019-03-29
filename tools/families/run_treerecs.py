@@ -2,6 +2,8 @@ import os
 import sys
 import subprocess
 import shutil
+import time
+import saved_metrics
 sys.path.insert(0, 'scripts')
 sys.path.insert(0, os.path.join("tools", "families"))
 import experiments as exp
@@ -87,7 +89,9 @@ def run_treerecs_on_families(dataset_dir, is_dna, cores):
   scheduler_commands_file = generate_scheduler_commands_file(dataset_dir, is_dna, cores, output_dir)
   command = generate_scheduler_command(scheduler_commands_file, cores, output_dir)
   print(command.split(" "))
-  subprocess.check_call(command.split(" "))
+  start = time.time()
+  subprocess.check_call(command.split(" "), stdout = sys.stdout)
+  saved_metrics.save_metric(dataset_dir, "Treerecs", (time.time() - start), "runtimes") 
   extract_treerecs_trees(os.path.join(dataset_dir, "families"))
   extract.extract_events_from_treerecs(dataset_dir)
   

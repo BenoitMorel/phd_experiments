@@ -30,6 +30,9 @@ def generate_jprime_species(species, output, seed):
   command.append("0")
   command.append(os.path.join(output, "species"))
   subprocess.check_call(command)
+  
+  species_tree = os.path.join(output, "species.pruned.tree")
+  subprocess.check_call(["sed", "-i", "s/1.443047701658439E-4/0.0001443047701658439/g", species_tree])
   print(open(os.path.join(output, "species.pruned.tree")).read()) 
 
 def generate_jprime_genome(families, dupRate, lossRate, transferRate, output, seed):

@@ -6,6 +6,9 @@ sys.path.insert(0, 'scripts')
 sys.path.insert(0, 'tools/raxml/')
 import experiments as exp
 import raxml_get_tca_score as tca
+import time
+import saved_metrics
+import run_raxml_supportvalues as raxml
 
 def run_pargenes(dataset_dir, pargenes_dir, is_dna, starting_trees, bs_trees, cores):
   command = []
@@ -30,7 +33,7 @@ def run_pargenes(dataset_dir, pargenes_dir, is_dna, starting_trees, bs_trees, co
     command.append("-r")
     command.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), "raxml_command_prot.txt"))
   command.append("--continue")
-  subprocess.check_call(command)
+  subprocess.check_call(command, stdout = sys.stdout)
 
 
 def export_pargenes_trees(pargenes_dir, dataset_dir):
@@ -85,10 +88,16 @@ def export_pargenes_trees(pargenes_dir, dataset_dir):
       print("Cleaning family " + family)
       shutil.move(os.path.join(families_dir, family), garbage_dir)
 
-def run_pargenes_and_extract_trees(dataset_dir, is_dna, starting_trees, bs_trees, cores):
-  pargenes_dir = os.path.join(dataset_dir, "pargenes")
+def run_pargenes_and_extract_trees(dataset_dir, is_dna, starting_trees, bs_trees, cores, pargenes_dir = "pargenes", extract_trees = True):
+  saved_metrics_key = "RAxML-NG"
+  if (pargenes_dir != "pargenes"):
+    saved_metrics_key = pargenes_dir
+  pargenes_dir = os.path.join(dataset_dir, pargenes_dir)
+  start = time.time()
   run_pargenes(dataset_dir, pargenes_dir, is_dna, starting_trees, bs_trees, cores)
-  export_pargenes_trees(pargenes_dir, dataset_dir)
+  saved_metrics.save_metric(dataset_dir, saved_metrics_key, (time.time() - start), "runtimes") 
+  if (extract_trees):
+    export_pargenes_trees(pargenes_dir, dataset_dir)
 
 if __name__ == "__main__":
   for dataset in os.listdir(sys.argv[1]):

@@ -7,7 +7,9 @@ import experiments as exp
 
 sys.path.insert(0, os.path.join("tools", "families"))
 import generate_families_with_jprime as jprime
+import run_raxml_supportvalues as raxml
 import run_all
+import saved_metrics
 
 # couples of (species interval, seed) to get a given number of species node
 jsim_species_to_params = {}
@@ -20,9 +22,13 @@ jsim_species_to_params = {}
 
 jsim_species_to_params[5] = (3, 2)
 jsim_species_to_params[10] = (3, 13)
+jsim_species_to_params[12] = (3, 9)
+jsim_species_to_params[14] = (3, 17)
 jsim_species_to_params[19] = (3, 11)
 jsim_species_to_params[27] = (3, 12)
 jsim_species_to_params[41] = (3, 4)
+
+jsim_species_to_params[16] = (3, 6)
 
 
 
@@ -74,7 +80,7 @@ def run_generax(dataset, starting_tree, with_transfers, run_name, is_dna):
   command.append(run_name)
   if (not is_dna):
     command.append("--protein")
-  print("Running " + " ".join(command))
+  print("-> Running " + " ".join(command))
   subprocess.check_call(command)
 
 
@@ -87,17 +93,37 @@ def generate_dataset(dataset):
   bl_factor = float(get_param_from_dataset_name("bl", dataset))
   d = get_param_from_dataset_name("dup_rate", dataset)
   l = get_param_from_dataset_name("loss_rate", dataset)
-  t = get_param_from_dataset_name("tl_ratio", dataset)
+  t = get_param_from_dataset_name("transfer_rate", dataset)
   output = "../BenoitDatasets/families"
   jprime.generate_jprime(species_internal, families, sites, model, bl_factor, d, l, t, output, seed) 
 
 def run_reference_methods(dataset):
+  print("*************************************")
+  print("Run reference methods for " + dataset)
+  print("*************************************")
   dataset_dir = os.path.join("../BenoitDatasets/families", dataset)
   is_dna = 1
   starting_trees = 10
   bs_trees = 100
   cores = 40
+  save_sdtout = sys.stdout
+  redirected_file = os.path.join(dataset_dir, "run_all.txt")
+  print("Redirected logs to " + redirected_file)
+  sys.stdout.flush()
+  sys.stdout = open(redirected_file, "w")
   run_all.run_reference_methods(dataset_dir, is_dna, starting_trees, bs_trees, cores)
+  sys.stdout = save_sdtout
+  print("End of run_all")
+  sys.stdout.flush()
+
+def run_all_raxml_light(datasets):
+  for dataset in datasets:
+    dataset_dir = os.path.join("../BenoitDatasets/families", dataset)
+    is_dna = 1
+    starting_trees = 1
+    bs_trees = 0
+    cores = 40
+    raxml.run_pargenes_and_extract_trees(dataset_dir, is_dna, starting_trees, bs_trees, cores, "RAxML-light", False)
 
 def run_all_reference_methods(datasets):
   for dataset in datasets:
@@ -105,6 +131,9 @@ def run_all_reference_methods(datasets):
 
 def run_all_generax(datasets, raxml = True, random = True):
   for dataset in datasets:
+    print("*************************************")
+    print("Run generate dataset for " + dataset)
+    print("*************************************")
     is_dna = (not dataset in protein_datasets)
     if (raxml):
       run_generax(dataset, "raxml", False, "GeneRax-DL-Raxml", is_dna)
@@ -140,14 +169,26 @@ def get_rf_from_logs(logs):
       dico[method] = rf
   return dico
 
+
+def get_runtimes(dataset):
+  dico = {}
+  try:
+    lines = open(os.path.join(exp.benoit_datasets_root, "families", dataset, "runtimes.txt")).readlines()
+    for line in lines:
+      split = line.replace("\n", "").split(" ")
+      dico[split[0]] = split[1]
+  except:
+    return None
+  return dico
+
 def get_results(dataset):
   try:
     analyse_script = os.path.join(exp.tools_root, "families", "analyze_dataset.py")
-    families_path = os.path.join(exp.benoit_datasets_root, "families", dataset, "families")
+    dataset_path = os.path.join(exp.benoit_datasets_root, "families", dataset)
     cmd = []
     cmd.append("python")
     cmd.append(analyse_script)
-    cmd.append(families_path)
+    cmd.append(dataset_path)
     logs = subprocess.check_output(cmd)
     return get_rf_from_logs(logs) 
   except:
@@ -166,11 +207,22 @@ def get_datasets_to_plot(datasets_rf_dico, fixed_params_dico, x_param):
         continue
       dataset_param_value = get_param_from_dataset_name(fixed_param, dataset)
       if (dataset_param_value != fixed_params_dico[fixed_param]):
-        print("No: " + fixed_param + " " + dataset_param_value)
         ok = False
         continue
     if (ok):
       datasets_to_plot.append(dataset)
   return datasets_to_plot
 
-
+def get_metrics_for_datasets(datasets_prefix, metric_name):
+  datasets = get_available_datasets(datasets_prefix)
+  datasets_rf_dico = {}
+  datasets_runtimes_dico = {}
+  total = len(datasets)
+  for dataset in datasets:
+    #if (metric_name == "average_rrf"):
+    #  get_results(dataset)
+    dataset_dir = os.path.join(exp.families_datasets_root, dataset)
+    res = saved_metrics.get_metrics(dataset_dir, metric_name)
+    if (res != None):
+      datasets_rf_dico[dataset] = res
+  return datasets_rf_dico

@@ -7,6 +7,8 @@ import analyze_dataset
 import experiments as exp
 import exp_jointsearch_utils as utils
 import shutil
+import time
+import runtimes
 
 datasets = utils.get_generax_datasets()
 
@@ -68,12 +70,17 @@ def run(dataset, strategy, starting_tree, cores, additional_arguments, resultsdi
   is_protein = exp.checkAndDelete("--protein", additional_arguments)
   run_name = exp.getAndDelete("--run", additional_arguments, "lastRun") 
   mode = get_mode_from_additional_arguments(additional_arguments)
+  if (not dataset in datasets):
+    print("Error: " + dataset + " is not in " + str(datasets))
+    exit(1)
   datadir = datasets[dataset]
   generax_families_file = os.path.join(resultsdir, "generax_families.txt")
   build_generax_families_file(datadir, starting_tree, is_protein, generax_families_file)
+  start = time.time()
   run_generax(datadir, strategy, generax_families_file, mode, cores, additional_arguments, resultsdir)
+  runtimes.save_elapsed_time(datadir, run_name, (time.time() - start)) 
   extract_trees(os.path.join(datadir, "families"), os.path.join(resultsdir, "generax"), run_name)
-  analyze_dataset.analyze(os.path.join(datadir, "families"), run_name)
+  analyze_dataset.analyze(datadir, run_name)
   print("Output in " + resultsdir)
 
 def launch(dataset, strategy, starting_tree, cluster, cores, additional_arguments):

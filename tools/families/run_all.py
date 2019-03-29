@@ -7,6 +7,10 @@ import run_notung as notung
 import run_stag
 
 def run_reference_methods(dataset_dir, is_dna, starting_trees, bs_trees, cores):
+  print("Run pargenes light...")
+  sys.stdout.flush()
+  raxml.run_pargenes_and_extract_trees(dataset_dir, is_dna, 1, 0, cores, "RAxML-light", False)
+  sys.stdout.flush()
   print("Run pargenes and extract trees...")
   sys.stdout.flush()
   raxml.run_pargenes_and_extract_trees(dataset_dir, is_dna, starting_trees, bs_trees, cores)

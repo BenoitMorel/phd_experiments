@@ -64,12 +64,6 @@ def generate_scheduler_command(command_file, parallelization, cores, scheduler_o
   command += "0"
   return command.split(" ")
 
-def generate_analyze_command(families_dir, pargenes_dir):
-  command = "python "
-  command += exp.analyze_pargenes_jointsearch_tool + " "
-  command += families_dir + " " +  pargenes_dir
-  return command
-
 def extract_trees(data_family_dir, results_family_dir, prefix):
   results_dir = os.path.join(results_family_dir, "results")
   for msa in os.listdir(results_dir):
@@ -109,7 +103,7 @@ def run(dataset, strategy, starting_tree, cores, additional_arguments, resultsdi
   print("Running " + " ".join(command))
   subprocess.check_call(command)
   extract_trees(os.path.join(datadir, "families"), os.path.join(resultsdir, "scheduler_run"), run_name)
-  analyze_dataset.analyze(families_dir, run_name)
+  analyze_dataset.analyze(datadir, run_name)
   print("Output in " + resultsdir)
 
 if (__name__ == "__main__"): 

@@ -9,6 +9,7 @@ from rf_distance import ete3_rf
 from rf_distance import get_relative_rf
 from rf_distance import get_rf
 import concurrent.futures
+import saved_metrics
 
 def get_nodes(tree1):
   rf = ete3_rf(tree1, tree1)
@@ -52,14 +53,14 @@ def get_gene_tree(method, dataset_dir, msa):
   #  print("File " + tree_path + " does not exist")
   return read_tree(tree_path)
 
-def add_ran_methods(methods, dataset_dir, benched_method):
+def add_ran_methods(methods, dataset_dir):
   runs_dir = os.path.join(dataset_dir, os.listdir(dataset_dir)[0], "results")
   if (not os.path.isdir(runs_dir)):
     return
   for method in os.listdir(runs_dir):
     method = method.split(".")[0]
-    if (method != benched_method and method != "lastRun"):
-      methods.append(method)
+    #if (method != "lastRun"):
+    methods.append(method)
 
 def analyze_msa(params):
   msa, dataset_dir, methods, methods_to_compare = params
@@ -104,12 +105,11 @@ def analyze_msa(params):
 
 def analyze(dataset_dir, benched_method = ""):
   print("To re-run: python " + os.path.realpath(__file__) + " " + dataset_dir + " " + benched_method)
+  families_dir = os.path.join(dataset_dir, "families") 
   analyzed_msas = 0
   total_nodes_number = 0
   methods = ["True", "RAxML-NG", "Treerecs", "Phyldog", "Notung"]
-  add_ran_methods(methods, dataset_dir, benched_method)
-  if (len(benched_method) > 0):
-    methods.append(benched_method)
+  add_ran_methods(methods, families_dir)
   methods_trees_number = {}
   methods_to_compare = []
   for method in methods:
@@ -128,8 +128,8 @@ def analyze(dataset_dir, benched_method = ""):
     methods_key = method1 + " - " + method2
     total_rrf[methods_key] = 0.0
   analyze_msa_params = []
-  for msa in os.listdir(dataset_dir):  
-    analyze_msa_params.append((msa, dataset_dir, methods, methods_to_compare))
+  for msa in os.listdir(families_dir):  
+    analyze_msa_params.append((msa, families_dir, methods, methods_to_compare))
   with concurrent.futures.ProcessPoolExecutor(1) as executor:
     total_invalid_methods = []
     for rrf, bt, invalid_methods in executor.map(analyze_msa, analyze_msa_params):
@@ -160,7 +160,13 @@ def analyze(dataset_dir, benched_method = ""):
     method1 = method_pair[0]
     method2 = method_pair[1]
     methods_key = method1 + " - " + method2
-    rrf_printer.add("- " + methods_key + ":",  str(total_rrf[methods_key] / float(analyzed_msas)))
+    arrow = ""
+    if (method1 == "True" and method2 == benched_method):
+      arrow = " <-- "
+    average_rrf = str(total_rrf[methods_key] / float(analyzed_msas))
+    if (method1 == "True"):
+      saved_metrics.save_metrics(dataset_dir, method2, average_rrf, "average_rrf")
+    rrf_printer.add("- " + methods_key + ":",  average_rrf + arrow)
   rrf_printer.display()
   print("")
   
