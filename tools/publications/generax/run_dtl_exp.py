@@ -46,16 +46,16 @@ def add_small():
   datasets.append("jsimdtl_s5_f15_sites50_dna4_bl1.0_d0.15_l0.15_t0.15")
 
 
-#add_fixed_point()
-#add_sites()
-#add_dtl_rates_scaler()
-#add_transfers()
-#add_bl()
+add_fixed_point()
+add_sites()
+add_dtl_rates_scaler()
+add_transfers()
+add_bl()
 add_species()
 #add_small()
 
-common.generate_all_datasets(datasets)
-common.run_all_reference_methods(datasets)
+#common.generate_all_datasets(datasets)
+#common.run_all_reference_methods(datasets)
 common.run_all_generax(datasets)
 
 

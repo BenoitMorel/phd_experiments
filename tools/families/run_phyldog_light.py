@@ -84,9 +84,7 @@ def run_phyldog_light_on_families(dataset_dir, is_dna, cores):
   print(command.split(" "))
   start = time.time()
   subprocess.check_call(command.split(" "), stdout = sys.stdout)
-  saved_metrics.save_metric(dataset_dir, "Phyldog", (time.time() - start), "runtimes") 
-  extract_phyldog_trees(os.path.join(dataset_dir, "families"))
-  extract.extract_events_from_phyldog(dataset_dir)
+  saved_metrics.save_metrics(dataset_dir, "Phyldog", (time.time() - start), "runtimes") 
   extract_phyldog_trees(os.path.join(dataset_dir, "families"))
   extract.extract_events_from_phyldog(dataset_dir)
 

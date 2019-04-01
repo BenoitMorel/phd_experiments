@@ -18,6 +18,8 @@ def save_dico(dataset_dir, dico, metric_name):
 
 def save_metrics(dataset_dir, method_key, metric_value, metric_name):
   dico = get_metrics(dataset_dir, metric_name)
+  if (dico == None):
+    dico = {}
   dico[method_key] = str(metric_value)
   save_dico(dataset_dir, dico, metric_name)
 

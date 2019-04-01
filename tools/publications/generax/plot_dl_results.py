@@ -27,7 +27,9 @@ if (__name__ == "__main__"):
   
   params_to_plot_dl = ["sites", "dup_rate", "bl", "dl_ratio", "species", "families"]
   params_to_plot_dtl = ["sites", "dup_rate", "bl", "species", "tl_ratio"]
-
+  
+  rf_y_label =  "Average relative RF"
+  runtime_y_label = "Runtime with 40 cores (s)"
 
   prefix = "jsim_"
   datasets_rf_dico = common.get_metrics_for_datasets(prefix, "average_rrf")
@@ -39,8 +41,8 @@ if (__name__ == "__main__"):
   fixed_params["dl_ratio"] = "2.0"
   fixed_params["sites"] = "500"
   fixed_params["families"] = "100"
-  plotter_rf = common_plots.Plotter(datasets_rf_dico, fixed_params, methods_dl_rf, x_labels, "dl_rf")
-  plotter_runtimes = common_plots.Plotter(datasets_runtimes_dico, fixed_params, methods_dl_runtimes, x_labels, "dl_runtimes")
+  plotter_rf = common_plots.Plotter(datasets_rf_dico, fixed_params, methods_dl_rf, x_labels, rf_y_label, "dl_rf")
+  plotter_runtimes = common_plots.Plotter(datasets_runtimes_dico, fixed_params, methods_dl_runtimes, x_labels, runtime_y_label, "dl_runtimes")
   for param in params_to_plot_dl:
     plotter_rf(param)
     plotter_runtimes(param)
@@ -55,8 +57,8 @@ if (__name__ == "__main__"):
   fixed_params["bl"] = "1.0"
   fixed_params["dl_ratio"] = "1.0"
   fixed_params["sites"] = "500"
-  plotter_rf = common_plots.Plotter(datasets_rf_dico, fixed_params, methods_dtl_rf, x_labels, "dtl_rf")
-  plotter_runtimes = common_plots.Plotter(datasets_runtimes_dico, fixed_params, methods_dtl_runtimes, x_labels, "dtl_runtimes")
+  plotter_rf = common_plots.Plotter(datasets_rf_dico, fixed_params, methods_dtl_rf, x_labels, rf_y_label, "dtl_rf")
+  plotter_runtimes = common_plots.Plotter(datasets_runtimes_dico, fixed_params, methods_dtl_runtimes, x_labels, runtime_y_label, "dtl_runtimes")
   for param in params_to_plot_dtl:
     plotter_rf(param)
     plotter_runtimes(param)

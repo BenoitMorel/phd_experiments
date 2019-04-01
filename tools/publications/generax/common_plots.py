@@ -11,7 +11,7 @@ sys.path.insert(0, 'scripts')
 import experiments as exp
 import common
 
-def plot(datasets_rf_dico, x_param, fixed_params_dico, methods, x_label, output):
+def plot(datasets_rf_dico, x_param, fixed_params_dico, methods, x_label, y_label, output):
   print(x_param)
   datasets_to_plot = common.get_datasets_to_plot(datasets_rf_dico, fixed_params_dico, x_param)
   #print(datasets_to_plot)
@@ -46,7 +46,7 @@ def plot(datasets_rf_dico, x_param, fixed_params_dico, methods, x_label, output)
     plt.plot(x_param, method, data=df, marker='x', linestyle = style, linewidth=2, label = method)
     #ax.set_ylim(bottom=0)
   plt.xlabel(x_label[x_param])
-  plt.ylabel('RF distance')
+  plt.ylabel(y_label)
   plt.legend()
   plt.savefig(output)
   print("Saving result in " + output)
@@ -54,14 +54,14 @@ def plot(datasets_rf_dico, x_param, fixed_params_dico, methods, x_label, output)
 
 
 class Plotter(object):
-  def __init__(self, datasets_values_dico, fixed_parameters, methods, x_labels, prefix):
+  def __init__(self, datasets_values_dico, fixed_parameters, methods, x_labels, y_label, prefix):
     self.datasets_values_dico = datasets_values_dico
     self.fixed_parameters = fixed_parameters
     self.methods = methods
     self.x_labels = x_labels
     self.prefix = prefix
+    self.y_label = y_label
   
   def __call__(self, parameter):
-    plot(self.datasets_values_dico, parameter, self.fixed_parameters, self.methods, self.x_labels,  self.prefix + "_" + parameter + ".png")
-    #plot(self.datasets_runtimes_dico, parameter, self.fixed_parameters, self.methods, self.x_labels, self.prefix + "_runtimes_" +  parameter + ".png")
+    plot(self.datasets_values_dico, parameter, self.fixed_parameters, self.methods, self.x_labels,  self.y_label, self.prefix + "_" + parameter + ".png")
 

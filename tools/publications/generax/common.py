@@ -119,7 +119,7 @@ def run_reference_methods(dataset):
 def run_all_raxml_light(datasets):
   for dataset in datasets:
     dataset_dir = os.path.join("../BenoitDatasets/families", dataset)
-    is_dna = 1
+    is_dna = 0
     starting_trees = 1
     bs_trees = 0
     cores = 40
