@@ -93,6 +93,7 @@ def run_pargenes_and_extract_trees(dataset_dir, is_dna, starting_trees, bs_trees
   if (pargenes_dir != "pargenes"):
     saved_metrics_key = pargenes_dir
   pargenes_dir = os.path.join(dataset_dir, pargenes_dir)
+  shutil.rmtree(pargenes_dir, True)
   start = time.time()
   run_pargenes(dataset_dir, pargenes_dir, is_dna, starting_trees, bs_trees, cores)
   saved_metrics.save_metrics(dataset_dir, saved_metrics_key, (time.time() - start), "runtimes") 

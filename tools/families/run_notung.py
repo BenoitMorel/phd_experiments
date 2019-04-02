@@ -76,6 +76,7 @@ def generate_scheduler_commands_file(dataset_dir, threshold, cores, output_dir):
 
 def run_notung_on_families(dataset_dir, threshold, cores):
   output_dir = os.path.join(dataset_dir, "notung_run")
+  shutil.rmtree(output_dir, True)
   os.makedirs(output_dir)
   generate_notung_files(dataset_dir)
   scheduler_commands_file = generate_scheduler_commands_file(dataset_dir,  threshold, cores, output_dir)

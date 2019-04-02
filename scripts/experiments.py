@@ -64,6 +64,10 @@ notung_jar = os.path.join(github_root, "Notung-2.9", "Notung-2.9.jar")
 mafft_exec = os.path.join(github_root, "mafft", "bin", "mafft")
 stag_script = os.path.join(github_root, "STAG", "stag", "stag.py")
 phylobayes_exec = os.path.join(github_root, "phylobayes4.1c", "data", "pb")
+exabayes_exec = os.path.join(github_root, "exabayes-1.5", "yggdrasil")
+ale_observe_exec = os.path.join(github_root, "ALE", "build", "bin", "ALEobserve")
+ale_ml_exec = os.path.join(github_root, "ALE", "build", "bin", "ALEml_undated")
+
 # constants
 mpi_scheduler_heuristic = "--split-scheduler"
 

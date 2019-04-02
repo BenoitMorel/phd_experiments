@@ -78,6 +78,7 @@ def extract_phyldog_trees(families_dir):
 
 def run_phyldog_light_on_families(dataset_dir, is_dna, cores):
   output_dir = os.path.join(dataset_dir, "phyldog_run")
+  shutil.rmtree(output_dir, True)
   os.makedirs(output_dir)
   scheduler_commands_file = generate_scheduler_commands_file(dataset_dir, is_dna, cores, output_dir)
   command = generate_scheduler_command(scheduler_commands_file, cores, output_dir)

@@ -22,6 +22,7 @@ methods_tree_files["RAxML-NG"] = "raxmlGeneTree.newick"
 methods_tree_files["Treerecs"] = "treerecsGeneTree.newick"
 methods_tree_files["Phyldog"] = "phyldogGeneTree.newick"
 methods_tree_files["Notung"] = "notungGeneTree.newick"
+methods_tree_files["ALE"] = "misc/ale_samples.newick"
 
 class AlignedPrinter:
   def __init__(self):
@@ -87,6 +88,8 @@ def analyze_msa(params):
     rf_cell = ete3_rf(trees[method1], trees[method2])
     if (rf_cell[1] == 0):
       print("null cell for " + methods_key + " " + msa)
+      print(trees[method1])
+      print(trees[method2])
       exit(1)
     rrf[methods_key] = float(rf_cell[0]) / float(rf_cell[1])
     if (method1 == "True" or method2 == "True"):
@@ -108,7 +111,7 @@ def analyze(dataset_dir, benched_method = ""):
   families_dir = os.path.join(dataset_dir, "families") 
   analyzed_msas = 0
   total_nodes_number = 0
-  methods = ["True", "RAxML-NG", "Treerecs", "Phyldog", "Notung"]
+  methods = ["True", "RAxML-NG", "Treerecs", "Phyldog", "Notung", "ALE"]
   add_ran_methods(methods, families_dir)
   methods_trees_number = {}
   methods_to_compare = []
