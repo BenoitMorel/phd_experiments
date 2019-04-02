@@ -13,9 +13,10 @@ import experiments as exp
 import msa_converter
 import cut_node_names 
 import re
+import  run_exabayes
 
-SAMPLES_NUMBER = 1
-BURN_IN = 100
+ALE_SAMPLES = 1
+BURN_IN = 1000
 
 def generate_ALE_observe_commands_file(dataset_dir, cores, output_dir):
   families_dir = os.path.join(dataset_dir, "families")
@@ -53,7 +54,7 @@ def generate_ALE_ml_commands_file(dataset_dir, cores, output_dir):
       command.append("1")
       command.append(speciesTree)
       command.append(ale_object)
-      command.append("sample=" + str(SAMPLES_NUMBER))
+      command.append("sample=" + str(ALE_SAMPLES))
       command.append("separator=_")
       writer.write(" ".join(command) + "\n")
   return scheduler_commands_file
@@ -72,7 +73,7 @@ def extract_trees_from_ale_output(ale_output, output_trees):
   position += 2
   pattern = re.compile("[0-9]*:")
   with open(output_trees, "w") as writer:
-    for i in range(position, position + SAMPLES_NUMBER):
+    for i in range(position, position + ALE_SAMPLES):
       # get rid of weird reconciliation format
       print(lines[i])
       new_lines = re.sub("\.[0-9]*:", ":", lines[i])
@@ -113,13 +114,15 @@ def run_ALE_on_families(dataset_dir, cores):
   extract_ALE_results(ml_output_dir, os.path.join(dataset_dir, "families"))
 
 if (__name__== "__main__"):
-  max_args_number = 3
+  max_args_number = 4
   if len(sys.argv) < max_args_number:
-    print("Syntax error: python run_ALE.py dataset_dir cores.")
+    print("Syntax error: python run_ALE.py dataset_dir is_dna cores.")
     sys.exit(0)
 
   dataset_dir = sys.argv[1]
-  cores = int(sys.argv[2])
+  is_dna = int(sys.argv[2]) != 0
+  cores = int(sys.argv[3])
+  run_exabayes.run_exabayes_on_families(dataset_dir, is_dna, cores)
   run_ALE_on_families(dataset_dir, cores)
 
 

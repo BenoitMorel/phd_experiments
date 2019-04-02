@@ -14,7 +14,7 @@ import msa_converter
 import rename_leaves
 
 EXA_GEN = 40000
-EXA_FREQ = 50
+EXA_FREQ = 200
 
 def get_mapping_dictionnary(mapping_file):
   res = {}
@@ -111,7 +111,7 @@ def run_exabayes_on_families(dataset_dir, is_dna, cores):
   scheduler_commands_file = generate_exabayes_commands_file(dataset_dir, is_dna, cores, output_dir)
   start = time.time()
   utils.run_scheduler(scheduler_commands_file, exp.exabayes_exec, cores, output_dir, "exabayes_run.logs")
-  saved_metrics.save_metrics(dataset_dir, "PhyloBayes", (time.time() - start), "runtimes") 
+  saved_metrics.save_metrics(dataset_dir, "ExaBayes", (time.time() - start), "runtimes") 
   extract_exabayes_results(output_dir, os.path.join(dataset_dir, "families"))
 
 if (__name__== "__main__"):
