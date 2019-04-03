@@ -4,11 +4,13 @@ from ete3 import Tree
 import numpy
 import math
 sys.path.insert(0, os.path.join("tools", "trees"))
+sys.path.insert(0, os.path.join("tools", "families"))
 from read_tree import read_tree
 from rf_distance import ete3_rf
 from rf_distance import get_relative_rf
 from rf_distance import get_rf
 import concurrent.futures
+import families_util
 import saved_metrics
 
 def get_nodes(tree1):
@@ -22,8 +24,8 @@ methods_tree_files["RAxML-NG"] = "raxmlGeneTree.newick"
 methods_tree_files["Treerecs"] = "treerecsGeneTree.newick"
 methods_tree_files["Phyldog"] = "phyldogGeneTree.newick"
 methods_tree_files["Notung"] = "notungGeneTree.newick"
-methods_tree_files["ALE-DL"] = "misc/ALE-DL_samples.newick"
-methods_tree_files["ALE-DTL"] = "misc/ALE-DTL_samples.newick"
+methods_tree_files["ALE-DL"] = "ALE-DLGeneTree.newick"
+methods_tree_files["ALE-DTL"] = "ALE-DTLGeneTree.newick"
 
 class AlignedPrinter:
   def __init__(self):
@@ -47,12 +49,12 @@ class AlignedPrinter:
 def get_gene_tree(method, dataset_dir, msa):
   tree_path = ""
   if (method in methods_tree_files):
-    tree_path = os.path.join(dataset_dir, msa, methods_tree_files[method])
+    if (method == "True"):
+      tree_path = os.path.join(dataset_dir, msa, methods_tree_files[method])
+    else:
+      tree_path = os.path.join(dataset_dir, msa, "gene_trees", methods_tree_files[method])
   else:
     tree_path = os.path.join(dataset_dir, msa, "results", method + ".newick") 
-  prefix = os.path.join(dataset_dir, msa)
-  #if (not os.path.isfile(tree_path)):
-  #  print("File " + tree_path + " does not exist")
   return read_tree(tree_path)
 
 def add_ran_methods(methods, dataset_dir):

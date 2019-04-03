@@ -4,6 +4,7 @@ import subprocess
 import shutil
 import time
 import saved_metrics
+import families_util
 sys.path.insert(0, 'scripts')
 sys.path.insert(0, os.path.join("tools", "families"))
 import events_scenario_extraction as extract
@@ -26,17 +27,13 @@ def generate_scheduler_commands_file(dataset_dir, is_dna, cores, output_dir):
   with open(scheduler_commands_file, "w") as writer:
     for family in os.listdir(families_dir):
       family_dir = os.path.join(families_dir, family)
-      phyldog_dir = os.path.join(family_dir, "phyldog")
-      try:
-        os.makedirs(phyldog_dir)
-      except:
-        pass
+      phyldog_dir = os.path.join(family_dir, "misc")
       command = []
       command.append(family)
       command.append("1")
       command.append("1")
       command.append("species.tree.file=" + phyldogSpeciesTree)
-      command.append("gene.tree.file=" + os.path.join(family_dir, "raxmlGeneTree.newick"))
+      command.append("gene.tree.file=" + families_util.getRaxmlTree(dataset_dir, family))
       command.append("input.sequence.file=" + os.path.join(family_dir, "alignment.msa"))
       command.append("taxaseq.file=" + os.path.join(family_dir, "mapping.link"))
       if (is_dna):
@@ -48,10 +45,8 @@ def generate_scheduler_commands_file(dataset_dir, is_dna, cores, output_dir):
       if (not is_dna):
         command.append("alphabet=Protein")
       os.makedirs(os.path.join(results_dir, family))
-      command.append("output.file=" + os.path.join(family_dir, "phyldog", "phyldog"))
+      command.append("output.file=" + os.path.join(phyldog_dir, "phyldog"))
       command.append("branch.expected.numbers.optimization=average")
-      #command.append("output.file=" + os.path.join(results_dir, family, "phyldog"))
-      #print(" ".join(command))
       writer.write(" ".join(command) + "\n")
   return scheduler_commands_file
      
@@ -67,17 +62,19 @@ def generate_scheduler_command(command_file, cores, output_dir):
   command += "0"
   return command 
 
-def extract_phyldog_trees(families_dir):
+def extract_phyldog_trees(dataset_dir):
+  families_dir = os.path.join(dataset_dir, "families")
   for family in os.listdir(families_dir):
-    phyldogTree = os.path.join(families_dir, family, "phyldog", "phyldog_reconciled.tree")
+    phyldogTree = os.path.join(families_dir, family, "misc", "phyldog_reconciled.tree")
     if (os.path.isfile(phyldogTree)):
-      shutil.copyfile(phyldogTree, os.path.join(families_dir, family, "phyldogGeneTree.newick"))
+      shutil.copyfile(phyldogTree, families_util.getPhyldogTree(dataset_dir, family))
     else:
       print("Warning: no phyldog tree for family " + family)
   
 
 def run_phyldog_light_on_families(dataset_dir, is_dna, cores):
-  output_dir = os.path.join(dataset_dir, "phyldog_run")
+  families_util.init_dataset_dir(dataset_dir)
+  output_dir = os.path.join(dataset_dir, "runs", "phyldog_run")
   shutil.rmtree(output_dir, True)
   os.makedirs(output_dir)
   scheduler_commands_file = generate_scheduler_commands_file(dataset_dir, is_dna, cores, output_dir)
@@ -86,7 +83,7 @@ def run_phyldog_light_on_families(dataset_dir, is_dna, cores):
   start = time.time()
   subprocess.check_call(command.split(" "), stdout = sys.stdout)
   saved_metrics.save_metrics(dataset_dir, "Phyldog", (time.time() - start), "runtimes") 
-  extract_phyldog_trees(os.path.join(dataset_dir, "families"))
+  extract_phyldog_trees(dataset_dir)
   extract.extract_events_from_phyldog(dataset_dir)
 
 if (__name__== "__main__"):

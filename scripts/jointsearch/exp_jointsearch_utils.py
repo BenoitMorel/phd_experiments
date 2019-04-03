@@ -9,13 +9,14 @@ def get_possible_gene_trees():
 def get_possible_strategies():
   return ["SPR", "EVAL"]
 
-def get_gene_tree(datadir, tree):
+def get_gene_tree(familydir, tree):
+  datadir = os.path.join(familydir, "gene_trees")
   if (tree == "raxml"):
     return os.path.join(datadir, "raxmlGeneTree.newick")
   elif (tree == "raxmls"):
     return os.path.join(datadir, "raxmlGeneTrees.newick")
   elif (tree == "true"):
-    return os.path.join(datadir, "trueGeneTree.newick")
+    return os.path.join(familydir, "trueGeneTree.newick")
   elif (tree == "treerecs"):
     return os.path.join(datadir, "treerecsGeneTree.newick")
   elif (tree == "random"):

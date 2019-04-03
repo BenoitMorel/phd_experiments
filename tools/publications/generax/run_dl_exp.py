@@ -30,6 +30,13 @@ def add_dataset(fixed_point, strings_to_replace):
       exit(1)
     datasets.append(dataset)
 
+if (True):
+  datasets.append("jsim_s5_f10_sites200_dna4_bl0.5_d0.25_l0.25_t0.0")
+  common.generate_all_datasets(datasets)
+  common.run_all_reference_methods(datasets)
+  common.run_all_generax(datasets)
+ 
+exit(0)
 
 if (True):
   fixed_point_dl = "jsim_s19_f100_sites500_dna4_bl0.5_d0.25_l0.25_t0.0"

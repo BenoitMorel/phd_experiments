@@ -8,6 +8,7 @@ sys.path.insert(0, 'scripts')
 sys.path.insert(0, os.path.join("tools", "families"))
 import experiments as exp
 import events_scenario_extraction as extract
+import families_util
 
 def generate_scheduler_commands_file(dataset_dir, is_dna, cores, output_dir):
   families_dir = os.path.join(dataset_dir, "families")
@@ -20,11 +21,7 @@ def generate_scheduler_commands_file(dataset_dir, is_dna, cores, output_dir):
   with open(scheduler_commands_file, "w") as writer:
     for family in os.listdir(families_dir):
       family_dir = os.path.join(families_dir, family)
-      treerecs_dir = os.path.join(family_dir, "treerecs")
-      try:
-        os.makedirs(treerecs_dir)
-      except:
-        pass
+      treerecs_dir = os.path.join(family_dir, "misc")
       
       alignment_descriptor = os.path.join(treerecs_dir, "alignment_descriptor.txt")
       with open(alignment_descriptor, "w") as ali_writer:
@@ -39,7 +36,7 @@ def generate_scheduler_commands_file(dataset_dir, is_dna, cores, output_dir):
       command.append("--seed")
       command.append("42")
       command.append("-g")
-      command.append(os.path.join(family_dir, "raxmlGeneTree.newick"))
+      command.append(families_util.getRaxmlTree(dataset_dir, family))
       command.append("-s")
       command.append(speciesTree)
       command.append("-o")
@@ -71,12 +68,13 @@ def generate_scheduler_command(command_file, cores, output_dir):
   command += "0"
   return command 
 
-def extract_treerecs_trees(families_dir):
+def extract_treerecs_trees(dataset_dir):
+  families_dir = os.path.join(dataset_dir, "families")
   for family in os.listdir(families_dir):
-    treerecsTree = os.path.join(families_dir, family, "treerecs", "treerecs_output.newick.best")
+    treerecsTree = os.path.join(families_dir, family, "misc", "treerecs_output.newick.best")
     if (os.path.isfile(treerecsTree)):
       lines = open(treerecsTree).readlines()
-      with open(os.path.join(families_dir, family, "treerecsGeneTree.newick"), "w") as writer:
+      with open(families_util.getTreerecsTree(dataset_dir, family), "w") as writer:
         for line in lines:
           if (not line.startswith(">")):
             writer.write(line)
@@ -84,7 +82,8 @@ def extract_treerecs_trees(families_dir):
       print("Warning: no treerecs tree for family " + family)  
 
 def run_treerecs_on_families(dataset_dir, is_dna, cores):
-  output_dir = os.path.join(dataset_dir, "treerecs_run")
+  families_util.init_dataset_dir(dataset_dir)
+  output_dir = os.path.join(dataset_dir, "runs", "treerecs_run")
   shutil.rmtree(output_dir, True)
   os.makedirs(output_dir)
   scheduler_commands_file = generate_scheduler_commands_file(dataset_dir, is_dna, cores, output_dir)
@@ -92,8 +91,8 @@ def run_treerecs_on_families(dataset_dir, is_dna, cores):
   print(command.split(" "))
   start = time.time()
   subprocess.check_call(command.split(" "), stdout = sys.stdout)
-  saved_metrics.save_metric(dataset_dir, "Treerecs", (time.time() - start), "runtimes") 
-  extract_treerecs_trees(os.path.join(dataset_dir, "families"))
+  saved_metrics.save_metrics(dataset_dir, "Treerecs", (time.time() - start), "runtimes") 
+  extract_treerecs_trees(dataset_dir)
   extract.extract_events_from_treerecs(dataset_dir)
   
 if (__name__== "__main__"):

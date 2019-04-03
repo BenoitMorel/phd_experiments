@@ -3,12 +3,12 @@ import os
 import subprocess
 sys.path.insert(0, 'scripts')
 sys.path.insert(0, 'tools/families')
+import saved_metrics
 import analyze_dataset
 import experiments as exp
 import exp_jointsearch_utils as utils
 import shutil
 import time
-import runtimes
 
 datasets = utils.get_generax_datasets()
 
@@ -78,7 +78,7 @@ def run(dataset, strategy, starting_tree, cores, additional_arguments, resultsdi
   build_generax_families_file(datadir, starting_tree, is_protein, generax_families_file)
   start = time.time()
   run_generax(datadir, strategy, generax_families_file, mode, cores, additional_arguments, resultsdir)
-  runtimes.save_elapsed_time(datadir, run_name, (time.time() - start)) 
+  saved_metrics.save_metrics(datadir, run_name, (time.time() - start), "runtimes") 
   extract_trees(os.path.join(datadir, "families"), os.path.join(resultsdir, "generax"), run_name)
   analyze_dataset.analyze(datadir, run_name)
   print("Output in " + resultsdir)

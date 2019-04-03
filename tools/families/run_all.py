@@ -5,6 +5,7 @@ import run_treerecs as treerecs
 import run_phyldog_light as phyldog
 import run_notung as notung
 import run_ALE
+import families_util
 
 def run_reference_methods(dataset_dir, is_dna, starting_trees, bs_trees, cores):
   print("Run pargenes light...")
@@ -28,7 +29,7 @@ def run_reference_methods(dataset_dir, is_dna, starting_trees, bs_trees, cores):
   notung.run_notung_on_families(dataset_dir, threshold, cores)
   print("Run ALE...")
   sys.stdout.flush()
-  ALE.run_ALE_on_families(dataset_dir, is_dna, cores)
+  run_ALE.run_exabayes_and_ALE(dataset_dir, is_dna, cores)
 
 
 if __name__ == "__main__":

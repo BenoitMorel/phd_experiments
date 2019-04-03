@@ -4,6 +4,7 @@ import subprocess
 import shutil
 import time
 import utils
+import families_util
 sys.path.insert(0, 'scripts')
 sys.path.insert(0, os.path.join("tools", "families"))
 sys.path.insert(0, os.path.join("tools", "trees"))
@@ -59,6 +60,7 @@ def generate_ALE_ml_commands_file(dataset_dir, with_transfers, cores, output_dir
       command.append(speciesTree)
       command.append(ale_object)
       command.append("sample=" + str(ALE_SAMPLES))
+      command.append("seed=42")
       if (not with_transfers):
         command.append("tau=0.0")
       command.append("separator=_")
@@ -83,33 +85,30 @@ def extract_trees_from_ale_output(ale_output, output_trees):
       new_lines = re.sub("\.[0-9\.]*:", ":", lines[i])
       writer.write(new_lines)
 
-def extract_ALE_results(ALE_run_dir, with_transfers, families_dir):
+def extract_ALE_results(dataset_dir, ALE_run_dir, with_transfers, families_dir):
   method_name = "ALE-DL"
   if (with_transfers):
     method_name = "ALE-DTL"
   for family in os.listdir(families_dir):
-    family_misc_dir = os.path.join(families_dir, family, "misc")
-    try:
-      os.makedirs(family_misc_dir)
-    except:
-      pass
-    prefix = family + ".treelist.ale"
-
+    family_misc_dir = families_util.getMiscDir(dataset_dir, family)
+    family_trees_dir = families_util.getTreesDir(dataset_dir, family)
+    prefix =  "phyldogSpeciesTree.newick_" + family + ".treelist.ale"
+    print(prefix)
     prefixed_output_trees = os.path.join(family_misc_dir, method_name + "_samples_prefixed.newick")
-    output_trees = os.path.join(family_misc_dir, method_name + "_samples.newick")
+    output_trees = families_util.getALETree(dataset_dir, family, method_name)
     extract_trees_from_ale_output(prefix + ".uml_rec", prefixed_output_trees) 
     cut_node_names.remove_prefix_from_trees(prefixed_output_trees, output_trees) 
 # clean files
     force_move(prefix + ".uTs", family_misc_dir)
-    force_move(prefix + ".ucons_tree", family_misc_dir)
+    #force_move(prefix + ".ucons_tree", family_misc_dir)
     force_move(prefix + ".uml_rec", family_misc_dir)
 
 def run_ALE_on_families(dataset_dir, with_transfers, cores):
   method_name = "ALE-DL"
   if (with_transfers):
     method_name = "ALE-DTL"
-  observe_output_dir = os.path.join(dataset_dir, "ALE", method_name + "_observe_run")
-  ml_output_dir = os.path.join(dataset_dir, "ALE", method_name + "_ml_run")
+  observe_output_dir = os.path.join(dataset_dir, "runs",  "ALE", method_name + "_observe_run")
+  ml_output_dir = os.path.join(dataset_dir, "runs",  "ALE", method_name + "_ml_run")
   shutil.rmtree(observe_output_dir, True)
   shutil.rmtree(ml_output_dir, True)
   os.makedirs(observe_output_dir)
@@ -120,9 +119,10 @@ def run_ALE_on_families(dataset_dir, with_transfers, cores):
   utils.run_scheduler(commands_observe, exp.ale_observe_exec, cores, observe_output_dir, method_name + "_observe_run.logs")
   utils.run_scheduler(commands_ml, exp.ale_ml_exec, cores, ml_output_dir, method_name + "_ml_run.logs")
   saved_metrics.save_metrics(dataset_dir, method_name, (time.time() - start), "runtimes") 
-  extract_ALE_results(ml_output_dir, with_transfers, os.path.join(dataset_dir, "families"))
+  extract_ALE_results(dataset_dir, ml_output_dir, with_transfers, os.path.join(dataset_dir, "families"))
 
 def run_exabayes_and_ALE(dataset_dir, is_dna, cores):
+  families_util.init_dataset_dir(dataset_dir)
   run_exabayes.run_exabayes_on_families(dataset_dir, EXA_GEN, EXA_FREQ, is_dna, cores)
   run_ALE_on_families(dataset_dir, True, cores)
   run_ALE_on_families(dataset_dir, False, cores)

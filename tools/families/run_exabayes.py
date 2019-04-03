@@ -5,6 +5,7 @@ import shutil
 import time
 import utils
 import concurrent.futures
+import families_util
 sys.path.insert(0, 'scripts')
 sys.path.insert(0, os.path.join("tools", "families"))
 sys.path.insert(0, os.path.join("tools", "trees"))
@@ -79,10 +80,6 @@ def generate_exabayes_commands_file(dataset_dir, generations, frequency, is_dna,
 def extract_exabayes_family(params):
   family, exabayes_run_dir, families_dir = params
   family_misc_dir = os.path.join(families_dir, family, "misc")
-  try:
-    os.makedirs(family_misc_dir)
-  except:
-    pass
   topologies = os.path.join(exabayes_run_dir, "results", family, "ExaBayes_topologies.run-0." + family)
   lines = open(topologies).readlines()
   output = os.path.join(family_misc_dir, family + ".treelist")
@@ -114,7 +111,8 @@ def extract_exabayes_results(exabayes_run_dir, families_dir):
     executor.map(extract_exabayes_family, params)
 
 def run_exabayes_on_families(dataset_dir, generations, frequency, is_dna, cores):
-  output_dir = os.path.join(dataset_dir, "exabayes_run")
+  families_util.init_dataset_dir(dataset_dir)
+  output_dir = os.path.join(dataset_dir, "runs", "exabayes_run")
   shutil.rmtree(output_dir, True)
   os.makedirs(output_dir)
   scheduler_commands_file = generate_exabayes_commands_file(dataset_dir, generations, frequency, is_dna, cores, output_dir)

@@ -154,14 +154,14 @@ def generate_jprime(species, families, sites, model, bl_factor, dupRate, lossRat
   shutil.rmtree(output, True)
   print("Writing output in " + output)
   os.makedirs(output)
-  with open(os.path.join(output, "jprime_script_params.txt"), "w") as writer:
+  jprime_output = os.path.join(output, "jprime")
+  os.makedirs(jprime_output)
+  with open(os.path.join(jprime_output, "jprime_script_params.txt"), "w") as writer:
     writer.write(str(species) + " " + str(families) + " ")
     writer.write(str(sites) + " " + str(model) + " ")
     writer.write(str(bl_factor)+ " " + str(dupRate) + " ")
     writer.write(str(lossRate) + " " + str(transferRate) + " " + output)
     writer.write(" " + str(seed))
-  jprime_output = os.path.join(output, "jprime")
-  os.makedirs(jprime_output)
   generate_jprime_species(species, jprime_output, seed) 
   generate_jprime_genome(families, dupRate, lossRate, transferRate, jprime_output, seed)
   rescale_trees(jprime_output, families, bl_factor)

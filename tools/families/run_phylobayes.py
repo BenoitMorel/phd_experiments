@@ -4,6 +4,7 @@ import subprocess
 import shutil
 import time
 import utils
+import families_util
 sys.path.insert(0, 'scripts')
 sys.path.insert(0, os.path.join("tools", "families"))
 sys.path.insert(0, os.path.join("tools", "msa_edition"))
@@ -53,15 +54,12 @@ def generate_phylobayes_commands_file(dataset_dir, cores, output_dir):
 def extract_phylobayes_results(phylobayes_run_dir, families_dir):
   for family in os.listdir(families_dir):
     family_misc_dir = os.path.join(families_dir, family, "misc")
-    try:
-      os.makedirs(family_misc_dir)
-    except:
-      pass
     treelist = os.path.join(phylobayes_run_dir, "results", family + ".treelist")
     shutil.copyfile(treelist, os.path.join(family_misc_dir, family + ".treelist"))
 
 def run_phylobayes_on_families(dataset_dir, cores):
-  output_dir = os.path.join(dataset_dir, "phylobayes_run")
+  families_util.init_dataset_dir(dataset_dir)
+  output_dir = os.path.join(dataset_dir, "runs", "phylobayes_run")
   shutil.rmtree(output_dir, True)
   os.makedirs(output_dir)
   scheduler_commands_file = generate_phylobayes_commands_file(dataset_dir, cores, output_dir)

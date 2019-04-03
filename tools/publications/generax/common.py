@@ -108,7 +108,7 @@ def run_reference_methods(dataset):
   bs_trees = 100
   cores = 40
   save_sdtout = sys.stdout
-  redirected_file = os.path.join(dataset_dir, "run_all.txt")
+  redirected_file = os.path.join(dataset_dir, "logs_run_all.txt")
   print("Redirected logs to " + redirected_file)
   sys.stdout.flush()
   sys.stdout = open(redirected_file, "w")
