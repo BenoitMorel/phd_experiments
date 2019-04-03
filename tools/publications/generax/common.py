@@ -8,6 +8,7 @@ import experiments as exp
 sys.path.insert(0, os.path.join("tools", "families"))
 import generate_families_with_jprime as jprime
 import run_raxml_supportvalues as raxml
+import run_ALE
 import run_all
 import saved_metrics
 
@@ -119,11 +120,17 @@ def run_reference_methods(dataset):
 def run_all_raxml_light(datasets):
   for dataset in datasets:
     dataset_dir = os.path.join("../BenoitDatasets/families", dataset)
-    is_dna = 0
+    is_dna = 1
     starting_trees = 1
     bs_trees = 0
     cores = 40
     raxml.run_pargenes_and_extract_trees(dataset_dir, is_dna, starting_trees, bs_trees, cores, "RAxML-light", False)
+
+def run_all_ALE(datasets, is_dna):
+  for dataset in datasets:
+    dataset_dir = os.path.join("../BenoitDatasets/families", dataset)
+    cores = 40
+    run_ALE.run_exabayes_and_ALE(dataset_dir, is_dna, cores)
 
 def run_all_reference_methods(datasets):
   for dataset in datasets:
@@ -195,7 +202,10 @@ def get_results(dataset):
     print("Failed to get RF distances from dataset " + dataset)
     return None
 
-
+def run_all_analyzes(datasets):
+  for dataset in datasets:
+    print("analyze " + dataset)
+    get_results(dataset)
 
 def get_datasets_to_plot(datasets_rf_dico, fixed_params_dico, x_param):
 

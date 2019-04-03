@@ -56,7 +56,9 @@ add_species()
 
 #common.generate_all_datasets(datasets)
 #common.run_all_reference_methods(datasets)
-common.run_all_generax(datasets)
+#common.run_all_ALE(datasets, 1)
+#common.run_all_generax(datasets)
+common.run_all_analyzes(datasets)
 
 
 

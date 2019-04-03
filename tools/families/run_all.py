@@ -4,7 +4,7 @@ import run_raxml_supportvalues as raxml
 import run_treerecs as treerecs
 import run_phyldog_light as phyldog
 import run_notung as notung
-import run_stag
+import run_ALE
 
 def run_reference_methods(dataset_dir, is_dna, starting_trees, bs_trees, cores):
   print("Run pargenes light...")
@@ -24,8 +24,11 @@ def run_reference_methods(dataset_dir, is_dna, starting_trees, bs_trees, cores):
   phyldog.run_phyldog_light_on_families(dataset_dir, is_dna, cores)
   print("Run notung...")
   sys.stdout.flush()
-  threshold = 50
+  threshold = 80
   notung.run_notung_on_families(dataset_dir, threshold, cores)
+  print("Run ALE...")
+  sys.stdout.flush()
+  ALE.run_ALE_on_families(dataset_dir, is_dna, cores)
 
 
 if __name__ == "__main__":

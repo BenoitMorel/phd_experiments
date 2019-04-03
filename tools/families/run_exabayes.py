@@ -4,6 +4,7 @@ import subprocess
 import shutil
 import time
 import utils
+import concurrent.futures
 sys.path.insert(0, 'scripts')
 sys.path.insert(0, os.path.join("tools", "families"))
 sys.path.insert(0, os.path.join("tools", "trees"))
@@ -13,8 +14,6 @@ import experiments as exp
 import msa_converter
 import rename_leaves
 
-EXA_GEN = 40000
-EXA_FREQ = 200
 
 def get_mapping_dictionnary(mapping_file):
   res = {}
@@ -34,7 +33,7 @@ def generate_config_file(config_file, num_gen, sampling_freq):
     writer.write("  samplingFreq " + str(sampling_freq) + "\n")
     writer.write("end;")
 
-def generate_exabayes_commands_file(dataset_dir, is_dna, cores, output_dir):
+def generate_exabayes_commands_file(dataset_dir, generations, frequency, is_dna, cores, output_dir):
   families_dir = os.path.join(dataset_dir, "families")
   results_dir = os.path.join(output_dir, "results")
   scheduler_commands_file = os.path.join(output_dir, "commands.txt")
@@ -46,7 +45,7 @@ def generate_exabayes_commands_file(dataset_dir, is_dna, cores, output_dir):
       exabayes_family_dir = os.path.join(results_dir, family)
       os.makedirs(exabayes_family_dir)
       exabayes_config = os.path.join(exabayes_family_dir, "exa_config.nex")
-      generate_config_file(exabayes_config, EXA_GEN, EXA_FREQ)
+      generate_config_file(exabayes_config, generations, frequency)
       phy_alignment = os.path.join(family_dir, "species_prefixed_alignment.phy")
       fasta_alignment = os.path.join(family_dir, "alignment.msa")
       mapping_dictionnary = get_mapping_dictionnary(os.path.join(family_dir, "mapping.link"))
@@ -62,7 +61,7 @@ def generate_exabayes_commands_file(dataset_dir, is_dna, cores, output_dir):
       if (is_dna):
         command.append("DNA")
       else:
-        command.append("LG")
+        command.append("PROT")
       command.append("-s")
       command.append(str(i))
       command.append("-n")
@@ -76,39 +75,49 @@ def generate_exabayes_commands_file(dataset_dir, is_dna, cores, output_dir):
   return scheduler_commands_file
 
 
-def extract_exabayes_results(exabayes_run_dir, families_dir):
-  for family in os.listdir(families_dir):
-    family_misc_dir = os.path.join(families_dir, family, "misc")
-    try:
-      os.makedirs(family_misc_dir)
-    except:
-      pass
-    topologies = os.path.join(exabayes_run_dir, "results", family, "ExaBayes_topologies.run-0." + family)
-    lines = open(topologies).readlines()
-    output = os.path.join(family_misc_dir, family + ".treelist")
-    is_translation = False
-    translator = {}
-    with open(output, "w") as writer:
-      for line in lines:
-        if ("tree gen" in line):
-          is_translation = False
-          tree = line.split(" ")[-1]
-          writer.write(rename_leaves.rename_leaves(tree, translator) + "\n")
-          continue
-        if ("translate" in line):
-          is_translation = True
-          continue
-        if (is_translation):
-          split = line.split("\t")
-          left = split[1]
-          right = split[2][:-2]
-          translator[left] = right
 
-def run_exabayes_on_families(dataset_dir, is_dna, cores):
+def extract_exabayes_family(params):
+  family, exabayes_run_dir, families_dir = params
+  family_misc_dir = os.path.join(families_dir, family, "misc")
+  try:
+    os.makedirs(family_misc_dir)
+  except:
+    pass
+  topologies = os.path.join(exabayes_run_dir, "results", family, "ExaBayes_topologies.run-0." + family)
+  lines = open(topologies).readlines()
+  output = os.path.join(family_misc_dir, family + ".treelist")
+  is_translation = False
+  translator = {}
+  with open(output, "w") as writer:
+    for line in lines:
+      if ("tree gen" in line):
+        is_translation = False
+        tree = line.split(" ")[-1]
+        writer.write(rename_leaves.rename_leaves(tree, translator) + "\n")
+        continue
+      if ("translate" in line):
+        is_translation = True
+        continue
+      if (is_translation):
+        split = line.split("\t")
+        left = split[1]
+        right = split[2][:-2]
+        translator[left] = right
+
+def extract_exabayes_results(exabayes_run_dir, families_dir):
+  print("Extracting exabayes results...")
+  params = []
+  for family in os.listdir(families_dir):
+    params.append((family, exabayes_run_dir, families_dir))
+
+  with concurrent.futures.ProcessPoolExecutor() as executor:
+    executor.map(extract_exabayes_family, params)
+
+def run_exabayes_on_families(dataset_dir, generations, frequency, is_dna, cores):
   output_dir = os.path.join(dataset_dir, "exabayes_run")
   shutil.rmtree(output_dir, True)
   os.makedirs(output_dir)
-  scheduler_commands_file = generate_exabayes_commands_file(dataset_dir, is_dna, cores, output_dir)
+  scheduler_commands_file = generate_exabayes_commands_file(dataset_dir, generations, frequency, is_dna, cores, output_dir)
   start = time.time()
   utils.run_scheduler(scheduler_commands_file, exp.exabayes_exec, cores, output_dir, "exabayes_run.logs")
   saved_metrics.save_metrics(dataset_dir, "ExaBayes", (time.time() - start), "runtimes") 
@@ -123,7 +132,9 @@ if (__name__== "__main__"):
   dataset_dir = sys.argv[1]
   is_dna = int(sys.argv[2]) != 0
   cores = int(sys.argv[3])
-  run_exabayes_on_families(dataset_dir, is_dna, cores)
+  generations = int(sys.argv[4])
+  frequency = int(sys.argv[5])
+  run_exabayes_on_families(dataset_dir, generations, frequency, is_dna, cores)
 
 
 #

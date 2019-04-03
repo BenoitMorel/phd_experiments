@@ -151,6 +151,7 @@ def get_output(species, families, sites, model, bl_factor, dupRate, lossRate, tr
 
 def generate_jprime(species, families, sites, model, bl_factor, dupRate, lossRate, transferRate, root_output, seed):
   output = os.path.join(root_output, "jprime_temp")
+  shutil.rmtree(output, True)
   print("Writing output in " + output)
   os.makedirs(output)
   with open(os.path.join(output, "jprime_script_params.txt"), "w") as writer:

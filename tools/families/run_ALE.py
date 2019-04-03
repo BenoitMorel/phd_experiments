@@ -16,7 +16,13 @@ import re
 import  run_exabayes
 
 ALE_SAMPLES = 1
-BURN_IN = 1000
+BURN_IN = 100
+EXA_TREES = 2000
+EXA_FREQ = 10
+#BURN_IN = 100
+#EXA_TREES = 500
+#EXA_FREQ = 10
+EXA_GEN = EXA_TREES * EXA_FREQ
 
 def generate_ALE_observe_commands_file(dataset_dir, cores, output_dir):
   families_dir = os.path.join(dataset_dir, "families")
@@ -26,7 +32,6 @@ def generate_ALE_observe_commands_file(dataset_dir, cores, output_dir):
   with open(scheduler_commands_file, "w") as writer:
     for family in os.listdir(families_dir):
       family_dir = os.path.join(families_dir, family)
-      ALE_dir = os.path.join(family_dir, "ALE")
       tree_list = os.path.join(family_dir, "misc", family + ".treelist")
       command = []
       command.append(family)
@@ -37,7 +42,7 @@ def generate_ALE_observe_commands_file(dataset_dir, cores, output_dir):
       writer.write(" ".join(command) + "\n")
   return scheduler_commands_file
 
-def generate_ALE_ml_commands_file(dataset_dir, cores, output_dir):
+def generate_ALE_ml_commands_file(dataset_dir, with_transfers, cores, output_dir):
   families_dir = os.path.join(dataset_dir, "families")
   results_dir = os.path.join(output_dir, "results")
   scheduler_commands_file = os.path.join(output_dir, "commands.txt")
@@ -46,7 +51,6 @@ def generate_ALE_ml_commands_file(dataset_dir, cores, output_dir):
   with open(scheduler_commands_file, "w") as writer:
     for family in os.listdir(families_dir):
       family_dir = os.path.join(families_dir, family)
-      ALE_dir = os.path.join(family_dir, "ALE")
       ale_object = os.path.join(family_dir, "misc", family + ".treelist.ale")
       command = []
       command.append(family)
@@ -55,6 +59,8 @@ def generate_ALE_ml_commands_file(dataset_dir, cores, output_dir):
       command.append(speciesTree)
       command.append(ale_object)
       command.append("sample=" + str(ALE_SAMPLES))
+      if (not with_transfers):
+        command.append("tau=0.0")
       command.append("separator=_")
       writer.write(" ".join(command) + "\n")
   return scheduler_commands_file
@@ -71,17 +77,16 @@ def extract_trees_from_ale_output(ale_output, output_trees):
       break
     position += 1
   position += 2
-  pattern = re.compile("[0-9]*:")
   with open(output_trees, "w") as writer:
     for i in range(position, position + ALE_SAMPLES):
       # get rid of weird reconciliation format
-      print(lines[i])
-      new_lines = re.sub("\.[0-9]*:", ":", lines[i])
-      print(new_lines)
-      print("")
+      new_lines = re.sub("\.[0-9\.]*:", ":", lines[i])
       writer.write(new_lines)
 
-def extract_ALE_results(ALE_run_dir, families_dir):
+def extract_ALE_results(ALE_run_dir, with_transfers, families_dir):
+  method_name = "ALE-DL"
+  if (with_transfers):
+    method_name = "ALE-DTL"
   for family in os.listdir(families_dir):
     family_misc_dir = os.path.join(families_dir, family, "misc")
     try:
@@ -89,8 +94,9 @@ def extract_ALE_results(ALE_run_dir, families_dir):
     except:
       pass
     prefix = family + ".treelist.ale"
-    prefixed_output_trees = os.path.join(family_misc_dir, "ale_samples_prefixed.newick")
-    output_trees = os.path.join(family_misc_dir, "ale_samples.newick")
+
+    prefixed_output_trees = os.path.join(family_misc_dir, method_name + "_samples_prefixed.newick")
+    output_trees = os.path.join(family_misc_dir, method_name + "_samples.newick")
     extract_trees_from_ale_output(prefix + ".uml_rec", prefixed_output_trees) 
     cut_node_names.remove_prefix_from_trees(prefixed_output_trees, output_trees) 
 # clean files
@@ -98,20 +104,28 @@ def extract_ALE_results(ALE_run_dir, families_dir):
     force_move(prefix + ".ucons_tree", family_misc_dir)
     force_move(prefix + ".uml_rec", family_misc_dir)
 
-def run_ALE_on_families(dataset_dir, cores):
-  observe_output_dir = os.path.join(dataset_dir, "ALE_observe_run")
-  ml_output_dir = os.path.join(dataset_dir, "ALE_ml_run")
+def run_ALE_on_families(dataset_dir, with_transfers, cores):
+  method_name = "ALE-DL"
+  if (with_transfers):
+    method_name = "ALE-DTL"
+  observe_output_dir = os.path.join(dataset_dir, "ALE", method_name + "_observe_run")
+  ml_output_dir = os.path.join(dataset_dir, "ALE", method_name + "_ml_run")
   shutil.rmtree(observe_output_dir, True)
   shutil.rmtree(ml_output_dir, True)
   os.makedirs(observe_output_dir)
   os.makedirs(ml_output_dir)
   commands_observe = generate_ALE_observe_commands_file(dataset_dir, cores, observe_output_dir)
-  commands_ml = generate_ALE_ml_commands_file(dataset_dir, cores, ml_output_dir)
+  commands_ml = generate_ALE_ml_commands_file(dataset_dir, with_transfers, cores, ml_output_dir)
   start = time.time()
-  utils.run_scheduler(commands_observe, exp.ale_observe_exec, cores, observe_output_dir, "ALE_observe_run.logs")
-  utils.run_scheduler(commands_ml, exp.ale_ml_exec, cores, ml_output_dir, "ALE_ml_run.logs")
-  saved_metrics.save_metrics(dataset_dir, "ALE", (time.time() - start), "runtimes") 
-  extract_ALE_results(ml_output_dir, os.path.join(dataset_dir, "families"))
+  utils.run_scheduler(commands_observe, exp.ale_observe_exec, cores, observe_output_dir, method_name + "_observe_run.logs")
+  utils.run_scheduler(commands_ml, exp.ale_ml_exec, cores, ml_output_dir, method_name + "_ml_run.logs")
+  saved_metrics.save_metrics(dataset_dir, method_name, (time.time() - start), "runtimes") 
+  extract_ALE_results(ml_output_dir, with_transfers, os.path.join(dataset_dir, "families"))
+
+def run_exabayes_and_ALE(dataset_dir, is_dna, cores):
+  run_exabayes.run_exabayes_on_families(dataset_dir, EXA_GEN, EXA_FREQ, is_dna, cores)
+  run_ALE_on_families(dataset_dir, True, cores)
+  run_ALE_on_families(dataset_dir, False, cores)
 
 if (__name__== "__main__"):
   max_args_number = 4
@@ -122,9 +136,7 @@ if (__name__== "__main__"):
   dataset_dir = sys.argv[1]
   is_dna = int(sys.argv[2]) != 0
   cores = int(sys.argv[3])
-  run_exabayes.run_exabayes_on_families(dataset_dir, is_dna, cores)
-  run_ALE_on_families(dataset_dir, cores)
-
+  run_exabayes_and_ALE(dataset_dir, is_dna, cores)
 
 #
 

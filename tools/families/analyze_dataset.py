@@ -22,7 +22,8 @@ methods_tree_files["RAxML-NG"] = "raxmlGeneTree.newick"
 methods_tree_files["Treerecs"] = "treerecsGeneTree.newick"
 methods_tree_files["Phyldog"] = "phyldogGeneTree.newick"
 methods_tree_files["Notung"] = "notungGeneTree.newick"
-methods_tree_files["ALE"] = "misc/ale_samples.newick"
+methods_tree_files["ALE-DL"] = "misc/ALE-DL_samples.newick"
+methods_tree_files["ALE-DTL"] = "misc/ALE-DTL_samples.newick"
 
 class AlignedPrinter:
   def __init__(self):
@@ -111,7 +112,7 @@ def analyze(dataset_dir, benched_method = ""):
   families_dir = os.path.join(dataset_dir, "families") 
   analyzed_msas = 0
   total_nodes_number = 0
-  methods = ["True", "RAxML-NG", "Treerecs", "Phyldog", "Notung", "ALE"]
+  methods = ["True", "RAxML-NG", "Treerecs", "Phyldog", "Notung", "ALE-DL", "ALE-DTL"]
   add_ran_methods(methods, families_dir)
   methods_trees_number = {}
   methods_to_compare = []

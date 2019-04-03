@@ -20,10 +20,17 @@ if (__name__ == "__main__"):
   x_labels["families"] = "Number of gene families"
   x_labels["tl_ratio"] = "Ratio between transfer and loss rates (loss rate is fixed"
   
-  methods_dl_rf = ["RAxML-NG", "Notung", "Phyldog", "Treerecs", "GeneRax-DL-Raxml", "GeneRax-DL-Random"]
-  methods_dl_runtimes = ["RAxML-light", "Notung", "Phyldog", "Treerecs", "GeneRax-DL-Raxml", "GeneRax-DL-Random"]
-  methods_dtl_rf = ["RAxML-NG", "Notung", "Phyldog", "Treerecs", "GeneRax-DL-Random", "GeneRax-DTL-Random"]
-  methods_dtl_runtimes = ["RAxML-light", "Notung", "Phyldog", "Treerecs", "GeneRax-DL-Random", "GeneRax-DTL-Random"]
+  #methods_dl_rf = ["RAxML-NG", "Notung", "Phyldog", "Treerecs", "GeneRax-DL-Raxml", "GeneRax-DL-Random"]
+  #methods_dl_runtimes = ["RAxML-light", "Notung", "Phyldog", "Treerecs", "GeneRax-DL-Raxml", "GeneRax-DL-Random"]
+  #methods_dtl_rf = ["RAxML-NG", "Notung", "Phyldog", "Treerecs", "GeneRax-DL-Random", "GeneRax-DTL-Random"]
+  #methods_dtl_runtimes = ["RAxML-light", "Notung", "Phyldog", "Treerecs", "GeneRax-DL-Random", "GeneRax-DTL-Random"]
+  
+  methods_dl_rf = ["RAxML-NG", "ALE-DL", "GeneRax-DL-Raxml"]
+  methods_dl_runtimes = list(methods_dl_rf)
+  methods_dl_runtimes[0] = "RAxML-light"
+  methods_dtl_rf = ["RAxML-NG", "ALE-DTL", "GeneRax-DTL-Raxml"]
+  methods_dtl_runtimes = list(methods_dtl_rf)
+  methods_dtl_runtimes[0] = "RAxML-light"
   
   params_to_plot_dl = ["sites", "dup_rate", "bl", "dl_ratio", "species", "families"]
   params_to_plot_dtl = ["sites", "dup_rate", "bl", "species", "tl_ratio"]

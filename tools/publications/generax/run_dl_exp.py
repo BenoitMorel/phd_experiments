@@ -1,68 +1,72 @@
 import subprocess
 import os
 import sys
+import re
 import common
 
 datasets = []
 
+def get_param_position(fixed_point, param_name):
+  split = fixed_point.split("_")
+  for i in range(0, len(split)):
+    if (param_name ==  re.sub("[0-9]*[\.]*[0-9]*", "", split[i])):
+      return i
+  print("ERROR: unknown parameter " + param_name)
+  exit(1)
 
-def add_fixed_point():
-  datasets.append("jsim_s19_f100_sites500_dna4_bl1.0_d0.5_l0.25_t0.0")
+def add_dataset(fixed_point, strings_to_replace):
+  for string_to_replace in strings_to_replace:
+    elems_to_replace = string_to_replace.split("_")
+    split = fixed_point.split("_")
+    for elem in elems_to_replace:
+      param_name =  re.sub("[0-9]*[\.]*[0-9]*", "", elem)
+      param_value =  re.sub("[a-zA-Z]*", "", elem)
+      param_position = get_param_position(fixed_point, param_name)
+      split[param_position] = param_name + str(param_value)
+    dataset = "_".join(split)
+    print("Add " + dataset)
+    if (dataset in datasets):
+      print("duplicate: " + dataset)
+      exit(1)
+    datasets.append(dataset)
 
 
-def add_bl():
-  datasets.append("jsim_s19_f100_sites500_dna4_bl0.01_d0.5_l0.25_t0.0")
-  datasets.append("jsim_s19_f100_sites500_dna4_bl0.05_d0.5_l0.25_t0.0")
-  datasets.append("jsim_s19_f100_sites500_dna4_bl0.1_d0.5_l0.25_t0.0")
-  datasets.append("jsim_s19_f100_sites500_dna4_bl0.25_d0.5_l0.25_t0.0")
-  datasets.append("jsim_s19_f100_sites500_dna4_bl0.5_d0.5_l0.25_t0.0")
-  datasets.append("jsim_s19_f100_sites500_dna4_bl2.0_d0.5_l0.25_t0.0")
-  datasets.append("jsim_s19_f100_sites500_dna4_bl3.0_d0.5_l0.25_t0.0")
+if (True):
+  fixed_point_dl = "jsim_s19_f100_sites500_dna4_bl0.5_d0.25_l0.25_t0.0"
+  datasets.append(fixed_point_dl)
+  add_dataset(fixed_point_dl, ["s5", "s10", "s27", "s41"])
+  add_dataset(fixed_point_dl, ["sites100", "sites250", "sites750", "sites1000"])
+  add_dataset(fixed_point_dl, ["bl0.01", "bl0.05", "bl0.1", "bl0.2", "bl1.0", "bl2.0"])
+  add_dataset(fixed_point_dl, ["f10", "f25", "f50", "f200"])
+  add_dataset(fixed_point_dl, ["d0.01_l0.01", "d0.05_l0.05", "d0.1_l0.1", "d0.4_l0.4"])
+  add_dataset(fixed_point_dl, ["d0.1", "d0.2", "d0.3", "d0.4"])
+  common.generate_all_datasets(datasets)
+  common.run_all_reference_methods(datasets)
+  common.run_all_generax(datasets)
 
-def add_sites():
-  datasets.append("jsim_s19_f100_sites100_dna4_bl1.0_d0.5_l0.25_t0.0")
-  datasets.append("jsim_s19_f100_sites250_dna4_bl1.0_d0.5_l0.25_t0.0")
-  datasets.append("jsim_s19_f100_sites750_dna4_bl1.0_d0.5_l0.25_t0.0")
-  datasets.append("jsim_s19_f100_sites1000_dna4_bl1.0_d0.5_l0.25_t0.0")
+datasets = []
 
-def add_rates_multiplier():
-  datasets.append("jsim_s19_f100_sites500_dna4_bl1.0_d0.1_l0.05_t0.0")
-  datasets.append("jsim_s19_f100_sites500_dna4_bl1.0_d0.2_l0.1_t0.0")
-  datasets.append("jsim_s19_f100_sites500_dna4_bl1.0_d1_l0.5_t0.0")
-  datasets.append("jsim_s19_f100_sites500_dna4_bl1.0_d2_l1.0_t0.0")
+if (True):
+  fixed_point_dtl = "jsimdtl_s16_f100_sites500_dna4_bl0.5_d0.1_l0.2_t0.1"
+  datasets.append(fixed_point_dtl)
+  add_dataset(fixed_point_dtl, ["s5", "s10", "s12", "s19", "s27", "s41"])
+  add_dataset(fixed_point_dtl, ["sites100", "sites250", "sites750", "sites1000"])
+  add_dataset(fixed_point_dtl, ["bl0.01", "bl0.05", "bl0.1", "bl0.2", "bl1.0", "bl2.0"])
+  add_dataset(fixed_point_dtl, ["f10", "f25", "f50", "f200"])
+  add_dataset(fixed_point_dtl, ["d0.01_l0.02_t0.01", "d0.05_l0.1_t0.05", "d0.15_l0.3_t0.15", "d0.2_l0.4_t0.2"])
+  add_dataset(fixed_point_dtl, ["d0.01_l0.2_t1.9", "d0.05_l0.2_t0.15", "d0.15_l0.2_t0.05", "d0.19_l0.2_t0.01"])
+  common.generate_all_datasets(datasets)
+  common.run_all_reference_methods(datasets)
+  common.run_all_generax(datasets)
 
-def add_dl_ratio():
-  datasets.append("jsim_s19_f100_sites500_dna4_bl1.0_d0.5_l0.05_t0.0")
-  datasets.append("jsim_s19_f100_sites500_dna4_bl1.0_d0.5_l0.1_t0.0")
-  datasets.append("jsim_s19_f100_sites500_dna4_bl1.0_d0.5_l0.5_t0.0")
-  datasets.append("jsim_s19_f100_sites500_dna4_bl1.0_d0.5_l1.0_t0.0")
+datasets = []
 
-def add_species():
-  datasets.append("jsim_s5_f100_sites500_dna4_bl1.0_d0.5_l0.25_t0.0")
-  datasets.append("jsim_s10_f100_sites500_dna4_bl1.0_d0.5_l0.25_t0.0")
-  datasets.append("jsim_s27_f100_sites500_dna4_bl1.0_d0.5_l0.25_t0.0")
-  datasets.append("jsim_s41_f100_sites500_dna4_bl1.0_d0.5_l0.25_t0.0")
+if (True):
+  datasets.append("cyano_simulated")
+  common.run_all_reference_methods(datasets)
+  common.run_all_generax(datasets)
 
-def add_families():
-  datasets.append("jsim_s19_f50_sites500_dna4_bl1.0_d0.5_l0.25_t0.0")
-  datasets.append("jsim_s19_f200_sites500_dna4_bl1.0_d0.5_l0.25_t0.0")
-  datasets.append("jsim_s19_f500_sites500_dna4_bl1.0_d0.5_l0.25_t0.0")
-  datasets.append("jsim_s19_f1000_sites500_dna4_bl1.0_d0.5_l0.25_t0.0")
 
-def add_small():
-  datasets.append("jsim_s10_f5_sites50_dna4_bl1.0_d0.5_l0.25_t0.0")
 
-add_fixed_point()
-add_bl()
-add_sites()
-add_rates_multiplier()
-add_dl_ratio()
-add_species()
-#add_families()
-#add_small()
-
-#common.generate_all_datasets(datasets)
-#common.run_all_reference_methods(datasets)
-common.run_all_generax(datasets)
-
+#common.run_all_analyzes(datasets)
 
