@@ -83,6 +83,7 @@ def extract_trees_from_ale_output(ale_output, output_trees):
     for i in range(position, position + ALE_SAMPLES):
       # get rid of weird reconciliation format
       new_lines = re.sub("\.[0-9\.]*:", ":", lines[i])
+      new_lines = re.sub("\.T.[^:]*", "", lines[i])
       writer.write(new_lines)
 
 def extract_ALE_results(dataset_dir, ALE_run_dir, with_transfers, families_dir):
@@ -93,7 +94,6 @@ def extract_ALE_results(dataset_dir, ALE_run_dir, with_transfers, families_dir):
     family_misc_dir = families_util.getMiscDir(dataset_dir, family)
     family_trees_dir = families_util.getTreesDir(dataset_dir, family)
     prefix =  "phyldogSpeciesTree.newick_" + family + ".treelist.ale"
-    print(prefix)
     prefixed_output_trees = os.path.join(family_misc_dir, method_name + "_samples_prefixed.newick")
     output_trees = families_util.getALETree(dataset_dir, family, method_name)
     extract_trees_from_ale_output(prefix + ".uml_rec", prefixed_output_trees) 

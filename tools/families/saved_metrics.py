@@ -9,6 +9,10 @@ def get_metrics(dataset_dir, metric_name):
         dico[split[0]] = split[1].replace("\n", "")
   except:
     return None
+  if (metric_name == "runtimes"):
+    for key in dico:
+      if ("ALE" in key):
+        dico[key] = str(float(dico[key]) + float(dico["ExaBayes"]))
   return dico
 
 def save_dico(dataset_dir, dico, metric_name):

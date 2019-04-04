@@ -14,13 +14,6 @@ import saved_metrics
 
 # couples of (species interval, seed) to get a given number of species node
 jsim_species_to_params = {}
-#jsim_species_to_params[8] = (9, 2)
-#jsim_species_to_params[12] = (3, 9)
-#jsim_species_to_params[13] = (8, 42)
-#jsim_species_to_params[16] = (3, 6)
-#jsim_species_to_params[21] = (7, 41)
-#jsim_species_to_params[34] = (8, 30)
-
 jsim_species_to_params[5] = (3, 2)
 jsim_species_to_params[10] = (3, 13)
 jsim_species_to_params[12] = (3, 9)
@@ -60,7 +53,15 @@ def get_param_from_dataset_name(parameter, dataset):
     d = get_param_from_dataset_name("dup_rate", dataset)
     l = get_param_from_dataset_name("loss_rate", dataset)
     return str(float(d)/float(l))
-    return res
+  elif (parameter == "dt_ratio"):
+    d = get_param_from_dataset_name("dup_rate", dataset)
+    t = get_param_from_dataset_name("transfer_rate", dataset)
+    return str(float(d)/float(t))
+  elif (parameter == "av_rate"):
+    d = float(get_param_from_dataset_name("dup_rate", dataset))
+    l = float(get_param_from_dataset_name("loss_rate", dataset))
+    t = float(get_param_from_dataset_name("transfer_rate", dataset))
+    return str((d + t + l) / 2.0)
   else:
     return "invalid"
 

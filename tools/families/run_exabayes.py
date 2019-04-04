@@ -102,6 +102,7 @@ def extract_exabayes_family(params):
         translator[left] = right
 
 def extract_exabayes_results(exabayes_run_dir, families_dir):
+  start = time.time()
   print("Extracting exabayes results...")
   params = []
   for family in os.listdir(families_dir):
@@ -109,6 +110,10 @@ def extract_exabayes_results(exabayes_run_dir, families_dir):
 
   with concurrent.futures.ProcessPoolExecutor() as executor:
     executor.map(extract_exabayes_family, params)
+  shutil.rmtree( os.path.join(exabayes_run_dir, "results"))
+  print("Finished extracting exabayes results " + str(time.time() - start) + "s")
+  sys.stdout.flush()
+  
 
 def run_exabayes_on_families(dataset_dir, generations, frequency, is_dna, cores):
   families_util.init_dataset_dir(dataset_dir)

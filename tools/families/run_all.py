@@ -30,6 +30,7 @@ def run_reference_methods(dataset_dir, is_dna, starting_trees, bs_trees, cores):
   print("Run ALE...")
   sys.stdout.flush()
   run_ALE.run_exabayes_and_ALE(dataset_dir, is_dna, cores)
+  sys.stdout.flush()
 
 
 if __name__ == "__main__":
