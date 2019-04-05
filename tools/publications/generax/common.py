@@ -253,3 +253,29 @@ def get_metrics_for_datasets(datasets_prefix, metric_name):
             res[key] = str(float(res[key]) + float(res["ExaBayes"]))
       datasets_rf_dico[dataset] = res
   return datasets_rf_dico
+
+
+def get_param_position(fixed_point, param_name):
+  split = fixed_point.split("_")
+  for i in range(0, len(split)):
+    if (param_name ==  re.sub("[0-9]*[\.]*[0-9]*", "", split[i])):
+      return i
+  print("ERROR: unknown parameter " + param_name)
+  exit(1)
+
+def add_dataset(datasets, fixed_point, strings_to_replace):
+  for string_to_replace in strings_to_replace:
+    elems_to_replace = string_to_replace.split("_")
+    split = fixed_point.split("_")
+    for elem in elems_to_replace:
+      param_name =  re.sub("[0-9]*[\.]*[0-9]*", "", elem)
+      param_value =  re.sub("[a-zA-Z]*", "", elem)
+      param_position = get_param_position(fixed_point, param_name)
+      split[param_position] = param_name + str(param_value)
+    dataset = "_".join(split)
+    print("Add " + dataset)
+    if (dataset in datasets):
+      print("duplicate: " + dataset)
+      exit(1)
+    datasets.append(dataset)
+
