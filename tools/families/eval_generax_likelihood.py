@@ -1,7 +1,7 @@
 import sys
 import os
 import shutil
-sys.path.insert(0, 'scripts/jointsearch')
+sys.path.insert(0, 'scripts/generax')
 import exp_jointsearch_utils as utils
 import launch_generax
 from cStringIO import StringIO

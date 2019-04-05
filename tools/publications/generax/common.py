@@ -6,6 +6,7 @@ sys.path.insert(0, 'scripts')
 import experiments as exp
 
 sys.path.insert(0, os.path.join("tools", "families"))
+import fam
 import generate_families_with_jprime as jprime
 import run_raxml_supportvalues as raxml
 import run_ALE
@@ -29,48 +30,11 @@ jsim_species_to_params[16] = (3, 6)
 
 protein_datasets = ["swiss", "cyano_simulated", "sub_t0.05_s0.5_cyano_empirical", "sub_t0.01_s0.2_ensembl_8880_15"]
 
-def get_param_from_dataset_name(parameter, dataset):
-  if (parameter == "species"):
-    return dataset.split("_")[1][1:]
-  if (parameter == "families"):
-    return dataset.split("_")[2][1:]
-  elif (parameter == "sites"):
-    return dataset.split("_")[3][5:]
-  elif (parameter == "model"):
-    return dataset.split("_")[4]
-  elif (parameter == "bl"):
-    return dataset.split("_")[5][2:]
-  elif (parameter == "dup_rate"):
-    return dataset.split("_")[6][1:]
-  elif (parameter == "loss_rate"):
-    return dataset.split("_")[7][1:]
-  elif (parameter == "transfer_rate"):
-    return dataset.split("_")[8][1:]
-  elif (parameter == "tl_ratio"):
-    t = get_param_from_dataset_name("transfer_rate", dataset)
-    l = get_param_from_dataset_name("loss_rate", dataset)
-    return  str(float(t)/float(l))
-  elif (parameter == "dl_ratio"):
-    d = get_param_from_dataset_name("dup_rate", dataset)
-    l = get_param_from_dataset_name("loss_rate", dataset)
-    return str(float(d)/float(l))
-  elif (parameter == "dt_ratio"):
-    d = get_param_from_dataset_name("dup_rate", dataset)
-    t = get_param_from_dataset_name("transfer_rate", dataset)
-    return str(float(d)/float(t))
-  elif (parameter == "av_rate"):
-    d = float(get_param_from_dataset_name("dup_rate", dataset))
-    l = float(get_param_from_dataset_name("loss_rate", dataset))
-    t = float(get_param_from_dataset_name("transfer_rate", dataset))
-    return str((d + t + l) / 2.0)
-  else:
-    return "invalid"
-
 
 def run_generax(dataset, starting_tree, with_transfers, run_name, is_dna, cores = 40):
   command = []
   command.append("python")
-  command.append("/home/morelbt/github/phd_experiments/scripts/jointsearch/launch_generax.py")
+  command.append(os.path.join(exp.scripts_root, "generax/launch_generax.py")
   command.append(dataset)
   command.append("SPR")
   command.append(starting_tree)
@@ -88,15 +52,15 @@ def run_generax(dataset, starting_tree, with_transfers, run_name, is_dna, cores 
 
 
 def generate_dataset(dataset):
-  species = get_param_from_dataset_name("species", dataset)
+  species = fam.get_param_from_dataset_name("species", dataset)
   species_internal, seed = jsim_species_to_params[int(species)]
-  families = int(get_param_from_dataset_name("families", dataset))
-  sites = get_param_from_dataset_name("sites", dataset)
-  model = get_param_from_dataset_name("model", dataset)
-  bl_factor = float(get_param_from_dataset_name("bl", dataset))
-  d = get_param_from_dataset_name("dup_rate", dataset)
-  l = get_param_from_dataset_name("loss_rate", dataset)
-  t = get_param_from_dataset_name("transfer_rate", dataset)
+  families = int(fam.get_param_from_dataset_name("families", dataset))
+  sites = fam.get_param_from_dataset_name("sites", dataset)
+  model = fam.get_param_from_dataset_name("model", dataset)
+  bl_factor = float(fam.get_param_from_dataset_name("bl", dataset))
+  d = fam.get_param_from_dataset_name("dup_rate", dataset)
+  l = fam.get_param_from_dataset_name("loss_rate", dataset)
+  t = fam.get_param_from_dataset_name("transfer_rate", dataset)
   output = "../BenoitDatasets/families"
   jprime.generate_jprime(species_internal, families, sites, model, bl_factor, d, l, t, output, seed) 
 
@@ -228,7 +192,7 @@ def get_datasets_to_plot(datasets_rf_dico, fixed_params_dico, x_param):
     for fixed_param in fixed_params_dico:
       if (fixed_param == x_param):
         continue
-      dataset_param_value = get_param_from_dataset_name(fixed_param, dataset)
+      dataset_param_value = fam.get_param_from_dataset_name(fixed_param, dataset)
       if (dataset_param_value != fixed_params_dico[fixed_param]):
         ok = False
         continue

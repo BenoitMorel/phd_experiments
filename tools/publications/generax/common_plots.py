@@ -9,13 +9,15 @@ import subprocess
 
 sys.path.insert(0, 'scripts')
 import experiments as exp
+sys.path.insert(0, os.path.join("tools", "families"))
+import fam
 import common
 
 def plot(datasets_rf_dico, x_param, fixed_params_dico, methods, x_label, y_label, output):
   print(x_param)
   datasets_to_plot = common.get_datasets_to_plot(datasets_rf_dico, fixed_params_dico, x_param)
   #print(datasets_to_plot)
-  datasets_to_plot.sort(key = lambda t: float(common.get_param_from_dataset_name(x_param, t)))
+  datasets_to_plot.sort(key = lambda t: float(fam.get_param_from_dataset_name(x_param, t)))
   df = pd.DataFrame()
   f, ax = plt.subplots(1)
  
@@ -25,8 +27,8 @@ def plot(datasets_rf_dico, x_param, fixed_params_dico, methods, x_label, y_label
   for method in methods:
     fake_df[method] = []
   for dataset in datasets_to_plot:
-    #print(float(common.get_param_from_dataset_name(x_param,     dataset)))
-    fake_df[x_param].append(float(common.get_param_from_dataset_name(x_param, dataset)))
+    #print(float(fam.get_param_from_dataset_name(x_param,     dataset)))
+    fake_df[x_param].append(float(fam.get_param_from_dataset_name(x_param, dataset)))
     rf_dico = datasets_rf_dico[dataset]
     for method in methods:
       if (not method in rf_dico):
