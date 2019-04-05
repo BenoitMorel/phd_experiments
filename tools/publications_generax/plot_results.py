@@ -5,7 +5,6 @@ import subprocess
 sys.path.insert(0, 'scripts')
 import experiments as exp
 import common
-import common_plots
 
 
 def substract(datasets_dico, method):
@@ -65,9 +64,9 @@ if (__name__ == "__main__"):
   fixed_params["sites"] = "500"
   fixed_params["families"] = "100"
   
-  plotter_rf = common_plots.Plotter(datasets_rf_dico, fixed_params, methods_dl_rf, x_labels, rf_y_label, "dl_rf")
-  plotter_ll = common_plots.Plotter(datasets_ll_dico, fixed_params, methods_dl_ll, x_labels, ll_DL_y_label, "dl_ll")
-  plotter_runtimes = common_plots.Plotter(datasets_runtimes_dico, fixed_params, methods_dl_runtimes, x_labels, runtime_y_label, "dl_runtimes")
+  plotter_rf = common.Plotter(datasets_rf_dico, fixed_params, methods_dl_rf, x_labels, rf_y_label, "dl_rf")
+  plotter_ll = common.Plotter(datasets_ll_dico, fixed_params, methods_dl_ll, x_labels, ll_DL_y_label, "dl_ll")
+  plotter_runtimes = common.Plotter(datasets_runtimes_dico, fixed_params, methods_dl_runtimes, x_labels, runtime_y_label, "dl_runtimes")
   for param in params_to_plot_dl:
     plotter_rf(param)
     plotter_runtimes(param)
@@ -88,9 +87,9 @@ if (__name__ == "__main__"):
   fixed_params["bl"] = "0.5"
   fixed_params["families"] = "100"
   fixed_params["sites"] = "500"
-  plotter_rf = common_plots.Plotter(datasets_rf_dico, fixed_params, methods_dtl_rf, x_labels, rf_y_label, "dtl_rf")
-  plotter_ll = common_plots.Plotter(datasets_ll_dico, fixed_params, methods_dtl_ll, x_labels, ll_DTL_y_label, "dtl_ll")
-  plotter_runtimes = common_plots.Plotter(datasets_runtimes_dico, fixed_params, methods_dtl_runtimes, x_labels, runtime_y_label, "dtl_runtimes")
+  plotter_rf = common.Plotter(datasets_rf_dico, fixed_params, methods_dtl_rf, x_labels, rf_y_label, "dtl_rf")
+  plotter_ll = common.Plotter(datasets_ll_dico, fixed_params, methods_dtl_ll, x_labels, ll_DTL_y_label, "dtl_ll")
+  plotter_runtimes = common.Plotter(datasets_runtimes_dico, fixed_params, methods_dtl_runtimes, x_labels, runtime_y_label, "dtl_runtimes")
   for param in params_to_plot_dtl:
     plotter_rf(param)
     plotter_runtimes(param)
