@@ -124,6 +124,8 @@ def run_exabayes_on_families(dataset_dir, generations, frequency, is_dna, cores)
   start = time.time()
   utils.run_scheduler(scheduler_commands_file, exp.exabayes_exec, cores, output_dir, "exabayes_run.logs")
   saved_metrics.save_metrics(dataset_dir, "ExaBayes", (time.time() - start), "runtimes") 
+  print("Finished running exabayes after " + str(time.time() - start) + "s")
+  sys.stdout.flush()
   extract_exabayes_results(output_dir, os.path.join(dataset_dir, "families"))
 
 if (__name__== "__main__"):

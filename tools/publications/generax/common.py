@@ -11,6 +11,9 @@ import run_raxml_supportvalues as raxml
 import run_ALE
 import run_all
 import saved_metrics
+import eval_generax_likelihood
+
+CORES = 40
 
 # couples of (species interval, seed) to get a given number of species node
 jsim_species_to_params = {}
@@ -74,7 +77,7 @@ def run_generax(dataset, starting_tree, with_transfers, run_name, is_dna):
   command.append("SPR")
   command.append(starting_tree)
   command.append("normal")
-  command.append("40")
+  command.append(str(CORES))
   if (with_transfers):
     command.append("--rec-model")
     command.append("UndatedDTL")
@@ -104,10 +107,10 @@ def run_reference_methods(dataset):
   print("Run reference methods for " + dataset)
   print("*************************************")
   dataset_dir = os.path.join("../BenoitDatasets/families", dataset)
-  is_dna = 1
+  is_dna = (not dataset in protein_datasets)
   starting_trees = 10
   bs_trees = 100
-  cores = 40
+  cores = CORES
   save_sdtout = sys.stdout
   redirected_file = os.path.join(dataset_dir, "logs_run_all.txt")
   print("Redirected logs to " + redirected_file)
@@ -121,16 +124,16 @@ def run_reference_methods(dataset):
 def run_all_raxml_light(datasets):
   for dataset in datasets:
     dataset_dir = os.path.join("../BenoitDatasets/families", dataset)
-    is_dna = 1
+    is_dna = (not dataset in protein_datasets)
     starting_trees = 1
     bs_trees = 0
-    cores = 40
+    cores = CORES
     raxml.run_pargenes_and_extract_trees(dataset_dir, is_dna, starting_trees, bs_trees, cores, "RAxML-light", False)
 
 def run_all_ALE(datasets, is_dna):
   for dataset in datasets:
     dataset_dir = os.path.join("../BenoitDatasets/families", dataset)
-    cores = 40
+    cores = CORES
     run_ALE.run_exabayes_and_ALE(dataset_dir, is_dna, cores)
 
 def run_all_reference_methods(datasets):
@@ -208,6 +211,16 @@ def run_all_analyzes(datasets):
     print("analyze " + dataset)
     get_results(dataset)
 
+def compute_likelihoods(datasets):
+  for dataset in datasets:
+    dataset_dir = os.path.join(exp.benoit_datasets_root, "families", dataset)
+    is_protein = dataset in protein_datasets
+    #starting_trees = ["RAxML-NG", "Treerecs", "ALE-DL", "ALE-DTL", "GeneRax-DL-Random", "GeneRax-DTL-Random", "True", "Notung"]
+    starting_trees = ["GeneRax-DL-Raxml", "GeneRax-DTL-Raxml"]
+    for tree in starting_trees:
+      eval_generax_likelihood.eval_and_save_likelihood(dataset_dir, tree, 0, is_protein, CORES)  
+      eval_generax_likelihood.eval_and_save_likelihood(dataset_dir, tree, 1, is_protein, CORES)  
+
 def get_datasets_to_plot(datasets_rf_dico, fixed_params_dico, x_param):
 
   datasets_to_plot = []
@@ -235,5 +248,9 @@ def get_metrics_for_datasets(datasets_prefix, metric_name):
     dataset_dir = os.path.join(exp.families_datasets_root, dataset)
     res = saved_metrics.get_metrics(dataset_dir, metric_name)
     if (res != None):
+      if (metric_name == "runtimes"):
+        for key in res: 
+          if ("ALE" in key):
+            res[key] = str(float(res[key]) + float(res["ExaBayes"))
       datasets_rf_dico[dataset] = res
   return datasets_rf_dico

@@ -19,10 +19,7 @@ import  run_exabayes
 ALE_SAMPLES = 1
 BURN_IN = 100
 EXA_TREES = 2000
-EXA_FREQ = 10
-#BURN_IN = 100
-#EXA_TREES = 500
-#EXA_FREQ = 10
+EXA_FREQ = 1000
 EXA_GEN = EXA_TREES * EXA_FREQ
 
 def generate_ALE_observe_commands_file(dataset_dir, cores, output_dir):

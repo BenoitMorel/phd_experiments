@@ -39,7 +39,7 @@ def run_generax(datadir, strategy, generax_families_file, mode, cores, additiona
   species_tree = os.path.join(datadir, "speciesTree.newick")
   command = utils.get_generax_command(generax_families_file, species_tree, strategy, additional_arguments, resultsdir, mode, cores)
   print(command)
-  subprocess.check_call(command.split(" "))
+  subprocess.check_call(command.split(" "), stdout = sys.stdout)
 
 
 def get_mode_from_additional_arguments(additional_arguments):

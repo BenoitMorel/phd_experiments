@@ -4,21 +4,30 @@ sys.path.insert(0, 'scripts')
 import experiments as exp
 
 def get_possible_gene_trees():
-  return ["raxml", "raxmls", "true", "treerecs", "random"]
+  return ["raxml", "raxmls", "true", "treerecs", "notung", "phyldog", "random", "ALE-D(T)L", "GeneRax-D(T)L-[Random, Raxml]"]
 
 def get_possible_strategies():
   return ["SPR", "EVAL"]
 
 def get_gene_tree(familydir, tree):
-  datadir = os.path.join(familydir, "gene_trees")
-  if (tree == "raxml"):
-    return os.path.join(datadir, "raxmlGeneTree.newick")
-  elif (tree == "raxmls"):
-    return os.path.join(datadir, "raxmlGeneTrees.newick")
-  elif (tree == "true"):
+  gene_trees_dir = os.path.join(familydir, "gene_trees")
+  lower_tree = tree.lower()
+  if (lower_tree == "raxml-ng"):
+    return os.path.join(gene_trees_dir, "raxmlGeneTree.newick")
+  elif (lower_tree == "raxmls"):
+    return os.path.join(gene_trees_dir, "raxmlGeneTrees.newick")
+  elif (lower_tree == "true"):
     return os.path.join(familydir, "trueGeneTree.newick")
-  elif (tree == "treerecs"):
-    return os.path.join(datadir, "treerecsGeneTree.newick")
+  elif (lower_tree == "treerecs"):
+    return os.path.join(gene_trees_dir, "treerecsGeneTree.newick")
+  elif (lower_tree == "phyldog"):
+    return os.path.join(gene_trees_dir, "phyldogGeneTree.newick")
+  elif (lower_tree == "notung"):
+    return os.path.join(gene_trees_dir, "notungGeneTree.newick")
+  elif ("GeneRax" in tree):
+    return os.path.join(familydir, "results", tree + ".newick")
+  elif ("ALE" in tree):
+    return os.path.join(gene_trees_dir, tree + "GeneTree.newick")
   elif (tree == "random"):
     return "__random__";
   else:
@@ -36,9 +45,6 @@ def get_raxml_model(datadir):
 def check_inputs(starting_tree, strategy):
   if (not (strategy in get_possible_strategies())):
     print("Unknown search strategy " + strategy)
-    exit(1)
-  if (not (starting_tree in get_possible_gene_trees())):
-    print("Unknown starting tree " + starting_tree)
     exit(1)
 
 def get_jointsearch_datasets():
