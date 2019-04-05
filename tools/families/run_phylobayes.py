@@ -3,11 +3,12 @@ import sys
 import subprocess
 import shutil
 import time
-import utils
-import families_util
+import fam
 sys.path.insert(0, 'scripts')
 sys.path.insert(0, os.path.join("tools", "families"))
+sys.path.insert(0, os.path.join("tools", "scheduler"))
 sys.path.insert(0, os.path.join("tools", "msa_edition"))
+import scheduler
 import saved_metrics
 import experiments as exp
 import msa_converter
@@ -58,13 +59,13 @@ def extract_phylobayes_results(phylobayes_run_dir, families_dir):
     shutil.copyfile(treelist, os.path.join(family_misc_dir, family + ".treelist"))
 
 def run_phylobayes_on_families(dataset_dir, cores):
-  families_util.init_dataset_dir(dataset_dir)
+  fam.init_dataset_dir(dataset_dir)
   output_dir = os.path.join(dataset_dir, "runs", "phylobayes_run")
   shutil.rmtree(output_dir, True)
   os.makedirs(output_dir)
   scheduler_commands_file = generate_phylobayes_commands_file(dataset_dir, cores, output_dir)
   start = time.time()
-  utils.run_scheduler(scheduler_commands_file, exp.phylobayes_exec, cores, output_dir, "phylobayes_run.logs")
+  scheduler.run_scheduler(scheduler_commands_file, exp.phylobayes_exec, cores, output_dir, "phylobayes_run.logs")
   saved_metrics.save_metrics(dataset_dir, "PhyloBayes", (time.time() - start), "runtimes") 
   extract_phylobayes_results(output_dir, os.path.join(dataset_dir, "families"))
 

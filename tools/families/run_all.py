@@ -5,7 +5,7 @@ import run_treerecs as treerecs
 import run_phyldog_light as phyldog
 import run_notung as notung
 import run_ALE
-import families_util
+import fam
 
 def run_reference_methods(dataset_dir, is_dna, starting_trees, bs_trees, cores):
   print("Run pargenes light...")

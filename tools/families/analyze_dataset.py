@@ -10,7 +10,6 @@ from rf_distance import ete3_rf
 from rf_distance import get_relative_rf
 from rf_distance import get_rf
 import concurrent.futures
-import families_util
 import saved_metrics
 
 def get_nodes(tree1):

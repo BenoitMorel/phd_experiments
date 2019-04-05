@@ -2,7 +2,7 @@ import os
 import sys
 import subprocess
 import shutil
-import families_util
+import fam
 sys.path.insert(0, 'scripts')
 sys.path.insert(0, os.path.join("tools", "families"))
 sys.path.insert(0, os.path.join("tools", "notung"))
@@ -16,7 +16,7 @@ def generate_notung_files(dataset_dir):
   families_dir = os.path.join(dataset_dir, "families")
   for family in os.listdir(families_dir):
     family_dir = os.path.join(families_dir, family)
-    input_tree = families_util.getRaxmlTree(dataset_dir, family) 
+    input_tree = fam.getRaxmlTree(dataset_dir, family) 
     input_species_tree = os.path.join(family_dir, "speciesTree.newick")
     mapping_file = os.path.join(family_dir, "mapping.link")
     notung_tree = os.path.join(family_dir, "misc", "raxmlGeneTree.notung")
@@ -33,7 +33,7 @@ def back_convert_notung_files(dataset_dir):
       os.makedirs(family_trees_dir)
     notung_tree = os.path.join(family_dir, "raxmlGeneTree.notung.rearrange.0")
     notung_mapping = os.path.join(family_dir, "misc", "mapping.notung")
-    output_tree = families_util.getNotungTree(dataset_dir, family)
+    output_tree = fam.getNotungTree(dataset_dir, family)
     convert_to_notung_tree.back_convert_notung_tree(notung_tree, notung_mapping, output_tree)
 
 def generate_scheduler_command(command_file, cores, output_dir):
@@ -79,7 +79,7 @@ def generate_scheduler_commands_file(dataset_dir, threshold, cores, output_dir):
   return scheduler_commands_file
 
 def run_notung_on_families(dataset_dir, threshold, cores):
-  families_util.init_dataset_dir(dataset_dir)
+  fam.init_dataset_dir(dataset_dir)
   output_dir = os.path.join(dataset_dir, "runs", "notung_run")
   shutil.rmtree(output_dir, True)
   os.makedirs(output_dir)
