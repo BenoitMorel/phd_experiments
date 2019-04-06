@@ -1,7 +1,7 @@
 import subprocess
 import sys
 import os 
-
+import re
 import pandas as pd
 import matplotlib
 matplotlib.use('Agg')
@@ -39,7 +39,7 @@ protein_datasets = ["swiss", "cyano_simulated", "sub_t0.05_s0.5_cyano_empirical"
 def run_generax(dataset, starting_tree, with_transfers, run_name, is_dna, cores = 40):
   command = []
   command.append("python")
-  command.append(os.path.join(exp.scripts_root, "generax/launch_generax.py")
+  command.append(os.path.join(exp.scripts_root, "generax/launch_generax.py"))
   command.append(dataset)
   command.append("SPR")
   command.append(starting_tree)
@@ -161,18 +161,19 @@ def get_runtimes(dataset):
   return dico
 
 def get_results(dataset):
-  try:
+  #try:
     analyse_script = os.path.join(exp.tools_root, "families", "analyze_dataset.py")
     dataset_path = os.path.join(exp.benoit_datasets_root, "families", dataset)
     cmd = []
     cmd.append("python")
     cmd.append(analyse_script)
     cmd.append(dataset_path)
+    print(" ".join(cmd))
     logs = subprocess.check_output(cmd)
     return get_rf_from_logs(logs) 
-  except:
-    print("Failed to get RF distances from dataset " + dataset)
-    return None
+  #except:
+  #  print("Failed to get RF distances from dataset " + dataset)
+  #  return None
 
 def run_all_analyzes(datasets):
   for dataset in datasets:

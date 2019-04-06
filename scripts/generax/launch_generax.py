@@ -6,11 +6,27 @@ sys.path.insert(0, 'tools/families')
 import saved_metrics
 import analyze_dataset
 import experiments as exp
-import exp_jointsearch_utils as utils
 import shutil
 import time
+import fam
 
-datasets = utils.get_generax_datasets()
+def get_possible_strategies():
+  return ["SPR", "EVAL"]
+
+def check_inputs(strategy):
+  if (not (strategy in get_possible_strategies())):
+    print("Unknown search strategy " + strategy)
+    exit(1)
+
+
+def get_generax_datasets():
+  root_datadir = os.path.join(exp.benoit_datasets_root, "families")
+  datasets = {}
+  for dataset in os.listdir(root_datadir):
+    datasets[dataset] = os.path.join(root_datadir, dataset)
+  return datasets
+
+datasets = get_generax_datasets()
 
 def build_generax_families_file(dataset, starting_tree, is_protein, output):
   families_dir = os.path.join(dataset, "families")
@@ -35,9 +51,32 @@ def build_generax_families_file(dataset, starting_tree, is_protein, output):
         else:
           writer.write("L: GTR\n")
 
+def get_generax_command(generax_families_file, species_tree, strategy, additional_arguments, output_dir, mode, cores):
+    executable = exp.generax_exec
+    if (mode == "gprof"):
+      executable = exp.generax_gprof_exec
+    elif (mode == "scalasca"):
+      executable = exp.generax_scalasca_exec
+    generax_output = os.path.join(output_dir, "generax")
+    command = []
+    command.append("mpirun")
+    command.append("-np")
+    command.append(str(cores))
+    command.append(executable)
+    command.append("-f")
+    command.append(generax_families_file)
+    command.append("-s")
+    command.append(species_tree)
+    command.append("--strategy")
+    command.append(strategy)
+    command.append("-p")
+    command.append(generax_output)
+    command.extend(additional_arguments)
+    return " ".join(command)
+
 def run_generax(datadir, strategy, generax_families_file, mode, cores, additional_arguments, resultsdir):
   species_tree = os.path.join(datadir, "speciesTree.newick")
-  command = utils.get_generax_command(generax_families_file, species_tree, strategy, additional_arguments, resultsdir, mode, cores)
+  command = get_generax_command(generax_families_file, species_tree, strategy, additional_arguments, resultsdir, mode, cores)
   print(command)
   subprocess.check_call(command.split(" "), stdout = sys.stdout)
 
@@ -112,7 +151,7 @@ if (__name__ == "__main__"):
     print("Syntax error: python " + os.path.basename(__file__) + "  dataset strategy starting_tree cluster cores [additional paremeters].\n Suggestions of datasets: ")
     for dataset in datasets:
       print("\t" + dataset)
-    print("strategy: " + ",".join(utils.get_possible_strategies()))
+    print("strategy: " + ",".join(get_possible_strategies()))
     print("starting_tree: " + ",".join(utils.get_possible_gene_trees()))
     sys.exit(1)
 
@@ -122,7 +161,7 @@ if (__name__ == "__main__"):
   cluster = sys.argv[4]
   cores = int(sys.argv[5])
   additional_arguments = sys.argv[min_args_number:]
-  utils.check_inputs(starting_tree, strategy)
+  check_inputs(starting_tree, strategy)
 
   if (is_run):
     run(dataset, strategy, starting_tree, cores, additional_arguments, resultsdir)

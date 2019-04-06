@@ -79,4 +79,39 @@ def get_param_from_dataset_name(parameter, dataset):
     return "invalid"
 
 
+def get_gene_tree(familydir, tree):
+  gene_trees_dir = os.path.join(familydir, "gene_trees")
+  lower_tree = tree.lower()
+  if (lower_tree == "raxml-ng"):
+    return os.path.join(gene_trees_dir, "raxmlGeneTree.newick")
+  elif (lower_tree == "raxmls"):
+    return os.path.join(gene_trees_dir, "raxmlGeneTrees.newick")
+  elif (lower_tree == "true"):
+    return os.path.join(familydir, "trueGeneTree.newick")
+  elif (lower_tree == "treerecs"):
+    return os.path.join(gene_trees_dir, "treerecsGeneTree.newick")
+  elif (lower_tree == "phyldog"):
+    return os.path.join(gene_trees_dir, "phyldogGeneTree.newick")
+  elif (lower_tree == "notung"):
+    return os.path.join(gene_trees_dir, "notungGeneTree.newick")
+  elif ("GeneRax" in tree):
+    return os.path.join(familydir, "results", tree + ".newick")
+  elif ("ALE" in tree):
+    return os.path.join(gene_trees_dir, tree + "GeneTree.newick")
+  elif (tree == "random"):
+    return "__random__";
+  else:
+    return tree
+
+def get_possible_gene_trees():
+  return ["raxml", "raxmls", "true", "treerecs", "notung", "phyldog", "random", "ALE-D(T)L", "GeneRax-D(T)L-[Random, Raxml]"]
+
+def get_mapping_file(datadir):
+  return os.path.join(datadir, "mapping.link")
+
+def get_alignment_file(datadir):
+  return os.path.join(datadir, "alignment.msa")
+
+def get_raxml_model(datadir):
+  return os.path.join(datadir, "raxmlBestModel.txt")
 

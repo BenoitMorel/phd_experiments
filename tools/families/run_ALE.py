@@ -81,7 +81,7 @@ def extract_trees_from_ale_output(ale_output, output_trees):
     for i in range(position, position + ALE_SAMPLES):
       # get rid of weird reconciliation format
       new_lines = re.sub("\.[0-9\.]*:", ":", lines[i])
-      new_lines = re.sub("\.T.[^:]*", "", lines[i])
+      new_lines = re.sub("\.T.[^:]*", "", new_lines)
       writer.write(new_lines)
 
 def extract_ALE_results(dataset_dir, ALE_run_dir, with_transfers, families_dir):
