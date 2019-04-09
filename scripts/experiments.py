@@ -25,6 +25,8 @@ programs_root = os.path.join(root, "programs")
 datasets_root = os.path.join(root, "datasets")
 # results
 results_root = os.path.join(root, "results")
+# install
+installer_root = os.path.join(root, "installer")
 
 
 # externals
