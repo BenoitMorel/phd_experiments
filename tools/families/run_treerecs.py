@@ -66,6 +66,7 @@ def generate_scheduler_command(command_file, cores, output_dir):
   command += command_file + " "
   command += output_dir + " " 
   command += "0"
+  print(command)
   return command 
 
 def extract_treerecs_trees(dataset_dir):

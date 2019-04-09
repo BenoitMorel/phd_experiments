@@ -34,7 +34,12 @@ def run_pargenes(dataset_dir, pargenes_dir, is_dna, starting_trees, bs_trees, co
     command.append("-r")
     command.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), "raxml_command_prot.txt"))
   command.append("--continue")
-  subprocess.check_call(command, stdout = sys.stdout)
+  try:
+    subprocess.check_call(command, stdout = sys.stdout)
+  except:
+    command[0] = "python2.7"
+    print(" ".join(command))
+    subprocess.check_call(command, stdout = sys.stdout)
 
 
 def export_pargenes_trees(pargenes_dir, dataset_dir):

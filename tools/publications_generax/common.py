@@ -100,9 +100,9 @@ def run_all_ALE(datasets, is_dna, cores = 40):
     dataset_dir = os.path.join("../BenoitDatasets/families", dataset)
     run_ALE.run_exabayes_and_ALE(dataset_dir, is_dna, cores)
 
-def run_all_reference_methods(datasets):
+def run_all_reference_methods(datasets, cores = 40):
   for dataset in datasets:
-    run_reference_methods(dataset)
+    run_reference_methods(dataset, cores)
 
 def run_all_generax(datasets, raxml = True, random = True, DL = True, DTL = True):
   for dataset in datasets:
@@ -301,5 +301,24 @@ class Plotter(object):
   
   def __call__(self, parameter):
     plot(self.datasets_values_dico, parameter, self.fixed_parameters, self.methods, self.x_labels,  self.y_label, self.prefix + "_" + parameter + ".png")
+
+def submit_single_experiment_haswell(dataset, cores):
+  command = []
+  command.append("python")
+  command.append(os.path.join(exp.tools_root, "publications_generax", "single_experiment.py"))
+  command.append(dataset)
+  command.append("1")
+  command.append(str(cores))
+  results_dir = os.path.join("single_experiments", dataset)
+  results_dir = exp.create_result_dir(results_dir, [])
+  result_msg = "GeneRax git: \n" + exp.get_git_info(exp.joint_search_root)
+  exp.write_results_info(results_dir, result_msg) 
+  submit_path = os.path.join(results_dir, "sub_generax.sh")
+  exp.submit(submit_path, " ".join(command), cores, "haswell") 
+
+def submit_multiple_experiments_haswell(datasets, cores):
+  for dataset in datasets:
+    submit_single_experiment_haswell(dataset, cores)
+  
 
 

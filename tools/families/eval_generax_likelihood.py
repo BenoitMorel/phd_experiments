@@ -3,7 +3,11 @@ import os
 import shutil
 sys.path.insert(0, 'scripts/generax')
 import launch_generax
-from cStringIO import StringIO
+
+try:
+      from StringIO import StringIO
+except ImportError:
+      from io import StringIO
 import saved_metrics
 
 def eval_likelihood(dataset_dir, starting_tree, with_transfers, is_protein, cores):
