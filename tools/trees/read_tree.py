@@ -10,4 +10,12 @@ def read_tree(tree):
   return None
 
 
+def read_trees_list(newick_file):
+  trees = []
+  lines = open(newick_file).readlines()
+  for line in lines:
+    if (not line.startswith(">")):
+      trees.append(Tree(line, format=1))
+  return trees
+
 

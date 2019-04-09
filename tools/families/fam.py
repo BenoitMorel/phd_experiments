@@ -98,7 +98,7 @@ def get_gene_tree(familydir, tree):
     return os.path.join(familydir, "results", tree + ".newick")
   elif ("ALE" in tree):
     return os.path.join(gene_trees_dir, tree + "GeneTree.newick")
-  elif (tree == "random"):
+  elif (lower_tree == "random"):
     return "__random__";
   else:
     return tree

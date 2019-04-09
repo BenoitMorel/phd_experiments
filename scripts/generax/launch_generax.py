@@ -37,12 +37,12 @@ def build_generax_families_file(dataset, starting_tree, is_protein, output):
       
       family_path = os.path.join(families_dir, family)
       writer.write("- " + family + "\n")
-      writer.write("G: " + utils.get_gene_tree(family_path, starting_tree) + "\n")
-      writer.write("A: " + utils.get_alignment_file(family_path) + "\n")
-      writer.write("M: " + utils.get_mapping_file(family_path) + "\n")
+      writer.write("G: " + fam.get_gene_tree(family_path, starting_tree) + "\n")
+      writer.write("A: " + fam.get_alignment_file(family_path) + "\n")
+      writer.write("M: " + fam.get_mapping_file(family_path) + "\n")
       raxml_model = ""
       if (starting_tree != "random"):
-        raxml_model = utils.get_raxml_model(family_path)
+        raxml_model = fam.get_raxml_model(family_path)
       if (os.path.isfile(raxml_model)):
         writer.write("L: " + raxml_model + "\n")
       else:
@@ -152,7 +152,7 @@ if (__name__ == "__main__"):
     for dataset in datasets:
       print("\t" + dataset)
     print("strategy: " + ",".join(get_possible_strategies()))
-    print("starting_tree: " + ",".join(utils.get_possible_gene_trees()))
+    print("starting_tree: " + ",".join(fam.get_possible_gene_trees()))
     sys.exit(1)
 
   dataset = sys.argv[1]
@@ -161,7 +161,7 @@ if (__name__ == "__main__"):
   cluster = sys.argv[4]
   cores = int(sys.argv[5])
   additional_arguments = sys.argv[min_args_number:]
-  check_inputs(starting_tree, strategy)
+  check_inputs(strategy)
 
   if (is_run):
     run(dataset, strategy, starting_tree, cores, additional_arguments, resultsdir)

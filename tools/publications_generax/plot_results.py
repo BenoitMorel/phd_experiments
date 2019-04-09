@@ -26,7 +26,7 @@ if (__name__ == "__main__"):
   x_labels["bl"] = "Gene tree branch length multiplier"
   x_labels["dl_ratio"] = "Rates ratio D/L (L is fixed)"
   x_labels["sites"] = "Number of sites"
-  x_labels["families"] = "Number of gene families"
+  #x_labels["families"] = "Number of gene families"
   x_labels["dt_ratio"] = "Rates ratio D/T (D+T is fixed)"
   
   methods_dl_rf = ["RAxML-NG", "Treerecs", "ALE-DL", "GeneRax-DL-Random", "GeneRax-DL-Raxml"]
@@ -42,8 +42,8 @@ if (__name__ == "__main__"):
   methods_dtl_ll = ["True"]
   methods_dtl_ll.extend(methods_dtl_rf)
   
-  params_to_plot_dl = ["sites", "loss_rate", "bl", "dl_ratio", "species", "families"]
-  params_to_plot_dtl = ["sites", "loss_rate", "bl", "species", "dt_ratio", "families"]
+  params_to_plot_dl = ["sites", "loss_rate", "bl", "dl_ratio", "species"]
+  params_to_plot_dtl = ["sites", "loss_rate", "bl", "species", "dt_ratio"]
   
   rf_y_label =  "Average relative RF"
   runtime_y_label = "Runtime with 40 cores (s)"

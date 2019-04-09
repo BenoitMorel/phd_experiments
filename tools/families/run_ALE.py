@@ -17,10 +17,15 @@ import cut_node_names
 import re
 import  run_exabayes
 
-ALE_SAMPLES = 1
-BURN_IN = 100
-EXA_TREES = 2000
+# ALE
+ALE_SAMPLES = 10
+
+# EXABAYES
+EXA_TREES = 500
 EXA_FREQ = 1000
+NUM_RUNS = 4
+NUM_CHAINS = 2
+PER_RUN_BURN_IN = 100
 EXA_GEN = EXA_TREES * EXA_FREQ
 
 def generate_ALE_observe_commands_file(dataset_dir, cores, output_dir):
@@ -37,7 +42,7 @@ def generate_ALE_observe_commands_file(dataset_dir, cores, output_dir):
       command.append("1")
       command.append("1")
       command.append(tree_list)
-      command.append("burnin=" + str(BURN_IN))
+      #command.append("burnin=" + str(BURN_IN))
       writer.write(" ".join(command) + "\n")
   return scheduler_commands_file
 
@@ -80,8 +85,8 @@ def extract_trees_from_ale_output(ale_output, output_trees):
   with open(output_trees, "w") as writer:
     for i in range(position, position + ALE_SAMPLES):
       # get rid of weird reconciliation format
-      new_lines = re.sub("\.[0-9\.]*:", ":", lines[i])
-      new_lines = re.sub("\.T.[^:]*", "", new_lines)
+      new_lines = re.sub("\.T.[^:]*", "", lines[i])
+      new_lines = re.sub("\.[0-9\.]*:", ":", new_lines)
       writer.write(new_lines)
 
 def extract_ALE_results(dataset_dir, ALE_run_dir, with_transfers, families_dir):
@@ -121,7 +126,7 @@ def run_ALE_on_families(dataset_dir, with_transfers, cores):
 
 def run_exabayes_and_ALE(dataset_dir, is_dna, cores):
   fam.init_dataset_dir(dataset_dir)
-  run_exabayes.run_exabayes_on_families(dataset_dir, EXA_GEN, EXA_FREQ, is_dna, cores)
+  run_exabayes.run_exabayes_on_families(dataset_dir, EXA_GEN, EXA_FREQ, NUM_RUNS, NUM_CHAINS, PER_RUN_BURN_IN, is_dna, cores)
   run_ALE_on_families(dataset_dir, True, cores)
   run_ALE_on_families(dataset_dir, False, cores)
 

@@ -44,7 +44,7 @@ def run_generax(dataset, starting_tree, with_transfers, run_name, is_dna, cores 
   command.append("SPR")
   command.append(starting_tree)
   command.append("normal")
-  command.append(cores)
+  command.append(str(cores))
   if (with_transfers):
     command.append("--rec-model")
     command.append("UndatedDTL")

@@ -6,9 +6,11 @@ import math
 sys.path.insert(0, os.path.join("tools", "trees"))
 sys.path.insert(0, os.path.join("tools", "families"))
 from read_tree import read_tree
+from read_tree import read_trees_list
 from rf_distance import ete3_rf
 from rf_distance import get_relative_rf
 from rf_distance import get_rf
+import rf_distance
 import concurrent.futures
 import saved_metrics
 
@@ -45,7 +47,7 @@ class AlignedPrinter:
       to_print = l + " " * (max_chars - len(l) + 1) + r
       print(to_print)
 
-def get_gene_tree(method, dataset_dir, msa):
+def get_gene_trees_list(method, dataset_dir, msa):
   tree_path = ""
   if (method in methods_tree_files):
     if (method == "True"):
@@ -54,7 +56,7 @@ def get_gene_tree(method, dataset_dir, msa):
       tree_path = os.path.join(dataset_dir, msa, "gene_trees", methods_tree_files[method])
   else:
     tree_path = os.path.join(dataset_dir, msa, "results", method + ".newick") 
-  return read_tree(tree_path)
+  return read_trees_list(tree_path)
 
 def add_ran_methods(methods, dataset_dir):
   runs_dir = os.path.join(dataset_dir, os.listdir(dataset_dir)[0], "results")
@@ -73,10 +75,10 @@ def analyze_msa(params):
   best_tree = {}
   
   for method in methods:
-    try: 
-      trees[method] = get_gene_tree(method, dataset_dir, msa)
-    except:
-      invalid_methods.append(method)
+    #try: 
+      trees[method] = get_gene_trees_list(method, dataset_dir, msa)
+    #except:
+    #  invalid_methods.append(method)
   for method in invalid_methods:
     if (method in methods):
       methods.remove(method)
@@ -87,7 +89,7 @@ def analyze_msa(params):
     method1 = method_pair[0]
     method2 = method_pair[1]
     methods_key = method1 + " - " + method2
-    rf_cell = ete3_rf(trees[method1], trees[method2])
+    rf_cell = rf_distance.ete3_average_rf_from_list(trees[method1], trees[method2])
     if (rf_cell[1] == 0):
       print("null cell for " + methods_key + " " + msa)
       print(trees[method1])
