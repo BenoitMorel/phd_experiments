@@ -104,7 +104,7 @@ def run_all_reference_methods(datasets, cores = 40):
   for dataset in datasets:
     run_reference_methods(dataset, cores)
 
-def run_all_generax(datasets, raxml = True, random = True, DL = True, DTL = True):
+def run_all_generax(datasets, raxml = True, random = True, DL = True, DTL = True, cores = 40):
   for dataset in datasets:
     print("*************************************")
     print("Run generate dataset for " + dataset)
@@ -112,14 +112,14 @@ def run_all_generax(datasets, raxml = True, random = True, DL = True, DTL = True
     is_dna = (not dataset in protein_datasets)
     if (raxml):
       if (DL):
-        run_generax(dataset, "RAxML-NG", False, "GeneRax-DL-Raxml", is_dna)
+        run_generax(dataset, "RAxML-NG", False, "GeneRax-DL-Raxml", is_dna, cores)
       if (DTL):
-        run_generax(dataset, "RAxML-NG", True, "GeneRax-DTL-Raxml", is_dna)
+        run_generax(dataset, "RAxML-NG", True, "GeneRax-DTL-Raxml", is_dna, cores)
     if (random):
       if (DL):
-        run_generax(dataset, "Random", False, "GeneRax-DL-Random", is_dna)
+        run_generax(dataset, "Random", False, "GeneRax-DL-Random", is_dna, cores)
       if (DTL):
-        run_generax(dataset, "Random", True, "GeneRax-DTL-Random", is_dna)
+        run_generax(dataset, "Random", True, "GeneRax-DTL-Random", is_dna, cores)
 
 def generate_all_datasets(datasets):
   for dataset in datasets:
@@ -311,10 +311,10 @@ def submit_single_experiment_haswell(dataset, cores):
   command.append(str(cores))
   results_dir = os.path.join("single_experiments", dataset)
   results_dir = exp.create_result_dir(results_dir, [])
-  result_msg = "GeneRax git: \n" + exp.get_git_info(exp.joint_search_root)
+  result_msg = ""
   exp.write_results_info(results_dir, result_msg) 
   submit_path = os.path.join(results_dir, "sub_generax.sh")
-  exp.submit(submit_path, " ".join(command), cores, "haswell") 
+  exp.submit(submit_path, " ".join(command), cores, "haswelld") 
 
 def submit_multiple_experiments_haswell(datasets, cores):
   for dataset in datasets:

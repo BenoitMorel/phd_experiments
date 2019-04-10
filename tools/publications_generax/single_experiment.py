@@ -6,8 +6,8 @@ def run_single_experiment(dataset, do_generate, cores):
   if (do_generate):
     common.generate_dataset(dataset)
   common.run_reference_methods(dataset, cores)
-  common.run_all_generax([dataset])
-  #common.compute_likelihoods([dataset])  
+  common.run_all_generax([dataset], cores = cores)
+  #common.compute_likelihoods([dataset], cores)  
   common.run_all_analyzes([dataset])
 
 

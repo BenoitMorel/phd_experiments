@@ -132,8 +132,9 @@ def launch(dataset, strategy, starting_tree, cluster, cores, additional_argument
   command.append("--exprun")
   resultsdir = os.path.join("GeneRax", dataset, strategy + "_start_" + starting_tree, "run")
   resultsdir = exp.create_result_dir(resultsdir, additional_arguments)
-  result_msg = "GeneRax git: \n" + exp.get_git_info(exp.joint_search_root)
-  exp.write_results_info(resultsdir, result_msg) 
+  #result_msg = "GeneRax git: \n" + exp.get_git_info(exp.joint_search_root)
+  #result_msg = ""
+  #exp.write_results_info(resultsdir, result_msg) 
   submit_path = os.path.join(resultsdir, "submit.sh")
   command.append(resultsdir)
   exp.submit(submit_path, " ".join(command), cores, cluster) 
