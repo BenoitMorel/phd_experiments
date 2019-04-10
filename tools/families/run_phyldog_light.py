@@ -36,12 +36,11 @@ def generate_scheduler_commands_file(dataset_dir, is_dna, cores, output_dir):
       command.append("gene.tree.file=" + fam.getRaxmlTree(dataset_dir, family))
       command.append("input.sequence.file=" + os.path.join(family_dir, "alignment.msa"))
       command.append("taxaseq.file=" + os.path.join(family_dir, "mapping.link"))
+      command.append("likelihood.evaluator=PLL")
       if (is_dna):
         command.append("model=GTR")
-        command.append("likelihood.evaluator=LIBPLL2")
       else:
         command.append("model=LG08")
-        command.append("likelihood.evaluator=PLL")
       if (not is_dna):
         command.append("alphabet=Protein")
       os.makedirs(os.path.join(results_dir, family))

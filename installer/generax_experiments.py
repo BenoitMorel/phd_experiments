@@ -134,6 +134,7 @@ def install_phyldog(repo_name):
   bpp_install = os.path.join(phyldog_deps, "bpp_install")
   bpp_libs = os.path.join(bpp_install, "lib")
   bpp_include = os.path.join(bpp_install, "include")
+  apply_git_diff("PHYLDOG", "phyldog_diff.txt")
   os.chdir(phyldog_deps)
   
   wget("https://sourceforge.net/projects/boost/files/boost/1.58.0/boost_1_58_0.zip/download", "boost.zip", phyldog_deps)

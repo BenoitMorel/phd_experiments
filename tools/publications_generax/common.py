@@ -314,7 +314,7 @@ def submit_single_experiment_haswell(dataset, cores):
   result_msg = ""
   exp.write_results_info(results_dir, result_msg) 
   submit_path = os.path.join(results_dir, "sub_generax.sh")
-  exp.submit(submit_path, " ".join(command), cores, "haswelld") 
+  exp.submit(submit_path, " ".join(command), cores, "haswell") 
 
 def submit_multiple_experiments_haswell(datasets, cores):
   for dataset in datasets:
