@@ -116,9 +116,9 @@ def jprime_to_families(jprime, out):
     new_family_dir = os.path.join(new_families_dir, family)
     os.makedirs(new_family_dir)
     # species tree
-    shutil.copyfile(new_species, os.path.join(new_family_dir, "speciesTree.newick"))
+    rel_symlink(new_species, os.path.join(new_family_dir, "speciesTree.newick"))
     # true trees
-    shutil.copyfile(genetree, os.path.join(new_family_dir, "trueGeneTree.newick"))
+    rel_symlink(genetree, os.path.join(new_family_dir, "trueGeneTree.newick"))
     # alignment
     alignment_base = family_number + ".fasta" 
     new_alignment_base = family + ".fasta"

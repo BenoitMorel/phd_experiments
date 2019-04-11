@@ -128,10 +128,13 @@ def extract_exabayes_results(exabayes_run_dir, families_dir, burnin):
   print("Finished extracting exabayes results " + str(time.time() - start) + "s")
   sys.stdout.flush()
   
+def get_exabayes_output_dir(dataset_dir):
+  return os.path.join(dataset_dir, "runs", "exabayes_run")
+  
 
 def run_exabayes_on_families(dataset_dir, generations, frequency, runs, chains, burnin, is_dna, cores):
   fam.init_dataset_dir(dataset_dir)
-  output_dir = os.path.join(dataset_dir, "runs", "exabayes_run")
+  output_dir = get_exabayes_output_dir(dataset_dir)
   shutil.rmtree(output_dir, True)
   os.makedirs(output_dir)
   scheduler_commands_file = generate_exabayes_commands_file(dataset_dir, generations, frequency, runs, chains, is_dna, cores, output_dir)
@@ -141,6 +144,15 @@ def run_exabayes_on_families(dataset_dir, generations, frequency, runs, chains, 
   print("Finished running exabayes after " + str(time.time() - start) + "s")
   sys.stdout.flush()
   extract_exabayes_results(output_dir, os.path.join(dataset_dir, "families"), burnin)
+
+def clean_exabayes(dataset_dir):
+  families_dir = os.path.join(dataset_dir, "families")
+  for family in os.listdir(families_dir):
+    family_dir = os.path.join(families_dir, family)
+    family_misc_dir = os.path.join(family_dir, "misc")
+    treelist = os.path.join(family_misc_dir, family + ".treelist")
+    os.remove(os.path.join(treelist))
+  shutil.rmtree(get_exabayes_output_dir(dataset_dir))
 
 if (__name__== "__main__"):
   max_args_number = 4
