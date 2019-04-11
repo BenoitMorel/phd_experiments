@@ -124,6 +124,12 @@ def add_string_to_file(f, s):
   with open(f, "w") as writer:
     writer.write(content + "\n" + s + "\n")
 
+def install_standard_raxml(name):
+  cwd = os.getcwd()
+  os.chdir(name) 
+  call(["make", "Makefile.AVX.gcc"])
+  os.chdir(cwd)
+
 def install_phyldog(repo_name):
   cwd = os.getcwd()
   phyldog_root = os.path.join(exp.github_root, repo_name)
@@ -184,7 +190,7 @@ if (False):
   git_update("https://github.com/BenoitMorel/Pargenes.git", "pargenes")
   git_update("https://github.com/amkozlov/raxml-ng.git", "raxml-ng", "dev")
   git_update("https://gitlab.inria.fr/Phylophile/Treerecs.git", "Treerecs", "treesearch")
-  
+  git_update("https://github.com/stamatak/standard-RAxML.git", "standard-RAxML")  
   install_bpp_for_ale()
   apply_git_diff("ALE", "ale_diff.txt")
   home = os.path.expanduser("~")
@@ -212,6 +218,7 @@ if (False):
 
   install_phyldog("PHYLDOG")
 
+  install_standard_raxml("standard-RAxML")
 
 if (True):
   pass
