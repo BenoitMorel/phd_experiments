@@ -1,17 +1,19 @@
 import sys
 import os
 import subprocess
-sys.path.insert(0, 'scripts')
-import experiments as exp
 import exp_jointsearch_utils as utils
+sys.path.insert(0, 'scripts')
+sys.path.insert(0, 'tools/families')
+import experiments as exp
+import fam
 
 
 
 def get_compare_rf_command(data_dir, tree, name, output):
   command = "echo Comparing true tree and " + name + " tree: >> " + output + "\n"
   command += "python " + exp.rf_distance_tool + " "
-  command += utils.get_gene_tree(data_dir, "true") + " "
-  command += utils.get_gene_tree(data_dir, tree) + " >> " + output
+  command += fam.get_gene_tree(data_dir, "true") + " "
+  command += fam.get_gene_tree(data_dir, tree) + " >> " + output
   return command
 
 
@@ -24,7 +26,7 @@ def launch_jointsearch(mode):
     for dataset in datasets:
       print("\t" + dataset)
     print("strategy: " + ",".join(utils.get_possible_strategies()))
-    print("starting_tree: " + ",".join(utils.get_possible_gene_trees()))
+    print("starting_tree: " + ",".join(fam.get_possible_gene_trees()))
     sys.exit(0)
 
   dataset = sys.argv[1]
@@ -33,7 +35,6 @@ def launch_jointsearch(mode):
   cluster = sys.argv[4]
   cores = int(sys.argv[5])
   additional_arguments = sys.argv[max_args_number:]
-  utils.check_inputs(starting_tree, strategy)
 
   resultsdir = os.path.join("JointSearch", dataset, strategy + "_start_" + starting_tree, cluster + "_" + str(cores), "run")
   resultsdir = exp.create_result_dir(resultsdir, additional_arguments)
@@ -41,7 +42,7 @@ def launch_jointsearch(mode):
   exp.write_results_info(resultsdir, result_msg) 
 
   datadir = datasets[dataset]
-  gene_tree = utils.get_gene_tree(datadir, starting_tree)
+  gene_tree = fam.get_gene_tree(datadir, starting_tree)
   species_tree = os.path.join(datadir, "speciesTree.newick")
   alignment = os.path.join(datadir, "alignment.msa")
   mapping = os.path.join(datadir, "mapping.link")
@@ -54,7 +55,7 @@ def launch_jointsearch(mode):
 
   command += "\n"
   command += "echo\n"
-  command += get_compare_rf_command(datadir, "raxml", "raxml", summary)
+  command += get_compare_rf_command(datadir, "raxml-ng", "raxml-ng", summary)
   command += "\n"
   command += get_compare_rf_command(datadir, "treerecs", "treerecs", summary)
   command += "\n"

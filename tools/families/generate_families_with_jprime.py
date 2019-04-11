@@ -76,10 +76,10 @@ def generate_seqgen_sequence(families, sites, model, output, seed):
     with open(sequence_file, "w") as writer:
       subprocess.check_call(command, stdout=writer)
 
-def build_mapping_file(gprime_mapping, phyldog_mapping, treerecs_mapping):
+def build_mapping_file(jprime_mapping, phyldog_mapping, treerecs_mapping):
   phyldog_writer = open(phyldog_mapping, "w")
   treerecs_writer = open(treerecs_mapping, "w")
-  lines = open(gprime_mapping).readlines()
+  lines = open(jprime_mapping).readlines()
   dico = {}
   for line in lines:
     split = line.split("\t")
@@ -91,20 +91,24 @@ def build_mapping_file(gprime_mapping, phyldog_mapping, treerecs_mapping):
   for species, genes in dico.items():
     phyldog_writer.write(species + ":" + ";".join(genes) + "\n")
 
-def gprime_to_families(gprime, out):
+def rel_symlink(src, dest):
+  relative_path = os.path.relpath(src, os.path.dirname(dest))
+  os.symlink(relative_path,  dest)
+
+def jprime_to_families(jprime, out):
   new_ali_dir = os.path.join(out, "alignments")
   new_families_dir = os.path.join(out, "families")
   os.makedirs(new_ali_dir)
   os.makedirs(new_families_dir)
   # species tree
-  species = os.path.join(gprime, "species.pruned.tree")
+  species = os.path.join(jprime, "species.pruned.tree")
   new_species = os.path.join(out, "speciesTree.newick")
   shutil.copyfile(species, new_species)
   alignments_writer = open(os.path.join(out, "alignments.txt"), "w")
-  for genetree_base in os.listdir(gprime):
+  for genetree_base in os.listdir(jprime):
     if (not "gene.pruned.tree" in genetree_base):
       continue
-    genetree = os.path.join(gprime, genetree_base)
+    genetree = os.path.join(jprime, genetree_base)
     if (os.path.getsize(genetree) < 2):
       continue
     family_number = genetree_base.split("_")[0]
@@ -118,15 +122,16 @@ def gprime_to_families(gprime, out):
     # alignment
     alignment_base = family_number + ".fasta" 
     new_alignment_base = family + ".fasta"
-    alignment = os.path.join(gprime, alignment_base)
-    shutil.copyfile(alignment, os.path.join(new_family_dir, "alignment.msa"))
-    shutil.copyfile(alignment, os.path.join(new_ali_dir, new_alignment_base))
+    alignment = os.path.join(jprime, alignment_base)
+   
+    rel_symlink(alignment, os.path.join(new_family_dir, "alignment.msa"))
+    rel_symlink(alignment, os.path.join(new_ali_dir, new_alignment_base))
     alignments_writer.write(os.path.abspath(os.path.join(new_ali_dir, new_alignment_base)) + "\n")
     # link file
-    gprime_mapping = os.path.join(gprime, genetree_base[:-4] + "leafmap")
+    jprime_mapping = os.path.join(jprime, genetree_base[:-4] + "leafmap")
     phyldog_mapping = os.path.join(new_family_dir, "mapping.link")
     treerecs_mapping = os.path.join(new_family_dir, "treerecs_mapping.link")
-    build_mapping_file(gprime_mapping, phyldog_mapping, treerecs_mapping)
+    build_mapping_file(jprime_mapping, phyldog_mapping, treerecs_mapping)
 
 def rescale_trees(jprime_output, families, bl_factor):
   for i in range(0, families):
@@ -167,7 +172,7 @@ def generate_jprime(species, families, sites, model, bl_factor, dupRate, lossRat
   rescale_trees(jprime_output, families, bl_factor)
   generate_seqgen_sequence(families, sites, model, jprime_output, seed)
   print("jprime output: " + jprime_output)
-  gprime_to_families(jprime_output, output)
+  jprime_to_families(jprime_output, output)
   
   species_nodes = analyze_tree.get_tree_taxa_number(os.path.join(jprime_output, "species.pruned.tree"))
   new_output = os.path.join(root_output, get_output(species_nodes, families, sites, model, bl_factor, dupRate, lossRate, transferRate))
