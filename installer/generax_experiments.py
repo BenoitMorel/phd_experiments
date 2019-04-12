@@ -46,6 +46,14 @@ def git_update(repo, output = "", branch = "", output_prefix = exp.github_root):
     print("failed to update submodule for " + repo)
   os.chdir(cwd)
 
+def apply_diff(diff_file):
+  cwd = os.getcwd()
+  os.chdir(exp.github_root)
+  os.system("patch -p0 < " + diff_file)
+
+  os.chdir(cwd)
+
+
 def apply_git_diff(repo_name, diff_file):
   output = os.path.join(exp.github_root, repo_name)
   cwd = os.getcwd()
@@ -180,6 +188,7 @@ def install_phyldog(repo_name):
 
 
 
+
 if (False):
   git_update("https://github.com/ssolo/ALE.git", "ALE")
   git_update("https://github.com/BenoitMorel/BenoitDatasets.git", "BenoitDatasets")
@@ -221,5 +230,5 @@ if (False):
   install_standard_raxml("standard-RAxML")
 
 if (True):
-  pass
+  apply_diff(os.path.join(exp.github_root, "phd_experiments", "installer", "exabayes_diff.txt"))
 
