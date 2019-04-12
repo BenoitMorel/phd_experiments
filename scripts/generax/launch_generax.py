@@ -37,19 +37,19 @@ def build_generax_families_file(dataset, starting_tree, is_protein, output):
       
       family_path = os.path.join(families_dir, family)
       writer.write("- " + family + "\n")
-      writer.write("G: " + fam.get_gene_tree(family_path, starting_tree) + "\n")
-      writer.write("A: " + fam.get_alignment_file(family_path) + "\n")
-      writer.write("M: " + fam.get_mapping_file(family_path) + "\n")
+      writer.write("starting_gene_tree = " + fam.get_gene_tree(family_path, starting_tree) + "\n")
+      writer.write("alignment = " + fam.get_alignment_file(family_path) + "\n")
+      writer.write("mapping = " + fam.get_mapping_file(family_path) + "\n")
       raxml_model = ""
       if (starting_tree != "random"):
         raxml_model = fam.get_raxml_model(family_path)
       if (os.path.isfile(raxml_model)):
-        writer.write("S: " + raxml_model + "\n")
+        writer.write("subst_model = " + raxml_model + "\n")
       else:
         if (is_protein):
-          writer.write("S: LG\n")
+          writer.write("subst_model = LG\n")
         else:
-          writer.write("S: GTR\n")
+          writer.write("subst_model = GTR\n")
 
 def get_generax_command(generax_families_file, species_tree, strategy, additional_arguments, output_dir, mode, cores):
     executable = exp.generax_exec
@@ -163,6 +163,10 @@ if (__name__ == "__main__"):
   cores = int(sys.argv[5])
   additional_arguments = sys.argv[min_args_number:]
   check_inputs(strategy)
+
+  if (starting_tree == "raxml"):
+    print("use raxml-ng instead of raxml please")
+    exit(1)
 
   if (is_run):
     run(dataset, strategy, starting_tree, cores, additional_arguments, resultsdir)
