@@ -44,12 +44,12 @@ def build_generax_families_file(dataset, starting_tree, is_protein, output):
       if (starting_tree != "random"):
         raxml_model = fam.get_raxml_model(family_path)
       if (os.path.isfile(raxml_model)):
-        writer.write("L: " + raxml_model + "\n")
+        writer.write("S: " + raxml_model + "\n")
       else:
         if (is_protein):
-          writer.write("L: LG\n")
+          writer.write("S: LG\n")
         else:
-          writer.write("L: GTR\n")
+          writer.write("S: GTR\n")
 
 def get_generax_command(generax_families_file, species_tree, strategy, additional_arguments, output_dir, mode, cores):
     executable = exp.generax_exec
