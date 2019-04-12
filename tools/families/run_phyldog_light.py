@@ -82,7 +82,7 @@ def clean_phyldog(dataset_dir):
     if (f.startswith("tmpPLL") and  (dataset_name.replace(".", "_") in f.replace(".", "_"))):
       os.remove(os.path.join(phyldog_run_dir, f))
 
-def run_phyldog_on_families(dataset_dir, is_dna, cores):
+def run_phyldogt stat_on_families(dataset_dir, is_dna, cores):
   fam.init_dataset_dir(dataset_dir)
   output_dir = get_phyldog_run_dir(dataset_dir)
   shutil.rmtree(output_dir, True)

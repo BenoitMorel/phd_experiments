@@ -41,6 +41,7 @@ joint_likelihood_evaluator_exec = os.path.join(treerecs_root, "build", "bin", "m
 treerecs_joint_search_exec = os.path.join(treerecs_root, "build", "bin", "misc", "jointTreeSearch")
 joint_search_root = os.path.join(github_root, "GeneRax")
 generax_exec = os.path.join(joint_search_root, "build", "bin", "generax")
+speciesrax_exec = os.path.join(joint_search_root, "build", "bin", "speciesrax")
 generax_gprof_exec = os.path.join(joint_search_root, "gprof_build", "bin", "generax")
 generax_scalasca_exec = os.path.join(joint_search_root, "scalasca_build", "bin", "generax")
 joint_search_exec = os.path.join(joint_search_root, "build", "bin", "JointSearch")
