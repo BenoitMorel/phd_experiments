@@ -115,7 +115,7 @@ def analyze(dataset_dir, benched_method = ""):
   families_dir = os.path.join(dataset_dir, "families") 
   analyzed_msas = 0
   total_nodes_number = 0
-  methods = ["True", "RAxML-NG", "Treerecs", "Phyldog", "Notung", "ALE-DL", "ALE-DTL"]
+  methods = ["True", "RAxML-NG", "Phyldog"] #"Treerecs", "Phyldog", "Notung", "ALE-DL", "ALE-DTL"]
   add_ran_methods(methods, families_dir)
   methods_trees_number = {}
   methods_to_compare = []

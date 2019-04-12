@@ -91,10 +91,6 @@ def build_mapping_file(jprime_mapping, phyldog_mapping, treerecs_mapping):
   for species, genes in dico.items():
     phyldog_writer.write(species + ":" + ";".join(genes) + "\n")
 
-def rel_symlink(src, dest):
-  relative_path = os.path.relpath(src, os.path.dirname(dest))
-  os.symlink(relative_path,  dest)
-
 def jprime_to_families(jprime, out):
   new_ali_dir = os.path.join(out, "alignments")
   new_families_dir = os.path.join(out, "families")
@@ -116,22 +112,23 @@ def jprime_to_families(jprime, out):
     new_family_dir = os.path.join(new_families_dir, family)
     os.makedirs(new_family_dir)
     # species tree
-    rel_symlink(new_species, os.path.join(new_family_dir, "speciesTree.newick"))
+    exp.relative_symlink(new_species, os.path.join(new_family_dir, "speciesTree.newick"))
     # true trees
-    rel_symlink(genetree, os.path.join(new_family_dir, "trueGeneTree.newick"))
+    exp.relative_symlink(genetree, os.path.join(new_family_dir, "trueGeneTree.newick"))
     # alignment
     alignment_base = family_number + ".fasta" 
     new_alignment_base = family + ".fasta"
     alignment = os.path.join(jprime, alignment_base)
    
-    rel_symlink(alignment, os.path.join(new_family_dir, "alignment.msa"))
-    rel_symlink(alignment, os.path.join(new_ali_dir, new_alignment_base))
+    exp.relative_symlink(alignment, os.path.join(new_family_dir, "alignment.msa"))
+    exp.relative_symlink(alignment, os.path.join(new_ali_dir, new_alignment_base))
     alignments_writer.write(os.path.abspath(os.path.join(new_ali_dir, new_alignment_base)) + "\n")
     # link file
     jprime_mapping = os.path.join(jprime, genetree_base[:-4] + "leafmap")
     phyldog_mapping = os.path.join(new_family_dir, "mapping.link")
     treerecs_mapping = os.path.join(new_family_dir, "treerecs_mapping.link")
     build_mapping_file(jprime_mapping, phyldog_mapping, treerecs_mapping)
+    exp.relative_symlink(phyldog_mapping, os.path.join(all_mappings_dir, family  + ".link"))
 
 def rescale_trees(jprime_output, families, bl_factor):
   for i in range(0, families):

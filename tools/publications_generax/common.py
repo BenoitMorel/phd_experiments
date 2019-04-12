@@ -16,6 +16,7 @@ import generate_families_with_jprime as jprime
 import run_raxml_supportvalues as raxml
 import run_ALE
 import run_all
+import run_phyldog_light
 import saved_metrics
 import eval_generax_likelihood
 
@@ -86,6 +87,12 @@ def run_reference_methods(dataset, cores = 40):
   sys.stdout = save_sdtout
   print("End of run_all")
   sys.stdout.flush()
+
+def run_all_phyldog(datasets, is_dna, cores):
+  for dataset in datasets:
+    dataset_dir = os.path.join("../BenoitDatasets/families", dataset)
+    is_dna = (not dataset in protein_datasets)
+    run_phyldog_light.run_phyldog_light_on_families(dataset_dir, is_dna, cores)
 
 def run_all_raxml_light(datasets, cores = 40):
   for dataset in datasets:

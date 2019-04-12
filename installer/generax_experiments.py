@@ -142,12 +142,11 @@ def install_phyldog(repo_name):
   bpp_include = os.path.join(bpp_install, "include")
   apply_git_diff("PHYLDOG", "phyldog_diff.txt")
   os.chdir(phyldog_deps)
-  
   wget("https://sourceforge.net/projects/boost/files/boost/1.58.0/boost_1_58_0.zip/download", "boost.zip", phyldog_deps)
   os.chdir("boost_1_58_0")
   call(["./bootstrap.sh", "--prefix=boost_install", "--with-libraries=mpi,serialization"])
   add_string_to_file("project-config.jam", "using mpi ;")
-  call(["./b2", "--user-config=/hits/basement/cme/morel/github/PHYLDOG/temp_install/boost_1_58_0/project-config.jam"]) 
+  call(["./b2", "--user-config=project-config.jam"]) 
   call(["./b2", "install"]) 
   
  
@@ -159,7 +158,6 @@ def install_phyldog(repo_name):
   install_with_cmake(os.path.join(phyldog_deps, "bpp-core"), ["-DCMAKE_INSTALL_PREFIX=" + bpp_install], True)
   install_with_cmake(os.path.join(phyldog_deps, "bpp-seq"), ["-DCMAKE_INSTALL_PREFIX=" + bpp_install], True)
   install_with_cmake(os.path.join(phyldog_deps, "bpp-phyl"), ["-DCMAKE_INSTALL_PREFIX=" + bpp_install, "-DCMAKE_LIBRARY_PATH=" + bpp_libs, "-DCMAKE_INCLUDE_PATH=" + bpp_include], True)
-  
   print ("WARNING: YOU NEED TO DOWNLOAD AND BUILD OLD PLL HERE!!!")
   pll_libs = os.path.join(phyldog_deps, "pll") 
   pll_includes = os.path.join(phyldog_deps, "pll") 
@@ -213,13 +211,13 @@ if (False):
     shutil.copy(treerecs_exec, treerecs_exec_2)
   except:
     pass
+  install_standard_raxml("standard-RAxML")
 
-  git_update("https://github.com/Boussau/PHYLDOG", PHYLDOG)
+  git_update("https://github.com/Boussau/PHYLDOG", "PHYLDOG")
 
   install_phyldog("PHYLDOG")
 
-  install_standard_raxml("standard-RAxML")
-
 if (True):
+
   pass
 

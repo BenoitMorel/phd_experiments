@@ -4,6 +4,7 @@ import os
 import datetime
 import sys
 import subprocess
+import shutil
 
 def get_parent_path(path):
   return os.path.abspath(os.path.join(path, os.pardir))
@@ -57,6 +58,7 @@ oldraxml_exec = os.path.join(oldraxml_root, "raxmlHPC-AVX")
 bigdatasets_root = os.path.join(github_root, "datasets")
 phyldog_root = os.path.join(github_root, "PHYLDOG")
 phyldog_light_exec = os.path.join(phyldog_root, "build", "bin", "phyldog_light")
+phyldog_exec = os.path.join(phyldog_root, "build", "bin", "phyldog")
 zombi_script = os.path.join(github_root, "ZOMBI", "Zombi.py")
 jprime_jar = os.path.join(github_root, "jprime", "jprime-0.3.6.jar")
 ale_root = os.path.join(github_root, "ALE")
@@ -213,6 +215,17 @@ def try_make_dir(dir_name):
     os.makedirs(dir_name)
   except:
     pass
+
+def mkdir(dir_name):
+  try_make_dir(dir_name)
+
+def relative_symlink(src, dest):
+  relative_path = os.path.relpath(src, os.path.dirname(dest))
+  os.symlink(relative_path,  dest)
+
+def reset_dir(dir_name):
+  shutil.rmtree(dir_name, True)
+  os.makedirs(dir_name)
 
 def checkAndDelete(arg, arguments):
   if (arg in arguments):
