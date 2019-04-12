@@ -92,7 +92,7 @@ def run_all_phyldog(datasets, is_dna, cores):
   for dataset in datasets:
     dataset_dir = os.path.join("../BenoitDatasets/families", dataset)
     is_dna = (not dataset in protein_datasets)
-    run_phyldog_light.run_phyldog_light_on_families(dataset_dir, is_dna, cores)
+    run_phyldog_light.run_phyldog_on_families(dataset_dir, is_dna, cores)
 
 def run_all_raxml_light(datasets, cores = 40):
   for dataset in datasets:

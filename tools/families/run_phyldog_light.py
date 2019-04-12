@@ -71,17 +71,18 @@ def extract_phyldog_trees(dataset_dir):
     else:
       print("Warning: no phyldog tree for family " + family)
 
-def clean_phyldog(dataset_dir):
-  dataset_name = os.path.basename(dataset_dir)
-  print("CLEANING " + dataset_name)
-  for f in os.listdir("."):
-    if (f.startswith("tmpPLL") and  (dataset_name.replace(".", "_") in f.replace(".", "_"))):
-      os.remove(f)
-
 def get_phyldog_run_dir(dataset_dir):
   return os.path.join(dataset_dir, "runs", "phyldog_run")
 
-def run_phyldog_light_on_families(dataset_dir, is_dna, cores):
+def clean_phyldog(dataset_dir):
+  phyldog_run_dir = get_phyldog_run_dir(dataset_dir)
+  dataset_name = os.path.basename(dataset_dir)
+  print("CLEANING " + dataset_name)
+  for f in os.listdir(phyldog_run_dir):
+    if (f.startswith("tmpPLL") and  (dataset_name.replace(".", "_") in f.replace(".", "_"))):
+      os.remove(os.path.join(phyldog_run_dir, f))
+
+def run_phyldog_on_families(dataset_dir, is_dna, cores):
   fam.init_dataset_dir(dataset_dir)
   output_dir = get_phyldog_run_dir(dataset_dir)
   shutil.rmtree(output_dir, True)
@@ -89,14 +90,21 @@ def run_phyldog_light_on_families(dataset_dir, is_dna, cores):
   generate_options(dataset_dir, is_dna)
   run_phyldog(dataset_dir, cores)
   extract_phyldog(dataset_dir)
-  return
+  clean_phyldog(dataset_dir)
+  return 
+
+
+def run_phyldog_light_on_families(dataset_dir, is_dna, cores):
+  fam.init_dataset_dir(dataset_dir)
+  output_dir = get_phyldog_run_dir(dataset_dir)
+  shutil.rmtree(output_dir, True)
+  os.makedirs(output_dir)
   scheduler_commands_file = generate_scheduler_commands_file(dataset_dir, is_dna, cores, output_dir)
   command = generate_scheduler_command(scheduler_commands_file, cores, output_dir)
   print(command.split(" "))
   start = time.time()
   subprocess.check_call(command.split(" "), stdout = sys.stdout)
   saved_metrics.save_metrics(dataset_dir, "Phyldog", (time.time() - start), "runtimes") 
-  clean_phyldog(dataset_dir)
   extract_phyldog_trees(dataset_dir)
   extract.extract_events_from_phyldog(dataset_dir)
     
@@ -113,6 +121,7 @@ def add_starting_tree(option_file, tree_path):
     writer.write("\n")
     writer.write("init.gene.tree=user\n")
     writer.write("gene.tree.file=" + tree_path + "\n")
+    writer.write("use.quality.filters=0\n")
 
 def generate_options(dataset_dir, is_dna):
   families_dir = os.path.join(dataset_dir, "families")
@@ -149,7 +158,7 @@ def generate_options(dataset_dir, is_dna):
     writer.write(os.path.join(dataset_dir, "phyldogSpeciesTree.newick") + "\n")
     writer.write("no" + "\n") #opt species tree
     writer.write("yes" + "\n") # opt dup loss
-    writer.write("branchwise" + "\n") # branchwise DL opt
+    writer.write("average" + "\n") # branchwise DL opt
     writer.write("no" + "\n") # same number of genes ?
     writer.write("yes" + "\n") # opt gene trees
     writer.write("48" + "\n") # max time (hours)
@@ -163,6 +172,7 @@ def generate_options(dataset_dir, is_dna):
 
    
 def run_phyldog(dataset_dir, cores):
+  cwd = os.getcwd()
   families_number = len(os.listdir(os.path.join(dataset_dir, "families")))
   print("plop")
   print(str(families_number) + " families")
@@ -173,12 +183,14 @@ def run_phyldog(dataset_dir, cores):
   command.append("-n")
   command.append(str(cores))
   command.append(exp.phyldog_exec)
-  command.append("param=" + os.path.join(phyldog_run_dir, "options", "GeneralOptions.txt"))
+  command.append("param=" + os.path.abspath(os.path.join(phyldog_run_dir, "options", "GeneralOptions.txt")))
   print("EXECUTE PHYLDOG")
   print(" ".join(command))
   logs = open(os.path.join(phyldog_run_dir, "logs.txt"), "w")
+  os.chdir(phyldog_run_dir)
   subprocess.check_call(command, stdout = logs)
   print("end EXECUTE PHYLDOG")
+  os.chdir(cwd)
 
 
 def extract_phyldog(dataset_dir):
@@ -201,5 +213,5 @@ if (__name__== "__main__"):
   dataset_dir = sys.argv[1]
   is_dna = int(sys.argv[2]) != 0
   cores = int(sys.argv[3])
-  run_phyldog_light_on_families(dataset_dir, is_dna, cores)
+  run_phyldog_on_families(dataset_dir, is_dna, cores)
 

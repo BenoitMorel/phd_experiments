@@ -22,7 +22,7 @@ def run_reference_methods(dataset_dir, is_dna, starting_trees, bs_trees, cores):
   sys.stdout.flush()
   print("Run phyldog...")
   sys.stdout.flush()
-  phyldog.run_phyldog_light_on_families(dataset_dir, is_dna, cores)
+  phyldog.run_phyldog_on_families(dataset_dir, is_dna, cores)
   print("Run notung...")
   sys.stdout.flush()
   threshold = 80
