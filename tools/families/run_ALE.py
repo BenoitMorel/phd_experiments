@@ -21,10 +21,10 @@ import  run_exabayes
 ALE_SAMPLES = 10
 
 # EXABAYES
-EXA_TREES = 200
-EXA_FREQ = 10
+EXA_TREES = 2000
+EXA_FREQ = 1000
 NUM_RUNS = 4
-NUM_CHAINS = 4
+NUM_CHAINS = 4 
 PER_RUN_BURN_IN = 100
 EXA_GEN = EXA_TREES * EXA_FREQ
 
@@ -142,12 +142,17 @@ def run_ALE_on_families(dataset_dir, with_transfers, cores):
   extract_ALE_results(dataset_dir, ml_output_dir, with_transfers, os.path.join(dataset_dir, "families"))
 
 def run_exabayes_and_ALE(dataset_dir, is_dna, cores):
+  run_dir = os.path.join(dataset_dir, "runs")
+  dataset_dir = os.path.abspath(dataset_dir)
   fam.init_dataset_dir(dataset_dir)
+  cwd = os.getcwd()
+  os.chdir(run_dir)
   run_exabayes.run_exabayes_on_families(dataset_dir, EXA_GEN, EXA_FREQ, NUM_RUNS, NUM_CHAINS, PER_RUN_BURN_IN, is_dna, cores)
   run_ALE_on_families(dataset_dir, True, cores)
   run_ALE_on_families(dataset_dir, False, cores)
   run_exabayes.clean_exabayes(dataset_dir)
   clean_ALE(dataset_dir)
+  os.chdir(cwd)
 
 if (__name__== "__main__"):
   max_args_number = 4

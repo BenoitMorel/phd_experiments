@@ -128,7 +128,6 @@ def jprime_to_families(jprime, out):
     phyldog_mapping = os.path.join(new_family_dir, "mapping.link")
     treerecs_mapping = os.path.join(new_family_dir, "treerecs_mapping.link")
     build_mapping_file(jprime_mapping, phyldog_mapping, treerecs_mapping)
-    exp.relative_symlink(phyldog_mapping, os.path.join(all_mappings_dir, family  + ".link"))
 
 def rescale_trees(jprime_output, families, bl_factor):
   for i in range(0, families):
