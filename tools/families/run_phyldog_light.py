@@ -188,7 +188,9 @@ def run_phyldog(dataset_dir, cores):
   print(" ".join(command))
   logs = open(os.path.join(phyldog_run_dir, "logs.txt"), "w")
   os.chdir(phyldog_run_dir)
+  start = time.time()
   subprocess.check_call(command, stdout = logs)
+  saved_metrics.save_metrics(dataset_dir, "Phyldog", (time.time() - start), "runtimes") 
   print("end EXECUTE PHYLDOG")
   os.chdir(cwd)
 
