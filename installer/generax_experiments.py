@@ -204,7 +204,7 @@ if (False):
   install_with_cmake("ALE", ["-DCMAKE_LIBRARY_PATH=" + home + "/install/bio++/lib", "-DCMAKE_INCLUDE_PATH=" + home + "/install/bio++/include/"])
   
   wget("https://cme.h-its.org/exelixis/resource/download/software/exabayes-1.5.zip", "exabayes-1.5.zip")
-  install_with_autotools("exabayes-1.5")
+  apply_diff(os.path.join(exp.github_root, "phd_experiments", "installer", "exabayes_diff.txt"))
   install_with_cmake("GeneRax")
   install_with_install_script("pargenes") 
   git_update("https://github.com/BenoitMorel/MPIScheduler.git", "MPIScheduler")
@@ -227,5 +227,5 @@ if (False):
   install_phyldog("PHYLDOG")
 
 if (True):
-  apply_diff(os.path.join(exp.github_root, "phd_experiments", "installer", "exabayes_diff.txt"))
+  install_with_autotools("exabayes-1.5")
 

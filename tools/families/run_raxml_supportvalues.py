@@ -68,8 +68,6 @@ def export_pargenes_trees(pargenes_dir, dataset_dir):
     old_raxml_tree = os.path.join(support_trees_dir, support_tree)
     new_raxml_tree = fam.getRaxmlTree(dataset_dir, family)
     shutil.copyfile(old_raxml_tree, new_raxml_tree)
-    raxml_symlink = os.path.join(all_raxml_trees_dir, family + ".newick")
-    exp.relative_symlink(old_raxml_tree, raxml_symlink) 
 
   # ml trees
   ml_trees_dir = os.path.join(pargenes_dir, "mlsearch_run", "results")

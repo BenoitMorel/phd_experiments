@@ -9,6 +9,7 @@ import common
 
 def substract(datasets_dico, method):
   for dataset in datasets_dico:
+    print("substract dataset " + dataset)
     dico = datasets_dico[dataset]
     substract = float(dico[method])
     for m in dico:
@@ -29,7 +30,7 @@ if (__name__ == "__main__"):
   #x_labels["families"] = "Number of gene families"
   x_labels["dt_ratio"] = "Rates ratio D/T (D+T is fixed)"
   
-  methods_dl_rf = ["RAxML-NG", "Treerecs", "ALE-DL", "GeneRax-DL-Random", "GeneRax-DL-Raxml"]
+  methods_dl_rf = ["RAxML-NG", "Notung", "Phyldog", "Treerecs", "ALE-DL", "GeneRax-DL-Random", "GeneRax-DL-Raxml"]
   methods_dtl_rf = ["RAxML-NG", "Treerecs", "ALE-DTL", "GeneRax-DTL-Random", "GeneRax-DTL-Raxml"]
 
   methods_dl_runtimes = list(methods_dl_rf)
@@ -42,8 +43,8 @@ if (__name__ == "__main__"):
   methods_dtl_ll = ["True"]
   methods_dtl_ll.extend(methods_dtl_rf)
   
-  params_to_plot_dl = ["sites", "loss_rate", "bl", "dl_ratio", "species"]
-  params_to_plot_dtl = ["sites", "loss_rate", "bl", "species", "dt_ratio"]
+  params_to_plot_dl = ["bl"] #, "sites", "loss_rate", "dl_ratio", "species"]
+  params_to_plot_dtl = [] #"sites", "loss_rate", "bl", "species", "dt_ratio"]
   
   rf_y_label =  "Average relative RF"
   runtime_y_label = "Runtime with 40 cores (s)"
@@ -54,8 +55,11 @@ if (__name__ == "__main__"):
   datasets_rf_dico = common.get_metrics_for_datasets(prefix, "average_rrf")
   datasets_runtimes_dico = common.get_metrics_for_datasets(prefix, "runtimes")
   datasets_ll_dico = common.get_metrics_for_datasets(prefix, "joint_likelihood_DL")
-  substract(datasets_ll_dico, "True")
-  
+  try:
+    substract(datasets_ll_dico, "True")
+  except:
+    print("failed substracting likelihoods")
+
   fixed_params = {}
   fixed_params["species"] = "19"
   fixed_params["bl"] = "0.5"
@@ -70,7 +74,7 @@ if (__name__ == "__main__"):
   for param in params_to_plot_dl:
     plotter_rf(param)
     plotter_runtimes(param)
-    plotter_ll(param)
+    #plotter_ll(param)
   
   #fixed_point_dtl = "jsimdtl_s16_f100_sites500_dna4_bl0.5_d0.1_l0.2_t0.1"
 

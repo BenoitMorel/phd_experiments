@@ -176,7 +176,7 @@ def get_results(dataset):
     cmd.append(analyse_script)
     cmd.append(dataset_path)
     print(" ".join(cmd))
-    logs = subprocess.check_output(cmd)
+    logs = subprocess.check_output(cmd).decode("utf-8")
     return get_rf_from_logs(logs) 
   #except:
   #  print("Failed to get RF distances from dataset " + dataset)
@@ -309,12 +309,12 @@ class Plotter(object):
   def __call__(self, parameter):
     plot(self.datasets_values_dico, parameter, self.fixed_parameters, self.methods, self.x_labels,  self.y_label, self.prefix + "_" + parameter + ".png")
 
-def submit_single_experiment_haswell(dataset, cores):
+def submit_single_experiment_haswell(dataset, do_generate, cores):
   command = []
   command.append("python")
   command.append(os.path.join(exp.tools_root, "publications_generax", "single_experiment.py"))
   command.append(dataset)
-  command.append("1")
+  command.append(str(do_generate))
   command.append(str(cores))
   results_dir = os.path.join("single_experiments", dataset)
   results_dir = exp.create_result_dir(results_dir, [])
@@ -323,9 +323,9 @@ def submit_single_experiment_haswell(dataset, cores):
   submit_path = os.path.join(results_dir, "sub_generax.sh")
   exp.submit(submit_path, " ".join(command), cores, "haswell") 
 
-def submit_multiple_experiments_haswell(datasets, cores):
+def submit_multiple_experiments_haswell(datasets, do_generate, cores):
   for dataset in datasets:
-    submit_single_experiment_haswell(dataset, cores)
+    submit_single_experiment_haswell(dataset, do_generate, cores)
   
 
 
