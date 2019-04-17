@@ -3,19 +3,18 @@ import os
 import sys
 import re
 import common
+sys.path.insert(0, os.path.join("tools", "families"))
+from run_all import RunFilter
 
 datasets = []
 cores = 40
 
 if (True):
-  datasets.append("jsim_s19_f100_sites500_dna4_bl1.0_d0.25_l0.25_t0.0")
-  #datasets.append("jsim_s12_f2_sites10_dna4_bl1.0_d0.05_l0.05_t0.0")
-  #common.generate_all_datasets(datasets)
-  #common.run_all_reference_methods(datasets, cores)
-  #common.run_all_phyldog(datasets, 1, cores)
-  common.run_all_ALE(datasets, 1)
-  #common.run_all_generax(datasets)
-  common.run_all_analyzes(datasets)
+  run_filter = RunFilter(ALE = False)
+  #datasets.append("jsim_s19_f100_sites500_dna4_bl1.0_d0.25_l0.25_t0.0")
+  datasets.append("jsim_s12_f2_sites10_dna4_bl1.0_d0.05_l0.05_t0.0")
+  common.generate_all_datasets(datasets)
+  common.run_all_reference_methods(datasets, cores, run_filter) 
   exit(0)
 
 if (False):

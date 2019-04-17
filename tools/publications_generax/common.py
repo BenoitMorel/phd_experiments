@@ -15,7 +15,7 @@ import fam
 import generate_families_with_jprime as jprime
 import run_raxml_supportvalues as raxml
 import run_ALE
-import run_all
+from run_all import RunFilter
 import run_phyldog_light
 import saved_metrics
 import eval_generax_likelihood
@@ -70,7 +70,7 @@ def generate_dataset(dataset):
   output = "../BenoitDatasets/families"
   jprime.generate_jprime(species_internal, families, sites, model, bl_factor, d, l, t, output, seed) 
 
-def run_reference_methods(dataset, cores = 40):
+def run_reference_methods(dataset, cores = 40, run_filter = RunFilter()):
   print("*************************************")
   print("Run reference methods for " + dataset)
   print("*************************************")
@@ -83,7 +83,7 @@ def run_reference_methods(dataset, cores = 40):
   print("Redirected logs to " + redirected_file)
   sys.stdout.flush()
   sys.stdout = open(redirected_file, "w")
-  run_all.run_reference_methods(dataset_dir, is_dna, starting_trees, bs_trees, cores)
+  run_all.run_reference_methods(dataset_dir, is_dna, starting_trees, bs_trees, cores, run_filter)
   sys.stdout = save_sdtout
   print("End of run_all")
   sys.stdout.flush()
@@ -107,9 +107,9 @@ def run_all_ALE(datasets, is_dna, cores = 40):
     dataset_dir = os.path.join("../BenoitDatasets/families", dataset)
     run_ALE.run_exabayes_and_ALE(dataset_dir, is_dna, cores)
 
-def run_all_reference_methods(datasets, cores = 40):
+def run_all_reference_methods(datasets, cores = 40, run_filter = RunFilter()):
   for dataset in datasets:
-    run_reference_methods(dataset, cores)
+    run_reference_methods(dataset, cores, run_filter)
 
 def run_all_generax(datasets, raxml = True, random = True, DL = True, DTL = True, cores = 40):
   for dataset in datasets:

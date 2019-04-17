@@ -43,7 +43,7 @@ if (__name__ == "__main__"):
     print("Syntax: python " + os.path.basename(__file__) + " valgrind_file")
     exit(1)
 
-  ignore = ["PMPI_Init", "start_thread", "ompi_mpi_init"]
+  ignore = ["PMPI_Init", "start_thread", "ompi_mpi_init", "PMPI_Comm_split", "PMPI_Comm_dup", "dlopen", "mpiSplit", "ParallelContext::init", "opal_db_base_fetch", "doWork"]
 
   valgrind_file = sys.argv[1]
   analyze(valgrind_file, ignore)
