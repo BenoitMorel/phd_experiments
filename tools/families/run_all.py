@@ -6,16 +6,19 @@ import run_phyldog_light as phyldog
 import run_notung as notung
 import run_ALE
 import fam
-
+import run_generax
+import analyze_dataset
 
 class RunFilter():
-  def __init__(self, raxml = True, pargenes = True, treerecs = True, phyldog = True, notung = True, ALE = True):
+  def __init__(self, raxml = True, pargenes = True, treerecs = True, phyldog = True, notung = True, generax = True, ALE = True, analyze = True):
     self.raxml = raxml
     self.pargenes = pargenes
     self.treerecs = treerecs
     self.phyldog = phyldog
     self.notung = notung
+    self.generax = generax
     self.ALE = ALE
+    self.analyze = analyze
   
   def disable_all(self):
     self.raxml = False
@@ -23,7 +26,9 @@ class RunFilter():
     self.treerecs = False
     self.phyldog = False
     self.notung = False
-    self.ALE = False
+    self.generax = False
+    self.ALE = False  
+    self.analyze = False
 
 def run_reference_methods(dataset_dir, is_dna, starting_trees, bs_trees, cores, run_filter = RunFilter()):
   if (run_filter.raxml):
@@ -51,12 +56,20 @@ def run_reference_methods(dataset_dir, is_dna, starting_trees, bs_trees, cores, 
     sys.stdout.flush()
     threshold = 80
     notung.run_notung_on_families(dataset_dir, threshold, cores)
+  if (run_filter.generax):
+    print("Run Generax")
+    sys.stdout.flush()
+    run_generax.run_generax_on_families(dataset_dir, is_dna, cores)
+    sys.stdout.flush()
   if (run_filter.ALE):
     print("Run ALE...")
     sys.stdout.flush()
     run_ALE.run_exabayes_and_ALE(dataset_dir, is_dna, cores)
     sys.stdout.flush()
-
+  if (run_filter.analyze):
+    print("Run analyze...")
+    sys.stdout.flush()
+    analyze_dataset.analyze(dataset_dir)
 
 if __name__ == "__main__":
   if (len(sys.argv) != 6):

@@ -16,6 +16,7 @@ import generate_families_with_jprime as jprime
 import run_raxml_supportvalues as raxml
 import run_ALE
 from run_all import RunFilter
+import run_all
 import run_phyldog_light
 import saved_metrics
 import eval_generax_likelihood
