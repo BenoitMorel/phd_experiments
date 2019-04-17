@@ -69,16 +69,17 @@ def add_ran_methods(methods, dataset_dir):
 
 def analyze_msa(params):
   msa, dataset_dir, methods, methods_to_compare = params
+  print("analyze msa " + str(methods) + " " + str(methods_to_compare))
   trees = {}
   family_path = os.path.join(dataset_dir, msa)
   invalid_methods = []
   best_tree = {}
   
   for method in methods:
-    #try: 
+    try: 
       trees[method] = get_gene_trees_list(method, dataset_dir, msa)
-    #except:
-    #  invalid_methods.append(method)
+    except:
+      invalid_methods.append(method)
   for method in invalid_methods:
     if (method in methods):
       methods.remove(method)
@@ -135,27 +136,24 @@ def analyze(dataset_dir, benched_method = ""):
     methods_key = method1 + " - " + method2
     total_rrf[methods_key] = 0.0
   analyze_msa_params = []
-  for msa in os.listdir(families_dir):  
-    analyze_msa_params.append((msa, families_dir, methods, methods_to_compare))
-  with concurrent.futures.ProcessPoolExecutor(1) as executor:
-    total_invalid_methods = []
-    for rrf, bt, invalid_methods in executor.map(analyze_msa, analyze_msa_params):
-      for method in invalid_methods:
-        if (not method in total_invalid_methods):
-          total_invalid_methods.append(method)
-      for m in rrf:
-        total_rrf[m] += rrf[m]
-      for m in bt:
-        best_tree[m] += bt[m]
-      analyzed_msas += 1
+  #with concurrent.futures.ProcessPoolExecutor(1) as executor:
+  for param in analyze_msa_params:
+    rrf, bt, invalid_methods = analyze_msa((msa, families_dir, methods, methods_to_compare))
+    for method in invalid_methods:
+      print("remove " + method)
+      print(methods_to_compare)
+      methods_to_compare = [p for p in methods_to_compare if (p[0] != method and p[1] != method)]
+      print(methods_to_compare)
+      #del best_tree[method]
+    for m in rrf:
+      total_rrf[m] += rrf[m]
+    for m in bt:
+      best_tree[m] += bt[m]
+    analyzed_msas += 1
   if (analyzed_msas == 0):
     print("did not manage to analyze any MSA")
     exit(1)
         
-  for method in total_invalid_methods:
-    methods.remove(method)
-    methods_to_compare = [p for p in methods_to_compare if (p[0] != method and p[1] != method)]
-    #del best_tree[method]
   
 
   print("Number of gene families: " + str(analyzed_msas))
