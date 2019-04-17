@@ -69,7 +69,6 @@ def add_ran_methods(methods, dataset_dir):
 
 def analyze_msa(params):
   msa, dataset_dir, methods, methods_to_compare = params
-  print("analyze msa " + str(methods) + " " + str(methods_to_compare))
   trees = {}
   family_path = os.path.join(dataset_dir, msa)
   invalid_methods = []
@@ -137,7 +136,7 @@ def analyze(dataset_dir, benched_method = ""):
     total_rrf[methods_key] = 0.0
   analyze_msa_params = []
   #with concurrent.futures.ProcessPoolExecutor(1) as executor:
-  for param in analyze_msa_params:
+  for msa in os.listdir(families_dir):  
     rrf, bt, invalid_methods = analyze_msa((msa, families_dir, methods, methods_to_compare))
     for method in invalid_methods:
       print("remove " + method)
