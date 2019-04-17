@@ -2,6 +2,7 @@ import os
 import sys
 import subprocess
 import shutil
+import hashlib
 sys.path.insert(0, 'scripts')
 sys.path.insert(0, os.path.join("tools", "phyldog"))
 sys.path.insert(0, os.path.join("tools", "trees"))
@@ -151,7 +152,9 @@ def get_output(species, families, sites, model, bl_factor, dupRate, lossRate, tr
   return dirname
 
 def generate_jprime(species, families, sites, model, bl_factor, dupRate, lossRate, transferRate, root_output, seed):
-  output = os.path.join(root_output, "jprime_temp")
+  to_hash = str(species) + str(families) + str(sites) + model + str(bl_factor) + str(dupRate) + str(lossRate) + str(transferRate) + str(seed)
+  md5 = hashlib.md5(to_hash.encode())
+  output = os.path.join(root_output, "jprime_temp_" + str(md5.hexdigest()))
   shutil.rmtree(output, True)
   print("Writing output in " + output)
   os.makedirs(output)
