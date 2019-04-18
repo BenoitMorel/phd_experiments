@@ -7,6 +7,9 @@ def mkdir(directory):
   except:
     pass
 
+def getSpeciesTree(dataset_dir):
+  return os.path.join(dataset_dir, "speciesTree.newick")
+
 def getFamilies(dataset_dir):
   return os.path.join(dataset_dir, "families")
 
@@ -21,6 +24,10 @@ def getMiscDir(dataset_dir, family):
 
 def getAlignment(dataset_dir, family):
   return os.path.join(getFamily(dataset_dir, family), "alignment.msa")
+
+def getMappings(dataset_dir, family):
+  return os.path.join(getFamily(dataset_dir, family), "mappings.link")
+
 
 def getRaxmlTree(dataset_dir, family):
   return os.path.join(getTreesDir(dataset_dir, family), "raxmlGeneTree.newick")
