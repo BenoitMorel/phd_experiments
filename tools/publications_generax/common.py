@@ -77,8 +77,8 @@ def run_reference_methods(dataset, cores = 40, run_filter = RunFilter()):
   print("*************************************")
   dataset_dir = os.path.join("../BenoitDatasets/families", dataset)
   is_dna = (not dataset in protein_datasets)
-  starting_trees = 10
-  bs_trees = 100
+  starting_trees = 1
+  bs_trees = 5
   save_sdtout = sys.stdout
   redirected_file = os.path.join(dataset_dir, "logs_run_all.txt")
   print("Redirected logs to " + redirected_file)

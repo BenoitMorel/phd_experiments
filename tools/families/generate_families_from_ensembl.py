@@ -9,12 +9,12 @@ import fam
 import create_random_tree
 from ete3 import Tree
 import concurrent.futures
+import title_node_names
 
 class SeqEntry():
   def __init__(self, line, family):
     split = line.split(" ")
-    temp = split[1].split("_")
-    self.species = temp[0].title() + "_" + temp[1].title()
+    self.species = title_node_names.get_title(split[1])
     self.gene = split[2]
     self.chromozome = split[3]
     self.begin = int(split[4])
@@ -104,7 +104,7 @@ def export_mappings(families_seq_entries, output_file):
     species_to_genes[entry.species].append(entry.gene)
   fam.write_phyldog_mapping(species_to_genes, output_file)
 
-def export(species_tree, seq_entries_dict, alignments_dico, datadir):
+def export(species_tree, seq_entries_dict, alignments_dico, datadir, max_families):
   per_family_seq_entries = {}
   for gene in seq_entries_dict:
     seq_entry = seq_entries_dict[gene]
@@ -118,12 +118,17 @@ def export(species_tree, seq_entries_dict, alignments_dico, datadir):
   families_dir = fam.getFamiliesDir(datadir)
   os.makedirs(families_dir)
   print("Number of families: " + str(len(per_family_seq_entries)))
+  print(str(min(len(per_family_seq_entries), max_families)) + " families will be exported")
+  processed_families = 0
   for family in per_family_seq_entries:
     family_dir = fam.getFamily(datadir, family)
     os.makedirs(family_dir)
     seq_entries = per_family_seq_entries[family]
     export_msa(seq_entries, alignments_dico, fam.getAlignment(datadir, family)) 
     export_mappings(seq_entries, fam.get_mappings(datadir, family))
+    processed_families += 1
+    if (processed_families > max_families):
+      break
   prepare_datadir(datadir)
 
 def get_species_dict(species_tree_file):
@@ -131,22 +136,36 @@ def get_species_dict(species_tree_file):
   tree = Tree(species_tree_file, 1)
   for leaf in tree.get_leaves():
     split = leaf.name.split("_")
-    res[split[0].title() + "_" + split[1].title()] = True
+    res[leaf.name] = True
   return res
 
-def extract_from_ensembl(nhx_emf_file, fasta_file, species_tree, datadir):
+def extract_from_ensembl(nhx_emf_file, fasta_file, species_tree, datadir, max_families):
+  new_species_tree = species_tree + ".titled"
+  title_node_names.title_node_names(species_tree, new_species_tree)
+  species_tree = new_species_tree
   species_dict = get_species_dict(species_tree)
+  print(species_dict)
   seq_entries_dict = parse_nhx_emf(nhx_emf_file, species_dict)
   alignments_dico = parse_fasta(fasta_file, seq_entries_dict)
-  export(species_tree, seq_entries_dict, alignments_dico, datadir)
+  export(species_tree, seq_entries_dict, alignments_dico, datadir, max_families)
+
+
+def get_max_families(argv):
+  max_families = 10000000000
+  for i in range(0, len(argv)):
+    if (argv[i] == "--max-families"):
+      max_families = int(argv[i+1])
+      print("reading max families " + str(max_families))
+  return max_families
 
 if (__name__ == "__main__"): 
-  if (len(sys.argv) != 5): 
+  if (len(sys.argv) <= 5): 
     print("Syntax: python " + os.path.basename(__file__) + " nhx_emf fasta output")
     exit(1)
   nhx_emf_file = sys.argv[1]
   fasta_file = sys.argv[2]
   species_tree = sys.argv[3]
   datadir = sys.argv[4]
-  extract_from_ensembl(nhx_emf_file, fasta_file, species_tree, datadir)
+  max_families = get_max_families(sys.argv)
+  extract_from_ensembl(nhx_emf_file, fasta_file, species_tree, datadir, max_families)
   
