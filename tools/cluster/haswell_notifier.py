@@ -3,14 +3,30 @@ import os
 import subprocess
 import re
 
+def query_haswell_vpn(user_name, query):
+  command = []
+  command.append("ssh")
+  command.append("-t")
+  command.append(user_name + "@bridge-login.h-its.org")
+  command2 = []
+  command2.append("ssh")
+  command2.append("-t")
+  command2.append(user_name + "@cluster-login-hits.urz.uni-heidelberg.de")
+  command2.append(query)
+  command.append(" ".join(command2))
+  return subprocess.check_output(command)
 
-def get_running_jobs(user_name):
+def query_haswell(user_name, query):
   command = []
   command.append("ssh")
   command.append("-t")
   command.append(user_name + "@cluster-login-hits.urz.uni-heidelberg.de")
-  command.append("squeue")
-  logs = subprocess.check_output(command)
+  command.append(query)
+  return subprocess.check_output(command)
+  
+
+def get_running_jobs(user_name):
+  logs = query_haswell_vpn(user_name, "squeue")
   jobs = {}
   for line in logs.split("\n"):
     if (("haswell" in line) and (user_name in line)):
@@ -26,11 +42,14 @@ def store_jobs(jobs):
 
 def get_last_read_jobs():
   temp_file = os.path.join(os.path.expanduser("~"), ".temp_haswell_notifier.txt")
-  line = open(os.path.join(temp_file)).read()
   jobs = {}
-  for job in line.split(" "):
-    if (len(job)):
-      jobs[job] = True
+  try:
+    line = open(os.path.join(temp_file)).read()
+    for job in line.split(" "):
+      if (len(job)):
+        jobs[job] = True
+  except:
+    pass
   return jobs
 
 
