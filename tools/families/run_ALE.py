@@ -17,11 +17,37 @@ import cut_node_names
 import re
 import  run_exabayes
 
-ALE_SAMPLES = 1
-BURN_IN = 100
+# ALE
+ALE_SAMPLES = 10
+
+# EXABAYES
 EXA_TREES = 2000
 EXA_FREQ = 1000
+NUM_RUNS = 2
+NUM_CHAINS = 1 
+PER_RUN_BURN_IN = 100
 EXA_GEN = EXA_TREES * EXA_FREQ
+
+
+def get_method_name(with_transfers):
+  if (with_transfers):
+    return "ALE-DTL"
+  else:
+    return "ALE-DL"
+
+def get_observe_run_dir(dataset_dir, with_transfers):
+  method_name = get_method_name(with_transfers)
+  return os.path.join(dataset_dir, "runs", "ALE", method_name + "_observe_run")
+
+def clean_ALE(dataset_dir):
+  try:  
+    shutil.rmtree(get_observe_run_dir(dataset_dir, True))
+  except:
+    pass
+  try:
+    shutil.rmtree(get_observe_run_dir(dataset_dir, False))
+  except:
+    pass
 
 def generate_ALE_observe_commands_file(dataset_dir, cores, output_dir):
   families_dir = os.path.join(dataset_dir, "families")
@@ -37,7 +63,7 @@ def generate_ALE_observe_commands_file(dataset_dir, cores, output_dir):
       command.append("1")
       command.append("1")
       command.append(tree_list)
-      command.append("burnin=" + str(BURN_IN))
+      #command.append("burnin=" + str(BURN_IN))
       writer.write(" ".join(command) + "\n")
   return scheduler_commands_file
 
@@ -80,14 +106,12 @@ def extract_trees_from_ale_output(ale_output, output_trees):
   with open(output_trees, "w") as writer:
     for i in range(position, position + ALE_SAMPLES):
       # get rid of weird reconciliation format
-      new_lines = re.sub("\.[0-9\.]*:", ":", lines[i])
       new_lines = re.sub("\.T.[^:]*", "", lines[i])
+      new_lines = re.sub("\.[0-9\.]*:", ":", new_lines)
       writer.write(new_lines)
 
 def extract_ALE_results(dataset_dir, ALE_run_dir, with_transfers, families_dir):
-  method_name = "ALE-DL"
-  if (with_transfers):
-    method_name = "ALE-DTL"
+  method_name = get_method_name(with_transfers)
   for family in os.listdir(families_dir):
     family_misc_dir = fam.getMiscDir(dataset_dir, family)
     family_trees_dir = fam.getTreesDir(dataset_dir, family)
@@ -102,10 +126,8 @@ def extract_ALE_results(dataset_dir, ALE_run_dir, with_transfers, families_dir):
     force_move(prefix + ".uml_rec", family_misc_dir)
 
 def run_ALE_on_families(dataset_dir, with_transfers, cores):
-  method_name = "ALE-DL"
-  if (with_transfers):
-    method_name = "ALE-DTL"
-  observe_output_dir = os.path.join(dataset_dir, "runs",  "ALE", method_name + "_observe_run")
+  method_name = get_method_name(with_transfers)
+  observe_output_dir = get_observe_run_dir(dataset_dir, with_transfers)
   ml_output_dir = os.path.join(dataset_dir, "runs",  "ALE", method_name + "_ml_run")
   shutil.rmtree(observe_output_dir, True)
   shutil.rmtree(ml_output_dir, True)
@@ -120,10 +142,17 @@ def run_ALE_on_families(dataset_dir, with_transfers, cores):
   extract_ALE_results(dataset_dir, ml_output_dir, with_transfers, os.path.join(dataset_dir, "families"))
 
 def run_exabayes_and_ALE(dataset_dir, is_dna, cores):
+  run_dir = os.path.join(dataset_dir, "runs")
+  dataset_dir = os.path.abspath(dataset_dir)
   fam.init_dataset_dir(dataset_dir)
-  run_exabayes.run_exabayes_on_families(dataset_dir, EXA_GEN, EXA_FREQ, is_dna, cores)
+  cwd = os.getcwd()
+  os.chdir(run_dir)
+  run_exabayes.run_exabayes_on_families(dataset_dir, EXA_GEN, EXA_FREQ, NUM_RUNS, NUM_CHAINS, PER_RUN_BURN_IN, is_dna, cores)
   run_ALE_on_families(dataset_dir, True, cores)
   run_ALE_on_families(dataset_dir, False, cores)
+  run_exabayes.clean_exabayes(dataset_dir)
+  clean_ALE(dataset_dir)
+  os.chdir(cwd)
 
 if (__name__== "__main__"):
   max_args_number = 4

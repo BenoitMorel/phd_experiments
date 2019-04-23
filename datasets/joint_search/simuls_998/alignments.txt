@@ -1,2 +1,0 @@
-GTR
-alignment.msa

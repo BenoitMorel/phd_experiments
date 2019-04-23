@@ -1,0 +1,19 @@
+diff --git a/src/LikelihoodEvaluator.cpp b/src/LikelihoodEvaluator.cpp
+index fe60f71..d33bdea 100755
+--- a/src/LikelihoodEvaluator.cpp
++++ b/src/LikelihoodEvaluator.cpp
+@@ -753,8 +753,12 @@ void LikelihoodEvaluator::writeAlignmentFilesForPLL()
+   if(aligmentFilesForPllWritten_)
+     return;
+   WHEREAMI( __FILE__ , __LINE__ );
+-  fileNamePrefix = "tmpPLL_" + name + "_" ;
+-  ofstream alignementFile(string(fileNamePrefix + "alignment.fasta").c_str(), ofstream::out);
++   std::string sequencePath = ApplicationTools::getStringParameter("input.sequence.file",params,"rnd");
++   std::replace( sequencePath.begin(), sequencePath.end(), '/', '_');
++   std::replace( sequencePath.begin(), sequencePath.end(), '.', '_');
++   fileNamePrefix = "tmpPLL_" + sequencePath + "_" ;
++   ofstream alignementFile(string(fileNamePrefix + "alignment.fasta").c_str(), ofstream::out);
++
+ 
+   //preparing the file for the alignment
+   BasicSequence currSequence(sites->getAlphabet());

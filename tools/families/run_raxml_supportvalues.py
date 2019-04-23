@@ -34,7 +34,12 @@ def run_pargenes(dataset_dir, pargenes_dir, is_dna, starting_trees, bs_trees, co
     command.append("-r")
     command.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), "raxml_command_prot.txt"))
   command.append("--continue")
-  subprocess.check_call(command, stdout = sys.stdout)
+  try:
+    subprocess.check_call(command, stdout = sys.stdout)
+  except:
+    command[0] = "python2.7"
+    print(" ".join(command))
+    subprocess.check_call(command, stdout = sys.stdout)
 
 
 def export_pargenes_trees(pargenes_dir, dataset_dir):
@@ -60,8 +65,10 @@ def export_pargenes_trees(pargenes_dir, dataset_dir):
     if (not support_tree.endswith("support")):
       continue
     family = "_".join(support_tree.split("_")[:-1]) # remove everything after the last _
+    old_raxml_tree = os.path.join(support_trees_dir, support_tree)
     new_raxml_tree = fam.getRaxmlTree(dataset_dir, family)
-    shutil.copyfile(os.path.join(support_trees_dir, support_tree), new_raxml_tree)
+    shutil.copyfile(old_raxml_tree, new_raxml_tree)
+
   # ml trees
   ml_trees_dir = os.path.join(pargenes_dir, "mlsearch_run", "results")
   for family in os.listdir(ml_trees_dir):

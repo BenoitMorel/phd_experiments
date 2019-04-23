@@ -11,6 +11,26 @@ def str_4(ll):
 def ete3_rf(tree1, tree2):
   return tree1.robinson_foulds(tree2, unrooted_trees=True, skip_large_polytomies = True)
 
+def ete3_average_rf_from_list(tree_list_1, tree_list_2):
+  average_cell = [0.0, 0.0]
+  for tree1 in tree_list_1:
+    for tree2 in tree_list_2:
+      cell = tree1.robinson_foulds(tree2, unrooted_trees=True)
+      average_cell[0] += float(cell[0])
+      average_cell[1] += float(cell[1])
+  average_cell[0] /= float(len(tree_list_1) * len(tree_list_2))
+  average_cell[1] /= float(len(tree_list_1) * len(tree_list_2))
+  return average_cell
+
+def ete3_min_rf_from_list(tree_list_1, tree_list_2):
+  min_cell = [1000000000, 110000000]
+  for tree1 in tree_list_1:
+    for tree2 in tree_list_2:
+      cell = tree1.robinson_foulds(tree2, unrooted_trees=True)
+      if (cell[0] < min_cell[0]):
+        min_cell = cell
+  return min_cell
+
 def get_rf(tree1, tree2):
   return ete3_rf(tree1, tree2)[0]
 

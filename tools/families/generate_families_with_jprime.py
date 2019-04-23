@@ -2,6 +2,8 @@ import os
 import sys
 import subprocess
 import shutil
+import hashlib
+import fam
 sys.path.insert(0, 'scripts')
 sys.path.insert(0, os.path.join("tools", "phyldog"))
 sys.path.insert(0, os.path.join("tools", "trees"))
@@ -76,10 +78,10 @@ def generate_seqgen_sequence(families, sites, model, output, seed):
     with open(sequence_file, "w") as writer:
       subprocess.check_call(command, stdout=writer)
 
-def build_mapping_file(gprime_mapping, phyldog_mapping, treerecs_mapping):
+def build_mapping_file(jprime_mapping, phyldog_mapping, treerecs_mapping):
   phyldog_writer = open(phyldog_mapping, "w")
   treerecs_writer = open(treerecs_mapping, "w")
-  lines = open(gprime_mapping).readlines()
+  lines = open(jprime_mapping).readlines()
   dico = {}
   for line in lines:
     split = line.split("\t")
@@ -91,20 +93,20 @@ def build_mapping_file(gprime_mapping, phyldog_mapping, treerecs_mapping):
   for species, genes in dico.items():
     phyldog_writer.write(species + ":" + ";".join(genes) + "\n")
 
-def gprime_to_families(gprime, out):
+def jprime_to_families(jprime, out):
   new_ali_dir = os.path.join(out, "alignments")
   new_families_dir = os.path.join(out, "families")
   os.makedirs(new_ali_dir)
   os.makedirs(new_families_dir)
   # species tree
-  species = os.path.join(gprime, "species.pruned.tree")
+  species = os.path.join(jprime, "species.pruned.tree")
   new_species = os.path.join(out, "speciesTree.newick")
   shutil.copyfile(species, new_species)
   alignments_writer = open(os.path.join(out, "alignments.txt"), "w")
-  for genetree_base in os.listdir(gprime):
+  for genetree_base in os.listdir(jprime):
     if (not "gene.pruned.tree" in genetree_base):
       continue
-    genetree = os.path.join(gprime, genetree_base)
+    genetree = os.path.join(jprime, genetree_base)
     if (os.path.getsize(genetree) < 2):
       continue
     family_number = genetree_base.split("_")[0]
@@ -112,21 +114,23 @@ def gprime_to_families(gprime, out):
     new_family_dir = os.path.join(new_families_dir, family)
     os.makedirs(new_family_dir)
     # species tree
-    shutil.copyfile(new_species, os.path.join(new_family_dir, "speciesTree.newick"))
+    exp.relative_symlink(new_species, os.path.join(new_family_dir, "speciesTree.newick"))
+    fam.convertToPhyldogSpeciesTree(fam.get_species_tree(out), fam.get_phyldog_species_tree(out)) 
     # true trees
-    shutil.copyfile(genetree, os.path.join(new_family_dir, "trueGeneTree.newick"))
+    exp.relative_symlink(genetree, os.path.join(new_family_dir, "trueGeneTree.newick"))
     # alignment
     alignment_base = family_number + ".fasta" 
     new_alignment_base = family + ".fasta"
-    alignment = os.path.join(gprime, alignment_base)
-    shutil.copyfile(alignment, os.path.join(new_family_dir, "alignment.msa"))
-    shutil.copyfile(alignment, os.path.join(new_ali_dir, new_alignment_base))
+    alignment = os.path.join(jprime, alignment_base)
+   
+    exp.relative_symlink(alignment, os.path.join(new_family_dir, "alignment.msa"))
+    exp.relative_symlink(alignment, os.path.join(new_ali_dir, new_alignment_base))
     alignments_writer.write(os.path.abspath(os.path.join(new_ali_dir, new_alignment_base)) + "\n")
     # link file
-    gprime_mapping = os.path.join(gprime, genetree_base[:-4] + "leafmap")
+    jprime_mapping = os.path.join(jprime, genetree_base[:-4] + "leafmap")
     phyldog_mapping = os.path.join(new_family_dir, "mapping.link")
     treerecs_mapping = os.path.join(new_family_dir, "treerecs_mapping.link")
-    build_mapping_file(gprime_mapping, phyldog_mapping, treerecs_mapping)
+    build_mapping_file(jprime_mapping, phyldog_mapping, treerecs_mapping)
 
 def rescale_trees(jprime_output, families, bl_factor):
   for i in range(0, families):
@@ -150,7 +154,9 @@ def get_output(species, families, sites, model, bl_factor, dupRate, lossRate, tr
   return dirname
 
 def generate_jprime(species, families, sites, model, bl_factor, dupRate, lossRate, transferRate, root_output, seed):
-  output = os.path.join(root_output, "jprime_temp")
+  to_hash = str(species) + str(families) + str(sites) + model + str(bl_factor) + str(dupRate) + str(lossRate) + str(transferRate) + str(seed)
+  md5 = hashlib.md5(to_hash.encode())
+  output = os.path.join(root_output, "jprime_temp_" + str(md5.hexdigest()))
   shutil.rmtree(output, True)
   print("Writing output in " + output)
   os.makedirs(output)
@@ -167,7 +173,7 @@ def generate_jprime(species, families, sites, model, bl_factor, dupRate, lossRat
   rescale_trees(jprime_output, families, bl_factor)
   generate_seqgen_sequence(families, sites, model, jprime_output, seed)
   print("jprime output: " + jprime_output)
-  gprime_to_families(jprime_output, output)
+  jprime_to_families(jprime_output, output)
   
   species_nodes = analyze_tree.get_tree_taxa_number(os.path.join(jprime_output, "species.pruned.tree"))
   new_output = os.path.join(root_output, get_output(species_nodes, families, sites, model, bl_factor, dupRate, lossRate, transferRate))

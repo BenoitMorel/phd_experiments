@@ -1,7 +1,7 @@
 import subprocess
 import sys
 import os 
-
+import re
 import pandas as pd
 import matplotlib
 matplotlib.use('Agg')
@@ -15,7 +15,9 @@ import fam
 import generate_families_with_jprime as jprime
 import run_raxml_supportvalues as raxml
 import run_ALE
+from run_all import RunFilter
 import run_all
+import run_phyldog_light
 import saved_metrics
 import eval_generax_likelihood
 
@@ -39,12 +41,12 @@ protein_datasets = ["swiss", "cyano_simulated", "sub_t0.05_s0.5_cyano_empirical"
 def run_generax(dataset, starting_tree, with_transfers, run_name, is_dna, cores = 40):
   command = []
   command.append("python")
-  command.append(os.path.join(exp.scripts_root, "generax/launch_generax.py")
+  command.append(os.path.join(exp.scripts_root, "generax/launch_generax.py"))
   command.append(dataset)
   command.append("SPR")
   command.append(starting_tree)
   command.append("normal")
-  command.append(cores)
+  command.append(str(cores))
   if (with_transfers):
     command.append("--rec-model")
     command.append("UndatedDTL")
@@ -69,7 +71,7 @@ def generate_dataset(dataset):
   output = "../BenoitDatasets/families"
   jprime.generate_jprime(species_internal, families, sites, model, bl_factor, d, l, t, output, seed) 
 
-def run_reference_methods(dataset, cores = 40):
+def run_reference_methods(dataset, cores = 40, run_filter = RunFilter()):
   print("*************************************")
   print("Run reference methods for " + dataset)
   print("*************************************")
@@ -82,10 +84,16 @@ def run_reference_methods(dataset, cores = 40):
   print("Redirected logs to " + redirected_file)
   sys.stdout.flush()
   sys.stdout = open(redirected_file, "w")
-  run_all.run_reference_methods(dataset_dir, is_dna, starting_trees, bs_trees, cores)
+  run_all.run_reference_methods(dataset_dir, is_dna, starting_trees, bs_trees, cores, run_filter)
   sys.stdout = save_sdtout
   print("End of run_all")
   sys.stdout.flush()
+
+def run_all_phyldog(datasets, is_dna, cores):
+  for dataset in datasets:
+    dataset_dir = os.path.join("../BenoitDatasets/families", dataset)
+    is_dna = (not dataset in protein_datasets)
+    run_phyldog_light.run_phyldog_on_families(dataset_dir, is_dna, cores)
 
 def run_all_raxml_light(datasets, cores = 40):
   for dataset in datasets:
@@ -100,11 +108,11 @@ def run_all_ALE(datasets, is_dna, cores = 40):
     dataset_dir = os.path.join("../BenoitDatasets/families", dataset)
     run_ALE.run_exabayes_and_ALE(dataset_dir, is_dna, cores)
 
-def run_all_reference_methods(datasets):
+def run_all_reference_methods(datasets, cores = 40, run_filter = RunFilter()):
   for dataset in datasets:
-    run_reference_methods(dataset)
+    run_reference_methods(dataset, cores, run_filter)
 
-def run_all_generax(datasets, raxml = True, random = True, DL = True, DTL = True):
+def run_all_generax(datasets, raxml = True, random = True, DL = True, DTL = True, cores = 40):
   for dataset in datasets:
     print("*************************************")
     print("Run generate dataset for " + dataset)
@@ -112,14 +120,14 @@ def run_all_generax(datasets, raxml = True, random = True, DL = True, DTL = True
     is_dna = (not dataset in protein_datasets)
     if (raxml):
       if (DL):
-        run_generax(dataset, "RAxML-NG", False, "GeneRax-DL-Raxml", is_dna)
+        run_generax(dataset, "RAxML-NG", False, "GeneRax-DL-Raxml", is_dna, cores)
       if (DTL):
-        run_generax(dataset, "RAxML-NG", True, "GeneRax-DTL-Raxml", is_dna)
+        run_generax(dataset, "RAxML-NG", True, "GeneRax-DTL-Raxml", is_dna, cores)
     if (random):
       if (DL):
-        run_generax(dataset, "Random", False, "GeneRax-DL-Random", is_dna)
+        run_generax(dataset, "Random", False, "GeneRax-DL-Random", is_dna, cores)
       if (DTL):
-        run_generax(dataset, "Random", True, "GeneRax-DTL-Random", is_dna)
+        run_generax(dataset, "Random", True, "GeneRax-DTL-Random", is_dna, cores)
 
 def generate_all_datasets(datasets):
   for dataset in datasets:
@@ -161,18 +169,19 @@ def get_runtimes(dataset):
   return dico
 
 def get_results(dataset):
-  try:
+  #try:
     analyse_script = os.path.join(exp.tools_root, "families", "analyze_dataset.py")
     dataset_path = os.path.join(exp.benoit_datasets_root, "families", dataset)
     cmd = []
     cmd.append("python")
     cmd.append(analyse_script)
     cmd.append(dataset_path)
-    logs = subprocess.check_output(cmd)
+    print(" ".join(cmd))
+    logs = subprocess.check_output(cmd).decode("utf-8")
     return get_rf_from_logs(logs) 
-  except:
-    print("Failed to get RF distances from dataset " + dataset)
-    return None
+  #except:
+  #  print("Failed to get RF distances from dataset " + dataset)
+  #  return None
 
 def run_all_analyzes(datasets):
   for dataset in datasets:
@@ -300,5 +309,24 @@ class Plotter(object):
   
   def __call__(self, parameter):
     plot(self.datasets_values_dico, parameter, self.fixed_parameters, self.methods, self.x_labels,  self.y_label, self.prefix + "_" + parameter + ".png")
+
+def submit_single_experiment_haswell(dataset, do_generate, cores):
+  command = []
+  command.append("python")
+  command.append(os.path.join(exp.tools_root, "publications_generax", "single_experiment.py"))
+  command.append(dataset)
+  command.append(str(do_generate))
+  command.append(str(cores))
+  results_dir = os.path.join("single_experiments", dataset)
+  results_dir = exp.create_result_dir(results_dir, [])
+  result_msg = ""
+  exp.write_results_info(results_dir, result_msg) 
+  submit_path = os.path.join(results_dir, "sub_generax.sh")
+  exp.submit(submit_path, " ".join(command), cores, "haswell") 
+
+def submit_multiple_experiments_haswell(datasets, do_generate, cores):
+  for dataset in datasets:
+    submit_single_experiment_haswell(dataset, do_generate, cores)
+  
 
 
