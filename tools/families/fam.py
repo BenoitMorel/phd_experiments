@@ -33,6 +33,9 @@ def getMappings(dataset_dir, family):
   return os.path.join(getFamily(dataset_dir, family), "mappings.link")
 
 
+def getTrueTree(dataset_dir, family):
+  return os.path.join(getFamily(dataset_dir, family), "trueGeneTree.newick")
+
 def getRaxmlTree(dataset_dir, family):
   return os.path.join(getTreesDir(dataset_dir, family), "raxmlGeneTree.newick")
 
@@ -143,7 +146,6 @@ def get_raxml_model(datadir):
 
 def convertToPhyldogSpeciesTree(speciesTree, phyldogSpeciesTree):
   command = "sed s/)[nH][0123456789]*/)/g " + speciesTree #+ " > " + phyldogSpeciesTree
-  print(command.split(" "))
   with open(phyldogSpeciesTree, "w") as output:
     subprocess.check_call(command.split(" "), stdout=output)
 

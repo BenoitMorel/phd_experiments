@@ -3,9 +3,12 @@ import os
 import shutil
 sys.path.insert(0, 'scripts')
 sys.path.insert(0, 'tools/families')
+sys.path.insert(0, 'tools/trees')
 import experiments as exp
 import fam
+import create_random_tree
 from ete3 import Tree
+import concurrent.futures
 
 class SeqEntry():
   def __init__(self, line, family):
@@ -66,6 +69,10 @@ def parse_fasta(fasta_file, genes_dict):
   print("number of DNA seq: " + str(len(alignments_dico)))
   return alignments_dico
 
+def parallelized_function(params):
+  datadir, family = params
+  create_random_tree.create_random_tree(fam.getAlignment(datadir, family), fam.getTrueTree(datadir, family))
+
 # this function should be common to all generation scripts
 def prepare_datadir(datadir):
   # phyldog species trees
@@ -75,9 +82,14 @@ def prepare_datadir(datadir):
   for family in fam.getFamiliesList(datadir):
     family_dir = fam.getFamily(datadir, family)
     exp.relative_symlink(fam.getAlignment(datadir, family), os.path.join(datadir, "alignments", family + ".fasta"))
-  # treerecs mappings
     fam.convert_phyldog_to_treerecs_mapping(fam.get_mappings(datadir, family), fam.get_treerecs_mappings(datadir, family)) 
-
+    exp.relative_symlink(fam.getSpeciesTree(datadir), os.path.join(fam.getFamiliesDir(datadir), family, "speciesTree.newick"))
+  print("create random trees")
+  params = []
+  for family in fam.getFamiliesList(datadir):
+    params.append((datadir, family))
+  with concurrent.futures.ProcessPoolExecutor() as executor:
+    executor.map(parallelized_function, params)
 
 def export_msa(seq_entries, alignments_dico, output_file):
   with open(output_file, "w") as writer:
@@ -105,6 +117,7 @@ def export(species_tree, seq_entries_dict, alignments_dico, datadir):
   
   families_dir = fam.getFamiliesDir(datadir)
   os.makedirs(families_dir)
+  print("Number of families: " + str(len(per_family_seq_entries)))
   for family in per_family_seq_entries:
     family_dir = fam.getFamily(datadir, family)
     os.makedirs(family_dir)
