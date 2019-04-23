@@ -78,6 +78,11 @@ def get_param_from_dataset_name(parameter, dataset):
   else:
     return "invalid"
 
+def get_species_tree(datadir):
+  return os.path.join(datadir, "speciesTree.newick")
+
+def get_phyldog_species_tree(datadir):
+  return os.path.join(datadir, "phyldogSpeciesTree.newick")
 
 def get_gene_tree(familydir, tree):
   gene_trees_dir = os.path.join(familydir, "gene_trees")
@@ -114,4 +119,13 @@ def get_alignment_file(datadir):
 
 def get_raxml_model(datadir):
   return os.path.join(datadir, "raxmlBestModel.txt")
+
+def convertToPhyldogSpeciesTree(speciesTree, phyldogSpeciesTree):
+  command = "sed s/)[nH][0123456789]*/)/g " + speciesTree #+ " > " + phyldogSpeciesTree
+  print(command.split(" "))
+  with open(phyldogSpeciesTree, "w") as output:
+    subprocess.check_call(command.split(" "), stdout=output)
+
+
+
 

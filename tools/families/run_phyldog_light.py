@@ -12,11 +12,6 @@ import events_scenario_extraction as extract
 import experiments as exp
 
 
-def convertToPhyldogSpeciesTree(speciesTree, phyldogSpeciesTree):
-  command = "sed s/)[nH][0123456789]*/)/g " + speciesTree #+ " > " + phyldogSpeciesTree
-  print(command.split(" "))
-  with open(phyldogSpeciesTree, "w") as output:
-    subprocess.check_call(command.split(" "), stdout=output)
 
 def generate_scheduler_commands_file(dataset_dir, is_dna, cores, output_dir):
   families_dir = os.path.join(dataset_dir, "families")
@@ -24,7 +19,7 @@ def generate_scheduler_commands_file(dataset_dir, is_dna, cores, output_dir):
   scheduler_commands_file = os.path.join(output_dir, "commands.txt")
   speciesTree = os.path.join(dataset_dir, "speciesTree.newick")
   phyldogSpeciesTree = os.path.join(dataset_dir, "phyldogSpeciesTree.newick")
-  convertToPhyldogSpeciesTree(speciesTree, phyldogSpeciesTree)
+  fam.convertToPhyldogSpeciesTree(speciesTree, phyldogSpeciesTree)
   with open(scheduler_commands_file, "w") as writer:
     for family in os.listdir(families_dir):
       family_dir = os.path.join(families_dir, family)
