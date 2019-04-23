@@ -29,7 +29,7 @@ def build_speciesrax_families_file(dataset, starting_tree, is_protein, output):
       writer.write("- " + family + "\n")
       writer.write("starting_gene_tree = " + fam.get_gene_tree(family_path, starting_tree) + "\n")
       writer.write("alignment = " + fam.get_alignment_file(family_path) + "\n")
-      writer.write("mapping = " + fam.get_mapping_file(family_path) + "\n")
+      writer.write("mapping = " + fam.get_mappings(dataset) + "\n")
       raxml_model = ""
       if (starting_tree != "random"):
         raxml_model = fam.get_raxml_model(family_path)

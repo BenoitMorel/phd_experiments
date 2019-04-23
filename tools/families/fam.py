@@ -1,5 +1,6 @@
 import os
 import sys
+import subprocess
 
 def mkdir(directory):
   try:
@@ -10,11 +11,14 @@ def mkdir(directory):
 def getSpeciesTree(dataset_dir):
   return os.path.join(dataset_dir, "speciesTree.newick")
 
-def getFamilies(dataset_dir):
+def getFamiliesDir(dataset_dir):
   return os.path.join(dataset_dir, "families")
 
+def getFamiliesList(dataset_dir):
+  return os.listdir(getFamiliesDir(dataset_dir))
+
 def getFamily(dataset_dir, family):
-  return os.path.join(getFamilies(dataset_dir), family)
+  return os.path.join(getFamiliesDir(dataset_dir), family)
 
 def getTreesDir(dataset_dir, family):
   return os.path.join(getFamily(dataset_dir, family), "gene_trees")
@@ -50,7 +54,7 @@ def getALETree(dataset_dir, family, method):
 
 
 def init_dataset_dir(dataset_dir):
-  for family in getFamilies(dataset_dir):
+  for family in getFamiliesList(dataset_dir):
     mkdir(getTreesDir(dataset_dir, family))
     mkdir(getMiscDir(dataset_dir, family))
 
@@ -124,8 +128,12 @@ def get_gene_tree(familydir, tree):
 def get_possible_gene_trees():
   return ["raxml", "raxmls", "true", "treerecs", "notung", "phyldog", "random", "ALE-D(T)L", "GeneRax-D(T)L-[Random, Raxml]"]
 
-def get_mapping_file(datadir):
-  return os.path.join(datadir, "mapping.link")
+def get_mappings(datadir, family):
+  return os.path.join(getFamily(datadir, family), "mapping.link")
+
+def get_treerecs_mappings(datadir, family):
+  return os.path.join(getFamily(datadir, family), "treerecs_mapping.link")
+
 
 def get_alignment_file(datadir):
   return os.path.join(datadir, "alignment.msa")
@@ -139,6 +147,21 @@ def convertToPhyldogSpeciesTree(speciesTree, phyldogSpeciesTree):
   with open(phyldogSpeciesTree, "w") as output:
     subprocess.check_call(command.split(" "), stdout=output)
 
+def convert_phyldog_to_treerecs_mapping(phyldog_mappings, treerecs_mappings):
+  lines = open(phyldog_mappings).readlines()
+  with open(treerecs_mappings, "w") as writer:
+    for line in lines:
+      split = line.split(":")
+      species = split[0]
+      genes = split[1].split(";")
+      for gene in genes:
+        writer.write(gene.replace("\n", "") + " " + species + "\n")
+
+
+def write_phyldog_mapping(species_to_genes_dict, output_file):
+  with open(output_file, "w") as writer:
+    for species in species_to_genes_dict:
+      writer.write(species + ":" + ";".join(species_to_genes_dict[species]) + "\n")
 
 
 

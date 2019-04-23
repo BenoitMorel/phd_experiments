@@ -69,11 +69,14 @@ def parse_fasta(fasta_file, genes_dict):
 # this function should be common to all generation scripts
 def prepare_datadir(datadir):
   # phyldog species trees
-
-  # treerecs mappings
-
+  fam.convertToPhyldogSpeciesTree(fam.get_species_tree(datadir), fam.get_phyldog_species_tree(datadir)) 
+  exp.mkdir(os.path.join(datadir, "alignments"))
   # alignments
-  pass
+  for family in fam.getFamiliesList(datadir):
+    family_dir = fam.getFamily(datadir, family)
+    exp.relative_symlink(fam.getAlignment(datadir, family), os.path.join(datadir, "alignments", family + ".fasta"))
+  # treerecs mappings
+    fam.convert_phyldog_to_treerecs_mapping(fam.get_mappings(datadir, family), fam.get_treerecs_mappings(datadir, family)) 
 
 
 def export_msa(seq_entries, alignments_dico, output_file):
@@ -82,9 +85,12 @@ def export_msa(seq_entries, alignments_dico, output_file):
       writer.write(alignments_dico[seq_entry.gene])
 
 def export_mappings(families_seq_entries, output_file):
-  with open(output_file, "w") as writer:
-    print("todo write mappings")
-    writer.write("plop")
+  species_to_genes = {}
+  for entry in families_seq_entries:
+    if (not entry.species in species_to_genes):
+      species_to_genes[entry.species] = []
+    species_to_genes[entry.species].append(entry.gene)
+  fam.write_phyldog_mapping(species_to_genes, output_file)
 
 def export(species_tree, seq_entries_dict, alignments_dico, datadir):
   per_family_seq_entries = {}
@@ -97,14 +103,14 @@ def export(species_tree, seq_entries_dict, alignments_dico, datadir):
   os.makedirs(datadir)
   shutil.copy(species_tree, fam.getSpeciesTree(datadir))
   
-  families_dir = fam.getFamilies(datadir)
+  families_dir = fam.getFamiliesDir(datadir)
   os.makedirs(families_dir)
   for family in per_family_seq_entries:
     family_dir = fam.getFamily(datadir, family)
     os.makedirs(family_dir)
     seq_entries = per_family_seq_entries[family]
     export_msa(seq_entries, alignments_dico, fam.getAlignment(datadir, family)) 
-    export_mappings(seq_entries, fam.getMappings(datadir, family))
+    export_mappings(seq_entries, fam.get_mappings(datadir, family))
   prepare_datadir(datadir)
 
 def get_species_dict(species_tree_file):
@@ -130,4 +136,4 @@ if (__name__ == "__main__"):
   species_tree = sys.argv[3]
   datadir = sys.argv[4]
   extract_from_ensembl(nhx_emf_file, fasta_file, species_tree, datadir)
-
+  
