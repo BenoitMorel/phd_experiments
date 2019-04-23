@@ -9,13 +9,21 @@ from run_all import RunFilter
 datasets = []
 cores = 40
 
-if (True):
+if (False):
   run_filter = RunFilter()
   #datasets.append("jsim_s19_f100_sites500_dna4_bl1.0_d0.25_l0.25_t0.0")
   datasets.append("jsim_s12_f2_sites10_dna4_bl1.0_d0.05_l0.05_t0.0")
   common.generate_all_datasets(datasets)
   common.run_all_reference_methods(datasets, cores, run_filter) 
   exit(0)
+
+if (True):
+  datasets = ["sub_5_ensembl_96_ncrna_primates"]
+  run_filter = RunFilter()
+  
+  #run_filter.disable_all()
+  #run_filter.ALE = True
+  common.run_all_reference_methods(datasets, cores, run_filter)
 
 if (False):
   fixed_point_dl = "jsim_s19_f100_sites500_dna4_bl0.5_d0.25_l0.25_t0.0"
