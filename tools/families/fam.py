@@ -7,11 +7,27 @@ def mkdir(directory):
   except:
     pass
 
+def getSpeciesTree(dataset_dir):
+  return os.path.join(dataset_dir, "speciesTree.newick")
+
+def getFamilies(dataset_dir):
+  return os.path.join(dataset_dir, "families")
+
+def getFamily(dataset_dir, family):
+  return os.path.join(getFamilies(dataset_dir), family)
+
 def getTreesDir(dataset_dir, family):
-  return os.path.join(dataset_dir, "families", family, "gene_trees")
+  return os.path.join(getFamily(dataset_dir, family), "gene_trees")
 
 def getMiscDir(dataset_dir, family):
-  return os.path.join(dataset_dir, "families", family, "misc")
+  return os.path.join(getFamily(dataset_dir, family), "misc")
+
+def getAlignment(dataset_dir, family):
+  return os.path.join(getFamily(dataset_dir, family), "alignment.msa")
+
+def getMappings(dataset_dir, family):
+  return os.path.join(getFamily(dataset_dir, family), "mappings.link")
+
 
 def getRaxmlTree(dataset_dir, family):
   return os.path.join(getTreesDir(dataset_dir, family), "raxmlGeneTree.newick")
@@ -32,9 +48,6 @@ def getALETree(dataset_dir, family, method):
   return os.path.join(getTreesDir(dataset_dir, family), method + "GeneTree.newick")
 
 
-
-def getFamilies(dataset_dir):
-  return os.listdir(os.path.join(dataset_dir, "families"))
 
 def init_dataset_dir(dataset_dir):
   for family in getFamilies(dataset_dir):
