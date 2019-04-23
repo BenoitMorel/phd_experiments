@@ -35,35 +35,47 @@ class SeqEntry():
     res += ")"
     return res
 
-def read_data(line, family, trees_dict, seq_entries_dict):
+# read an ensembl tree, prune the genes that we do not consider,
+# and return true if the resulting tree has more than 3 taxa
+def read_ensembl_tree(line, family, trees_dict, seq_entries_dict):
   tree = Tree(line.replace("\n", ""), format = 1)
   leaves = tree.get_leaves()
   filtered_leaves = []
   for leaf in leaves:
     if leaf.name in seq_entries_dict:
       filtered_leaves.append(leaf.name)
-  tree.prune(filtered_leaves)
-  trees_dict[family] = line.replace("\n", "")
+  try:
+    tree.prune(filtered_leaves)
+  except:
+    return False
+  print(len(tree.get_leaves()))
+  if (len(tree.get_leaves()) > 3):
+    trees_dict[family] = line.replace("\n", "")
+    return True
+  return False
 
 
 def parse_nhx_emf(emf_file, species_dict, max_families):
   seq_entries_dict = {}  
+  current_entries_dict = {}
   trees_dict = {}
   family_index = 0
   family = "family_" + str(family_index)
   last_was_data = False
   for line in open(emf_file).readlines():
     if (last_was_data):
-      read_data(line, family, trees_dict, seq_entries_dict)
-      family_index += 1
-      family = "family_" + str(family_index)
+      last_was_data = False
+      if (read_ensembl_tree(line, family, trees_dict, current_entries_dict)):
+        for gene in current_entries_dict:
+          seq_entries_dict[gene] = current_entries_dict[gene]
+        family_index += 1
+        family = "family_" + str(family_index)
       if (family_index >= max_families):
         break
-      last_was_data = False
     if (line[:3] == "SEQ"):
       entry = SeqEntry(line, family)
       if (entry.species in species_dict):
-        seq_entries_dict[entry.gene] = entry
+        current_entries_dict[entry.gene] = entry
     elif (line[:4] == "DATA"):
       last_was_data = True
 
