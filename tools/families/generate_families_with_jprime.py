@@ -3,6 +3,7 @@ import sys
 import subprocess
 import shutil
 import hashlib
+import fam
 sys.path.insert(0, 'scripts')
 sys.path.insert(0, os.path.join("tools", "phyldog"))
 sys.path.insert(0, os.path.join("tools", "trees"))
@@ -114,6 +115,7 @@ def jprime_to_families(jprime, out):
     os.makedirs(new_family_dir)
     # species tree
     exp.relative_symlink(new_species, os.path.join(new_family_dir, "speciesTree.newick"))
+    fam.convertToPhyldogSpeciesTree(fam.get_species_tree(out), fam.get_phyldog_species_tree(out)) 
     # true trees
     exp.relative_symlink(genetree, os.path.join(new_family_dir, "trueGeneTree.newick"))
     # alignment

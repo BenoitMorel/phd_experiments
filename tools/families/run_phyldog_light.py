@@ -19,7 +19,6 @@ def generate_scheduler_commands_file(dataset_dir, is_dna, cores, output_dir):
   scheduler_commands_file = os.path.join(output_dir, "commands.txt")
   speciesTree = os.path.join(dataset_dir, "speciesTree.newick")
   phyldogSpeciesTree = os.path.join(dataset_dir, "phyldogSpeciesTree.newick")
-  fam.convertToPhyldogSpeciesTree(speciesTree, phyldogSpeciesTree)
   with open(scheduler_commands_file, "w") as writer:
     for family in os.listdir(families_dir):
       family_dir = os.path.join(families_dir, family)
@@ -122,7 +121,6 @@ def generate_options(dataset_dir, is_dna):
   families_dir = os.path.join(dataset_dir, "families")
   speciesTree = os.path.join(dataset_dir, "speciesTree.newick")
   phyldogSpeciesTree = os.path.join(dataset_dir, "phyldogSpeciesTree.newick")
-  convertToPhyldogSpeciesTree(speciesTree, phyldogSpeciesTree)
   phyldog_run_dir = get_phyldog_run_dir(dataset_dir)
   prepare_input = os.path.join(phyldog_run_dir, "prepare_input.txt")
   dataset_dir = os.path.abspath(dataset_dir)

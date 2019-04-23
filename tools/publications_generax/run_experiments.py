@@ -10,7 +10,7 @@ datasets = []
 cores = 40
 
 if (True):
-  run_filter = RunFilter(ALE = False, generax = False)
+  run_filter = RunFilter()
   #datasets.append("jsim_s19_f100_sites500_dna4_bl1.0_d0.25_l0.25_t0.0")
   datasets.append("jsim_s12_f2_sites10_dna4_bl1.0_d0.05_l0.05_t0.0")
   common.generate_all_datasets(datasets)
