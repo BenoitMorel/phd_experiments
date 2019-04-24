@@ -4,6 +4,7 @@ import subprocess
 import re
 import pickle
 import time 
+import datetime as dt
 
 is_remote = False # set to True if you need to access haswell haswell through magny
 user_name = "morelbt" # haswell username
@@ -48,6 +49,7 @@ def get_running_jobs(user_name, is_remote):
       jobs[job_id] = status
   return jobs
 
+
 def store_jobs(jobs):
   temp_file = os.path.join(os.path.expanduser("~"), ".temp_haswell_notifier.txt")
   pickle.dump(jobs, open(temp_file, "wb"))
@@ -58,8 +60,9 @@ def get_last_read_jobs():
 
 
 def notify(message):
-  message.replace("\n", "\\\\n")
-  subprocess.Popen(['notify-send', "Haswell-notif",  message], stdin=None, stdout=None, stderr=None, close_fds=True)
+  if (len(message)):
+    message.replace("\n", "\\\\n")
+    subprocess.Popen(['notify-send', "Haswell-notif",  message], stdin=None, stdout=None, stderr=None, close_fds=True)
   
 def play_sounds(sounds):
   try:
@@ -70,6 +73,23 @@ def play_sounds(sounds):
   except:
     pass
 
+
+lt_announced = False
+def check_lt():
+  global lt_announced
+  t = dt.datetime.now()
+  if (not lt_announced):
+    lt_announced = True
+    if (t.hour == 12 and t.minute == 25):
+      msg = "Warning! Warning! It's lunchtime in 5 minutes!"
+      notify(msg)
+      play_sounds([msg])
+    elif (t.hour == 12 and t.minute == 30):
+      msg = "It's lunchtime! Go go go!"
+      notify(msg)
+      play_sounds([msg])
+  else:
+    lt_announced = False
 
 def compare_jobs(previous_jobs, new_jobs):
   notifications = []
@@ -90,11 +110,10 @@ def compare_jobs(previous_jobs, new_jobs):
       if ("aswell" in new_status):
         notifications.append("Job " + job + "started")
         sounds.append("Job started")
-  if (len(notifications)):
-    notify("\n".join(notifications))
-  if (sound_on and len(sounds)):
-    play_sounds(sounds)
-  
+  notify("\n".join(notifications))
+  play_sounds(sounds)
+  check_lt()
+
 new_jobs = get_running_jobs(user_name, is_remote)
 store_jobs(new_jobs)
 while True:
