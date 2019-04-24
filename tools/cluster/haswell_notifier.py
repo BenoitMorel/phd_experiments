@@ -2,8 +2,15 @@ import sys
 import os
 import subprocess
 import re
+import pickle
+import time 
 
-def query_haswell_vpn(user_name, query):
+is_remote = False # set to True if you need to access haswell haswell through magny
+user_name = "morelbt" # haswell username
+sound_on = True
+timer_interval = 10 # elapsed time between queries (s)
+
+def query_haswell_remote(user_name, query):
   command = []
   command.append("ssh")
   command.append("-t")
@@ -14,47 +21,87 @@ def query_haswell_vpn(user_name, query):
   command2.append(user_name + "@cluster-login-hits.urz.uni-heidelberg.de")
   command2.append(query)
   command.append(" ".join(command2))
-  return subprocess.check_output(command)
+  FNULL = open(os.devnull, 'w')
+  return subprocess.check_output(command, stderr=FNULL)
 
-def query_haswell(user_name, query):
+def query_haswell(user_name, query, is_remote):
+  if (is_remote):
+    return query_haswell_remote(user_name, query)
   command = []
   command.append("ssh")
   command.append("-t")
   command.append(user_name + "@cluster-login-hits.urz.uni-heidelberg.de")
   command.append(query)
-  return subprocess.check_output(command)
+  FNULL = open(os.devnull, 'w')
+  return subprocess.check_output(command, stderr=FNULL)
   
 
-def get_running_jobs(user_name):
-  logs = query_haswell_vpn(user_name, "squeue")
+def get_running_jobs(user_name, is_remote):
+  logs = query_haswell(user_name, "squeue", is_remote)
   jobs = {}
   for line in logs.split("\n"):
     if (("haswell" in line) and (user_name in line)):
       line = re.sub(' +', ' ', line)
-      jobs[line.split(" ")[1]] = True
+      split = line.split(" ")
+      job_id = split[1]
+      status = split[8]
+      jobs[job_id] = status
   return jobs
 
 def store_jobs(jobs):
   temp_file = os.path.join(os.path.expanduser("~"), ".temp_haswell_notifier.txt")
-  with open(os.path.join(temp_file), "w") as writer:
-    for job in jobs:
-      writer.write(job + " ")
+  pickle.dump(jobs, open(temp_file, "wb"))
 
 def get_last_read_jobs():
   temp_file = os.path.join(os.path.expanduser("~"), ".temp_haswell_notifier.txt")
-  jobs = {}
+  return pickle.load(open(temp_file, "rb"))
+
+
+def notify(message):
+  message.replace("\n", "\\\\n")
+  subprocess.Popen(['notify-send', "Haswell-notif",  message], stdin=None, stdout=None, stderr=None, close_fds=True)
+  
+def play_sounds(sounds):
   try:
-    line = open(os.path.join(temp_file)).read()
-    for job in line.split(" "):
-      if (len(job)):
-        jobs[job] = True
+    if (sound_on):
+      for sound in sounds:
+        subprocess.Popen(['spd-say', sound])
+        time.sleep(1) #otherwise the sounds overlapp
   except:
     pass
-  return jobs
 
 
-previous_jobs = get_last_read_jobs()
-print(" last jobs: " + str(previous_jobs))
-current_jobs = get_running_jobs("morelbt")
-print(" current jobs: " + str(current_jobs))
-store_jobs(current_jobs)
+def compare_jobs(previous_jobs, new_jobs):
+  notifications = []
+  sounds = []
+  for job in new_jobs:
+    if (not job in previous_jobs):
+      notifications.append("You submitted job " + job)
+      sounds.append("Job submitted")
+
+  for job in previous_jobs:
+    if (not job in new_jobs):
+      notifications.append("Job " + job + " ended")
+      sounds.append("Job ended")
+      continue	
+    previous_status = previous_jobs[job]
+    new_status = new_jobs[job]
+    if (previous_status != new_status):
+      if ("aswell" in new_status):
+        notifications.append("Job " + job + "started")
+        sounds.append("Job started")
+  if (len(notifications)):
+    notify("\n".join(notifications))
+  if (sound_on and len(sounds)):
+    play_sounds(sounds)
+  
+new_jobs = get_running_jobs(user_name, is_remote)
+store_jobs(new_jobs)
+while True:
+	new_jobs = get_running_jobs(user_name, is_remote)
+	previous_jobs = get_last_read_jobs()
+	store_jobs(new_jobs)
+	compare_jobs(previous_jobs, new_jobs)
+	time.sleep(timer_interval)
+
+
