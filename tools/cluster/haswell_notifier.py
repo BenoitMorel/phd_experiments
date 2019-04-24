@@ -78,13 +78,15 @@ lt_announced = False
 def check_lt():
   global lt_announced
   t = dt.datetime.now()
-  if (not lt_announced):
-    lt_announced = True
-    if (t.hour == 12 and t.minute == 25):
+  if (t.hour == 12 and t.minute == 25):
+    if (not lt_announced):
+      lt_announced = True
       msg = "Warning! Warning! It's lunchtime in 5 minutes!"
       notify(msg)
       play_sounds([msg])
-    elif (t.hour == 12 and t.minute == 30):
+  elif (t.hour == 12 and t.minute == 30):
+    if (not lt_announced):
+      lt_announced = True
       msg = "It's lunchtime! Go go go!"
       notify(msg)
       play_sounds([msg])
