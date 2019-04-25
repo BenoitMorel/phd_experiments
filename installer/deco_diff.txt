@@ -1,0 +1,14 @@
+Only in DeCo: Backtracking.o
+Only in DeCo: CostFunctions.o
+Common subdirectories: DeCo/DATA and refDeCo/DATA
+Only in DeCo: DeCo
+Only in DeCo: DECO.o
+Only in DeCo: main.o
+diff DeCo/makefile refDeCo/makefile
+27,28c27
+< CFLAGS1 = -O3 -I/home/morelbt/github/BPP/install_bpp/include/Bpp -I /home/morelbt/github/BPP/install_bpp/include -L/home/morelbt/github/BPP/install_bpp/lib64 
+< #CFLAGS1 = -O3 -I/home/morelbt/github/PHYLDOG/temp_install/bpp_install/include/Bpp/ -L/home/morelbt/github/PHYLDOG/temp_install/bpp_install/lib/ 
+---
+> CFLAGS1 = -O3 -I/usr/local/bpp/include/Bpp/ -L/usr/local/bpp/lib 
+Only in DeCo: Reconcil.o
+Common subdirectories: DeCo/RESULTS and refDeCo/RESULTS

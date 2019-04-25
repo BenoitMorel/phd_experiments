@@ -10,6 +10,7 @@ import create_random_tree
 from ete3 import Tree
 import concurrent.futures
 import title_node_names
+from itertools import tee, izip
 
 class SeqEntry():
   def __init__(self, line, family):
@@ -34,6 +35,13 @@ class SeqEntry():
     res += "family:" + self.family
     res += ")"
     return res
+
+def compare(entry1, entry2):
+  if (entry1.species != entry2.species):
+    return cmp(entry1.species, entry2.species)
+  if (entry1.chromozome != entry2.chromozome):
+    return cmp(entry1.chromozome, entry2.chromozome)
+  return cmp(entry1.begin, entry2.begin)
 
 # read an ensembl tree, prune the genes that we do not consider,
 # and return true if the resulting tree has more than 3 taxa
@@ -70,6 +78,8 @@ def parse_nhx_emf(emf_file, species_dict, max_families):
           seq_entries_dict[gene] = current_entries_dict[gene]
         family_index += 1
         family = "family_" + str(family_index)
+        print(family)
+      current_entries_dict = {}
       if (family_index >= max_families):
         break
     if (line[:3] == "SEQ"):
@@ -136,6 +146,22 @@ def export_mappings(families_seq_entries, output_file):
     species_to_genes[entry.species].append(entry.gene)
   fam.write_phyldog_mapping(species_to_genes, output_file)
 
+def pairwise(iterable):
+  "s -> (s0,s1), (s1,s2), (s2, s3), ..."
+  a, b = tee(iterable)
+  next(b, None)
+  return izip(a, b)
+
+
+def extract_adjacencies(seq_entries_dict, output_file):
+  seq_entries_list = []
+  for gene in seq_entries_dict:
+    seq_entries_list.append(seq_entries_dict[gene])
+  seq_entries_list.sort(lambda x,y: compare(x, y))
+  with open(output_file, "w") as writer:
+    for gene1, gene2 in pairwise(seq_entries_list):
+      if (gene1.species == gene2.species and gene1.chromozome == gene2.chromozome):
+        writer.write(gene1.gene + "|" + gene2.gene + "\n")
 
 def export(species_tree, seq_entries_dict, trees_dict, alignments_dico, datadir):
   per_family_seq_entries = {}
@@ -161,6 +187,7 @@ def export(species_tree, seq_entries_dict, trees_dict, alignments_dico, datadir)
     processed_families += 1
     with open(fam.getTrueTree(datadir, family), "w") as writer:
       writer.write(trees_dict[family])
+  extract_adjacencies(seq_entries_dict, os.path.join(datadir, "adjacencies.txt"))
   prepare_datadir(datadir)
 
 def get_species_dict(species_tree_file):
@@ -171,6 +198,7 @@ def get_species_dict(species_tree_file):
     res[leaf.name] = True
   return res
 
+
 def extract_from_ensembl(nhx_emf_file, fasta_file, species_tree, datadir, max_families):
   new_species_tree = species_tree + ".titled"
   title_node_names.title_node_names(species_tree, new_species_tree)
@@ -178,7 +206,7 @@ def extract_from_ensembl(nhx_emf_file, fasta_file, species_tree, datadir, max_fa
   species_dict = get_species_dict(species_tree)
   print(species_dict)
   seq_entries_dict, trees_dict = parse_nhx_emf(nhx_emf_file, species_dict, max_families)
-
+  
   alignments_dico = parse_fasta(fasta_file, seq_entries_dict)
   export(species_tree, seq_entries_dict, trees_dict, alignments_dico, datadir)
 
