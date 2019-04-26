@@ -16,6 +16,10 @@ def run_generax_instance(dataset, starting_tree, with_transfers, run_name, is_dn
   if (with_transfers):
     command.append("--rec-model")
     command.append("UndatedDTL")
+  else:
+    command.append("--rec-model")
+    command.append("UndatedDL")
+
   command.append("--run")
   command.append(run_name)
   if (not is_dna):

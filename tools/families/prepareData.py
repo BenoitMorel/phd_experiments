@@ -271,6 +271,7 @@ if __name__ == '__main__':
         fopt.write("genetic_code=Standard\n")
         fopt.write("model=YN98( kappa=1, omega=1.0, initFreqs=observed )\n")
       elif ("PROTEIN".startswith(DATATYPE) ):
+        print("START WITH PROTEIN")
         fopt.write("alphabet=Protein\n")
         fopt.write("model=LG08+F(initFreqs=observed )\n")
         fopt.write("rate_distribution=Gamma(n=4,alpha=1)\n")

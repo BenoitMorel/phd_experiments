@@ -80,6 +80,7 @@ def run_reference_methods(dataset, cores = 40, run_filter = RunFilter()):
   starting_trees = 10
   bs_trees = 100
   save_sdtout = sys.stdout
+  print("IS DNA " + str(is_dna))
   redirected_file = os.path.join(dataset_dir, "logs_run_all.txt")
   print("Redirected logs to " + redirected_file)
   sys.stdout.flush()
@@ -90,6 +91,7 @@ def run_reference_methods(dataset, cores = 40, run_filter = RunFilter()):
   sys.stdout.flush()
 
 def run_all_phyldog(datasets, is_dna, cores):
+  print (" run phyldog " + str(is_dna))
   for dataset in datasets:
     dataset_dir = os.path.join("../BenoitDatasets/families", dataset)
     is_dna = (not dataset in protein_datasets)

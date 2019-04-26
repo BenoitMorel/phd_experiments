@@ -20,19 +20,19 @@ if (False):
   
 
 if (True):
+  common.submit_multiple_experiments_haswell(["ensembl_96_ncrna_primates"], 0, 512)
   common.submit_multiple_experiments_haswell(["cyano_simulated"], 0, 512)
+  #common.submit_multiple_experiments_haswell(["jsim_s5_f1_sites50_dna4_bl0.5_d0.25_l0.25_t0.0"], 1, 16)
 
 if (False):
   fixed_point_dl = "jsim_s19_f100_sites500_dna4_bl0.5_d0.25_l0.25_t0.0"
-  datasets.append(fixed_point_dl)
+  #datasets.append(fixed_point_dl)
   #common.add_dataset(datasets, fixed_point_dl, ["d0.01_l0.01", "d0.05_l0.05", "d0.1_l0.1", "d0.4_l0.4"])
   #common.add_dataset(datasets, fixed_point_dl, ["d0.1", "d0.2", "d0.3", "d0.4"])
   #common.add_dataset(datasets, fixed_point_dl, ["sites100", "sites250", "sites750", "sites1000"])
   #common.add_dataset(datasets, fixed_point_dl, ["bl0.01", "bl0.05", "bl0.1", "bl0.2", "bl1.0", "bl2.0"])
   #common.add_dataset(datasets, fixed_point_dl, ["s5", "s10", "s27", "s41"])
 
-
-  common.add_dataset(datasets, fixed_point_dl, ["sites1000", "sites250", "d0.3_l0.25", "d0.1_l0.25"])
 
 if (False):
   fixed_point_dtl = "jsimdtl_s16_f100_sites500_dna4_bl0.5_d0.1_l0.2_t0.1"

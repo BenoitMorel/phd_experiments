@@ -14,7 +14,7 @@ import run_raxml_supportvalues as raxml
 def run_pargenes(dataset_dir, pargenes_dir, is_dna, starting_trees, bs_trees, cores):
   command = []
   command.append("python")
-  command.append(exp.pargenes_script)
+  command.append(exp.pargenes_script_debug)
   command.append("-a")
   command.append(os.path.join(dataset_dir, "alignments"))
   command.append("-b")

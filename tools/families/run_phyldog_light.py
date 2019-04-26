@@ -33,8 +33,10 @@ def generate_scheduler_commands_file(dataset_dir, is_dna, cores, output_dir):
       command.append("taxaseq.file=" + os.path.join(family_dir, "mapping.link"))
       command.append("likelihood.evaluator=PLL")
       if (is_dna):
+        print("is dna")
         command.append("model=GTR")
       else:
+        print("is protein")
         command.append("model=LG08")
       if (not is_dna):
         command.append("alphabet=Protein")
@@ -82,27 +84,13 @@ def run_phyldog_on_families(dataset_dir, is_dna, cores):
   shutil.rmtree(output_dir, True)
   os.makedirs(output_dir)
   generate_options(dataset_dir, is_dna)
+  start = time.time()
   run_phyldog(dataset_dir, cores)
+  saved_metrics.save_metrics(dataset_dir, "Phyldog", (time.time() - start), "runtimes") 
   extract_phyldog(dataset_dir)
   clean_phyldog(dataset_dir)
-  return 
 
 
-def run_phyldog_light_on_families(dataset_dir, is_dna, cores):
-  fam.init_dataset_dir(dataset_dir)
-  output_dir = get_phyldog_run_dir(dataset_dir)
-  shutil.rmtree(output_dir, True)
-  os.makedirs(output_dir)
-  scheduler_commands_file = generate_scheduler_commands_file(dataset_dir, is_dna, cores, output_dir)
-  command = generate_scheduler_command(scheduler_commands_file, cores, output_dir)
-  print(command.split(" "))
-  start = time.time()
-  subprocess.check_call(command.split(" "), stdout = sys.stdout)
-  saved_metrics.save_metrics(dataset_dir, "Phyldog", (time.time() - start), "runtimes") 
-  extract_phyldog_trees(dataset_dir)
-  extract.extract_events_from_phyldog(dataset_dir)
-    
-    
 def add_starting_tree(option_file, tree_path):
   lines = open(option_file).readlines()
   with open(option_file, "w") as writer:
@@ -194,7 +182,11 @@ def extract_phyldog(dataset_dir):
   for family in os.listdir(families_dir):
     phyldog_tree = os.path.join(results_dir, family + ".ReconciledTree")
     new_phyldog_tree = fam.getPhyldogTree(dataset_dir, family)
-    shutil.copy(phyldog_tree, new_phyldog_tree)
+    try:
+      shutil.copy(phyldog_tree, new_phyldog_tree)
+    except:
+      print("Phyldog failed to infer tree " + phyldog_tree)
+      shutil.copy(fam.getRaxmlTree(dataset_dir, family), new_phyldog_tree)
 
 
 if (__name__== "__main__"):

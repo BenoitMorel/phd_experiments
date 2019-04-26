@@ -15,7 +15,6 @@ def extract_events_from_phyldog(dataset_dir):
   for family in os.listdir(families_dir):
     phyldog_newick = os.path.join(families_dir, family, "phyldogGeneTree.newick")
     if (not os.path.isfile(phyldog_newick)):
-        print("skipping " + family)
         continue
     writer = open(os.path.join(families_dir, family, "phyldogEvents.txt"), "w")
     line = open(phyldog_newick).readlines()[0]
@@ -31,7 +30,6 @@ def extract_events_from_treerecs(dataset_dir):
   for family in os.listdir(families_dir):
     treerecs_newick = os.path.join(families_dir, family, "treerecs", "treerecs_output.newick.best")
     if (not os.path.isfile(treerecs_newick)):
-      print("extract_events_from_treerecs: skipping family " + family)
       continue
     writer = open(os.path.join(families_dir, family, "treerecsEvents.txt"), "w")
     line = open(treerecs_newick).readlines()[0]
