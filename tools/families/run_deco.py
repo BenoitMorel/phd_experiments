@@ -91,9 +91,9 @@ if (__name__ == "__main__"):
      exit(1)
   datadir = sys.argv[1]
   method = sys.argv[2]
-  run_deco = True
-  if (sys.argv > 3):
-    run_deco = int(sys.argv[3])
-  if (run_deco):
+  do_run_deco = True
+  if (len(sys.argv) > 3):
+    do_run_deco = int(sys.argv[3])
+  if (do_run_deco):
     run_deco(datadir, method)
   analyze_deco_output(datadir, method)

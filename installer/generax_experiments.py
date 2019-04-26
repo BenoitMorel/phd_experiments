@@ -46,10 +46,14 @@ def git_update(repo, output = "", branch = "", output_prefix = exp.github_root):
     print("failed to update submodule for " + repo)
   os.chdir(cwd)
 
-def apply_diff(diff_file):
+def apply_diff(diff_file, reverse = False):
   cwd = os.getcwd()
   os.chdir(exp.github_root)
-  os.system("patch -p0 < " + diff_file)
+  if (reverse):
+    os.system("patch -p0 -R < " + diff_file)
+
+  else:
+    os.system("patch -p0 < " + diff_file)
 
   os.chdir(cwd)
 
@@ -62,7 +66,7 @@ def apply_git_diff(repo_name, diff_file):
   call(["git", "apply", os.path.join(exp.installer_root, diff_file)])
   os.chdir(cwd)
 
-def wget(link, file_name, prefix = exp.github_root):
+def wget(link, file_name, prefix = exp.github_root, unzip = True):
   output = os.path.join(prefix, file_name)
   cwd = os.getcwd()
   os.chdir(prefix)
@@ -70,7 +74,7 @@ def wget(link, file_name, prefix = exp.github_root):
     print("Directory " + output + " already exists")
   else:
     call(["wget", "-O", file_name, link, "-P", exp.github_root])
-  if (not os.path.isdir(os.path.splitext(output)[0])):
+  if (not os.path.isdir(os.path.splitext(output)[0]) and unzip):
     call(["unzip", output])
   os.chdir(cwd)
 
@@ -181,10 +185,24 @@ def install_phyldog(repo_name):
 
 
 
+def install_deco(targz):
+  cwd = os.getcwd()
+  os.chdir(exp.github_root)
+  subprocess.check_call(["gunzip", targz])
+  subprocess.check_call(["tar", "-xf", targz[:-3]])
+  repo = os.path.join(exp.github_root, targz)[:-7]
+  print(repo)
+  
+  apply_diff(os.path.join(exp.github_root, "phd_experiments", "installer", "deco_diff.txt"), reverse = True)
+  apply_diff(os.path.join(exp.github_root, "phd_experiments", "installer", "deco_make_diff.txt"), reverse = True)
+  os.chdir(repo)
+  call(["make"])
 
 
 
 
+
+  os.chdir(cwd)
 
 
 if (False):
@@ -225,7 +243,8 @@ if (False):
   git_update("https://github.com/Boussau/PHYLDOG", "PHYLDOG")
 
   install_phyldog("PHYLDOG")
-
-if (True):
   install_with_autotools("exabayes-1.5")
 
+if (True):
+  wget("http://pbil.univ-lyon1.fr/software/DeCo/DeCo.tar.gz", "DeCo.tar.gz", unzip = False)
+  install_deco("DeCo.tar.gz")
