@@ -1,0 +1,14 @@
+--- ./DeCo/makefile	2019-04-25 15:18:14.467299052 +0200
++++ ./refDeCo/makefile	2012-09-03 16:33:01.000000000 +0200
+@@ -24,9 +24,8 @@
+ 
+ CC = g++
+ 
+-CFLAGS1 = -g -O3 -I/home/morelbt/github/BPP/install_bpp/include/Bpp -I /home/morelbt/github/BPP/install_bpp/include -L/home/morelbt/github/BPP/install_bpp/lib64 
+-#CFLAGS1 = -O3 -I/home/morelbt/github/PHYLDOG/temp_install/bpp_install/include/Bpp/ -L/home/morelbt/github/PHYLDOG/temp_install/bpp_install/lib/ 
+-CFLAGS2 = -g -lbpp-phyl -lbpp-seq -lbpp-core
++CFLAGS1 = -O3 -I/usr/local/bpp/include/Bpp/ -L/usr/local/bpp/lib 
++CFLAGS2 = -lbpp-phyl -lbpp-seq -lbpp-core
+ 
+ all : $(OBJS)  
+ 	$(CC) $(CFLAGS1) $(OBJS) $(CFLAGS2) -o DeCo
