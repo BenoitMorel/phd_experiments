@@ -163,6 +163,11 @@ def extract_adjacencies(seq_entries_dict, output_file):
       if (gene1.species == gene2.species and gene1.chromozome == gene2.chromozome):
         writer.write(gene1.gene + "|" + gene2.gene + "\n")
 
+def extract_deco_mappings(seq_entries_dict, output_file):
+  with open(output_file, "w") as writer:
+    for gene in seq_entries_dict:
+      writer.write(seq_entries_dict[gene].species + " " + gene + "\n")
+
 def export(species_tree, seq_entries_dict, trees_dict, alignments_dico, datadir):
   per_family_seq_entries = {}
   for gene in seq_entries_dict:
@@ -187,7 +192,8 @@ def export(species_tree, seq_entries_dict, trees_dict, alignments_dico, datadir)
     processed_families += 1
     with open(fam.getTrueTree(datadir, family), "w") as writer:
       writer.write(trees_dict[family])
-  extract_adjacencies(seq_entries_dict, os.path.join(datadir, "adjacencies.txt"))
+  extract_adjacencies(seq_entries_dict, fam.get_adjacencies(datadir))
+  extract_deco_mappings(seq_entries_dict, fam.get_deco_mappings(datadir))
   prepare_datadir(datadir)
 
 def get_species_dict(species_tree_file):

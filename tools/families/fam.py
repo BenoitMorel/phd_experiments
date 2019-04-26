@@ -11,6 +11,12 @@ def mkdir(directory):
 def getSpeciesTree(dataset_dir):
   return os.path.join(dataset_dir, "speciesTree.newick")
 
+def get_adjacencies(dataset_dir):
+  return os.path.join(dataset_dir, "adjacencies.txt")
+
+def get_deco_mappings(dataset_dir):
+  return os.path.join(dataset_dir, "deco_mappings.txt")
+
 def getFamiliesDir(dataset_dir):
   return os.path.join(dataset_dir, "families")
 

@@ -58,8 +58,8 @@ def get_gene_trees_list(method, dataset_dir, msa):
     tree_path = os.path.join(dataset_dir, msa, "results", method + ".newick") 
   return read_trees_list(tree_path)
 
-def add_ran_methods(methods, dataset_dir):
-  runs_dir = os.path.join(dataset_dir, os.listdir(dataset_dir)[0], "results")
+def add_ran_methods(methods, families_dir):
+  runs_dir = os.path.join(families_dir, os.listdir(families_dir)[0], "results")
   if (not os.path.isdir(runs_dir)):
     return
   for method in os.listdir(runs_dir):
