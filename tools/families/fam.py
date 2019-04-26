@@ -42,6 +42,9 @@ def getMappings(dataset_dir, family):
 def getTrueTree(dataset_dir, family):
   return os.path.join(getFamily(dataset_dir, family), "trueGeneTree.newick")
 
+def getRandomTree(dataset_dir, family):
+  return os.path.join(getTreesDir(dataset_dir, family), "randomGeneTree.newick")
+
 def getRaxmlTree(dataset_dir, family):
   return os.path.join(getTreesDir(dataset_dir, family), "raxmlGeneTree.newick")
 
@@ -130,7 +133,11 @@ def get_gene_tree(familydir, tree):
   elif ("ALE" in tree):
     return os.path.join(gene_trees_dir, tree + "GeneTree.newick")
   elif (lower_tree == "random"):
-    return "__random__";
+    res = os.path.join(gene_trees_dir, "randomGeneTree.newick")
+    if (os.path.isfile(res)):
+        return res
+    else:
+      return "__random__";
   else:
     return tree
 

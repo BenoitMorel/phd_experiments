@@ -18,7 +18,7 @@ import re
 import  run_exabayes
 
 # ALE
-ALE_SAMPLES = 10
+ALE_SAMPLES = 1
 
 # EXABAYES
 EXA_TREES = 2000
