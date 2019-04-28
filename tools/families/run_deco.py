@@ -46,11 +46,13 @@ def run_deco(datadir, method):
   deco_run_dir =  get_deco_run_dir(datadir, method)
   shutil.rmtree(deco_run_dir, True)
   os.makedirs(deco_run_dir)
+  logs_file = os.path.join(deco_run_dir, "logs.txt")
   trees_file = build_trees_file(datadir, method)
   conf_file = build_deco_conf(datadir, method, trees_file)
   command = [exp.deco_exec, conf_file]
   print("Executing " + " ".join(command))
-  subprocess.check_call(command)
+  print("Output in " + logs_file)
+  subprocess.check_call(command, stdout = open(logs_file, "w"))
   print("Results in : " + deco_run_dir)
 
 def analyze_deco_output(datadir, method):

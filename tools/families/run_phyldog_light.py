@@ -154,26 +154,28 @@ def generate_options(dataset_dir, is_dna):
    
 def run_phyldog(dataset_dir, cores):
   cwd = os.getcwd()
-  families_number = len(os.listdir(os.path.join(dataset_dir, "families")))
-  print("plop")
-  print(str(families_number) + " families")
-  cores = str(min(families_number, int(cores)))
-  phyldog_run_dir = get_phyldog_run_dir(dataset_dir)
-  command = []
-  command.append("mpirun")
-  command.append("-n")
-  command.append(str(cores))
-  command.append(exp.phyldog_exec)
-  command.append("param=" + os.path.abspath(os.path.join(phyldog_run_dir, "options", "GeneralOptions.txt")))
-  print("EXECUTE PHYLDOG")
-  print(" ".join(command))
-  logs = open(os.path.join(phyldog_run_dir, "logs.txt"), "w")
-  os.chdir(phyldog_run_dir)
-  start = time.time()
-  subprocess.check_call(command, stdout = logs)
-  saved_metrics.save_metrics(dataset_dir, "Phyldog", (time.time() - start), "runtimes") 
-  print("end EXECUTE PHYLDOG")
-  os.chdir(cwd)
+  try:
+    families_number = len(os.listdir(os.path.join(dataset_dir, "families")))
+    print("plop")
+    print(str(families_number) + " families")
+    cores = str(min(families_number, int(cores)))
+    phyldog_run_dir = get_phyldog_run_dir(dataset_dir)
+    command = []
+    command.append("mpirun")
+    command.append("-n")
+    command.append(str(cores))
+    command.append(exp.phyldog_exec)
+    command.append("param=" + os.path.abspath(os.path.join(phyldog_run_dir, "options", "GeneralOptions.txt")))
+    print("EXECUTE PHYLDOG")
+    print(" ".join(command))
+    logs = open(os.path.join(phyldog_run_dir, "logs.txt"), "w")
+    os.chdir(phyldog_run_dir)
+    start = time.time()
+    subprocess.check_call(command, stdout = logs)
+    saved_metrics.save_metrics(dataset_dir, "Phyldog", (time.time() - start), "runtimes") 
+    print("end EXECUTE PHYLDOG")
+  finally:
+    os.chdir(cwd)
 
 
 def extract_phyldog(dataset_dir):
