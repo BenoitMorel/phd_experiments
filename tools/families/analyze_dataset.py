@@ -123,6 +123,10 @@ def analyze(dataset_dir, benched_method = ""):
     if (method == "True"):
       continue
     methods_to_compare.append(("True", method))
+  methods_to_compare.append(("GeneRax-DL-Raxml", "Treerecs"))
+  methods_to_compare.append(("GeneRax-DL-Raxml", "GeneRax-DTL-Raxml"))
+  methods_to_compare.append(("GeneRax-DL-Raxml", "Notung"))
+  methods_to_compare.append(("GeneRax-DL-Raxml", "RAxML-NG"))
   for m in methods:
     methods_trees_number[m] = 0
   total_rrf = {}
