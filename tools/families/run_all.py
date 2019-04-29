@@ -48,7 +48,7 @@ def run_reference_methods(dataset_dir, is_dna, starting_trees, bs_trees, cores, 
       treerecs.run_treerecs_on_families(dataset_dir, is_dna, cores)
     except Exception as exc:
       print("Failed running Treerecs")
-      print exc
+      print(exc)
     sys.stdout.flush()
   if (run_filter.phyldog):
     print("Run phyldog...")
@@ -57,7 +57,7 @@ def run_reference_methods(dataset_dir, is_dna, starting_trees, bs_trees, cores, 
       phyldog.run_phyldog_on_families(dataset_dir, is_dna, cores)
     except Exception as exc:
       print("Failed running Phyldog")
-      print exc
+      print(exc)
   if (run_filter.notung):
     print("Run notung...")
     sys.stdout.flush()
@@ -66,7 +66,7 @@ def run_reference_methods(dataset_dir, is_dna, starting_trees, bs_trees, cores, 
       notung.run_notung_on_families(dataset_dir, threshold, cores)
     except Exception as exc:
       print("Failed running Notung")
-      print exc
+      print(exc)
 
   if (run_filter.generax):
     print("Run Generax")
@@ -75,7 +75,7 @@ def run_reference_methods(dataset_dir, is_dna, starting_trees, bs_trees, cores, 
       run_generax.run_generax_on_families(dataset_dir, is_dna, cores)
     except Exception as exc:
       print("Failed running GeneRax")
-      print exc
+      print(exc)
     sys.stdout.flush()
   if (run_filter.ALE):
     print("Run ALE...")
@@ -84,7 +84,7 @@ def run_reference_methods(dataset_dir, is_dna, starting_trees, bs_trees, cores, 
       run_ALE.run_exabayes_and_ALE(dataset_dir, is_dna, cores)
     except Exception as exc:
       print("Failed running ALE")
-      print exc
+      print(exc)
     sys.stdout.flush()
   if (run_filter.analyze):
     print("Run analyze...")
@@ -93,7 +93,7 @@ def run_reference_methods(dataset_dir, is_dna, starting_trees, bs_trees, cores, 
       analyze_dataset.analyze(dataset_dir)
     except Exception as exc:
       print("Failed running analyze")
-      print exc
+      print(exc)
 
 if __name__ == "__main__":
   if (len(sys.argv) != 6):

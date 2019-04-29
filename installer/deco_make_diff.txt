@@ -3,10 +3,10 @@
 @@ -24,9 +24,8 @@
  
  CC = g++
- 
--CFLAGS1 = -g -O3 -I/home/morelbt/github/BPP/install_bpp/include/Bpp -I /home/morelbt/github/BPP/install_bpp/include -L/home/morelbt/github/BPP/install_bpp/lib64 
--#CFLAGS1 = -O3 -I/home/morelbt/github/PHYLDOG/temp_install/bpp_install/include/Bpp/ -L/home/morelbt/github/PHYLDOG/temp_install/bpp_install/lib/ 
--CFLAGS2 = -g -lbpp-phyl -lbpp-seq -lbpp-core
+
+-bpp_root=$(HOME)/install/bio++
+-CFLAGS1 = -g -O3  -I$(bpp_root)/include/Bpp -I$(bpp_root)/include -L$(bpp_root)/lib 
+-CFLAGS2 = -g $(bpp_root)/lib/libbpp-phyl.a  $(bpp_root)/lib/libbpp-seq.a  $(bpp_root)/lib/libbpp-core.a
 +CFLAGS1 = -O3 -I/usr/local/bpp/include/Bpp/ -L/usr/local/bpp/lib 
 +CFLAGS2 = -lbpp-phyl -lbpp-seq -lbpp-core
  
