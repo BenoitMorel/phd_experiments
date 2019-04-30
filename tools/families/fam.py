@@ -14,6 +14,9 @@ def getSpeciesTree(dataset_dir):
 def get_adjacencies(dataset_dir):
   return os.path.join(dataset_dir, "adjacencies.txt")
 
+def get_prefixed_adjacencies(dataset_dir):
+  return get_adjacencies(dataset_dir) + ".prefixed"
+
 def get_deco_mappings(dataset_dir):
   return os.path.join(dataset_dir, "deco_mappings.txt")
 
@@ -57,8 +60,11 @@ def getPhyldogTree(dataset_dir, family):
 def getTreerecsTree(dataset_dir, family):
   return os.path.join(getTreesDir(dataset_dir, family), "treerecsGeneTree.newick")
 
-def getNotungTree(dataset_dir, family):
-  return os.path.join(getTreesDir(dataset_dir, family), "notungGeneTree.newick")
+def getNotungTree(dataset_dir, family, threshold = None):
+  if (threshold == None):
+    return os.path.join(getTreesDir(dataset_dir, family), "notungGeneTree.newick")
+  else:
+    return os.path.join(getTreesDir(dataset_dir, family), "notung" + str(threshold) + "GeneTree.newick")
 
 def getALETree(dataset_dir, family, method):
   return os.path.join(getTreesDir(dataset_dir, family), method + "GeneTree.newick")
@@ -126,8 +132,8 @@ def get_gene_tree(familydir, tree):
     return os.path.join(gene_trees_dir, "treerecsGeneTree.newick")
   elif (lower_tree == "phyldog"):
     return os.path.join(gene_trees_dir, "phyldogGeneTree.newick")
-  elif (lower_tree == "notung"):
-    return os.path.join(gene_trees_dir, "notungGeneTree.newick")
+  elif ("notung" in lower_tree):
+    return os.path.join(gene_trees_dir, lower_tree + "GeneTree.newick")
   elif ("GeneRax" in tree):
     return os.path.join(familydir, "results", tree + ".newick")
   elif ("ALE" in tree):

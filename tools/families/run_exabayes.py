@@ -33,8 +33,8 @@ def generate_config_file(config_file, num_gen, sampling_freq, runs, chains):
     writer.write("begin run;\n")
     writer.write("  numGen " + str(num_gen) + "\n")
     writer.write("  samplingFreq " + str(sampling_freq) + "\n")
-    writer.write("  numCoupledChains " + str(runs) + "\n")
-    writer.write("  numRuns " + str(chains) + "\n")
+    writer.write("  numCoupledChains " + str(chains) + "\n")
+    writer.write("  numRuns " + str(runs) + "\n")
     writer.write("  convergenceCriterion none\n")
     writer.write("end;")
 
