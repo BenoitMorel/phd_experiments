@@ -20,7 +20,9 @@ if (False):
   
 
 if (True):
-  common.submit_multiple_experiments_haswell(["ensembl_96_ncrna_primates"], 0, 512)
+  #common.submit_multiple_experiments_haswell(["ensembl_96_ncrna_primates"], 0, 512)
+  common.submit_multiple_experiments_haswell(["ensembl_96_ncrna_fishes"], 0, 512)
+  common.submit_multiple_experiments_haswell(["ensembl_96_ncrna_sauropsids"], 0, 512)
   #common.submit_multiple_experiments_haswell(["cyano_simulated"], 0, 512)
   #common.submit_multiple_experiments_haswell(["jsim_s5_f1_sites50_dna4_bl0.5_d0.25_l0.25_t0.0"], 1, 16)
 

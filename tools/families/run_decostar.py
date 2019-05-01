@@ -105,9 +105,11 @@ def analyze_decostart_output(datadir, method):
     species_adjacencies_left = per_species_adjacencies_left[species]
     species_adjacencies_right = per_species_adjacencies_right[species]
     if (not gene1 in species_adjacencies_left):
+      species_adjacencies_right[gene1] = 0
       species_adjacencies_left[gene1] = 0
     species_adjacencies_left[gene1] += 1
     if (not gene2 in species_adjacencies_right):
+      species_adjacencies_left[gene2] = 0
       species_adjacencies_right[gene2] = 0
     species_adjacencies_right[gene2] += 1
   

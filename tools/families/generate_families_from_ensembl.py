@@ -1,6 +1,7 @@
 import sys
 import os
 import shutil
+import functools
 sys.path.insert(0, 'scripts')
 sys.path.insert(0, 'tools/families')
 sys.path.insert(0, 'tools/trees')
@@ -10,7 +11,14 @@ import create_random_tree
 from ete3 import Tree
 import concurrent.futures
 import title_node_names
-from itertools import tee, izip
+from itertools import tee
+try:
+  from itertools import izip
+except:
+  izip = zip
+
+def mycmp(a, b):
+  return (a > b) - (a < b) 
 
 class SeqEntry():
   def __init__(self, line, family):
@@ -38,10 +46,10 @@ class SeqEntry():
 
 def compare(entry1, entry2):
   if (entry1.species != entry2.species):
-    return cmp(entry1.species, entry2.species)
+    return mycmp(entry1.species, entry2.species)
   if (entry1.chromozome != entry2.chromozome):
-    return cmp(entry1.chromozome, entry2.chromozome)
-  return cmp(entry1.begin, entry2.begin)
+    return mycmp(entry1.chromozome, entry2.chromozome)
+  return mycmp(entry1.begin, entry2.begin)
 
 # read an ensembl tree, prune the genes that we do not consider,
 # and return true if the resulting tree has more than 3 taxa
@@ -153,11 +161,11 @@ def pairwise(iterable):
   return izip(a, b)
 
 
-def extract_adjacencies(seq_entries_dict, datadir)):
+def extract_adjacencies(seq_entries_dict, datadir):
   seq_entries_list = []
   for gene in seq_entries_dict:
     seq_entries_list.append(seq_entries_dict[gene])
-  seq_entries_list.sort(lambda x,y: compare(x, y))
+  seq_entries_list.sort(key = functools.cmp_to_key(compare))
   with open(fam.get_adjacencies(datadir), "w") as writer:
     for gene1, gene2 in pairwise(seq_entries_list):
       if (gene1.species == gene2.species and gene1.chromozome == gene2.chromozome):
@@ -231,7 +239,7 @@ def get_max_families(argv):
 
 if (__name__ == "__main__"): 
   if (len(sys.argv) < 5): 
-    print("Syntax: python " + os.path.basename(__file__) + " nhx_emf fasta output")
+    print("Syntax: python " + os.path.basename(__file__) + " nhx_emf fasta species_tree output")
     exit(1)
   nhx_emf_file = sys.argv[1]
   fasta_file = sys.argv[2]
