@@ -18,7 +18,7 @@ if (False):
   exit(0)
 
 if (True):
-  datasets = ["sub_5_ensembl_96_ncrna_primates"]
+  datasets = ["zsim_s10_f10_sites50_d0.25_l0.25"]
   run_filter = RunFilter()
   
   #run_filter.disable_all()

@@ -6,6 +6,7 @@ sys.path.insert(0, 'scripts')
 sys.path.insert(0, os.path.join("tools", "phyldog"))
 import experiments as exp
 import link_file_from_gene_tree as phyldog_link
+import fam
 
 def generate_zombi_species(species, output):
   parameters_dir = os.path.join(output, "parameters")
@@ -122,6 +123,7 @@ def zombi_to_families(zombi, out):
     os.makedirs(new_family_dir)
     # species tree
     shutil.copyfile(new_species, os.path.join(new_family_dir, "speciesTree.newick"))
+    fam.convertToPhyldogSpeciesTree(fam.get_species_tree(out), fam.get_phyldog_species_tree(out)) 
     # true trees
     shutil.copyfile(genetree, os.path.join(new_family_dir, "trueGeneTree.newick"))
     # alignment
@@ -135,7 +137,7 @@ def zombi_to_families(zombi, out):
 
 
 def generate_zombi(species, families, sites, dupRate, lossRate, transferRate, output):
-  dirname = "sim_s" + str(species) + "_f" + str(families)
+  dirname = "zsim_s" + str(species) + "_f" + str(families)
   dirname += "_sites" + str(sites)
   dirname += "_d" + str(dupRate) + "_l" + str(lossRate)
   output = os.path.join(output, dirname)
