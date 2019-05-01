@@ -183,7 +183,10 @@ def install_phyldog(repo_name):
   
   
 
-
+def run_make(repo):
+  os.chdir(repo)
+  call(["make"])
+  os.chdir(cwd)
 
 def install_deco(targz):
   cwd = os.getcwd()
@@ -195,15 +198,7 @@ def install_deco(targz):
   
   apply_diff(os.path.join(exp.github_root, "phd_experiments", "installer", "deco_diff.txt"), reverse = True)
   apply_diff(os.path.join(exp.github_root, "phd_experiments", "installer", "deco_make_diff.txt"), reverse = True)
-  os.chdir(repo)
-  call(["make"])
-
-
-
-
-
-  os.chdir(cwd)
-
+  run_make(repo)
 
 if (False):
   git_update("https://github.com/ssolo/ALE.git", "ALE")
@@ -244,7 +239,15 @@ if (False):
 
   install_phyldog("PHYLDOG")
   install_with_autotools("exabayes-1.5")
-
-if (True):
   wget("http://pbil.univ-lyon1.fr/software/DeCo/DeCo.tar.gz", "DeCo.tar.gz", unzip = False)
   install_deco("DeCo.tar.gz")
+  
+  git_update("https://github.com/WandrilleD/DeCoSTAR.git", "DeCoSTAR")
+  subprocess.check_call(["./installer/install_recent_bpp.sh"], shell = True)
+  apply_diff(os.path.join(exp.github_root, "phd_experiments", "installer", "decostart_make_diff.txt"))#, reverse = True)
+
+if (True):
+  run_make(os.path.join(exp.github_root, "DeCoSTAR"))
+
+
+

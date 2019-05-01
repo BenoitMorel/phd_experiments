@@ -153,15 +153,19 @@ def pairwise(iterable):
   return izip(a, b)
 
 
-def extract_adjacencies(seq_entries_dict, output_file):
+def extract_adjacencies(seq_entries_dict, datadir)):
   seq_entries_list = []
   for gene in seq_entries_dict:
     seq_entries_list.append(seq_entries_dict[gene])
   seq_entries_list.sort(lambda x,y: compare(x, y))
-  with open(output_file, "w") as writer:
+  with open(fam.get_adjacencies(datadir), "w") as writer:
     for gene1, gene2 in pairwise(seq_entries_list):
       if (gene1.species == gene2.species and gene1.chromozome == gene2.chromozome):
         writer.write(gene1.gene + "|" + gene2.gene + "\n")
+  with open(fam.get_prefixed_adjacencies(datadir), "w") as writer:
+    for gene1, gene2 in pairwise(seq_entries_list):
+      if (gene1.species == gene2.species and gene1.chromozome == gene2.chromozome):
+        writer.write(gene1.species + "_" + gene1.gene + "|" + gene2.species + "_" + gene2.gene + "\n")
 
 def extract_deco_mappings(seq_entries_dict, output_file):
   with open(output_file, "w") as writer:
@@ -192,7 +196,7 @@ def export(species_tree, seq_entries_dict, trees_dict, alignments_dico, datadir)
     processed_families += 1
     with open(fam.getTrueTree(datadir, family), "w") as writer:
       writer.write(trees_dict[family])
-  extract_adjacencies(seq_entries_dict, fam.get_adjacencies(datadir))
+  extract_adjacencies(seq_entries_dict, datadir)
   extract_deco_mappings(seq_entries_dict, fam.get_deco_mappings(datadir))
   prepare_datadir(datadir)
 
