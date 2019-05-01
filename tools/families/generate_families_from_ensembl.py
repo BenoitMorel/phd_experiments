@@ -58,7 +58,7 @@ def read_ensembl_tree(line, family, trees_dict, seq_entries_dict):
     return False
   print(len(tree.get_leaves()))
   if (len(tree.get_leaves()) > 3):
-    trees_dict[family] = line.replace("\n", "")
+    trees_dict[family] = tree.write().replace("\n", "")
     return True
   return False
 
