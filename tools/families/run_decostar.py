@@ -78,7 +78,7 @@ def run_decostar(datadir, method):
 
 def get_distance_to_1(count_vector):
   distance = 0.0
-  for i in range(0, len(count_vector)):
+  for i in range(2, len(count_vector)):
     distance += abs(float(i) - 1.0) * float(count_vector[i])
   return distance 
 
@@ -138,25 +138,28 @@ def analyze_decostart_output(datadir, method):
   print("Total number of adjacencies: " + str(total_adj_count))
   print("Total number of genes: " + str(len(all_genes)))
   # extract counts
-  adj_count = [0] * (max_adj_count + 1)
+  adj_count_left = [0] * (max_adj_count + 1)
+  adj_count_right = [0] * (max_adj_count + 1)
   total_classes = 0
   for species in species_to_analyze:
     species = str(species)
     species_adjacencies_left = per_species_adjacencies_left[species]
     for gene in species_adjacencies_left:
-      adj_count[species_adjacencies_left[gene]] += 1
+      adj_count_left[species_adjacencies_left[gene]] += 1
       total_classes += 1
     species_adjacencies_right = per_species_adjacencies_right[species]
     for gene in species_adjacencies_right:
-      adj_count[species_adjacencies_right[gene]] += 1
+      adj_count_right[species_adjacencies_right[gene]] += 1
       total_classes += 1
-  for count in adj_count[1:]:
-    sys.stdout.write(" " + "%.2f" % (float(count) / float(total_classes)))
-  print("")
-  for count in adj_count[1:]:
-    sys.stdout.write(" " + str(count))
-  print("")
-  print("distance to 1: " + str(get_distance_to_1(adj_count) / float(total_classes)))
+  #for count in adj_count[1:]:
+  #  sys.stdout.write(" " + "%.2f" % (float(count) / float(total_classes)))
+  #print("")
+  #for count in adj_count[1:]:
+  #  sys.stdout.write(" " + str(count))
+  #print("")
+  distance = get_distance_to_1(adj_count_left) + get_distance_to_1(adj_count_right)
+  distance = float(distance) / float(total_classes)
+  print("distance to 1: " + str(distance))
 
 if (__name__ == "__main__"): 
   if (len(sys.argv) < 3): 

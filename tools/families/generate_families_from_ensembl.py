@@ -169,11 +169,11 @@ def extract_adjacencies(seq_entries_dict, datadir):
   with open(fam.get_adjacencies(datadir), "w") as writer:
     for gene1, gene2 in pairwise(seq_entries_list):
       if (gene1.species == gene2.species and gene1.chromozome == gene2.chromozome):
-        writer.write(gene1.gene + "|" + gene2.gene + "\n")
+        writer.write(gene1.gene + " " + gene2.gene + "\n")
   with open(fam.get_prefixed_adjacencies(datadir), "w") as writer:
     for gene1, gene2 in pairwise(seq_entries_list):
       if (gene1.species == gene2.species and gene1.chromozome == gene2.chromozome):
-        writer.write(gene1.species + "_" + gene1.gene + "|" + gene2.species + "_" + gene2.gene + "\n")
+        writer.write(gene1.species + "_" + gene1.gene + " " + gene2.species + "_" + gene2.gene + "\n")
 
 def extract_deco_mappings(seq_entries_dict, output_file):
   with open(output_file, "w") as writer:
