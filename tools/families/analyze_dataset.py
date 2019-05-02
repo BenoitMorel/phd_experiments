@@ -24,7 +24,7 @@ methods_tree_files["True"] = "trueGeneTree.newick"
 methods_tree_files["RAxML-NG"] = "raxmlGeneTree.newick"
 methods_tree_files["Treerecs"] = "treerecsGeneTree.newick"
 methods_tree_files["Phyldog"] = "phyldogGeneTree.newick"
-methods_tree_files["Notung"] = "notungGeneTree.newick"
+methods_tree_files["Notung"] = "notung80GeneTree.newick"
 methods_tree_files["ALE-DL"] = "ALE-DLGeneTree.newick"
 methods_tree_files["ALE-DTL"] = "ALE-DTLGeneTree.newick"
 

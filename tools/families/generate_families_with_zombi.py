@@ -7,6 +7,8 @@ sys.path.insert(0, os.path.join("tools", "phyldog"))
 import experiments as exp
 import link_file_from_gene_tree as phyldog_link
 import fam
+from ete3 import Tree
+from ete3 import SeqGroup
 
 def generate_zombi_species(species, output):
   parameters_dir = os.path.join(output, "parameters")
@@ -100,6 +102,23 @@ def generate_zombi_sequence(sites, output):
   command.append(output)
   subprocess.check_call(command)
 
+def rename_with_family(name, family):
+  return name + "_" + family.replace("_", "UUU")
+
+def copy_and_rename_tree(src, dest, family):
+  tree = Tree(src, 1)
+  for node in tree.traverse("postorder"):
+    node.name = rename_with_family(node.name, family)
+  open(dest, "w").write(tree.write())
+
+def copy_and_rename_alignment(src, dest, family):
+  seqs = SeqGroup(open(src).read()) #, format="phylip_relaxed")
+  new_seqs = SeqGroup() 
+  for entry in seqs.get_entries():
+    new_seqs.set_seq(rename_with_family(entry[0], family), entry[1])
+  open(dest, "w").write(new_seqs.write())
+
+
 def zombi_to_families(zombi, out):
   new_ali_dir = os.path.join(out, "alignments")
   new_families_dir = os.path.join(out, "families")
@@ -118,6 +137,10 @@ def zombi_to_families(zombi, out):
     if (os.path.getsize(genetree) < 2):
       continue
     family = genetree_base.split("_")[0] + "_pruned"
+    alignment_base = family + ".fasta" 
+    alignment = os.path.join(zombi, "S", alignment_base)
+    if (not os.path.isfile(alignment)):
+      continue
     print(family)
     new_family_dir = os.path.join(new_families_dir, family)
     os.makedirs(new_family_dir)
@@ -125,15 +148,23 @@ def zombi_to_families(zombi, out):
     shutil.copyfile(new_species, os.path.join(new_family_dir, "speciesTree.newick"))
     fam.convertToPhyldogSpeciesTree(fam.get_species_tree(out), fam.get_phyldog_species_tree(out)) 
     # true trees
-    shutil.copyfile(genetree, os.path.join(new_family_dir, "trueGeneTree.newick"))
+    new_gene_tree = os.path.join(new_family_dir, "trueGeneTree.newick")
+    copy_and_rename_tree(genetree, new_gene_tree, family)
     # alignment
-    alignment_base = family + ".fasta" 
-    alignment = os.path.join(zombi, "S", alignment_base)
-    shutil.copyfile(alignment, os.path.join(new_family_dir, "alignment.msa"))
-    shutil.copyfile(alignment, os.path.join(new_ali_dir, alignment_base))
+    copy_and_rename_alignment(alignment, os.path.join(new_ali_dir, alignment_base), family)
+    exp.relative_symlink(os.path.join(new_ali_dir, alignment_base), os.path.join(new_family_dir, "alignment.msa"))
     alignments_writer.write(os.path.abspath(os.path.join(new_ali_dir, alignment_base)) + "\n")
     # link file
-    phyldog_link.generate_link_file(genetree, os.path.join(new_family_dir, "mapping.link"), "_")
+    phyldog_link.generate_link_file(new_gene_tree, os.path.join(new_family_dir, "mapping.link"), "_")
+
+def export_adjacencies(zombi_dir, datadir):
+  species_names = Tree(fam.getSpeciesTree(datadir), 1).get_leaf_names()
+  for species in species_names:
+    genome_path = os.path.join(zombi_dir, "G", "Genomes", species + "_GENOME.tsv")
+    genes = []
+    for line in open(genome_path).readlines()[1:]:
+      genes.append(species + "_" + line.split()[-1])
+    print(genes)
 
 
 def generate_zombi(species, families, sites, dupRate, lossRate, transferRate, output):
@@ -153,6 +184,8 @@ def generate_zombi(species, families, sites, dupRate, lossRate, transferRate, ou
   generate_zombi_genome(families, dupRate, lossRate, transferRate, zombi_output) 
   generate_zombi_sequence(sites, zombi_output)
   zombi_to_families(zombi_output, output)
+  export_adjacencies(zombi_output, output)
+  print("Output in: " + output)
 
 if (len(sys.argv) != 8):
   print("Syntax: python generate_zombi.py species families sites dupRate lossRate transferRate output")

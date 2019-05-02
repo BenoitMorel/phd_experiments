@@ -164,9 +164,13 @@ def get_raxml_model(datadir):
   return os.path.join(datadir, "raxmlBestModel.txt")
 
 def convertToPhyldogSpeciesTree(speciesTree, phyldogSpeciesTree):
-  command = "sed s/)[nH][0123456789]*/)/g " + speciesTree #+ " > " + phyldogSpeciesTree
+  command = "sed s/)[nHR][0123456789a-zA-Z]*/)/g " + speciesTree #+ " > " + phyldogSpeciesTree
   with open(phyldogSpeciesTree, "w") as output:
     subprocess.check_call(command.split(" "), stdout=output)
+  print(open(speciesTree).read())
+  subprocess.check_call(command.split(" "))
+  print("")
+  print("")
 
 def convert_phyldog_to_treerecs_mapping(phyldog_mappings, treerecs_mappings):
   lines = open(phyldog_mappings).readlines()

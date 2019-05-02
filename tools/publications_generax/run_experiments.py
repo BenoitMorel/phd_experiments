@@ -18,12 +18,13 @@ if (False):
   exit(0)
 
 if (True):
-  datasets = ["zsim_s10_f10_sites50_d0.25_l0.25"]
-  run_filter = RunFilter()
+  datasets = ["zsim_s15_f100_sites100_d1.0_l1.0"]
+  run_filter = RunFilter(ALE=False)
   
   #run_filter.disable_all()
   #run_filter.ALE = True
   common.run_all_reference_methods(datasets, cores, run_filter)
+  common.run_all_analyzes(datasets)
 
 if (False):
   fixed_point_dl = "jsim_s19_f100_sites500_dna4_bl0.5_d0.25_l0.25_t0.0"
