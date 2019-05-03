@@ -9,22 +9,19 @@ from run_all import RunFilter
 datasets = []
 cores = 40
 
-if (False):
-  run_filter = RunFilter()
-  #datasets.append("jsim_s19_f100_sites500_dna4_bl1.0_d0.25_l0.25_t0.0")
-  datasets.append("jsim_s12_f2_sites10_dna4_bl1.0_d0.05_l0.05_t0.0")
-  common.generate_all_datasets(datasets)
-  common.run_all_reference_methods(datasets, cores, run_filter) 
-  exit(0)
 
+# TO KEEP
 if (True):
-  datasets = ["zsim_s15_f100_sites100_d1.0_l1.0"]
+  datasets = []
+  #datasets.append("zsim_s20_f100_sites400_d5.0_l6.0")
+  #datasets.append("zsim_s25_f100_sites200_d10.0_l10.0")
+  datasets.append("zsim_s8_f100_sites200_d2.0_l2.0")
   run_filter = RunFilter(ALE=False)
-  
-  #run_filter.disable_all()
-  #run_filter.ALE = True
   common.run_all_reference_methods(datasets, cores, run_filter)
   common.run_all_analyzes(datasets)
+  common.run_all_generax_weighted(datasets, cores, 10)
+  common.run_all_generax_weighted(datasets, cores, 100)
+  common.run_all_decostar(datasets)
 
 if (False):
   fixed_point_dl = "jsim_s19_f100_sites500_dna4_bl0.5_d0.25_l0.25_t0.0"
@@ -34,8 +31,6 @@ if (False):
   common.add_dataset(datasets, fixed_point_dl, ["bl0.01", "bl0.05", "bl0.1", "bl0.2", "bl1.0", "bl2.0"])
   common.add_dataset(datasets, fixed_point_dl, ["d0.01_l0.01", "d0.05_l0.05", "d0.1_l0.1", "d0.4_l0.4"])
   common.add_dataset(datasets, fixed_point_dl, ["d0.1", "d0.2", "d0.3", "d0.4"])
-  #common.run_all_ALE(datasets, 1)
-  #common.run_all_analyzes(datasets)
   #common.generate_all_datasets(datasets)
   #common.run_all_reference_methods(datasets)
   #common.run_all_generax(datasets, random = False, DL = False)
@@ -51,20 +46,11 @@ if (False):
   common.add_dataset(datasets, fixed_point_dtl, ["bl0.01", "bl0.05", "bl0.1", "bl0.2", "bl1.0", "bl2.0"])
   common.add_dataset(datasets, fixed_point_dtl, ["d0.01_l0.02_t0.01", "d0.05_l0.1_t0.05", "d0.15_l0.3_t0.15", "d0.2_l0.4_t0.2"])
   common.add_dataset(datasets, fixed_point_dtl, ["d0.01_l0.2_t0.19", "d0.05_l0.2_t0.15", "d0.15_l0.2_t0.05", "d0.19_l0.2_t0.01"])
-  #common.run_all_ALE(datasets, 1)
-  #common.run_all_analyzes(datasets)
-  #common.compute_likelihoods(datasets)  
   #common.generate_all_datasets(datasets)
   #common.run_all_reference_methods(datasets)
   #common.run_all_generax(datasets, random = False, DL = False)
+  #common.compute_likelihoods(datasets)  
 
-#datasets = []
-
-#if (True):
-  #datasets.append("cyano_simulated")
-  #common.run_all_reference_methods(datasets)
-  #common.run_all_ALE(datasets, 0)
-  #common.run_all_generax(datasets)
 
 
 

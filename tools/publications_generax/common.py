@@ -20,6 +20,7 @@ import run_all
 import run_phyldog_light
 import saved_metrics
 import eval_generax_likelihood
+import run_decostar
 
 # couples of (species interval, seed) to get a given number of species node
 jsim_species_to_params = {}
@@ -37,8 +38,12 @@ jsim_species_to_params[16] = (3, 6)
 
 protein_datasets = ["swiss", "cyano_simulated", "sub_t0.05_s0.5_cyano_empirical", "sub_t0.01_s0.2_ensembl_8880_15"]
 
+def run_all_decostar(datasets):
+  for dataset in datasets:
+    datadir = os.path.join("../BenoitDatasets/families", dataset)
+    run_decostar.run_on_analized_methods(datadir)
 
-def run_generax(dataset, starting_tree, with_transfers, run_name, is_dna, cores = 40):
+def run_generax(dataset, starting_tree, with_transfers, run_name, is_dna, cores = 40, additional_arguments = []):
   command = []
   command.append("python")
   command.append(os.path.join(exp.scripts_root, "generax/launch_generax.py"))
@@ -52,6 +57,7 @@ def run_generax(dataset, starting_tree, with_transfers, run_name, is_dna, cores 
     command.append("UndatedDTL")
   command.append("--run")
   command.append(run_name)
+  command.extend(additional_arguments)
   if (not is_dna):
     command.append("--protein")
   print("-> Running " + " ".join(command))
@@ -113,6 +119,12 @@ def run_all_ALE(datasets, is_dna, cores = 40):
 def run_all_reference_methods(datasets, cores = 40, run_filter = RunFilter()):
   for dataset in datasets:
     run_reference_methods(dataset, cores, run_filter)
+
+def run_all_generax_weighted(datasets, cores, weight):
+  for dataset in datasets:
+    is_dna =  (not dataset in protein_datasets)
+    additional_arguments = ["--rec-weight", str(weight)]
+    run_generax(dataset, "RAxML-NG", False, "GeneRax-Weighted" + str(weight), is_dna, cores, additional_arguments) 
 
 def run_all_generax(datasets, raxml = True, random = True, DL = True, DTL = True, cores = 40):
   for dataset in datasets:
@@ -330,5 +342,4 @@ def submit_multiple_experiments_haswell(datasets, do_generate, cores):
   for dataset in datasets:
     submit_single_experiment_haswell(dataset, do_generate, cores)
   
-
 

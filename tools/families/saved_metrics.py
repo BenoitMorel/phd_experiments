@@ -11,6 +11,17 @@ def get_metrics(dataset_dir, metric_name):
     return None
   return dico
 
+def get_metrics_methods(dataset_dir, metric_name):
+  methods = []
+  try:
+    with open(os.path.join(dataset_dir, "metrics", metric_name + ".txt")) as writer:
+      for line in writer.readlines():
+        split = line.split(" ")
+        methods.append(split[0])
+  except:
+    pass
+  return methods
+
 def save_dico(dataset_dir, dico, metric_name):
   try:
     os.makedirs(os.path.join(dataset_dir, "metrics"))

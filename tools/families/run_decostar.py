@@ -2,6 +2,7 @@ import sys
 import os
 import subprocess
 import shutil
+import saved_metrics
 sys.path.insert(0, 'scripts')
 sys.path.insert(0, 'tools/families')
 sys.path.insert(0, 'tools/notung')
@@ -9,6 +10,10 @@ import experiments as exp
 import fam
 from ete3 import Tree
 
+
+"""
+  load the gene to species dictionary, to prefix gene names (see get_prefixed_name)
+"""
 def load_mapping(datadir):
   mapping = {}
   for line in open(fam.get_deco_mappings(datadir)).readlines():
@@ -16,6 +21,9 @@ def load_mapping(datadir):
     mapping[s[1]] = s[0]
   return mapping
 
+"""
+  decostar: gene names must be prefixed with the species name
+"""
 def get_prefixed_name(gene_name, mapping):
   return mapping[gene_name] + "_" + gene_name
 
@@ -28,12 +36,15 @@ def prefix_tree(tree_file, prefixed_tree_file, mapping):
 def get_decostar_run_dir(datadir, method):
   return os.path.join(datadir, "runs", "decostar_run", method)
 
+"""
+  decostar takes as input a file with all the gene trees (with prefixed gene names)
+  build this file and return a path to it
+"""
 def build_trees_file(datadir, method, mapping):
   run_dir = get_decostar_run_dir(datadir, method)
   prefixed_trees_dir = os.path.join(run_dir, "prefixed_trees")
   os.mkdir(prefixed_trees_dir)
   trees_file = os.path.join(get_decostar_run_dir(datadir, method), "tree_files.txt")
-  
   with open(trees_file, "w") as writer:
     for family in fam.getFamiliesList(datadir):
       tree_file = fam.get_gene_tree(fam.getFamily(datadir, family), method)
@@ -59,9 +70,9 @@ def build_decostar_conf(datadir, method, trees_file, mapping):
   return os.path.abspath(conf_file)
 
 
-def run_decostar(datadir, method):
+def run_decostar(datadir, method, force):
   decostar_run_dir =  get_decostar_run_dir(datadir, method)
-  if (os.path.isdir(decostar_run_dir)):
+  if (not force and os.path.isdir(decostar_run_dir)):
     print("directory already exists")
     return
   shutil.rmtree(decostar_run_dir, True)
@@ -83,13 +94,20 @@ def get_distance_to_1(count_vector):
   return distance 
 
 
-def analyze_decostart_output(datadir, method):
+"""
+  Analyze decostar outputs: compute, print and save all "ancestral metrics" 
+  (adjacencies and gene counts)
+"""
+def analyze_decostar_output(datadir, method):
   decostar_run_dir =  get_decostar_run_dir(datadir, method)
   adjacencies_file = os.path.join(decostar_run_dir, "decostar_run.adjacencies.txt")
+  # per_species_adjacencies_left[s][g] = number left neighbors of gene g in species s
   per_species_adjacencies_left = {}
+  # per_species_adjacencies_right[s][g] = number right neighbors of gene g in species s
   per_species_adjacencies_right = {}
+  # dictionary of all ancestral genes
   all_genes = {}
-  # fill adjacencies 
+  # fill per_species_adjacencies_left, per_species_adjacencies_right and all_genes
   for line in open(adjacencies_file).readlines():
     if (not "|" in line):
       continue
@@ -113,14 +131,15 @@ def analyze_decostart_output(datadir, method):
       species_adjacencies_right[gene2] = 0
     species_adjacencies_right[gene2] += 1
   
-  # sort by species
+  # compute sorted species vector 
   sorted_species_list = []
   for species in per_species_adjacencies_left:
     sorted_species_list.append(int(species))
   sorted_species_list.sort()
-  
+ 
+  # root only
   #species_to_analyze = sorted_species_list[-1:]
-
+  # all branches
   species_to_analyze = sorted_species_list
 
   
@@ -134,9 +153,7 @@ def analyze_decostart_output(datadir, method):
     for gene in per_species_adjacencies_right[str(species)]:
       max_adj_count = max(max_adj_count, per_species_adjacencies_right[str(species)][gene])
       total_adj_count += per_species_adjacencies_right[str(species)][gene]
-  #print("Max number of adjacencies: " + str(max_adj_count))
-  print("Total number of adjacencies: " + str(total_adj_count))
-  print("Total number of genes: " + str(len(all_genes)))
+  ancestral_genes_count = len(all_genes)
   # extract counts
   adj_count_left = [0] * (max_adj_count + 1)
   adj_count_right = [0] * (max_adj_count + 1)
@@ -151,25 +168,35 @@ def analyze_decostart_output(datadir, method):
     for gene in species_adjacencies_right:
       adj_count_right[species_adjacencies_right[gene]] += 1
       total_classes += 1
-  #for count in adj_count[1:]:
-  #  sys.stdout.write(" " + "%.2f" % (float(count) / float(total_classes)))
-  #print("")
-  #for count in adj_count[1:]:
-  #  sys.stdout.write(" " + str(count))
-  #print("")
   distance = get_distance_to_1(adj_count_left) + get_distance_to_1(adj_count_right)
   distance = float(distance) / float(total_classes)
+  print("Total number of adjacencies: " + str(total_adj_count))
+  print("Total number of genes: " + str(ancestral_genes_count))
   print("distance to 1: " + str(distance))
+  saved_metrics.save_metrics(datadir, method, distance, "syntheny_score_1")
+  saved_metrics.save_metrics(datadir, method, ancestral_genes_count, "gene_count")
+  saved_metrics.save_metrics(datadir, method, total_adj_count, "syntheny_count")
+
+def run_on_analized_methods(datadir):
+  for method in saved_metrics.get_metrics_methods(datadir, "average_rrf"):
+    run_decostar(datadir, method, force = True)
+    analyze_decostar_output(datadir, method)
+  run_decostar(datadir, "true", force = True)
+  analyze_decostar_output(datadir, "true")
 
 if (__name__ == "__main__"): 
   if (len(sys.argv) < 3): 
      print("Syntax: python " + os.path.basename(__file__) + " datadir method [run_decostar]")
+     print("method can also be set to all")
      exit(1)
   datadir = sys.argv[1]
   method = sys.argv[2]
-  do_run_decostar = True
-  if (len(sys.argv) > 3):
-    do_run_decostar = int(sys.argv[3])
-  if (do_run_decostar):
-    run_decostar(datadir, method)
-  analyze_decostart_output(datadir, method)
+  force = False
+
+  if (method == "all"):
+    run_on_analized_methods(datadir)
+  else:
+    if (len(sys.argv) > 3):
+      force = int(sys.argv[3])
+    run_decostar(datadir, method, force)
+    analyze_decostar_output(datadir, method)

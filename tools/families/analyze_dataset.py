@@ -24,7 +24,8 @@ methods_tree_files["True"] = "trueGeneTree.newick"
 methods_tree_files["RAxML-NG"] = "raxmlGeneTree.newick"
 methods_tree_files["Treerecs"] = "treerecsGeneTree.newick"
 methods_tree_files["Phyldog"] = "phyldogGeneTree.newick"
-methods_tree_files["Notung"] = "notung80GeneTree.newick"
+methods_tree_files["Notung80"] = "notung80GeneTree.newick"
+methods_tree_files["Notung101"] = "notung101GeneTree.newick"
 methods_tree_files["ALE-DL"] = "ALE-DLGeneTree.newick"
 methods_tree_files["ALE-DTL"] = "ALE-DTLGeneTree.newick"
 
@@ -115,7 +116,7 @@ def analyze(dataset_dir, benched_method = ""):
   families_dir = os.path.join(dataset_dir, "families") 
   analyzed_msas = 0
   total_nodes_number = 0
-  methods = ["True", "RAxML-NG", "Phyldog","Treerecs", "Phyldog", "Notung", "ALE-DL", "ALE-DTL"]
+  methods = ["True", "RAxML-NG", "Phyldog","Treerecs", "Phyldog", "Notung80", "Notung101", "ALE-DL", "ALE-DTL"]
   add_ran_methods(methods, families_dir)
   methods_trees_number = {}
   methods_to_compare = []
@@ -123,10 +124,6 @@ def analyze(dataset_dir, benched_method = ""):
     if (method == "True"):
       continue
     methods_to_compare.append(("True", method))
-  methods_to_compare.append(("GeneRax-DL-Raxml", "Treerecs"))
-  methods_to_compare.append(("GeneRax-DL-Raxml", "GeneRax-DTL-Raxml"))
-  methods_to_compare.append(("GeneRax-DL-Raxml", "Notung"))
-  methods_to_compare.append(("GeneRax-DL-Raxml", "RAxML-NG"))
   for m in methods:
     methods_trees_number[m] = 0
   total_rrf = {}
