@@ -93,6 +93,9 @@ def get_distance_to_1(count_vector):
     distance += abs(float(i) - 1.0) * float(count_vector[i])
   return distance 
 
+def get_distance(per_species_adjacencies_left, per_species_adjacencies_right, species_to_analyze, all_genes, norm):
+  pass
+
 
 """
   Analyze decostar outputs: compute, print and save all "ancestral metrics" 
@@ -171,6 +174,7 @@ def analyze_decostar_output(datadir, method):
   distance = get_distance_to_1(adj_count_left) + get_distance_to_1(adj_count_right)
   distance = float(distance) / float(total_classes)
   print("Total number of adjacencies: " + str(total_adj_count))
+  print("Total number of adjacencies class: " + str(total_classes))
   print("Total number of genes: " + str(ancestral_genes_count))
   print("distance to 1: " + str(distance))
   saved_metrics.save_metrics(datadir, method, distance, "syntheny_score_1")

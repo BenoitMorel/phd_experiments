@@ -207,7 +207,6 @@ def compute_likelihoods(datasets, cores = 40):
     dataset_dir = os.path.join(exp.benoit_datasets_root, "families", dataset)
     is_protein = dataset in protein_datasets
     starting_trees = ["RAxML-NG", "Treerecs", "ALE-DL", "ALE-DTL", "GeneRax-DL-Random", "GeneRax-DTL-Random", "True", "Notung"]
-    #starting_trees = ["GeneRax-DL-Raxml", "GeneRax-DTL-Raxml"]
     for tree in starting_trees:
       eval_generax_likelihood.eval_and_save_likelihood(dataset_dir, tree, 0, is_protein, cores)  
       eval_generax_likelihood.eval_and_save_likelihood(dataset_dir, tree, 1, is_protein, cores)  

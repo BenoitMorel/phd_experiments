@@ -134,11 +134,11 @@ def get_gene_tree(familydir, tree):
     return os.path.join(gene_trees_dir, "phyldogGeneTree.newick")
   elif ("notung" in lower_tree):
     return os.path.join(gene_trees_dir, lower_tree + "GeneTree.newick")
-  elif ("GeneRax" in tree):
+  elif ("generax" in lower_tree):
     return os.path.join(familydir, "results", tree + ".newick")
   elif ("rec" in tree):
     return os.path.join(familydir, "results", tree + ".newick")
-  elif ("ALE" in tree):
+  elif ("ale" in lower_tree):
     return os.path.join(gene_trees_dir, tree + "GeneTree.newick")
   elif (lower_tree == "random"):
     res = os.path.join(gene_trees_dir, "randomGeneTree.newick")
@@ -148,6 +148,54 @@ def get_gene_tree(familydir, tree):
       return "__random__";
   else:
     return tree
+
+def get_possible_gene_trees():
+  return ["raxml", "raxmls", "true", "treerecs", "notung", "phyldog", "random", "ALE-D(T)L", "GeneRax-D(T)L-[Random, Raxml]"]
+
+def get_method_name_aux(tree_path):
+  tree = os.path.basename(tree_path)
+  if (tree == "raxmlGeneTree.newick"):
+    return "raxml-ng"
+  elif (tree == "raxmlGeneTrees.newick"):
+    return "raxmls"
+  elif (tree == "trueGeneTree.newick"):
+    return "true"
+  elif (tree == "treerecsGeneTree.newick"):
+    return "treerecs"
+  elif (tree == "phyldogGeneTree.newick"):
+    return "phyldog"
+  elif (tree == "randomGeneTree.newick"):
+    return "random"
+  elif (tree == "randomGeneTree.newick"):
+    return "random"
+  else:
+    return tree.replace("GeneTree.newick", "").replace(".newick", "")
+  
+
+def get_method_name(family_dir, tree_path):
+  if (not tree_path.endswith(".newick")):
+    return None
+  method_name = get_method_name_aux(tree_path)
+  if (not os.path.isfile(get_gene_tree(family_dir, method_name))):
+    return None
+  return method_name
+
+def get_successfully_ran_methods(datadir):
+  methods = []
+  families_dir = os.path.join(datadir, "families")
+  one_family_dir = os.path.join(families_dir, os.listdir(families_dir)[0])
+  print(one_family_dir)
+  directories_to_check = []
+  directories_to_check.append(one_family_dir)
+  directories_to_check.append(os.path.join(one_family_dir, "gene_trees"))
+  directories_to_check.append(os.path.join(one_family_dir, "results"))
+
+  for directory in directories_to_check:
+    for tree in os.listdir(directory):
+      method = get_method_name(one_family_dir, os.path.join(directory, tree))
+      if (method != None):
+        methods.append(method)
+  return methods
 
 def get_possible_gene_trees():
   return ["raxml", "raxmls", "true", "treerecs", "notung", "phyldog", "random", "ALE-D(T)L", "GeneRax-D(T)L-[Random, Raxml]"]
@@ -184,11 +232,18 @@ def convert_phyldog_to_treerecs_mapping(phyldog_mappings, treerecs_mappings):
       for gene in genes:
         writer.write(gene.replace("\n", "") + " " + species + "\n")
 
-
 def write_phyldog_mapping(species_to_genes_dict, output_file):
   with open(output_file, "w") as writer:
     for species in species_to_genes_dict:
       writer.write(species + ":" + ";".join(species_to_genes_dict[species]) + "\n")
+
+
+if (__name__ == "__main__"): 
+  if (len(sys.argv) != 2): 
+     print("Syntax: python " + os.path.basename(__file__) + " param1")
+     exit(1)
+  print(get_successfully_ran_methods(sys.argv[1]))
+
 
 
 
