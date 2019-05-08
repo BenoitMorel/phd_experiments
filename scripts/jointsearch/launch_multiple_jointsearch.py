@@ -120,7 +120,6 @@ if (__name__ == "__main__"):
     for dataset in datasets:
       print("\t" + dataset)
     print("strategy: " + ",".join(utils.get_possible_strategies()))
-    print("starting_tree: " + ",".join(utils.get_possible_gene_trees()))
     sys.exit(1)
   
   dataset = sys.argv[1]

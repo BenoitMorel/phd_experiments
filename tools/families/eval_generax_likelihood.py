@@ -45,8 +45,8 @@ def eval_and_save_likelihood(dataset_dir, starting_tree, with_transfers, is_prot
   print(metric_name + " = " + str(joint_likelihood))
   saved_metrics.save_metrics(dataset_dir, starting_tree, str(joint_likelihood), metric_name)  
      
-def eval_for_all_trees_that_have_rf(dataset_dir, is_protein, cores):
-  for method in saved_metrics
+#def eval_for_all_trees_that_have_rf(dataset_dir, is_protein, cores):
+#  for method in saved_metrics
 
 if (__name__ == "__main__"): 
   if (len(sys.argv) != 6): 

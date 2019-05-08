@@ -132,7 +132,6 @@ if (__name__ == "__main__"):
     print("Syntax error: python " + os.path.basename(__file__) + "  dataset starting_tree cluster cores [additional paremeters].\n Suggestions of datasets: ")
     for dataset in datasets:
       print("\t" + dataset)
-    print("starting_tree: " + ",".join(fam.get_possible_gene_trees()))
     sys.exit(1)
 
   dataset = sys.argv[1]

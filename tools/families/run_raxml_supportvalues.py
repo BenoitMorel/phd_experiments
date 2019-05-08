@@ -66,7 +66,7 @@ def export_pargenes_trees(pargenes_dir, dataset_dir):
       continue
     family = "_".join(support_tree.split("_")[:-1]) # remove everything after the last _
     old_raxml_tree = os.path.join(support_trees_dir, support_tree)
-    new_raxml_tree = fam.getRaxmlTree(dataset_dir, family)
+    new_raxml_tree = fam.get_raxml_tree(dataset_dir, family)
     shutil.copyfile(old_raxml_tree, new_raxml_tree)
 
   # ml trees
@@ -77,7 +77,7 @@ def export_pargenes_trees(pargenes_dir, dataset_dir):
     if (not os.path.isfile(trees_file)):
       trees_file = os.path.join(ml_trees_dir, family, family + ".raxml.bestTree")
     family = "_".join(family.split("_")[:-1]) # remove everything after the last _
-    new_raxml_tree = fam.getRaxmlMultipleTrees(dataset_dir, family)
+    new_raxml_tree = fam.get_raxml_multiple_trees(dataset_dir, family)
     try:
       shutil.copyfile(trees_file, new_raxml_tree)
     except:
@@ -92,12 +92,11 @@ def export_pargenes_trees(pargenes_dir, dataset_dir):
   except:
     pass
   for family in os.listdir(families_dir):
-    if (not os.path.isfile(fam.getRaxmlTree(dataset_dir, family))): 
+    if (not os.path.isfile(fam.get_raxml_tree(dataset_dir, family))): 
       print("Cleaning family " + family)
       shutil.move(os.path.join(families_dir, family), garbage_dir)
 
 def run_pargenes_and_extract_trees(dataset_dir, is_dna, starting_trees, bs_trees, cores, pargenes_dir = "pargenes", extract_trees = True):
-  fam.init_dataset_dir(dataset_dir)
   saved_metrics_key = "RAxML-NG"
   if (pargenes_dir != "pargenes"):
     saved_metrics_key = pargenes_dir

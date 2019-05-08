@@ -75,7 +75,7 @@ def get_generax_command(generax_families_file, species_tree, strategy, additiona
     return " ".join(command)
 
 def run_generax(datadir, strategy, generax_families_file, mode, cores, additional_arguments, resultsdir):
-  species_tree = os.path.join(datadir, "speciesTree.newick")
+  species_tree = fam.get_species_tree(datadir)
   command = get_generax_command(generax_families_file, species_tree, strategy, additional_arguments, resultsdir, mode, cores)
   print(command)
   subprocess.check_call(command.split(" "), stdout = sys.stdout)
@@ -101,7 +101,7 @@ def extract_trees(data_family_dir, results_family_dir, prefix):
     except:
       pass
     source = os.path.join(results_dir, msa, "geneTree.newick")
-    dest = os.path.join(output_msa_dir, prefix + ".newick")
+    dest = os.path.join(output_msa_dir, prefix + "GeneTree.newick")
     shutil.copy(source, dest)
 
 
@@ -152,7 +152,6 @@ if (__name__ == "__main__"):
     for dataset in datasets:
       print("\t" + dataset)
     print("strategy: " + ",".join(get_possible_strategies()))
-    print("starting_tree: " + ",".join(fam.get_possible_gene_trees()))
     print("Syntax error: python " + os.path.basename(__file__) + "  dataset strategy starting_tree cluster cores [additional paremeters].\n Suggestions of datasets: ")
     sys.exit(1)
 

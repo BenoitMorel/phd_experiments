@@ -2,7 +2,7 @@ import os
 import sys
 import run_raxml_supportvalues as raxml
 import run_treerecs as treerecs
-import run_phyldog_light as phyldog
+import run_phyldog as phyldog
 import run_notung as notung
 import run_ALE
 import fam
@@ -99,7 +99,7 @@ def run_reference_methods(dataset_dir, is_dna, starting_trees, bs_trees, cores, 
   if (run_filter.eval_joint_ll):
     print("Evaluating joint likelihoods...")
     try:
-      
+      pass  
     except Exception as exc:
       print("Failed evaluating joint likelihoods")
       print(exc)

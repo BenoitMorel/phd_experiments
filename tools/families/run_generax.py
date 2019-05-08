@@ -28,18 +28,18 @@ def run_generax_instance(dataset, starting_tree, with_transfers, run_name, is_dn
   subprocess.check_call(command)
     
   
-def run_generax_on_families(dataset_dir, is_dna, cores, raxml = True, random = True, DL = True, DTL = True):
+def run_generax_on_families(dataset_dir, is_dna, cores, raxml = True, random = True, dl = True, dtl = True):
   dataset = os.path.basename(dataset_dir)
   if (raxml):
-    if (DL):
-      run_generax_instance(dataset, "RAxML-NG", False, "GeneRax-DL-Raxml", is_dna, cores)
-    if (DTL):
-      run_generax_instance(dataset, "RAxML-NG", True, "GeneRax-DTL-Raxml", is_dna, cores)
+    if (dl):
+      run_generax_instance(dataset, "raxml-ng", False, "generax-dl-raxml", is_dna, cores)
+    if (dtl):
+      run_generax_instance(dataset, "raxml-ng", True, "generax-dtl-raxml", is_dna, cores)
   if (random):
-    if (DL):
-      run_generax_instance(dataset, "Random", False, "GeneRax-DL-Random", is_dna, cores)
-    if (DTL):
-      run_generax_instance(dataset, "Random", True, "GeneRax-DTL-Random", is_dna, cores)
+    if (dl):
+      run_generax_instance(dataset, "random", False, "generax-dl-random", is_dna, cores)
+    if (dtl):
+      run_generax_instance(dataset, "random", True, "generax-dtl-random", is_dna, cores)
 
 if (__name__== "__main__"):
   max_args_number = 4

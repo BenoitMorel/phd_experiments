@@ -121,25 +121,19 @@ def parse_fasta(fasta_file, genes_dict):
 
 def parallelized_function(params):
   datadir, family = params
-  create_random_tree.create_random_tree(fam.getAlignment(datadir, family), fam.getTrueTree(datadir, family))
+  create_random_tree.create_random_tree(fam.get_alignment(datadir, family), fam.get_true_tree(datadir, family))
 
 # this function should be common to all generation scripts
 def prepare_datadir(datadir):
   # phyldog species trees
-  fam.convertToPhyldogSpeciesTree(fam.get_species_tree(datadir), fam.get_phyldog_species_tree(datadir)) 
+  fam.convert_to_phyldog_species_tree(fam.get_species_tree(datadir), fam.get_phyldog_species_tree(datadir)) 
   exp.mkdir(os.path.join(datadir, "alignments"))
   # alignments
-  for family in fam.getFamiliesList(datadir):
-    family_dir = fam.getFamily(datadir, family)
-    exp.relative_symlink(fam.getAlignment(datadir, family), os.path.join(datadir, "alignments", family + ".fasta"))
+  for family in fam.get_families_list(datadir):
+    family_dir = fam.get_family_path(datadir, family)
+    exp.relative_symlink(fam.get_alignment(datadir, family), os.path.join(datadir, "alignments", family + ".fasta"))
     fam.convert_phyldog_to_treerecs_mapping(fam.get_mappings(datadir, family), fam.get_treerecs_mappings(datadir, family)) 
-    exp.relative_symlink(fam.getSpeciesTree(datadir), os.path.join(fam.getFamiliesDir(datadir), family, "speciesTree.newick"))
-  #print("create random trees")
-  #params = []
-  #for family in fam.getFamiliesList(datadir):
-  #  params.append((datadir, family))
-  #with concurrent.futures.ProcessPoolExecutor() as executor:
-  #  executor.map(parallelized_function, params)
+    exp.relative_symlink(fam.get_species_tree(datadir), os.path.join(fam.get_families_dir(datadir), family, "speciesTree.newick"))
 
 def export_msa(seq_entries, alignments_dico, output_file):
   with open(output_file, "w") as writer:
@@ -189,20 +183,20 @@ def export(species_tree, seq_entries_dict, trees_dict, alignments_dico, datadir)
     per_family_seq_entries[seq_entry.family].append(seq_entry)
   
   os.makedirs(datadir)
-  shutil.copy(species_tree, fam.getSpeciesTree(datadir))
+  shutil.copy(species_tree, fam.get_species_tree(datadir))
   
-  families_dir = fam.getFamiliesDir(datadir)
+  families_dir = fam.get_families_dir(datadir)
   os.makedirs(families_dir)
   print("Number of families: " + str(len(per_family_seq_entries)))
   processed_families = 0
   for family in per_family_seq_entries:
-    family_dir = fam.getFamily(datadir, family)
+    family_dir = fam.get_family_path(datadir, family)
     os.makedirs(family_dir)
     seq_entries = per_family_seq_entries[family]
-    export_msa(seq_entries, alignments_dico, fam.getAlignment(datadir, family)) 
+    export_msa(seq_entries, alignments_dico, fam.get_alignment(datadir, family)) 
     export_mappings(seq_entries, fam.get_mappings(datadir, family))
     processed_families += 1
-    with open(fam.getTrueTree(datadir, family), "w") as writer:
+    with open(fam.get_true_tree(datadir, family), "w") as writer:
       writer.write(trees_dict[family])
   extract_adjacencies(seq_entries_dict, datadir)
   extract_deco_mappings(seq_entries_dict, fam.get_deco_mappings(datadir))

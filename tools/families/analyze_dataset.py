@@ -13,6 +13,7 @@ from rf_distance import get_rf
 import rf_distance
 import concurrent.futures
 import saved_metrics
+import fam
 
 def get_nodes(tree1):
   rf = ete3_rf(tree1, tree1)
@@ -20,14 +21,15 @@ def get_nodes(tree1):
 
 
 methods_tree_files = {}
-methods_tree_files["True"] = "trueGeneTree.newick"
-methods_tree_files["RAxML-NG"] = "raxmlGeneTree.newick"
-methods_tree_files["Treerecs"] = "treerecsGeneTree.newick"
-methods_tree_files["Phyldog"] = "phyldogGeneTree.newick"
-methods_tree_files["Notung80"] = "notung80GeneTree.newick"
-methods_tree_files["Notung101"] = "notung101GeneTree.newick"
-methods_tree_files["ALE-DL"] = "ALE-DLGeneTree.newick"
-methods_tree_files["ALE-DTL"] = "ALE-DTLGeneTree.newick"
+methods_tree_files["true"] = "trueGeneTree.newick"
+methods_tree_files["raxml-ng"] = "raxmlGeneTree.newick"
+methods_tree_files["raxmls"] = "raxmlGeneTrees.newick"
+methods_tree_files["treerecs"] = "treerecsGeneTree.newick"
+methods_tree_files["phyldog"] = "phyldogGeneTree.newick"
+methods_tree_files["notung80"] = "notung80GeneTree.newick"
+methods_tree_files["notung101"] = "notung101GeneTree.newick"
+methods_tree_files["ale-dl"] = "ALE-DLGeneTree.newick"
+methods_tree_files["ale-dtl"] = "ALE-DTLGeneTree.newick"
 
 class AlignedPrinter:
   def __init__(self):
@@ -37,6 +39,13 @@ class AlignedPrinter:
   def add(self, left, right):
     self._lefts.append(left)
     self._rights.append(right)
+
+  def sort_right_float(self):
+    floating_array = []
+    for elem in self._rights:
+      floating_array.append(elem.split()[0])
+    self._lefts = [x for _,x in sorted(zip(floating_array, self._lefts))]
+    self._rights = [x for _,x in sorted(zip(floating_array, self._rights))]
 
   def display(self):
     max_chars = 0
@@ -49,24 +58,8 @@ class AlignedPrinter:
       print(to_print)
 
 def get_gene_trees_list(method, dataset_dir, msa):
-  tree_path = ""
-  if (method in methods_tree_files):
-    if (method == "True"):
-      tree_path = os.path.join(dataset_dir, msa, methods_tree_files[method])
-    else:
-      tree_path = os.path.join(dataset_dir, msa, "gene_trees", methods_tree_files[method])
-  else:
-    tree_path = os.path.join(dataset_dir, msa, "results", method + ".newick") 
+  tree_path = fam.get_gene_tree(os.path.join(dataset_dir, msa), method)
   return read_trees_list(tree_path)
-
-def add_ran_methods(methods, families_dir):
-  runs_dir = os.path.join(families_dir, os.listdir(families_dir)[0], "results")
-  if (not os.path.isdir(runs_dir)):
-    return
-  for method in os.listdir(runs_dir):
-    method = method.split(".")[0]
-    #if (method != "lastRun"):
-    methods.append(method)
 
 def analyze_msa(params):
   msa, dataset_dir, methods, methods_to_compare = params
@@ -97,16 +90,16 @@ def analyze_msa(params):
       print(trees[method2])
       exit(1)
     rrf[methods_key] = float(rf_cell[0]) / float(rf_cell[1])
-    if (method1 == "True" or method2 == "True"):
+    if (method1 == "true" or method2 == "true"):
       best_rrf = min(best_rrf, rrf[methods_key])
   for method_pair in methods_to_compare:
     method1 = method_pair[0]
     method2 = method_pair[1]
     methods_key = method1 + " - " + method2
-    if (method1 == "True"):
+    if (method1 == "true"):
       if (best_rrf == rrf[methods_key]):
         best_tree[method2] = 1
-    elif (method2 == "True"):
+    elif (method2 == "true"):
       if (best_rrf == rrf[methods_key]):
         best_tree[method1] = 1
   return rrf, best_tree, invalid_methods
@@ -116,14 +109,14 @@ def analyze(dataset_dir, benched_method = ""):
   families_dir = os.path.join(dataset_dir, "families") 
   analyzed_msas = 0
   total_nodes_number = 0
-  methods = ["True", "RAxML-NG", "Phyldog","Treerecs", "Phyldog", "Notung80", "Notung101", "ALE-DL", "ALE-DTL"]
-  add_ran_methods(methods, families_dir)
+  methods = fam.get_ran_methods(dataset_dir)
+#["true", "raxml-ng", "phyldog","treerecs", "phyldog", "notung80", "notung101", "ale-dl", "ale-dtl"]
   methods_trees_number = {}
   methods_to_compare = []
   for method in methods:
-    if (method == "True"):
+    if (method == "true"):
       continue
-    methods_to_compare.append(("True", method))
+    methods_to_compare.append(("true", method))
   for m in methods:
     methods_trees_number[m] = 0
   total_rrf = {}
@@ -144,7 +137,6 @@ def analyze(dataset_dir, benched_method = ""):
       print(methods_to_compare)
       methods_to_compare = [p for p in methods_to_compare if (p[0] != method and p[1] != method)]
       print(methods_to_compare)
-      #del best_tree[method]
     for m in rrf:
       total_rrf[m] += rrf[m]
     for m in bt:
@@ -166,12 +158,13 @@ def analyze(dataset_dir, benched_method = ""):
     method2 = method_pair[1]
     methods_key = method1 + " - " + method2
     arrow = ""
-    if (method1 == "True" and method2 == benched_method):
+    if (method1 == "true" and method2 == benched_method):
       arrow = " <-- "
     average_rrf = str(total_rrf[methods_key] / float(analyzed_msas))
-    if (method1 == "True"):
+    if (method1 == "true"):
       saved_metrics.save_metrics(dataset_dir, method2, average_rrf, "average_rrf")
     rrf_printer.add("- " + methods_key + ":",  average_rrf + arrow)
+  rrf_printer.sort_right_float()
   rrf_printer.display()
   print("")
   
@@ -179,7 +172,7 @@ def analyze(dataset_dir, benched_method = ""):
   print("Number of gene families for which a method reaches the smallest relative RF to the true trees compared with the other methods:")
   best_printer = AlignedPrinter()
   for method in methods:
-    if (method == "True"):
+    if (method == "true"):
       continue
     best_printer.add("- " + method + ":",  str(best_tree[method]) + "/" + str(analyzed_msas))
   best_printer.display()

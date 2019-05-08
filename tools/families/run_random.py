@@ -6,9 +6,9 @@ import fam
 
 
 def run_random(datadir):
-  for family in fam.getFamiliesList(datadir):
-    msa = fam.getAlignment(datadir, family)
-    random = fam.getRandomTree(datadir, family)
+  for family in fam.get_families_list(datadir):
+    msa = fam.get_alignment(datadir, family)
+    random = fam.get_random_tree(datadir, family)
     create_random_tree.create_random_tree(msa, random)
 
 if (__name__== "__main__"):

@@ -46,8 +46,8 @@ def build_trees_file(datadir, method, mapping):
   os.mkdir(prefixed_trees_dir)
   trees_file = os.path.join(get_decostar_run_dir(datadir, method), "tree_files.txt")
   with open(trees_file, "w") as writer:
-    for family in fam.getFamiliesList(datadir):
-      tree_file = fam.get_gene_tree(fam.getFamily(datadir, family), method)
+    for family in fam.get_families_list(datadir):
+      tree_file = fam.get_gene_tree(fam.get_family_path(datadir, family), method)
       prefixed_tree_file = os.path.join(prefixed_trees_dir, family + ".prefixed.newick")
       prefix_tree(tree_file, prefixed_tree_file, mapping)
       writer.write(prefixed_tree_file)
@@ -182,7 +182,7 @@ def analyze_decostar_output(datadir, method):
   saved_metrics.save_metrics(datadir, method, total_adj_count, "syntheny_count")
 
 def run_on_analized_methods(datadir):
-  for method in saved_metrics.get_metrics_methods(datadir, "average_rrf"):
+  for method in fam.get_ran_methods(datadir):
     run_decostar(datadir, method, force = True)
     analyze_decostar_output(datadir, method)
   run_decostar(datadir, "true", force = True)

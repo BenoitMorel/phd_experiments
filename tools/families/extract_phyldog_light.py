@@ -12,7 +12,7 @@ def mymakedirs(path):
   except:
     pass
 
-def convertToPhyldogSpeciesTree(speciesTree, phyldogSpeciesTree):
+def convert_to_phyldog_species_tree(speciesTree, phyldogSpeciesTree):
   command = "sed s/)n[0123456789]*/)/g " + speciesTree #+ " > " + phyldogSpeciesTree
   print(command.split(" "))
   with open(phyldogSpeciesTree, "w") as output:
@@ -24,7 +24,7 @@ def generate_scheduler_commands_file(dataset_dir, cores, output_dir):
   scheduler_commands_file = os.path.join(output_dir, "commands.txt")
   speciesTree = os.path.join(dataset_dir, "speciesTree.newick")
   phyldogSpeciesTree = os.path.join(dataset_dir, "phyldogSpeciesTree.newick")
-  convertToPhyldogSpeciesTree(speciesTree, phyldogSpeciesTree)
+  convert_to_phyldog_species_tree(speciesTree, phyldogSpeciesTree)
   with open(scheduler_commands_file, "w") as writer:
     for family in os.listdir(families_dir):
       family_dir = os.path.join(families_dir, family)
@@ -68,7 +68,7 @@ def extract_phyldog_trees(families_dir):
       print("Warning: no phyldog tree for family " + family)
   
 
-def run_phyldog_light_on_families(dataset_dir, cores):
+def run_phyldog_on_families(dataset_dir, cores):
   output_dir = os.path.join(dataset_dir, "phyldog_run")
   mymakedirs(output_dir)
   scheduler_commands_file = generate_scheduler_commands_file(dataset_dir, cores, output_dir)
@@ -80,12 +80,12 @@ def run_phyldog_light_on_families(dataset_dir, cores):
 if (__name__== "__main__"):
   max_args_number = 3
   if len(sys.argv) < max_args_number:
-    print("Syntax error: python run_phyldog_light.py dataset_dir cores.")
+    print("Syntax error: python run_phyldog.py dataset_dir cores.")
     print("Cluster can be either normal, haswell or magny")
     sys.exit(0)
 
 
   dataset_dir = sys.argv[1]
   cores = int(sys.argv[2])
-  run_phyldog_light_on_families(dataset_dir, cores)
+  run_phyldog_on_families(dataset_dir, cores)
 

@@ -16,8 +16,8 @@ def get_deco_run_dir(datadir, method):
 def build_trees_file(datadir, method):
   trees_file = os.path.join(get_deco_run_dir(datadir, method), "trees_file.newick")
   with open(trees_file, "w") as writer:
-    for family in fam.getFamiliesList(datadir):
-      tree_file = fam.get_gene_tree(fam.getFamily(datadir, family), method)
+    for family in fam.get_families_list(datadir):
+      tree_file = fam.get_gene_tree(fam.get_family_path(datadir, family), method)
       writer.write(open(tree_file).read())
       writer.write("\n")
   return trees_file
