@@ -19,7 +19,7 @@ def compare_metrics(datadir, metric_name_1, metric_name_2, output):
     if (not method in metric_dict_2):
       continue
     alldata.append((float(metric_dict_1[method]), float(metric_dict_2[method]), method))
-  for data in sorted(alldata):
+  for data in reversed(sorted(alldata)):
     datay1.append(data[0])
     datay2.append(data[1])
     datax_labels.append(data[2])
