@@ -20,6 +20,7 @@ def plot_two_arrays(output, datax, datay1, datay2, xlabel, ylabel1, ylabel2, xla
   ax1.set_ylabel(ylabel1, color=color1)
   ax1.plot(datax, datay1, color=color1)
   ax1.set_xticklabels(xlabels) 
+  ax1.tick_params(axis="y", labelcolor = color1)
   
   plt.xticks(rotation=45)
   plt.xticks(range(len(xlabels)), size='small')
