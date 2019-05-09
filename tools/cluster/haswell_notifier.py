@@ -6,7 +6,7 @@ import pickle
 import time 
 import datetime as dt
 
-is_remote = False # set to True if you need to access haswell haswell through magny
+is_remote = True # set to True if you need to access haswell haswell through magny
 user_name = "morelbt" # haswell username
 sound_on = True
 timer_interval = 10 # elapsed time between queries (s)
@@ -118,6 +118,7 @@ def compare_jobs(previous_jobs, new_jobs):
 
 new_jobs = get_running_jobs(user_name, is_remote)
 store_jobs(new_jobs)
+print("First query succeeded")
 while True:
 	new_jobs = get_running_jobs(user_name, is_remote)
 	previous_jobs = get_last_read_jobs()
