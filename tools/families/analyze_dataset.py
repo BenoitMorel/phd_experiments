@@ -114,8 +114,8 @@ def analyze(dataset_dir, benched_method = ""):
   methods_trees_number = {}
   methods_to_compare = []
   for method in methods:
-    if (method == "true"):
-      continue
+    #if (method == "true"):
+    #  continue
     methods_to_compare.append(("true", method))
   for m in methods:
     methods_trees_number[m] = 0

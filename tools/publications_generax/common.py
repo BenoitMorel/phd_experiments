@@ -213,10 +213,13 @@ def compute_likelihoods(datasets, cores = 40):
   for dataset in datasets:
     dataset_dir = os.path.join(exp.benoit_datasets_root, "families", dataset)
     is_protein = dataset in protein_datasets
-    starting_trees = fam.get_ran_methods(dataset)
+    starting_trees = fam.get_ran_methods(dataset_dir)
     for tree in starting_trees:
-      eval_generax_likelihood.eval_and_save_likelihood(dataset_dir, tree, 0, is_protein, cores)  
-      eval_generax_likelihood.eval_and_save_likelihood(dataset_dir, tree, 1, is_protein, cores)  
+      try:
+        eval_generax_likelihood.eval_and_save_likelihood(dataset_dir, tree, 0, is_protein, cores)  
+        eval_generax_likelihood.eval_and_save_likelihood(dataset_dir, tree, 1, is_protein, cores)  
+      except:
+        print("Failed to eval joint likelihood on " + dataset + " for method " + tree)
 
 def get_datasets_to_plot(datasets_rf_dico, fixed_params_dico, x_param):
 

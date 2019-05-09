@@ -171,12 +171,14 @@ def analyze_decostar_output(datadir, method):
     for gene in species_adjacencies_right:
       adj_count_right[species_adjacencies_right[gene]] += 1
       total_classes += 1
-  distance = get_distance_to_1(adj_count_left) + get_distance_to_1(adj_count_right)
-  distance = float(distance) / float(total_classes)
+  non_weighted_distance = get_distance_to_1(adj_count_left) + get_distance_to_1(adj_count_right)
+  distance = float(non_weighted_distance) / float(total_classes)
   print("Total number of adjacencies: " + str(total_adj_count))
   print("Total number of adjacencies class: " + str(total_classes))
   print("Total number of genes: " + str(ancestral_genes_count))
   print("distance to 1: " + str(distance))
+  print("distance to 1 (unweighted): " + str(non_weighted_distance))
+  saved_metrics.save_metrics(datadir, method, non_weighted_distance, "nw_syntheny_score_1")
   saved_metrics.save_metrics(datadir, method, distance, "syntheny_score_1")
   saved_metrics.save_metrics(datadir, method, ancestral_genes_count, "gene_count")
   saved_metrics.save_metrics(datadir, method, total_adj_count, "syntheny_count")

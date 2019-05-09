@@ -14,17 +14,19 @@ cores = 40
 if (True):
   datasets = []
   datasets.append("zsim_s20_f100_sites400_dna4_bl1.0_d0.05_l0.06_t0.0")
-  #datasets.append("zsim_s25_f100_sites200_dna4_bl1.0_d0.1_l0.1_t0.0")
-  #datasets.append("zsim_s8_f100_sites200_dna4_bl1.0_d0.02_l0.02_t0.0")
-  #datasets.append("zsim_s15_f100_sites200_dna4_bl1.0_d0.03_0.03_t0.0")
-  #datasets.append("zsim_s5_f100_sites100_dna4_bl1.0_d0.1_l0.1_t0.0")
+  datasets.append("zsim_s25_f100_sites200_dna4_bl1.0_d0.1_l0.1_t0.0")
+  datasets.append("zsim_s8_f100_sites200_dna4_bl1.0_d0.02_l0.02_t0.0")
+  datasets.append("zsim_s15_f100_sites200_dna4_bl1.0_d0.03_l.03_t0.0")
+  datasets.append("zsim_s5_f100_sites100_dna4_bl1.0_d0.1_l0.1_t0.0")
   run_filter = RunFilter(ALE=False)
-  common.generate_all_datasets(datasets)
-  common.run_all_reference_methods(datasets, cores, run_filter)
+  #common.generate_all_datasets(datasets)
+
+  #common.run_all_reference_methods(datasets, cores, run_filter)
   common.run_all_analyzes(datasets)
-  common.run_all_generax_weighted(datasets, cores, 10)
-  common.run_all_generax_weighted(datasets, cores, 100)
-  common.run_all_decostar(datasets)
+  #common.run_all_generax_weighted(datasets, cores, 10)
+  #common.run_all_generax_weighted(datasets, cores, 100)
+  #common.run_all_decostar(datasets)
+  #common.compute_likelihoods(datasets)
 
 if (False):
   fixed_point_dl = "jsim_s19_f100_sites500_dna4_bl0.5_d0.25_l0.25_t0.0"
