@@ -22,10 +22,10 @@ if (True):
   #common.generate_all_datasets(datasets)
 
   #common.run_all_reference_methods(datasets, cores, run_filter)
-  common.run_all_analyzes(datasets)
+  #common.run_all_analyzes(datasets)
   #common.run_all_generax_weighted(datasets, cores, 10)
   #common.run_all_generax_weighted(datasets, cores, 100)
-  #common.run_all_decostar(datasets)
+  common.run_all_decostar(datasets)
   #common.compute_likelihoods(datasets)
 
 if (False):
