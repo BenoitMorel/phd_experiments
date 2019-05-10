@@ -1,6 +1,7 @@
 import sys
 import os
 import shutil
+import functools
 sys.path.insert(0, 'scripts')
 sys.path.insert(0, 'tools/families')
 sys.path.insert(0, 'tools/trees')
@@ -10,6 +11,14 @@ import create_random_tree
 from ete3 import Tree
 import concurrent.futures
 import title_node_names
+from itertools import tee
+try:
+  from itertools import izip
+except:
+  izip = zip
+
+def mycmp(a, b):
+  return (a > b) - (a < b) 
 
 class SeqEntry():
   def __init__(self, line, family):
@@ -35,6 +44,13 @@ class SeqEntry():
     res += ")"
     return res
 
+def compare(entry1, entry2):
+  if (entry1.species != entry2.species):
+    return mycmp(entry1.species, entry2.species)
+  if (entry1.chromozome != entry2.chromozome):
+    return mycmp(entry1.chromozome, entry2.chromozome)
+  return mycmp(entry1.begin, entry2.begin)
+
 # read an ensembl tree, prune the genes that we do not consider,
 # and return true if the resulting tree has more than 3 taxa
 def read_ensembl_tree(line, family, trees_dict, seq_entries_dict):
@@ -50,7 +66,7 @@ def read_ensembl_tree(line, family, trees_dict, seq_entries_dict):
     return False
   print(len(tree.get_leaves()))
   if (len(tree.get_leaves()) > 3):
-    trees_dict[family] = line.replace("\n", "")
+    trees_dict[family] = tree.write().replace("\n", "")
     return True
   return False
 
@@ -70,6 +86,8 @@ def parse_nhx_emf(emf_file, species_dict, max_families):
           seq_entries_dict[gene] = current_entries_dict[gene]
         family_index += 1
         family = "family_" + str(family_index)
+        print(family)
+      current_entries_dict = {}
       if (family_index >= max_families):
         break
     if (line[:3] == "SEQ"):
@@ -103,25 +121,19 @@ def parse_fasta(fasta_file, genes_dict):
 
 def parallelized_function(params):
   datadir, family = params
-  create_random_tree.create_random_tree(fam.getAlignment(datadir, family), fam.getTrueTree(datadir, family))
+  create_random_tree.create_random_tree(fam.get_alignment(datadir, family), fam.get_true_tree(datadir, family))
 
 # this function should be common to all generation scripts
 def prepare_datadir(datadir):
   # phyldog species trees
-  fam.convertToPhyldogSpeciesTree(fam.get_species_tree(datadir), fam.get_phyldog_species_tree(datadir)) 
+  fam.convert_to_phyldog_species_tree(fam.get_species_tree(datadir), fam.get_phyldog_species_tree(datadir)) 
   exp.mkdir(os.path.join(datadir, "alignments"))
   # alignments
-  for family in fam.getFamiliesList(datadir):
-    family_dir = fam.getFamily(datadir, family)
-    exp.relative_symlink(fam.getAlignment(datadir, family), os.path.join(datadir, "alignments", family + ".fasta"))
+  for family in fam.get_families_list(datadir):
+    family_dir = fam.get_family_path(datadir, family)
+    exp.relative_symlink(fam.get_alignment(datadir, family), os.path.join(datadir, "alignments", family + ".fasta"))
     fam.convert_phyldog_to_treerecs_mapping(fam.get_mappings(datadir, family), fam.get_treerecs_mappings(datadir, family)) 
-    exp.relative_symlink(fam.getSpeciesTree(datadir), os.path.join(fam.getFamiliesDir(datadir), family, "speciesTree.newick"))
-  #print("create random trees")
-  #params = []
-  #for family in fam.getFamiliesList(datadir):
-  #  params.append((datadir, family))
-  #with concurrent.futures.ProcessPoolExecutor() as executor:
-  #  executor.map(parallelized_function, params)
+    exp.relative_symlink(fam.get_species_tree(datadir), os.path.join(fam.get_families_dir(datadir), family, "speciesTree.newick"))
 
 def export_msa(seq_entries, alignments_dico, output_file):
   with open(output_file, "w") as writer:
@@ -136,6 +148,31 @@ def export_mappings(families_seq_entries, output_file):
     species_to_genes[entry.species].append(entry.gene)
   fam.write_phyldog_mapping(species_to_genes, output_file)
 
+def pairwise(iterable):
+  "s -> (s0,s1), (s1,s2), (s2, s3), ..."
+  a, b = tee(iterable)
+  next(b, None)
+  return izip(a, b)
+
+
+def extract_adjacencies(seq_entries_dict, datadir):
+  seq_entries_list = []
+  for gene in seq_entries_dict:
+    seq_entries_list.append(seq_entries_dict[gene])
+  seq_entries_list.sort(key = functools.cmp_to_key(compare))
+  with open(fam.get_adjacencies(datadir), "w") as writer:
+    for gene1, gene2 in pairwise(seq_entries_list):
+      if (gene1.species == gene2.species and gene1.chromozome == gene2.chromozome):
+        writer.write(gene1.gene + " " + gene2.gene + "\n")
+  with open(fam.get_prefixed_adjacencies(datadir), "w") as writer:
+    for gene1, gene2 in pairwise(seq_entries_list):
+      if (gene1.species == gene2.species and gene1.chromozome == gene2.chromozome):
+        writer.write(gene1.species + "_" + gene1.gene + " " + gene2.species + "_" + gene2.gene + "\n")
+
+def extract_deco_mappings(seq_entries_dict, output_file):
+  with open(output_file, "w") as writer:
+    for gene in seq_entries_dict:
+      writer.write(seq_entries_dict[gene].species + " " + gene + "\n")
 
 def export(species_tree, seq_entries_dict, trees_dict, alignments_dico, datadir):
   per_family_seq_entries = {}
@@ -146,21 +183,23 @@ def export(species_tree, seq_entries_dict, trees_dict, alignments_dico, datadir)
     per_family_seq_entries[seq_entry.family].append(seq_entry)
   
   os.makedirs(datadir)
-  shutil.copy(species_tree, fam.getSpeciesTree(datadir))
+  shutil.copy(species_tree, fam.get_species_tree(datadir))
   
-  families_dir = fam.getFamiliesDir(datadir)
+  families_dir = fam.get_families_dir(datadir)
   os.makedirs(families_dir)
   print("Number of families: " + str(len(per_family_seq_entries)))
   processed_families = 0
   for family in per_family_seq_entries:
-    family_dir = fam.getFamily(datadir, family)
+    family_dir = fam.get_family_path(datadir, family)
     os.makedirs(family_dir)
     seq_entries = per_family_seq_entries[family]
-    export_msa(seq_entries, alignments_dico, fam.getAlignment(datadir, family)) 
+    export_msa(seq_entries, alignments_dico, fam.get_alignment(datadir, family)) 
     export_mappings(seq_entries, fam.get_mappings(datadir, family))
     processed_families += 1
-    with open(fam.getTrueTree(datadir, family), "w") as writer:
+    with open(fam.get_true_tree(datadir, family), "w") as writer:
       writer.write(trees_dict[family])
+  extract_adjacencies(seq_entries_dict, datadir)
+  extract_deco_mappings(seq_entries_dict, fam.get_deco_mappings(datadir))
   prepare_datadir(datadir)
 
 def get_species_dict(species_tree_file):
@@ -171,6 +210,7 @@ def get_species_dict(species_tree_file):
     res[leaf.name] = True
   return res
 
+
 def extract_from_ensembl(nhx_emf_file, fasta_file, species_tree, datadir, max_families):
   new_species_tree = species_tree + ".titled"
   title_node_names.title_node_names(species_tree, new_species_tree)
@@ -178,7 +218,7 @@ def extract_from_ensembl(nhx_emf_file, fasta_file, species_tree, datadir, max_fa
   species_dict = get_species_dict(species_tree)
   print(species_dict)
   seq_entries_dict, trees_dict = parse_nhx_emf(nhx_emf_file, species_dict, max_families)
-
+  
   alignments_dico = parse_fasta(fasta_file, seq_entries_dict)
   export(species_tree, seq_entries_dict, trees_dict, alignments_dico, datadir)
 
@@ -193,7 +233,7 @@ def get_max_families(argv):
 
 if (__name__ == "__main__"): 
   if (len(sys.argv) < 5): 
-    print("Syntax: python " + os.path.basename(__file__) + " nhx_emf fasta output")
+    print("Syntax: python " + os.path.basename(__file__) + " nhx_emf fasta species_tree output")
     exit(1)
   nhx_emf_file = sys.argv[1]
   fasta_file = sys.argv[2]

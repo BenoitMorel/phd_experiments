@@ -18,7 +18,7 @@ import re
 import  run_exabayes
 
 # ALE
-ALE_SAMPLES = 10
+ALE_SAMPLES = 1
 
 # EXABAYES
 EXA_TREES = 2000
@@ -31,52 +31,47 @@ EXA_GEN = EXA_TREES * EXA_FREQ
 
 def get_method_name(with_transfers):
   if (with_transfers):
-    return "ALE-DTL"
+    return "ale-dtl"
   else:
-    return "ALE-DL"
+    return "ale-dl"
 
-def get_observe_run_dir(dataset_dir, with_transfers):
+def get_observe_run_dir(datadir, with_transfers):
   method_name = get_method_name(with_transfers)
-  return os.path.join(dataset_dir, "runs", "ALE", method_name + "_observe_run")
+  return os.path.join(datadir, "runs", "ALE", method_name + "_observe_run")
 
-def clean_ALE(dataset_dir):
+def clean_ALE(datadir):
   try:  
-    shutil.rmtree(get_observe_run_dir(dataset_dir, True))
+    shutil.rmtree(get_observe_run_dir(datadir, True))
   except:
     pass
   try:
-    shutil.rmtree(get_observe_run_dir(dataset_dir, False))
+    shutil.rmtree(get_observe_run_dir(datadir, False))
   except:
     pass
 
-def generate_ALE_observe_commands_file(dataset_dir, cores, output_dir):
-  families_dir = os.path.join(dataset_dir, "families")
+def generate_ALE_observe_commands_file(datadir, cores, output_dir):
   results_dir = os.path.join(output_dir, "results")
   scheduler_commands_file = os.path.join(output_dir, "commands.txt")
   os.makedirs(results_dir)
   with open(scheduler_commands_file, "w") as writer:
-    for family in os.listdir(families_dir):
-      family_dir = os.path.join(families_dir, family)
-      tree_list = os.path.join(family_dir, "misc", family + ".treelist")
+    for family in fam.get_families_list(datadir):
+      tree_list = os.path.join(fam.get_misc_dir(datadir, family), family + ".treelist")
       command = []
       command.append(family)
       command.append("1")
       command.append("1")
       command.append(tree_list)
-      #command.append("burnin=" + str(BURN_IN))
       writer.write(" ".join(command) + "\n")
   return scheduler_commands_file
 
-def generate_ALE_ml_commands_file(dataset_dir, with_transfers, cores, output_dir):
-  families_dir = os.path.join(dataset_dir, "families")
+def generate_ALE_ml_commands_file(datadir, with_transfers, cores, output_dir):
   results_dir = os.path.join(output_dir, "results")
   scheduler_commands_file = os.path.join(output_dir, "commands.txt")
   os.makedirs(results_dir)
-  speciesTree = os.path.join(dataset_dir, "phyldogSpeciesTree.newick")
+  speciesTree = fam.get_phyldog_species_tree(datadir)
   with open(scheduler_commands_file, "w") as writer:
-    for family in os.listdir(families_dir):
-      family_dir = os.path.join(families_dir, family)
-      ale_object = os.path.join(family_dir, "misc", family + ".treelist.ale")
+    for family in fam.get_families_list(datadir):
+      ale_object = os.path.join(fam.get_misc_dir(datadir, family), family + ".treelist.ale")
       command = []
       command.append(family)
       command.append("1")
@@ -110,14 +105,14 @@ def extract_trees_from_ale_output(ale_output, output_trees):
       new_lines = re.sub("\.[0-9\.]*:", ":", new_lines)
       writer.write(new_lines)
 
-def extract_ALE_results(dataset_dir, ALE_run_dir, with_transfers, families_dir):
+def extract_ALE_results(datadir, ALE_run_dir, with_transfers, families_dir):
   method_name = get_method_name(with_transfers)
-  for family in os.listdir(families_dir):
-    family_misc_dir = fam.getMiscDir(dataset_dir, family)
-    family_trees_dir = fam.getTreesDir(dataset_dir, family)
+  for family in fam.get_families_list(datadir):
+    family_misc_dir = fam.get_misc_dir(datadir, family)
+    family_trees_dir = fam.get_gene_tree_dir(datadir, family)
     prefix =  "phyldogSpeciesTree.newick_" + family + ".treelist.ale"
     prefixed_output_trees = os.path.join(family_misc_dir, method_name + "_samples_prefixed.newick")
-    output_trees = fam.getALETree(dataset_dir, family, method_name)
+    output_trees = fam.get_ale_tree(datadir, family, method_name)
     extract_trees_from_ale_output(prefix + ".uml_rec", prefixed_output_trees) 
     cut_node_names.remove_prefix_from_trees(prefixed_output_trees, output_trees) 
 # clean files
@@ -125,45 +120,46 @@ def extract_ALE_results(dataset_dir, ALE_run_dir, with_transfers, families_dir):
     #force_move(prefix + ".ucons_tree", family_misc_dir)
     force_move(prefix + ".uml_rec", family_misc_dir)
 
-def run_ALE_on_families(dataset_dir, with_transfers, cores):
+def run_ALE_on_families(datadir, with_transfers, cores):
   method_name = get_method_name(with_transfers)
-  observe_output_dir = get_observe_run_dir(dataset_dir, with_transfers)
-  ml_output_dir = os.path.join(dataset_dir, "runs",  "ALE", method_name + "_ml_run")
+  observe_output_dir = get_observe_run_dir(datadir, with_transfers)
+  ml_output_dir = os.path.join(datadir, "runs",  "ALE", method_name + "_ml_run")
   shutil.rmtree(observe_output_dir, True)
   shutil.rmtree(ml_output_dir, True)
   os.makedirs(observe_output_dir)
   os.makedirs(ml_output_dir)
-  commands_observe = generate_ALE_observe_commands_file(dataset_dir, cores, observe_output_dir)
-  commands_ml = generate_ALE_ml_commands_file(dataset_dir, with_transfers, cores, ml_output_dir)
+  commands_observe = generate_ALE_observe_commands_file(datadir, cores, observe_output_dir)
+  commands_ml = generate_ALE_ml_commands_file(datadir, with_transfers, cores, ml_output_dir)
   start = time.time()
   scheduler.run_scheduler(commands_observe, exp.ale_observe_exec, cores, observe_output_dir, method_name + "_observe_run.logs")
   scheduler.run_scheduler(commands_ml, exp.ale_ml_exec, cores, ml_output_dir, method_name + "_ml_run.logs")
-  saved_metrics.save_metrics(dataset_dir, method_name, (time.time() - start), "runtimes") 
-  extract_ALE_results(dataset_dir, ml_output_dir, with_transfers, os.path.join(dataset_dir, "families"))
+  saved_metrics.save_metrics(datadir, method_name, (time.time() - start), "runtimes") 
+  extract_ALE_results(datadir, ml_output_dir, with_transfers, os.path.join(datadir, "families"))
 
-def run_exabayes_and_ALE(dataset_dir, is_dna, cores):
-  run_dir = os.path.join(dataset_dir, "runs")
-  dataset_dir = os.path.abspath(dataset_dir)
-  fam.init_dataset_dir(dataset_dir)
+def run_exabayes_and_ALE(datadir, is_dna, cores):
   cwd = os.getcwd()
-  os.chdir(run_dir)
-  run_exabayes.run_exabayes_on_families(dataset_dir, EXA_GEN, EXA_FREQ, NUM_RUNS, NUM_CHAINS, PER_RUN_BURN_IN, is_dna, cores)
-  run_ALE_on_families(dataset_dir, True, cores)
-  run_ALE_on_families(dataset_dir, False, cores)
-  run_exabayes.clean_exabayes(dataset_dir)
-  clean_ALE(dataset_dir)
-  os.chdir(cwd)
+  try:
+    run_dir = os.path.join(datadir, "runs")
+    datadir = os.path.abspath(datadir)
+    os.chdir(run_dir)
+    run_exabayes.run_exabayes_on_families(datadir, EXA_GEN, EXA_FREQ, NUM_RUNS, NUM_CHAINS, PER_RUN_BURN_IN, is_dna, cores)
+    run_ALE_on_families(datadir, True, cores)
+    run_ALE_on_families(datadir, False, cores)
+    run_exabayes.clean_exabayes(datadir)
+    clean_ALE(datadir)
+  finally:
+    os.chdir(cwd)
 
-if (__name__== "__main__"):
-  max_args_number = 4
-  if len(sys.argv) < max_args_number:
-    print("Syntax error: python run_ALE.py dataset_dir is_dna cores.")
-    sys.exit(0)
+  if (__name__== "__main__"):
+    max_args_number = 4
+    if len(sys.argv) < max_args_number:
+      print("Syntax error: python run_ALE.py datadir is_dna cores.")
+      sys.exit(0)
 
-  dataset_dir = sys.argv[1]
-  is_dna = int(sys.argv[2]) != 0
-  cores = int(sys.argv[3])
-  run_exabayes_and_ALE(dataset_dir, is_dna, cores)
+    datadir = sys.argv[1]
+    is_dna = int(sys.argv[2]) != 0
+    cores = int(sys.argv[3])
+    run_exabayes_and_ALE(datadir, is_dna, cores)
 
 #
 

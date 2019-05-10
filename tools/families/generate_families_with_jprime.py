@@ -37,7 +37,7 @@ def generate_jprime_species(species, output, seed):
   subprocess.check_call(["sed", "-i", "s/1.443047701658439E-4/0.0001443047701658439/g", species_tree])
   print(open(os.path.join(output, "species.pruned.tree")).read()) 
 
-def generate_jprime_genome(families, dupRate, lossRate, transferRate, output, seed):
+def generate_jprime_genome(families, dup_rate, loss_rate, transfer_rate, output, seed):
   for i in range(0, families):
     print("gene " + str(i) + "/" + str(families))
     command = []
@@ -51,9 +51,9 @@ def generate_jprime_genome(families, dupRate, lossRate, transferRate, output, se
     command.append("-s")
     command.append(str(i + seed))
     command.append(os.path.join(output, "species.pruned.tree"))
-    command.append(str(dupRate))
-    command.append(str(lossRate))
-    command.append(str(transferRate))
+    command.append(str(dup_rate))
+    command.append(str(loss_rate))
+    command.append(str(transfer_rate))
     command.append(os.path.join(output, str(i) + "_gene"))
     subprocess.check_call(command)
     
@@ -115,7 +115,7 @@ def jprime_to_families(jprime, out):
     os.makedirs(new_family_dir)
     # species tree
     exp.relative_symlink(new_species, os.path.join(new_family_dir, "speciesTree.newick"))
-    fam.convertToPhyldogSpeciesTree(fam.get_species_tree(out), fam.get_phyldog_species_tree(out)) 
+    fam.convert_to_phyldog_species_tree(fam.get_species_tree(out), fam.get_phyldog_species_tree(out)) 
     # true trees
     exp.relative_symlink(genetree, os.path.join(new_family_dir, "trueGeneTree.newick"))
     # alignment
@@ -140,21 +140,21 @@ def rescale_trees(jprime_output, families, bl_factor):
     rescale_bl.rescale_bl(tree, tree, bl_factor)
     subprocess.check_call(["sed", "-i", "s/)1:/):/g", tree])
 
-def get_output(species, families, sites, model, bl_factor, dupRate, lossRate, transferRate):
+def get_output(species, families, sites, model, bl_factor, dup_rate, loss_rate, transfer_rate):
   dirname = "jsim"
-  if (float(transferRate) != 0.0):
+  if (float(transfer_rate) != 0.0):
     dirname += "dtl"
   dirname += "_s" + str(species) + "_f" + str(families)
   dirname += "_sites" + str(sites)
   dirname += "_" + model
   dirname += "_bl" + str(bl_factor)
-  dirname += "_d" + str(dupRate) + "_l" + str(lossRate) 
-  if (transferRate != 0.0):
-    dirname += "_t" + str(transferRate)  
+  dirname += "_d" + str(dup_rate) + "_l" + str(loss_rate) 
+  if (transfer_rate != 0.0):
+    dirname += "_t" + str(transfer_rate)  
   return dirname
 
-def generate_jprime(species, families, sites, model, bl_factor, dupRate, lossRate, transferRate, root_output, seed):
-  to_hash = str(species) + str(families) + str(sites) + model + str(bl_factor) + str(dupRate) + str(lossRate) + str(transferRate) + str(seed)
+def generate_jprime(species, families, sites, model, bl_factor, dup_rate, loss_rate, transfer_rate, root_output, seed):
+  to_hash = str(species) + str(families) + str(sites) + model + str(bl_factor) + str(dup_rate) + str(loss_rate) + str(transfer_rate) + str(seed)
   md5 = hashlib.md5(to_hash.encode())
   output = os.path.join(root_output, "jprime_temp_" + str(md5.hexdigest()))
   shutil.rmtree(output, True)
@@ -165,18 +165,18 @@ def generate_jprime(species, families, sites, model, bl_factor, dupRate, lossRat
   with open(os.path.join(jprime_output, "jprime_script_params.txt"), "w") as writer:
     writer.write(str(species) + " " + str(families) + " ")
     writer.write(str(sites) + " " + str(model) + " ")
-    writer.write(str(bl_factor)+ " " + str(dupRate) + " ")
-    writer.write(str(lossRate) + " " + str(transferRate) + " " + output)
+    writer.write(str(bl_factor)+ " " + str(dup_rate) + " ")
+    writer.write(str(loss_rate) + " " + str(transfer_rate) + " " + output)
     writer.write(" " + str(seed))
   generate_jprime_species(species, jprime_output, seed) 
-  generate_jprime_genome(families, dupRate, lossRate, transferRate, jprime_output, seed)
+  generate_jprime_genome(families, dup_rate, loss_rate, transfer_rate, jprime_output, seed)
   rescale_trees(jprime_output, families, bl_factor)
   generate_seqgen_sequence(families, sites, model, jprime_output, seed)
   print("jprime output: " + jprime_output)
   jprime_to_families(jprime_output, output)
   
   species_nodes = analyze_tree.get_tree_taxa_number(os.path.join(jprime_output, "species.pruned.tree"))
-  new_output = os.path.join(root_output, get_output(species_nodes, families, sites, model, bl_factor, dupRate, lossRate, transferRate))
+  new_output = os.path.join(root_output, get_output(species_nodes, families, sites, model, bl_factor, dup_rate, loss_rate, transfer_rate))
   shutil.move(output, new_output)
   print("Final output directory: " + new_output)
   print("")
@@ -186,7 +186,7 @@ if (__name__ == "__main__"):
   if (len(sys.argv) != 11 or not (sys.argv[4] in sequence_model.get_model_sample_names())):
     if (len(sys.argv) != 11):
       print("Invalid number of parameters")
-    print("Syntax: python generate_jprime.py species_time_interval families sites model bl_scaler dupRate lossRate transferRate output seed")
+    print("Syntax: python generate_jprime.py species_time_interval families sites model bl_scaler dup_rate loss_rate transfer_rate output seed")
     print("model should be one of " + str(sequence_model.get_model_sample_names()))
     exit(1)
 
@@ -195,10 +195,10 @@ if (__name__ == "__main__"):
   sites = int(sys.argv[3])
   model = sys.argv[4]
   bl_factor = float(sys.argv[5])
-  dupRate = float(sys.argv[6])
-  lossRate = float(sys.argv[7])
-  transferRate = float(sys.argv[8])
+  dup_rate = float(sys.argv[6])
+  loss_rate = float(sys.argv[7])
+  transfer_rate = float(sys.argv[8])
   output = sys.argv[9]
   seed = int(sys.argv[10])
 
-  generate_jprime(species, families, sites, model, bl_factor, dupRate, lossRate, transferRate, output, seed)
+  generate_jprime(species, families, sites, model, bl_factor, dup_rate, loss_rate, transfer_rate, output, seed)

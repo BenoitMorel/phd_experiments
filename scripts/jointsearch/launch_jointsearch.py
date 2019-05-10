@@ -26,7 +26,6 @@ def launch_jointsearch(mode):
     for dataset in datasets:
       print("\t" + dataset)
     print("strategy: " + ",".join(utils.get_possible_strategies()))
-    print("starting_tree: " + ",".join(fam.get_possible_gene_trees()))
     sys.exit(0)
 
   dataset = sys.argv[1]

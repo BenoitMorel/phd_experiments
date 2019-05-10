@@ -1,0 +1,14 @@
+--- ./DeCo/makefile	2019-04-25 15:18:14.467299052 +0200
++++ ./refDeCo/makefile	2012-09-03 16:33:01.000000000 +0200
+@@ -24,9 +24,8 @@
+ 
+ CC = g++
+
+-bpp_root=$(HOME)/install/bio++
+-CFLAGS1 = -g -O3  -I$(bpp_root)/include/Bpp -I$(bpp_root)/include -L$(bpp_root)/lib 
+-CFLAGS2 = -g $(bpp_root)/lib/libbpp-phyl.a  $(bpp_root)/lib/libbpp-seq.a  $(bpp_root)/lib/libbpp-core.a
++CFLAGS1 = -O3 -I/usr/local/bpp/include/Bpp/ -L/usr/local/bpp/lib 
++CFLAGS2 = -lbpp-phyl -lbpp-seq -lbpp-core
+ 
+ all : $(OBJS)  
+ 	$(CC) $(CFLAGS1) $(OBJS) $(CFLAGS2) -o DeCo

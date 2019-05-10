@@ -13,13 +13,15 @@ import experiments as exp
 sys.path.insert(0, os.path.join("tools", "families"))
 import fam
 import generate_families_with_jprime as jprime
+import generate_families_with_zombi as zombi
 import run_raxml_supportvalues as raxml
 import run_ALE
 from run_all import RunFilter
 import run_all
-import run_phyldog_light
+import run_phyldog
 import saved_metrics
 import eval_generax_likelihood
+import run_decostar
 
 # couples of (species interval, seed) to get a given number of species node
 jsim_species_to_params = {}
@@ -37,8 +39,12 @@ jsim_species_to_params[16] = (3, 6)
 
 protein_datasets = ["swiss", "cyano_simulated", "sub_t0.05_s0.5_cyano_empirical", "sub_t0.01_s0.2_ensembl_8880_15"]
 
+def run_all_decostar(datasets):
+  for dataset in datasets:
+    datadir = os.path.join("../BenoitDatasets/families", dataset)
+    run_decostar.run_on_analized_methods(datadir)
 
-def run_generax(dataset, starting_tree, with_transfers, run_name, is_dna, cores = 40):
+def run_generax(dataset, starting_tree, with_transfers, run_name, is_dna, cores = 40, additional_arguments = []):
   command = []
   command.append("python")
   command.append(os.path.join(exp.scripts_root, "generax/launch_generax.py"))
@@ -52,6 +58,7 @@ def run_generax(dataset, starting_tree, with_transfers, run_name, is_dna, cores 
     command.append("UndatedDTL")
   command.append("--run")
   command.append(run_name)
+  command.extend(additional_arguments)
   if (not is_dna):
     command.append("--protein")
   print("-> Running " + " ".join(command))
@@ -60,7 +67,6 @@ def run_generax(dataset, starting_tree, with_transfers, run_name, is_dna, cores 
 
 def generate_dataset(dataset):
   species = fam.get_param_from_dataset_name("species", dataset)
-  species_internal, seed = jsim_species_to_params[int(species)]
   families = int(fam.get_param_from_dataset_name("families", dataset))
   sites = fam.get_param_from_dataset_name("sites", dataset)
   model = fam.get_param_from_dataset_name("model", dataset)
@@ -69,7 +75,14 @@ def generate_dataset(dataset):
   l = fam.get_param_from_dataset_name("loss_rate", dataset)
   t = fam.get_param_from_dataset_name("transfer_rate", dataset)
   output = "../BenoitDatasets/families"
-  jprime.generate_jprime(species_internal, families, sites, model, bl_factor, d, l, t, output, seed) 
+  if (dataset.startswith("jsim")):
+    species_internal, seed = jsim_species_to_params[int(species)]
+    jprime.generate_jprime(species_internal, families, sites, model, bl_factor, d, l, t, output, seed) 
+  elif (dataset.startswith("zsim")):
+    zombi.generate_zombi(species, families, sites, model, bl_factor, d, l, t, output) 
+  else:
+    print("Unknown simulator for dataset " + dataset)
+    sys.exit(1)
 
 def run_reference_methods(dataset, cores = 40, run_filter = RunFilter()):
   print("*************************************")
@@ -80,6 +93,7 @@ def run_reference_methods(dataset, cores = 40, run_filter = RunFilter()):
   starting_trees = 10
   bs_trees = 100
   save_sdtout = sys.stdout
+  print("IS DNA " + str(is_dna))
   redirected_file = os.path.join(dataset_dir, "logs_run_all.txt")
   print("Redirected logs to " + redirected_file)
   sys.stdout.flush()
@@ -90,10 +104,11 @@ def run_reference_methods(dataset, cores = 40, run_filter = RunFilter()):
   sys.stdout.flush()
 
 def run_all_phyldog(datasets, is_dna, cores):
+  print (" run phyldog " + str(is_dna))
   for dataset in datasets:
     dataset_dir = os.path.join("../BenoitDatasets/families", dataset)
     is_dna = (not dataset in protein_datasets)
-    run_phyldog_light.run_phyldog_on_families(dataset_dir, is_dna, cores)
+    run_phyldog.run_phyldog_on_families(dataset_dir, is_dna, cores)
 
 def run_all_raxml_light(datasets, cores = 40):
   for dataset in datasets:
@@ -112,6 +127,12 @@ def run_all_reference_methods(datasets, cores = 40, run_filter = RunFilter()):
   for dataset in datasets:
     run_reference_methods(dataset, cores, run_filter)
 
+def run_all_generax_weighted(datasets, cores, weight):
+  for dataset in datasets:
+    is_dna =  (not dataset in protein_datasets)
+    additional_arguments = ["--rec-weight", str(weight)]
+    run_generax(dataset, "RAxML-NG", False, "generax-weighted" + str(weight), is_dna, cores, additional_arguments) 
+
 def run_all_generax(datasets, raxml = True, random = True, DL = True, DTL = True, cores = 40):
   for dataset in datasets:
     print("*************************************")
@@ -120,14 +141,14 @@ def run_all_generax(datasets, raxml = True, random = True, DL = True, DTL = True
     is_dna = (not dataset in protein_datasets)
     if (raxml):
       if (DL):
-        run_generax(dataset, "RAxML-NG", False, "GeneRax-DL-Raxml", is_dna, cores)
+        run_generax(dataset, "raxml-ng", False, "generax-dl-raxml", is_dna, cores)
       if (DTL):
-        run_generax(dataset, "RAxML-NG", True, "GeneRax-DTL-Raxml", is_dna, cores)
+        run_generax(dataset, "raxml-ng", True, "generax-dtl-raxml", is_dna, cores)
     if (random):
       if (DL):
-        run_generax(dataset, "Random", False, "GeneRax-DL-Random", is_dna, cores)
+        run_generax(dataset, "random", False, "generax-dl-random", is_dna, cores)
       if (DTL):
-        run_generax(dataset, "Random", True, "GeneRax-DTL-Random", is_dna, cores)
+        run_generax(dataset, "random", True, "generax-dtl-random", is_dna, cores)
 
 def generate_all_datasets(datasets):
   for dataset in datasets:
@@ -192,11 +213,13 @@ def compute_likelihoods(datasets, cores = 40):
   for dataset in datasets:
     dataset_dir = os.path.join(exp.benoit_datasets_root, "families", dataset)
     is_protein = dataset in protein_datasets
-    starting_trees = ["RAxML-NG", "Treerecs", "ALE-DL", "ALE-DTL", "GeneRax-DL-Random", "GeneRax-DTL-Random", "True", "Notung"]
-    #starting_trees = ["GeneRax-DL-Raxml", "GeneRax-DTL-Raxml"]
+    starting_trees = fam.get_ran_methods(dataset_dir)
     for tree in starting_trees:
-      eval_generax_likelihood.eval_and_save_likelihood(dataset_dir, tree, 0, is_protein, cores)  
-      eval_generax_likelihood.eval_and_save_likelihood(dataset_dir, tree, 1, is_protein, cores)  
+      try:
+        eval_generax_likelihood.eval_and_save_likelihood(dataset_dir, tree, 0, is_protein, cores)  
+        eval_generax_likelihood.eval_and_save_likelihood(dataset_dir, tree, 1, is_protein, cores)  
+      except:
+        print("Failed to eval joint likelihood on " + dataset + " for method " + tree)
 
 def get_datasets_to_plot(datasets_rf_dico, fixed_params_dico, x_param):
 
@@ -328,5 +351,4 @@ def submit_multiple_experiments_haswell(datasets, do_generate, cores):
   for dataset in datasets:
     submit_single_experiment_haswell(dataset, do_generate, cores)
   
-
 
