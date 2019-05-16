@@ -67,6 +67,7 @@ def build_decostar_conf(datadir, method, trees_file, mapping):
     writer.write("adjacencies.file=" + fam.get_prefixed_adjacencies(datadir) + "\n")
     writer.write("dated.species.tree=0" + "\n")
     writer.write("with.transfer=0" + "\n")
+    writer.write("Loss.aware=1" + "\n")
     writer.write("already.reconciled=0" + "\n")
     writer.write("output.prefix=decostar_run" + "\n")
     writer.write("output.dir=" + run_dir + "\n")

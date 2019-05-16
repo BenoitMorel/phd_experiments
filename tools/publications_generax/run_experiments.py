@@ -10,14 +10,16 @@ datasets = []
 cores = 40
 
 
+
+
 # ZOMBI ADJACENCIES EXPERIMENTS
 if (True):
   datasets = []
   datasets.append("zsim_s20_f100_sites400_dna4_bl1.0_d0.05_l0.06_t0.0")
-  datasets.append("zsim_s25_f100_sites200_dna4_bl1.0_d0.1_l0.1_t0.0")
-  datasets.append("zsim_s8_f100_sites200_dna4_bl1.0_d0.02_l0.02_t0.0")
-  datasets.append("zsim_s15_f100_sites200_dna4_bl1.0_d0.03_l.03_t0.0")
-  datasets.append("zsim_s5_f100_sites100_dna4_bl1.0_d0.1_l0.1_t0.0")
+  #datasets.append("zsim_s25_f100_sites200_dna4_bl1.0_d0.1_l0.1_t0.0")
+  #datasets.append("zsim_s8_f100_sites200_dna4_bl1.0_d0.02_l0.02_t0.0")
+  #datasets.append("zsim_s15_f100_sites200_dna4_bl1.0_d0.03_l.03_t0.0")
+  #datasets.append("zsim_s5_f100_sites100_dna4_bl1.0_d0.1_l0.1_t0.0")
   run_filter = RunFilter(ALE=False)
   #common.generate_all_datasets(datasets)
 
