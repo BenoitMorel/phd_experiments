@@ -278,6 +278,5 @@ def postprocess_datadir(datadir):
     family_dir = get_family_path(datadir, family)
     exp.relative_symlink(get_alignment(datadir, family), os.path.join(datadir, "alignments", family + ".fasta"))
     convert_phyldog_to_treerecs_mapping(get_mappings(datadir, family), get_treerecs_mappings(datadir, family)) 
-    #exp.relative_symlink(get_species_tree(datadir), os.path.join(get_families_dir(datadir), family, "speciesTree.newick"))
 
 

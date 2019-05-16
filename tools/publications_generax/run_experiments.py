@@ -10,10 +10,16 @@ datasets = []
 cores = 40
 
 
-
+# EMPIRICAL EXPERIMENTS
+if (True):
+  datasets = []
+  datasets.append("swiss")
+  run_filter = RunFilter()
+  common.run_all_reference_methods(datasets, cores, run_filter)
+  common.run_all_analyzes(datasets)
 
 # ZOMBI ADJACENCIES EXPERIMENTS
-if (True):
+if (False):
   datasets = []
   datasets.append("zsim_s20_f100_sites400_dna4_bl1.0_d0.05_l0.06_t0.0")
   #datasets.append("zsim_s25_f100_sites200_dna4_bl1.0_d0.1_l0.1_t0.0")

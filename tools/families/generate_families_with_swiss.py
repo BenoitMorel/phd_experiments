@@ -4,7 +4,7 @@ sys.path.insert(0, 'scripts')
 sys.path.insert(0, os.path.join("tools", "mappings"))
 sys.path.insert(0, os.path.join("tools", "trees"))
 sys.path.insert(0, os.path.join("tools", "msa_edition"))
-
+import fam
 import experiments as exp
 import make_binary
 import nhx_to_newick
@@ -37,10 +37,10 @@ def copy_remove_carriage(input_file, output_file):
   with open(output_file, "w") as writer:
     writer.write(s.replace('\r',''))
 
-def extract_species_tree(swiss_dataset, output_dataset):
+def extract_species_tree(swiss_dataset, datadir):
   nhx_species_tree = os.path.join(swiss_dataset, "speciestree.nhx")
-  unresolved_species_tree = os.path.join(output_dataset, "unresolvedSpeciesTree.newick")
-  species_tree = os.path.join(output_dataset, "speciesTree.newick")
+  unresolved_species_tree = os.path.join(datadir, "unresolvedSpeciesTree.newick")
+  species_tree = fam.get_species_tree(datadir)
   nhx_to_newick.nhx_to_newick(nhx_species_tree, unresolved_species_tree)
   make_binary.make_binary(unresolved_species_tree, species_tree, 41)
   cut_node_names.cut_keep_first_elems(species_tree, species_tree, "_", 1)
@@ -97,7 +97,7 @@ def apply_id_to_name(id_to_name, input_tree, output_tree):
   with open(output_tree, "w") as writer:
     tree.write(outfile = output_tree)
 
-def extract_family(swiss_dataset, family, species_tree, output_dataset):
+def extract_family(swiss_dataset, family, species_tree, datadir):
   print("Treating " + family)
   swiss_alignment = os.path.join(swiss_dataset, family, "sequences.fst")
   if (not os.path.isfile(swiss_alignment)):
@@ -109,18 +109,13 @@ def extract_family(swiss_dataset, family, species_tree, output_dataset):
   swiss_sequence_id = os.path.join(swiss_dataset, family, "sequence_identifiers.txt")
   swiss_consensus_tree = os.path.join(swiss_dataset, family, "consensus_tree.nhx")
   
-  alignments_path = os.path.join(output_dataset, "alignments")
-  family_path = os.path.join(output_dataset, "families", family)
-  family_alignment = os.path.join(family_path, "alignment.msa")
+  family_path = fam.get_family_path(datadir, family)
   family_alignment_unaligned = os.path.join(family_path, "unaligned_alignment.msa")
-  pargenes_alignment = os.path.join(alignments_path, family + ".fasta")
-  family_mapping = os.path.join(family_path, "mapping.link")
-  family_treerecsc_mapping = os.path.join(family_path, "treerecs_mapping.link")
-  true_tree = os.path.join(family_path, "trueGeneTree.newick")
+  family_alignment = fam.get_alignment(datadir, family)
+  family_mapping = fam.get_mappings(datadir, family)
+  true_tree = fam.get_true_tree(datadir, family)
   
   # species tree
-  exp.try_make_dir(family_path)  
-  shutil.copyfile(species_tree, os.path.join(family_path, "speciesTree.newick"))
   species_leaves = get_leaf_names(species_tree)
 
   # alignment
@@ -128,35 +123,27 @@ def extract_family(swiss_dataset, family, species_tree, output_dataset):
   extract_sequence(swiss_alignment, family_alignment_unaligned, species_leaves, id_to_name)
   #print(id_to_name)
   align.align(family_alignment_unaligned, family_alignment, "MAFFT")
-  shutil.copyfile(family_alignment, pargenes_alignment)
  
 
-  #if (len(id_to_name) > 1):
-  #  extract_id_to_name(swiss_sequence_id, id_to_name)
   # true tree
   nhx_to_newick.nhx_to_newick(swiss_consensus_tree, true_tree)
-  #if (len(id_to_name) == 0):
   cut_node_names.cut_keep_first_elems(true_tree, true_tree, "_", 2)
-  #else:
-  #apply_id_to_name(id_to_name, true_tree, true_tree)
   
   # mapping
   fasta_to_mapping.fasta_to_mapping(family_alignment, family_mapping)
-  phyldog_to_treerecs_map.convert(family_mapping, family_treerecsc_mapping)
 
 
-def swiss_to_family(swiss_dataset, output_dataset):
-  species_tree = extract_species_tree(swiss_dataset, output_dataset)
-  alignments_path = os.path.join(output_dataset, "alignments")
-  exp.try_make_dir(alignments_path)
- 
+def swiss_to_family(swiss_dataset, datadir):
+  fam.init_top_directories(datadir) 
   good_families = ["ST001", "ST002", "ST003", "ST004", "ST005", "ST007", "ST009", "ST011"]
+  fam.init_families_directories(datadir, good_families)
+  species_tree = extract_species_tree(swiss_dataset, datadir)
   for family in good_families:
-    extract_family(swiss_dataset, family, species_tree, output_dataset)
- 
+    extract_family(swiss_dataset, family, species_tree, datadir)
+  fam.postprocess_datadir(datadir) 
 
 swiss_dataset = os.path.join(exp.benoit_datasets_root, "families/swiss/original_files")
-output_dataset = os.path.join(exp.benoit_datasets_root, "families/swiss/")
+datadir = os.path.join(exp.benoit_datasets_root, "families/swiss/")
 
-swiss_to_family(swiss_dataset, output_dataset)
+swiss_to_family(swiss_dataset, datadir)
 
