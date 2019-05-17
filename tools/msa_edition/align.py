@@ -8,7 +8,7 @@ def align(input_msa, output_msa, aligner):
   command = []
   command.append(exp.mafft_exec)
   command.append("--maxiterate")
-  command.append("1")
+  command.append("1000")
   command.append("--localpair")
   command.append(input_msa)
   print(input_msa)

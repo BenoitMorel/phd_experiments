@@ -12,6 +12,8 @@ import link_file_from_gene_tree as phyldog_link
 import sequence_model
 import rescale_bl
 import analyze_tree
+from ete3 import Tree
+from ete3 import SeqGroup
 
 
 def generate_jprime_species(species, output, seed):
@@ -78,31 +80,50 @@ def generate_seqgen_sequence(families, sites, model, output, seed):
     with open(sequence_file, "w") as writer:
       subprocess.check_call(command, stdout=writer)
 
-def build_mapping_file(jprime_mapping, phyldog_mapping, treerecs_mapping):
+def build_mapping_file(jprime_mapping, phyldog_mapping, treerecs_mapping, family):
   phyldog_writer = open(phyldog_mapping, "w")
   treerecs_writer = open(treerecs_mapping, "w")
   lines = open(jprime_mapping).readlines()
   dico = {}
   for line in lines:
     split = line.split("\t")
-    treerecs_writer.write(split[0] + " " + split[1])
-    split[1] = split[1][:-1]
+    split[1] = split[1].rstrip()
+    split[0] = rename_with_family(split[0], family)
+    treerecs_writer.write(split[0] + " " + split[1] + "\n")
     if (not split[1] in dico):
       dico[split[1]] = []
     dico[split[1]].append(split[0])
   for species, genes in dico.items():
     phyldog_writer.write(species + ":" + ";".join(genes) + "\n")
 
+def rename_with_family(zombi_gene_name, family):
+  return zombi_gene_name.replace("_", "UUU") + "UUU" + family.replace("_", "UUU")
+
+
+"""
+  Rename all nodes from the zombi gene tree (see rename_with_family)
+"""
+def copy_and_rename_tree(src, dest, family):
+  tree = Tree(src, 1)
+  for node in tree.traverse("postorder"):
+    node.name = rename_with_family(node.name, family)
+  open(dest, "w").write(tree.write())
+
+
+"""
+  Rename all taxa in the zombi alignments (see rename_with_family)
+"""
+def copy_and_rename_alignment(src, dest, family):
+  seqs = SeqGroup(open(src).read()) #, format="phylip_relaxed")
+  new_seqs = SeqGroup() 
+  for entry in seqs.get_entries():
+    new_seqs.set_seq(rename_with_family(entry[0], family), entry[1])
+  open(dest, "w").write(new_seqs.write())
+
+
 def jprime_to_families(jprime, out):
-  new_ali_dir = os.path.join(out, "alignments")
-  new_families_dir = os.path.join(out, "families")
-  os.makedirs(new_ali_dir)
-  os.makedirs(new_families_dir)
-  # species tree
-  species = os.path.join(jprime, "species.pruned.tree")
-  new_species = os.path.join(out, "speciesTree.newick")
-  shutil.copyfile(species, new_species)
-  alignments_writer = open(os.path.join(out, "alignments.txt"), "w")
+  fam.init_top_directories(out)
+  families = []
   for genetree_base in os.listdir(jprime):
     if (not "gene.pruned.tree" in genetree_base):
       continue
@@ -111,26 +132,26 @@ def jprime_to_families(jprime, out):
       continue
     family_number = genetree_base.split("_")[0]
     family =  family_number + "_pruned"
-    new_family_dir = os.path.join(new_families_dir, family)
-    os.makedirs(new_family_dir)
-    # species tree
-    exp.relative_symlink(new_species, os.path.join(new_family_dir, "speciesTree.newick"))
-    fam.convert_to_phyldog_species_tree(fam.get_species_tree(out), fam.get_phyldog_species_tree(out)) 
+    families.append(family)
+  fam.init_families_directories(out, families)
+  # species tree
+  species = os.path.join(jprime, "species.pruned.tree")
+  shutil.copyfile(species, fam.get_species_tree(out))
+  for family in families:
+    family_number = family.split("_")[0] 
     # true trees
-    exp.relative_symlink(genetree, os.path.join(new_family_dir, "trueGeneTree.newick"))
+    gene_tree = os.path.join(jprime, family_number + "_gene.pruned.tree")
     # alignment
-    alignment_base = family_number + ".fasta" 
-    new_alignment_base = family + ".fasta"
-    alignment = os.path.join(jprime, alignment_base)
-   
-    exp.relative_symlink(alignment, os.path.join(new_family_dir, "alignment.msa"))
-    exp.relative_symlink(alignment, os.path.join(new_ali_dir, new_alignment_base))
-    alignments_writer.write(os.path.abspath(os.path.join(new_ali_dir, new_alignment_base)) + "\n")
+    alignment = os.path.join(jprime, family_number + ".fasta")
+    # true trees
+    copy_and_rename_tree(gene_tree, fam.get_true_tree(out, family), family)
+    # alignment
+    copy_and_rename_alignment(alignment, fam.get_alignment(out, family), family)
     # link file
-    jprime_mapping = os.path.join(jprime, genetree_base[:-4] + "leafmap")
-    phyldog_mapping = os.path.join(new_family_dir, "mapping.link")
-    treerecs_mapping = os.path.join(new_family_dir, "treerecs_mapping.link")
-    build_mapping_file(jprime_mapping, phyldog_mapping, treerecs_mapping)
+    jprime_mapping = os.path.join(jprime, family_number + "_gene.pruned.leafmap")
+    phyldog_mapping = fam.get_mappings(out, family)
+    treerecs_mapping = fam.get_treerecs_mappings(out, family)
+    build_mapping_file(jprime_mapping, phyldog_mapping, treerecs_mapping, family)
 
 def rescale_trees(jprime_output, families, bl_factor):
   for i in range(0, families):
@@ -178,6 +199,8 @@ def generate_jprime(species, families, sites, model, bl_factor, dup_rate, loss_r
   species_nodes = analyze_tree.get_tree_taxa_number(os.path.join(jprime_output, "species.pruned.tree"))
   new_output = os.path.join(root_output, get_output(species_nodes, families, sites, model, bl_factor, dup_rate, loss_rate, transfer_rate))
   shutil.move(output, new_output)
+  fam.postprocess_datadir(new_output)
+  
   print("Final output directory: " + new_output)
   print("")
 

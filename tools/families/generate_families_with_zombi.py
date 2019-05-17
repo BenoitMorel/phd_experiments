@@ -164,12 +164,12 @@ def zombi_to_families(zombi, datadir):
   genetrees_dir = os.path.join(zombi, "G", "Gene_trees")
   families = get_valid_families(zombi)
   fam.init_families_directories(datadir, families)
+  # species tree
+  fam.convert_to_phyldog_species_tree(species, fam.get_phyldog_species_tree(datadir)) 
   for family in families:
     genetree = os.path.join(genetrees_dir, family + "tree.nwk")
     alignment = os.path.join(zombi, "S", family + ".fasta")
     new_family_dir = fam.get_family_path(datadir, family)
-    # species tree
-    fam.convert_to_phyldog_species_tree(species, fam.get_phyldog_species_tree(datadir)) 
     # true trees
     copy_and_rename_tree(genetree, fam.get_true_tree(datadir, family), family)
     # alignment

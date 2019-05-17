@@ -167,6 +167,7 @@ def get_method_name(family_dir, tree_path):
   method_name = get_method_name_aux(tree_path)
   if (not os.path.isfile(get_gene_tree(family_dir, method_name))):
     return None
+  print(tree_path + "  " + method_name)
   return method_name
 
 def get_ran_methods(datadir):
@@ -277,6 +278,8 @@ def postprocess_datadir(datadir):
   for family in get_families_list(datadir):
     family_dir = get_family_path(datadir, family)
     exp.relative_symlink(get_alignment(datadir, family), os.path.join(datadir, "alignments", family + ".fasta"))
+    print(get_alignment(datadir, family))
+    print(os.path.join(datadir, "alignments", family + ".fasta"))
     convert_phyldog_to_treerecs_mapping(get_mappings(datadir, family), get_treerecs_mappings(datadir, family)) 
 
 

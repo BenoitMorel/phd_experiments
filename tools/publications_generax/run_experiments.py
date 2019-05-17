@@ -11,7 +11,7 @@ cores = 40
 
 
 # EMPIRICAL EXPERIMENTS
-if (True):
+if (False):
   datasets = []
   datasets.append("swiss")
   run_filter = RunFilter()
@@ -51,16 +51,16 @@ if (False):
 
 #datasets = []
 
-if (False):
+if (True):
   fixed_point_dtl = "jsimdtl_s16_f100_sites500_dna4_bl0.5_d0.1_l0.2_t0.1"
   datasets.append(fixed_point_dtl)
-  common.add_dataset(datasets, fixed_point_dtl, ["s5", "s10", "s12", "s19", "s27", "s41"])
-  common.add_dataset(datasets, fixed_point_dtl, ["sites100", "sites250", "sites750", "sites1000"])
-  common.add_dataset(datasets, fixed_point_dtl, ["bl0.01", "bl0.05", "bl0.1", "bl0.2", "bl1.0", "bl2.0"])
-  common.add_dataset(datasets, fixed_point_dtl, ["d0.01_l0.02_t0.01", "d0.05_l0.1_t0.05", "d0.15_l0.3_t0.15", "d0.2_l0.4_t0.2"])
-  common.add_dataset(datasets, fixed_point_dtl, ["d0.01_l0.2_t0.19", "d0.05_l0.2_t0.15", "d0.15_l0.2_t0.05", "d0.19_l0.2_t0.01"])
-  #common.generate_all_datasets(datasets)
-  #common.run_all_reference_methods(datasets)
+  #common.add_dataset(datasets, fixed_point_dtl, ["s5", "s10", "s12", "s19", "s27", "s41"])
+  #common.add_dataset(datasets, fixed_point_dtl, ["sites100", "sites250", "sites750", "sites1000"])
+  #common.add_dataset(datasets, fixed_point_dtl, ["bl0.01", "bl0.05", "bl0.1", "bl0.2", "bl1.0", "bl2.0"])
+  #common.add_dataset(datasets, fixed_point_dtl, ["d0.01_l0.02_t0.01", "d0.05_l0.1_t0.05", "d0.15_l0.3_t0.15", "d0.2_l0.4_t0.2"])
+  #common.add_dataset(datasets, fixed_point_dtl, ["d0.01_l0.2_t0.19", "d0.05_l0.2_t0.15", "d0.15_l0.2_t0.05", "d0.19_l0.2_t0.01"])
+  common.generate_all_datasets(datasets)
+  common.run_all_reference_methods(datasets)
   #common.run_all_generax(datasets, random = False, DL = False)
   #common.compute_likelihoods(datasets)  
 

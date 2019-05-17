@@ -9,9 +9,7 @@ def generate_link_file(gene_tree_path, output_link_path, split_character):
   if (len(open(gene_tree_path).readlines()) == 0):
     return
   gene_tree = Tree(gene_tree_path, format=1)
-
   leaves = gene_tree.get_leaf_names()
-
   dico = {}
   for leaf in leaves:
     split = leaf.split(split_character)
@@ -19,7 +17,6 @@ def generate_link_file(gene_tree_path, output_link_path, split_character):
     if (not (species in dico)):
       dico[species] = []
     dico[species].append(leaf)
-
   with open(output_link_path, "w") as writer:
     for key, value in dico.items():
       writer.write(key)
