@@ -150,16 +150,16 @@ def run_exabayes_and_ALE(datadir, is_dna, cores):
   finally:
     os.chdir(cwd)
 
-  if (__name__== "__main__"):
-    max_args_number = 4
-    if len(sys.argv) < max_args_number:
-      print("Syntax error: python run_ALE.py datadir is_dna cores.")
-      sys.exit(0)
+if (__name__== "__main__"):
+  max_args_number = 4
+  if len(sys.argv) < max_args_number:
+    print("Syntax error: python run_ALE.py datadir is_dna cores.")
+    sys.exit(0)
 
-    datadir = sys.argv[1]
-    is_dna = int(sys.argv[2]) != 0
-    cores = int(sys.argv[3])
-    run_exabayes_and_ALE(datadir, is_dna, cores)
+  datadir = sys.argv[1]
+  is_dna = int(sys.argv[2]) != 0
+  cores = int(sys.argv[3])
+  run_exabayes_and_ALE(datadir, is_dna, cores)
 
 #
 

@@ -123,18 +123,6 @@ def parallelized_function(params):
   datadir, family = params
   create_random_tree.create_random_tree(fam.get_alignment(datadir, family), fam.get_true_tree(datadir, family))
 
-# this function should be common to all generation scripts
-def prepare_datadir(datadir):
-  # phyldog species trees
-  fam.convert_to_phyldog_species_tree(fam.get_species_tree(datadir), fam.get_phyldog_species_tree(datadir)) 
-  exp.mkdir(os.path.join(datadir, "alignments"))
-  # alignments
-  for family in fam.get_families_list(datadir):
-    family_dir = fam.get_family_path(datadir, family)
-    exp.relative_symlink(fam.get_alignment(datadir, family), os.path.join(datadir, "alignments", family + ".fasta"))
-    fam.convert_phyldog_to_treerecs_mapping(fam.get_mappings(datadir, family), fam.get_treerecs_mappings(datadir, family)) 
-    exp.relative_symlink(fam.get_species_tree(datadir), os.path.join(fam.get_families_dir(datadir), family, "speciesTree.newick"))
-
 def export_msa(seq_entries, alignments_dico, output_file):
   with open(output_file, "w") as writer:
     for seq_entry in seq_entries:
@@ -175,23 +163,22 @@ def extract_deco_mappings(seq_entries_dict, output_file):
       writer.write(seq_entries_dict[gene].species + " " + gene + "\n")
 
 def export(species_tree, seq_entries_dict, trees_dict, alignments_dico, datadir):
+  fam.init_top_directories(datadir)
   per_family_seq_entries = {}
   for gene in seq_entries_dict:
     seq_entry = seq_entries_dict[gene]
     if (not seq_entry.family in per_family_seq_entries):
       per_family_seq_entries[seq_entry.family] = []
     per_family_seq_entries[seq_entry.family].append(seq_entry)
-  
-  os.makedirs(datadir)
+    fam.init_family_directories(datadir, seq_entry.family)
+
   shutil.copy(species_tree, fam.get_species_tree(datadir))
   
   families_dir = fam.get_families_dir(datadir)
-  os.makedirs(families_dir)
   print("Number of families: " + str(len(per_family_seq_entries)))
   processed_families = 0
   for family in per_family_seq_entries:
     family_dir = fam.get_family_path(datadir, family)
-    os.makedirs(family_dir)
     seq_entries = per_family_seq_entries[family]
     export_msa(seq_entries, alignments_dico, fam.get_alignment(datadir, family)) 
     export_mappings(seq_entries, fam.get_mappings(datadir, family))
@@ -200,7 +187,7 @@ def export(species_tree, seq_entries_dict, trees_dict, alignments_dico, datadir)
       writer.write(trees_dict[family])
   extract_adjacencies(seq_entries_dict, datadir)
   extract_deco_mappings(seq_entries_dict, fam.get_deco_mappings(datadir))
-  prepare_datadir(datadir)
+  fam.postprocess_datadir(datadir)
 
 def get_species_dict(species_tree_file):
   res = {}
