@@ -4,6 +4,7 @@ import shutil
 sys.path.insert(0, 'scripts/generax')
 import launch_generax
 import saved_metrics
+import fam
 
 try:
       from StringIO import StringIO
@@ -21,6 +22,9 @@ def eval_likelihood(dataset_dir, starting_tree, with_transfers, is_protein, core
   if (with_transfers):
     additional_arguments.append("--rec-model")
     additional_arguments.append("UndatedDTL")
+  else:
+    additional_arguments.append("--rec-model")
+    additional_arguments.append("UndatedDL")
   sys.stdout = open(os.devnull, 'w')
   launch_generax.run_generax(dataset_dir, "EVAL", generax_families_file, "normal", cores, additional_arguments, temp_dir)
   sys.stdout = sys.__stdout__
@@ -35,6 +39,13 @@ def eval_likelihood(dataset_dir, starting_tree, with_transfers, is_protein, core
   return stats
   
 def eval_and_save_likelihood(dataset_dir, starting_tree, with_transfers, is_protein, cores):
+  print("Evaluating likelihood for " + starting_tree + " and " + dataset_dir + " transfers=" + str(with_transfers))
+  if (starting_tree == "all"):
+    for method in fam.get_ran_methods(dataset_dir):
+      assert(method != "all")
+      eval_and_save_likelihood(dataset_dir, method, with_transfers, is_protein, cores)
+    return
+
   stats = eval_likelihood(dataset_dir, starting_tree, with_transfers, is_protein, cores)
   for metric in stats:
     metric_name = metric

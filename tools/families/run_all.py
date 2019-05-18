@@ -99,7 +99,8 @@ def run_reference_methods(dataset_dir, is_dna, starting_trees, bs_trees, cores, 
   if (run_filter.eval_joint_ll):
     print("Evaluating joint likelihoods...")
     try:
-      pass  
+      eval_generax_likelihood.eval_and_save_likelihood(dataset_dir, "all", False, is_dna, cores)  
+      eval_generax_likelihood.eval_and_save_likelihood(dataset_dir, "all", True, is_dna, cores)  
     except Exception as exc:
       print("Failed evaluating joint likelihoods")
       print(exc)

@@ -3,13 +3,13 @@ import sys
 import subprocess
 import shutil
 import time
-import saved_metrics
-import fam
-import time
 sys.path.insert(0, 'scripts')
 sys.path.insert(0, os.path.join("tools", "families"))
+sys.path.insert(0, os.path.join("tools", "trees"))
+import saved_metrics
+import fam
 import experiments as exp
-
+import nhx_to_newick
 
 
 def generate_scheduler_commands_file(datadir, is_dna, cores, output_dir):
@@ -54,14 +54,6 @@ def generate_scheduler_command(command_file, cores, output_dir):
   command += "0"
   return command 
 
-def extract_phyldog_trees(datadir):
-  families_dir = os.path.join(datadir, "families")
-  for family in os.listdir(families_dir):
-    phyldogTree = os.path.join(families_dir, family, "misc", "phyldog_reconciled.tree")
-    if (os.path.isfile(phyldogTree)):
-      shutil.copyfile(phyldogTree, fam.get_phyldog_tree(datadir, family))
-    else:
-      print("Warning: no phyldog tree for family " + family)
 
 def get_phyldog_run_dir(datadir):
   return os.path.join(datadir, "runs", "phyldog_run")
@@ -174,9 +166,8 @@ def extract_phyldog(datadir):
   families_dir = os.path.join(datadir, "families")
   for family in os.listdir(families_dir):
     phyldog_tree = os.path.join(results_dir, family + ".ReconciledTree")
-    new_phyldog_tree = fam.get_phyldog_tree(datadir, family)
     try:
-      shutil.copy(phyldog_tree, new_phyldog_tree)
+      nhx_to_newick.nhx_to_newick(phyldog_tree, fam.get_phyldog_tree(datadir, family))
     except:
       print("Phyldog failed to infer tree " + phyldog_tree)
       shutil.copy(fam.get_raxml_tree(datadir, family), new_phyldog_tree)

@@ -3,7 +3,7 @@ import sys
 
 def nhx_to_newick(input_tree, output_tree):
   s = open(input_tree).readlines()
-  res = re.sub("\[.*?\]", "", s[0].replace("\n", "")) + ";"
+  res = re.sub("\[.*?\]", "", s[0].replace("\n", "")) 
   with open(output_tree, "w") as writer:
     writer.write(res)
 

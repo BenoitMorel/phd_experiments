@@ -15,7 +15,7 @@ def generate_scheduler_commands_file(datadir, is_dna, cores, output_dir):
   speciesTree = fam.get_species_tree(datadir)
   model = "GTR"
   if (not is_dna):
-    model = "DAYHOFF"
+    model = "LG"
   with open(scheduler_commands_file, "w") as writer:
     for family in fam.get_families_list(datadir):
       family_dir = fam.get_family_path(datadir, family)

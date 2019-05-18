@@ -59,8 +59,12 @@ if (True):
   #common.add_dataset(datasets, fixed_point_dtl, ["bl0.01", "bl0.05", "bl0.1", "bl0.2", "bl1.0", "bl2.0"])
   #common.add_dataset(datasets, fixed_point_dtl, ["d0.01_l0.02_t0.01", "d0.05_l0.1_t0.05", "d0.15_l0.3_t0.15", "d0.2_l0.4_t0.2"])
   #common.add_dataset(datasets, fixed_point_dtl, ["d0.01_l0.2_t0.19", "d0.05_l0.2_t0.15", "d0.15_l0.2_t0.05", "d0.19_l0.2_t0.01"])
-  common.generate_all_datasets(datasets)
-  common.run_all_reference_methods(datasets)
+  #common.generate_all_datasets(datasets)
+  run_filter = RunFilter()
+  run_filter.disable_all()
+  run_filter.phyldog = True
+  run_filter.eval_joint_ll = True
+  common.run_all_reference_methods(datasets, run_filter = run_filter)
   #common.run_all_generax(datasets, random = False, DL = False)
   #common.compute_likelihoods(datasets)  
 
