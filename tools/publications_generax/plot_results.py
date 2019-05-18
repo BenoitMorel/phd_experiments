@@ -30,15 +30,15 @@ if (__name__ == "__main__"):
   #x_labels["families"] = "Number of gene families"
   x_labels["dt_ratio"] = "Rates ratio D/T (D+T is fixed)"
   
-  methods_dl_rf = ["RAxML-NG", "Phyldog", "Treerecs", "ALE-DL", "GeneRax-DL-Random"] #, "GeneRax-DL-Raxml"]
-  methods_dtl_rf = ["RAxML-NG", "Phyldog", "Treerecs", "ALE-DTL", "GeneRax-DTL-Random"] #, "GeneRax-DTL-Raxml"]
+  methods_dl_rf = ["raxml-ng", "phyldog", "treerecs", "ale-dl", "generax-dl-random"] #, "GeneRax-DL-Raxml"]
+  methods_dtl_rf = ["raxml-ng", "phyldog", "treerecs", "ale-dtl", "generax-dtl-random"] #, "GeneRax-DTL-Raxml"]
 
   methods_dl_runtimes = list(methods_dl_rf)
-  methods_dl_runtimes[0] = "RAxML-light"
-  methods_dl_runtimes.remove("Phyldog")
+  methods_dl_runtimes[0] = "raxml-light"
+  methods_dl_runtimes.remove("phyldog")
   methods_dtl_runtimes = list(methods_dtl_rf)
-  methods_dtl_runtimes[0] = "RAxML-light"
-  methods_dtl_runtimes.remove("Phyldog")
+  methods_dtl_runtimes[0] = "raxml-light"
+  methods_dtl_runtimes.remove("phyldog")
   
   methods_dl_ll = ["True"]
   methods_dl_ll.extend(methods_dl_rf)
@@ -78,8 +78,6 @@ if (__name__ == "__main__"):
     plotter_runtimes(param)
     #plotter_ll(param)
   
-  #fixed_point_dtl = "jsimdtl_s16_f100_sites500_dna4_bl0.5_d0.1_l0.2_t0.1"
-
   prefix = "jsimdtl_"
   datasets_rf_dico = common.get_metrics_for_datasets(prefix, "average_rrf")
   datasets_runtimes_dico = common.get_metrics_for_datasets(prefix, "runtimes")
@@ -90,7 +88,7 @@ if (__name__ == "__main__"):
     print("failed substracting likelihoods")
   
   fixed_params = {}
-  fixed_params["species"] = "16"
+  fixed_params["species"] = "19"
   fixed_params["loss_rate"] = "0.2"
   fixed_params["dt_ratio"] = "1.0"
   fixed_params["bl"] = "0.5"

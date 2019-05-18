@@ -243,8 +243,6 @@ def get_metrics_for_datasets(datasets_prefix, metric_name):
   datasets_runtimes_dico = {}
   total = len(datasets)
   for dataset in datasets:
-    #if (metric_name == "average_rrf"):
-    #  get_results(dataset)
     dataset_dir = os.path.join(exp.families_datasets_root, dataset)
     res = saved_metrics.get_metrics(dataset_dir, metric_name)
     if (res != None):

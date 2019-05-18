@@ -9,7 +9,7 @@ def run_single_experiment(dataset, do_generate, cores):
     common.generate_dataset(dataset)
   run_filter = RunFilter()
   common.run_reference_methods(dataset, cores, run_filter)
-  common.compute_likelihoods([dataset], cores)  
+  #common.compute_likelihoods([dataset], cores)  
   common.run_all_analyzes([dataset])
 
 

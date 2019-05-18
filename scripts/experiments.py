@@ -224,7 +224,7 @@ def mkdir(dir_name):
 
 def relative_symlink(src, dest):
   relative_path = os.path.relpath(src, os.path.dirname(dest))
-  tmp = "temp.haha"
+  tmp = dest + ".sym"
   os.symlink(relative_path,  tmp)
   shutil.move(tmp, dest)
 
