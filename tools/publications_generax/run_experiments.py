@@ -61,9 +61,6 @@ if (True):
   #common.add_dataset(datasets, fixed_point_dtl, ["d0.01_l0.2_t0.19", "d0.05_l0.2_t0.15", "d0.15_l0.2_t0.05", "d0.19_l0.2_t0.01"])
   #common.generate_all_datasets(datasets)
   run_filter = RunFilter()
-  run_filter.disable_all()
-  run_filter.phyldog = True
-  run_filter.eval_joint_ll = True
   common.run_all_reference_methods(datasets, run_filter = run_filter)
   #common.run_all_generax(datasets, random = False, DL = False)
   #common.compute_likelihoods(datasets)  

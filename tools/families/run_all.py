@@ -71,12 +71,12 @@ def run_reference_methods(dataset_dir, is_dna, starting_trees, bs_trees, cores, 
     except Exception as exc:
       print("Failed running Notung")
       print(exc)
-    threshold = 101
-    try:
-      notung.run_notung_on_families(dataset_dir, threshold, cores)
-    except Exception as exc:
-      print("Failed running Notung")
-      print(exc)
+    #threshold = 101
+    #try:
+    #  notung.run_notung_on_families(dataset_dir, threshold, cores)
+    #except Exception as exc:
+    #  print("Failed running Notung")
+    #  print(exc)
 
   if (run_filter.generax):
     print("Run Generax")
