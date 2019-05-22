@@ -2,6 +2,7 @@ import subprocess
 import sys
 import os 
 import re
+import pickle
 import pandas as pd
 import matplotlib
 matplotlib.use('Agg')
@@ -331,7 +332,7 @@ class Plotter(object):
   def __call__(self, parameter):
     plot(self.datasets_values_dico, parameter, self.fixed_parameters, self.methods, self.x_labels,  self.y_label, self.prefix + "_" + parameter + ".png")
 
-def submit_single_experiment_haswell(dataset, do_generate, cores):
+def submit_single_experiment_haswell(dataset, do_generate, cores, run_filter = RunFilter()):
   command = []
   command.append("python")
   command.append(os.path.join(exp.tools_root, "publications_generax", "single_experiment.py"))
@@ -340,13 +341,16 @@ def submit_single_experiment_haswell(dataset, do_generate, cores):
   command.append(str(cores))
   results_dir = os.path.join("single_experiments", dataset)
   results_dir = exp.create_result_dir(results_dir, [])
+  run_filter_file = os.path.join(results_dir, "run_filter.pickle")
+  command.append(run_filter_file)
   result_msg = ""
-  exp.write_results_info(results_dir, result_msg) 
+  exp.write_results_info(results_dir, result_msg)
+  pickle.dump(run_filter, open(run_filter_file, "wb"))
   submit_path = os.path.join(results_dir, "sub_generax.sh")
-  exp.submit(submit_path, " ".join(command), cores, "haswell") 
+  exp.submit(submit_path, " ".join(command), cores, "haswelld") 
 
-def submit_multiple_experiments_haswell(datasets, do_generate, cores):
+def submit_multiple_experiments_haswell(datasets, do_generate, cores, run_filter = RunFilter()):
   for dataset in datasets:
-    submit_single_experiment_haswell(dataset, do_generate, cores)
+    submit_single_experiment_haswell(dataset, do_generate, cores, run_filter)
   
 

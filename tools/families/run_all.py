@@ -11,6 +11,7 @@ import eval_generax_likelihood
 import analyze_dataset
 
 class RunFilter():
+  
   def __init__(self, raxml = True, pargenes = True, treerecs = True, phyldog = True, notung = True, generax = True, ALE = True, eval_joint_ll = True, analyze = True):
     self.raxml = raxml
     self.pargenes = pargenes
@@ -21,8 +22,9 @@ class RunFilter():
     self.ALE = ALE
     self.eval_joint_ll = eval_joint_ll
     self.analyze = analyze
+    self.EXA_runs = -1 # use default values in run_ALE.py 
+    self.EXA_chains = -1 # use default values in run_ALE.py 
 
-  
   def disable_all(self):
     self.raxml = False
     self.pargenes = False
@@ -91,7 +93,7 @@ def run_reference_methods(dataset_dir, is_dna, starting_trees, bs_trees, cores, 
     print("Run ALE...")
     sys.stdout.flush()
     try:
-      run_ALE.run_exabayes_and_ALE(dataset_dir, is_dna, cores)
+      run_ALE.run_exabayes_and_ALE(dataset_dir, is_dna, cores, chains = run_filter.EXA_chains, runs = run_filter.EXA_runs)
     except Exception as exc:
       print("Failed running ALE")
       print(exc)
