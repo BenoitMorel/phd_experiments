@@ -36,6 +36,15 @@ if (False):
   common.run_all_decostar(datasets)
   #common.compute_likelihoods(datasets)
 
+# experiments on DTL rates optimization
+if (True):
+  fixed_point_dl = "jsimdtl_s19_f200_sites200_dna4_bl1.0_d0.1_l0.2_t0.1"
+  datasets.append(fixed_point_dl)
+  common.add_dataset(datasets, fixed_point_dl, ["s5", "s10"])
+  #common.generate_all_datasets(datasets)
+  run_filter = RunFilter(ALE=False)
+  common.run_all_reference_methods(datasets, run_filter = run_filter)
+
 if (False):
   fixed_point_dl = "jsim_s19_f100_sites500_dna4_bl0.5_d0.25_l0.25_t0.0"
   datasets.append(fixed_point_dl)
@@ -51,7 +60,7 @@ if (False):
 
 #datasets = []
 
-if (True):
+if (False):
   fixed_point_dtl = "jsimdtl_s16_f100_sites500_dna4_bl0.5_d0.1_l0.2_t0.1"
   datasets.append(fixed_point_dtl)
   #common.add_dataset(datasets, fixed_point_dtl, ["s5", "s10", "s12", "s19", "s27", "s41"])
