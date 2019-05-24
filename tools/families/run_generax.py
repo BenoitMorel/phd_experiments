@@ -4,7 +4,7 @@ import subprocess
 sys.path.insert(0, 'scripts')
 import experiments as exp
 
-def run_generax_instance(dataset, starting_tree, with_transfers, run_name, is_dna, cores = 40):
+def run_generax_instance(dataset, starting_tree, with_transfers, run_name, is_dna, per_sp_rates, cores = 40):
   command = []
   command.append("python")
   command.append(os.path.join(exp.scripts_root, "generax/launch_generax.py"))
@@ -20,6 +20,9 @@ def run_generax_instance(dataset, starting_tree, with_transfers, run_name, is_dn
     command.append("--rec-model")
     command.append("UndatedDL")
 
+  if (per_sp_rates):
+    command.append("--per-species-rates")
+    run_name = run_name + "-psr"
   command.append("--run")
   command.append(run_name)
   if (not is_dna):
@@ -32,14 +35,17 @@ def run_generax_on_families(dataset_dir, is_dna, cores, raxml = True, random = T
   dataset = os.path.basename(dataset_dir)
   if (raxml):
     if (dl):
-      run_generax_instance(dataset, "raxml-ng", False, "generax-dl-raxml", is_dna, cores)
+      run_generax_instance(dataset, "raxml-ng", False, "generax-dl-raxml", is_dna, False, cores)
     if (dtl):
-      run_generax_instance(dataset, "raxml-ng", True, "generax-dtl-raxml", is_dna, cores)
+      run_generax_instance(dataset, "raxml-ng", True, "generax-dtl-raxml", is_dna, False, cores)
   if (random):
     if (dl):
-      run_generax_instance(dataset, "random", False, "generax-dl-random", is_dna, cores)
+      run_generax_instance(dataset, "random", False, "generax-dl-random", is_dna, False, cores)
     if (dtl):
-      run_generax_instance(dataset, "random", True, "generax-dtl-random", is_dna, cores)
+      run_generax_instance(dataset, "random", True, "generax-dtl-random", is_dna, False, cores)
+  run_generax_instance(dataset, "raxml-ng", False, "generax-dl-raxml", is_dna, True, cores)
+  run_generax_instance(dataset, "raxml-ng", True, "generax-dtl-raxml", is_dna, True, cores)
+  
 
 if (__name__== "__main__"):
   max_args_number = 4

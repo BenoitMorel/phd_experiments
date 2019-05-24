@@ -307,10 +307,11 @@ def plot(datasets_rf_dico, x_param, fixed_params_dico, methods, x_label, y_label
     print("\t" + str(elem))
     print("\t" + str(fake_df[elem]))
     df[elem] = fake_df[elem]
-  
+ 
+  print("PLOT WITH POINT")
   for method in methods:
     style = "solid"
-    plt.plot(x_param, method, data=df, marker='x', linestyle = style, linewidth=2, label = method)
+    plt.plot(x_param, method, data=df, marker='.', linestyle = style, linewidth=2, label = method, markersize=12)
     #ax.set_ylim(bottom=0)
   plt.xlabel(x_label[x_param])
   plt.ylabel(y_label)
@@ -330,7 +331,7 @@ class Plotter(object):
     self.y_label = y_label
   
   def __call__(self, parameter):
-    plot(self.datasets_values_dico, parameter, self.fixed_parameters, self.methods, self.x_labels,  self.y_label, self.prefix + "_" + parameter + ".png")
+    plot(self.datasets_values_dico, parameter, self.fixed_parameters, self.methods, self.x_labels,  self.y_label, self.prefix + "_" + parameter + ".svg")
 
 def submit_single_experiment_haswell(dataset, do_generate, cores, run_filter = RunFilter()):
   command = []
@@ -347,7 +348,7 @@ def submit_single_experiment_haswell(dataset, do_generate, cores, run_filter = R
   exp.write_results_info(results_dir, result_msg)
   pickle.dump(run_filter, open(run_filter_file, "wb"))
   submit_path = os.path.join(results_dir, "sub_generax.sh")
-  exp.submit(submit_path, " ".join(command), cores, "haswelld") 
+  exp.submit(submit_path, " ".join(command), cores, "haswell") 
 
 def submit_multiple_experiments_haswell(datasets, do_generate, cores, run_filter = RunFilter()):
   for dataset in datasets:

@@ -14,12 +14,20 @@ if (True):
   run_filter = RunFilter()
   run_filter.EXA_runs = 2
   run_filter.EXA_chains = 2
-  common.submit_multiple_experiments_haswell(["ensembl_96_ncrna_primates"], 0, 512, run_filter = run_filter)
-  exit(0)
-  #common.submit_multiple_experiments_haswell(["ensembl_96_ncrna_fishes"], 0, 512)
-  #common.submit_multiple_experiments_haswell(["ensembl_96_ncrna_sauropsids"], 0, 512)
+  #common.submit_multiple_experiments_haswell(["ensembl_96_ncrna_primates"], 0, 512, run_filter = run_filter)
+  common.submit_multiple_experiments_haswell(["ensembl_96_ncrna_fishes"], 0, 512)
+  common.submit_multiple_experiments_haswell(["ensembl_96_ncrna_sauropsids"], 0, 512)
   #common.submit_multiple_experiments_haswell(["cyano_simulated"], 0, 512)
   #common.submit_multiple_experiments_haswell(["jsim_s5_f1_sites50_dna4_bl0.5_d0.25_l0.25_t0.0"], 1, 16)
+  exit(0)
+
+
+if (False):
+  run_filter = RunFilter()
+  run_filter.disable_all()
+  run_filter.generax = True
+  common.submit_multiple_experiments_haswell(["cyano_simulated"], 0, 512, run_filter = run_filter)
+  exit(0)
 
 
 if (False):
