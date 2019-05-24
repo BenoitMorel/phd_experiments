@@ -174,8 +174,8 @@ def get_output(species, families, sites, model, bl_factor, dup_rate, loss_rate, 
     dirname += "_t" + str(transfer_rate)  
   return dirname
 
-def generate_jprime(species, families, sites, model, bl_factor, dup_rate, loss_rate, transfer_rate, root_output, seed):
-  to_hash = str(species) + str(families) + str(sites) + model + str(bl_factor) + str(dup_rate) + str(loss_rate) + str(transfer_rate) + str(seed)
+def generate_jprime(species, families, sites, model, bl_factor, dup_rate, loss_rate, transfer_rate, perturbation, root_output, seed):
+  to_hash = str(species) + str(families) + str(sites) + model + str(bl_factor) + str(dup_rate) + str(loss_rate) + str(transfer_rate) + str(seed) + str(perturbation)
   md5 = hashlib.md5(to_hash.encode())
   output = os.path.join(root_output, "jprime_temp_" + str(md5.hexdigest()))
   shutil.rmtree(output, True)
@@ -187,7 +187,7 @@ def generate_jprime(species, families, sites, model, bl_factor, dup_rate, loss_r
     writer.write(str(species) + " " + str(families) + " ")
     writer.write(str(sites) + " " + str(model) + " ")
     writer.write(str(bl_factor)+ " " + str(dup_rate) + " ")
-    writer.write(str(loss_rate) + " " + str(transfer_rate) + " " + output)
+    writer.write(str(loss_rate) + " " + str(transfer_rate) + " " + str(perturbation) + " " + output)
     writer.write(" " + str(seed))
   generate_jprime_species(species, jprime_output, seed) 
   generate_jprime_genome(families, dup_rate, loss_rate, transfer_rate, jprime_output, seed)
@@ -200,16 +200,17 @@ def generate_jprime(species, families, sites, model, bl_factor, dup_rate, loss_r
   new_output = os.path.join(root_output, get_output(species_nodes, families, sites, model, bl_factor, dup_rate, loss_rate, transfer_rate))
   shutil.move(output, new_output)
   fam.postprocess_datadir(new_output)
+  fam.perturbate_species_tree(output, perturbation)
   
   print("Final output directory: " + new_output)
   print("")
 
 if (__name__ == "__main__"): 
 
-  if (len(sys.argv) != 11 or not (sys.argv[4] in sequence_model.get_model_sample_names())):
-    if (len(sys.argv) != 11):
+  if (len(sys.argv) != 12 or not (sys.argv[4] in sequence_model.get_model_sample_names())):
+    if (len(sys.argv) != 12):
       print("Invalid number of parameters")
-    print("Syntax: python generate_jprime.py species_time_interval families sites model bl_scaler dup_rate loss_rate transfer_rate output seed")
+    print("Syntax: python generate_jprime.py species_time_interval families sites model bl_scaler dup_rate loss_rate transfer_rate species_perturbation output seed")
     print("model should be one of " + str(sequence_model.get_model_sample_names()))
     exit(1)
 
@@ -221,7 +222,8 @@ if (__name__ == "__main__"):
   dup_rate = float(sys.argv[6])
   loss_rate = float(sys.argv[7])
   transfer_rate = float(sys.argv[8])
-  output = sys.argv[9]
-  seed = int(sys.argv[10])
+  perturbation = float(sys.argv[9])
+  output = sys.argv[10]
+  seed = int(sys.argv[11])
 
-  generate_jprime(species, families, sites, model, bl_factor, dup_rate, loss_rate, transfer_rate, output, seed)
+  generate_jprime(species, families, sites, model, bl_factor, dup_rate, loss_rate, transfer_rate, perturbation, output, seed)

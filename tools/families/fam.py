@@ -2,7 +2,9 @@ import os
 import sys
 import subprocess
 sys.path.insert(0, 'scripts')
+sys.path.insert(0, 'tools/trees')
 import experiments as exp
+import perturbate
 
 def mkdir(directory):
   try:
@@ -32,6 +34,9 @@ def get_alignments_dir(datadir):
 
 def get_species_tree(datadir):
   return os.path.join(get_species_dir(datadir), "speciesTree.newick")
+
+def get_true_species_tree(datadir):
+  return os.path.join(get_species_dir(datadir), "trueSpeciesTree.newick")
 
 def get_phyldog_species_tree(datadir):
   return os.path.join(get_species_dir(datadir), "phyldogSpeciesTree.newick")
@@ -203,6 +208,8 @@ def get_param_from_dataset_name(parameter, dataset):
     return dataset.split("_")[7][1:]
   elif (parameter == "transfer_rate"):
     return dataset.split("_")[8][1:]
+  elif (parameter == "perturbation"):
+    return dataset.split("_")[9][1:]
   elif (parameter == "tl_ratio"):
     t = get_param_from_dataset_name("transfer_rate", dataset)
     l = get_param_from_dataset_name("loss_rate", dataset)
@@ -273,10 +280,16 @@ def init_families_directories(datadir, families):
 def postprocess_datadir(datadir):
   # phyldog species trees
   convert_to_phyldog_species_tree(get_species_tree(datadir), get_phyldog_species_tree(datadir)) 
+  os.copyfile(get_species_tree(datadir), get_true_species_tree(datadir))
   # alignments
   for family in get_families_list(datadir):
     family_dir = get_family_path(datadir, family)
     exp.relative_symlink(get_alignment(datadir, family), os.path.join(datadir, "alignments", family + ".fasta"))
     convert_phyldog_to_treerecs_mapping(get_mappings(datadir, family), get_treerecs_mappings(datadir, family)) 
+
+def perturbate_species_tree(datadir, perturbation):
+  perturbate.perturbate(get_species_tree(datadir), get_true_species_tree(datadir), perturbation)
+
+
 
 

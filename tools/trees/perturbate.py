@@ -35,7 +35,7 @@ def perturbate(input_tree_path, output_tree_path, min_aRF):
         RF = tree.robinson_foulds(original_tree, unrooted_trees=True)
         aRF = float(RF[0]) / float(RF[1])
         print("RF: " + str(RF[0]) + " " + str(aRF))
-        if (aRF >= min_aRF):
+        if (aRF >= float(min_aRF)):
             break
     print("Saving perturbated tree in " + output_tree_path)
     open(output_tree_path, "w").write(tree.write())
