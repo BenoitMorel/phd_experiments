@@ -161,7 +161,7 @@ def rescale_trees(jprime_output, families, bl_factor):
     rescale_bl.rescale_bl(tree, tree, bl_factor)
     subprocess.check_call(["sed", "-i", "s/)1:/):/g", tree])
 
-def get_output(species, families, sites, model, bl_factor, dup_rate, loss_rate, transfer_rate):
+def get_output(species, families, sites, model, bl_factor, dup_rate, loss_rate, transfer_rate, perturbation):
   dirname = "jsim"
   if (float(transfer_rate) != 0.0):
     dirname += "dtl"
@@ -170,8 +170,9 @@ def get_output(species, families, sites, model, bl_factor, dup_rate, loss_rate, 
   dirname += "_" + model
   dirname += "_bl" + str(bl_factor)
   dirname += "_d" + str(dup_rate) + "_l" + str(loss_rate) 
-  if (transfer_rate != 0.0):
-    dirname += "_t" + str(transfer_rate)  
+  dirname += "_t" + str(transfer_rate)  
+  dirname += "_p" + str(perturbation)  
+  
   return dirname
 
 def generate_jprime(species, families, sites, model, bl_factor, dup_rate, loss_rate, transfer_rate, perturbation, root_output, seed):
@@ -197,10 +198,10 @@ def generate_jprime(species, families, sites, model, bl_factor, dup_rate, loss_r
   jprime_to_families(jprime_output, output)
   
   species_nodes = analyze_tree.get_tree_taxa_number(os.path.join(jprime_output, "species.pruned.tree"))
-  new_output = os.path.join(root_output, get_output(species_nodes, families, sites, model, bl_factor, dup_rate, loss_rate, transfer_rate))
+  new_output = os.path.join(root_output, get_output(species_nodes, families, sites, model, bl_factor, dup_rate, loss_rate, transfer_rate, perturbation))
   shutil.move(output, new_output)
   fam.postprocess_datadir(new_output)
-  fam.perturbate_species_tree(output, perturbation)
+  fam.perturbate_species_tree(new_output, perturbation)
   
   print("Final output directory: " + new_output)
   print("")

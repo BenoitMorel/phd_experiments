@@ -38,12 +38,14 @@ if (False):
 
 # experiments on DTL rates optimization
 if (True):
-  fixed_point_dl = "jsimdtl_s19_f200_sites200_dna4_bl1.0_d0.1_l0.2_t0.1_p0.0"
+  fixed_point_dl = "jsimdtl_s19_f3_sites200_dna4_bl1.0_d0.1_l0.2_t0.1_p0.0"
   datasets.append(fixed_point_dl)
   common.add_dataset(datasets, fixed_point_dl, ["p0.1", "p0.2"])
   common.generate_all_datasets(datasets)
-  #run_filter = RunFilter(ALE=False)
-  #common.run_all_reference_methods(datasets, run_filter = run_filter)
+  run_filter = RunFilter()
+  run_filter.EXA_runs = 1
+  run_filter.EXA_chains = 1
+  common.run_all_reference_methods(datasets, run_filter = run_filter)
 
 if (False):
   fixed_point_dl = "jsim_s19_f100_sites500_dna4_bl0.5_d0.25_l0.25_t0.0"

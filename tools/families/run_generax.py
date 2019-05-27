@@ -43,8 +43,8 @@ def run_generax_on_families(dataset_dir, is_dna, cores, raxml = True, random = T
       run_generax_instance(dataset, "random", False, "generax-dl-random", is_dna, False, cores)
     if (dtl):
       run_generax_instance(dataset, "random", True, "generax-dtl-random", is_dna, False, cores)
-  run_generax_instance(dataset, "raxml-ng", False, "generax-dl-raxml", is_dna, True, cores)
-  run_generax_instance(dataset, "raxml-ng", True, "generax-dtl-raxml", is_dna, True, cores)
+  #run_generax_instance(dataset, "raxml-ng", False, "generax-dl-raxml", is_dna, True, cores)
+  #run_generax_instance(dataset, "raxml-ng", True, "generax-dtl-raxml", is_dna, True, cores)
   
 
 if (__name__== "__main__"):
