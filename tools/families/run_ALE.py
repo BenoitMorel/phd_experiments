@@ -136,7 +136,7 @@ def run_ALE_on_families(datadir, with_transfers, cores):
   saved_metrics.save_metrics(datadir, method_name, (time.time() - start), "runtimes") 
   extract_ALE_results(datadir, ml_output_dir, with_transfers, os.path.join(datadir, "families"))
 
-def run_exabayes_and_ALE(datadir, is_dna, cores, runs = NUM_RUNS, chains = NUM_CHAINS):
+def run_exabayes_and_ALE(datadir, is_dna, cores, runs = NUM_RUNS, chains = NUM_CHAINS, redo = False):
   if (runs < 0):
     runs = NUM_RUNS
   if (chains < 0):
@@ -146,7 +146,7 @@ def run_exabayes_and_ALE(datadir, is_dna, cores, runs = NUM_RUNS, chains = NUM_C
     run_dir = os.path.join(datadir, "runs")
     datadir = os.path.abspath(datadir)
     os.chdir(run_dir)
-    run_exabayes.run_exabayes_on_families(datadir, EXA_GEN, EXA_FREQ, runs, chains, PER_RUN_BURN_IN, is_dna, cores)
+    run_exabayes.run_exabayes_on_families(datadir, EXA_GEN, EXA_FREQ, runs, chains, PER_RUN_BURN_IN, is_dna, cores, redo)
     run_ALE_on_families(datadir, True, cores)
     run_ALE_on_families(datadir, False, cores)
     run_exabayes.clean_exabayes(datadir)

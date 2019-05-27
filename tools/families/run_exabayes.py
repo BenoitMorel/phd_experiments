@@ -41,7 +41,7 @@ def generate_config_file(config_file, num_gen, sampling_freq, runs, chains):
 def generate_exabayes_commands_file(datadir, generations, frequency, runs, chains, is_dna, cores, output_dir):
   results_dir = os.path.join(output_dir, "results")
   scheduler_commands_file = os.path.join(output_dir, "commands.txt")
-  os.makedirs(results_dir)
+  exp.mkdir(results_dir)
   i = 1
   with open(scheduler_commands_file, "w") as writer:
     for family in sorted(fam.get_families_list(datadir)): # sorted to ensure seeds are unique
@@ -49,7 +49,7 @@ def generate_exabayes_commands_file(datadir, generations, frequency, runs, chain
 # a temporary file whose name comes from rand(). Different seeds avoid collisions
       family_dir = fam.get_family_path(datadir, family)
       exabayes_family_dir = os.path.join(results_dir, family)
-      os.makedirs(exabayes_family_dir)
+      exp.mkdir(exabayes_family_dir)
       exabayes_config = os.path.join(exabayes_family_dir, "exa_config.nex")
       generate_config_file(exabayes_config, generations, frequency, runs, chains)
       phy_alignment = os.path.join(family_dir, "species_prefixed_alignment.phy")
@@ -57,6 +57,10 @@ def generate_exabayes_commands_file(datadir, generations, frequency, runs, chain
       mapping_dictionnary = get_mapping_dictionnary(fam.get_mappings(datadir, family))
       msa_converter.msa_convert(fasta_alignment, phy_alignment, "fasta", "iphylip_relaxed", mapping_dictionnary)
       run_id = family
+      checkpoint_id = ""
+      while (os.isfile(os.path.join(exabayes_family_dir, "ExaBayes_checkpoint." + run_id))):
+        checkpoint_id = run_id
+        run_id += "_redo"
       command = []
       command.append(family)
       command.append("1")
@@ -68,8 +72,12 @@ def generate_exabayes_commands_file(datadir, generations, frequency, runs, chain
         command.append("DNA")
       else:
         command.append("PROT")
-      command.append("-s")
-      command.append(str(i))
+      if (len(checkpoint_id)):
+        command.append("-r")
+        command.append(checkpoint_id)
+      else:
+        command.append("-s")
+        command.append(str(i))
       command.append("-n")
       command.append(run_id)
       command.append("-c")
@@ -131,10 +139,11 @@ def get_exabayes_output_dir(datadir):
   return os.path.join(datadir, "runs", "exabayes_run")
   
 
-def run_exabayes_on_families(datadir, generations, frequency, runs, chains, burnin, is_dna, cores):
+def run_exabayes_on_families(datadir, generations, frequency, runs, chains, burnin, is_dna, cores, redo = False):
   output_dir = get_exabayes_output_dir(datadir)
-  shutil.rmtree(output_dir, True)
-  os.makedirs(output_dir)
+  if (not redo):
+    shutil.rmtree(output_dir, True)
+  exp.mkdir(output_dir)
   scheduler_commands_file = generate_exabayes_commands_file(datadir, generations, frequency, runs, chains, is_dna, cores, output_dir)
   start = time.time()
   scheduler.run_scheduler(scheduler_commands_file, exp.exabayes_exec, cores, output_dir, "exabayes_run.logs")
@@ -153,9 +162,8 @@ def clean_exabayes(datadir):
   shutil.rmtree(get_exabayes_output_dir(datadir))
 
 if (__name__== "__main__"):
-  max_args_number = 4
-  if len(sys.argv) < max_args_number:
-    print("Syntax error: python run_exabayes.py datadir is_dna cores.")
+  if len(sys.argv) != 10:
+    print("Syntax error: python run_exabayes.py datadir generations frequency runs chains cores burnin is_dna redo.")
     sys.exit(0)
 
   datadir = sys.argv[1]
@@ -166,7 +174,8 @@ if (__name__== "__main__"):
   cores = int(sys.argv[6])
   burnin = int(sys.argv[7])
   is_dna = int(sys.argv[8]) != 0
-  run_exabayes_on_families(datadir, generations, frequency, runs, chains, burnin, is_dna, cores)
+  redo = int(sys.argv[9])
+  run_exabayes_on_families(datadir, generations, frequency, runs, chains, burnin, is_dna, cores, redo)
 
 
 #
