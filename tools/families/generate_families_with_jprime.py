@@ -200,8 +200,8 @@ def generate_jprime(species, families, sites, model, bl_factor, dup_rate, loss_r
   species_nodes = analyze_tree.get_tree_taxa_number(os.path.join(jprime_output, "species.pruned.tree"))
   new_output = os.path.join(root_output, get_output(species_nodes, families, sites, model, bl_factor, dup_rate, loss_rate, transfer_rate, perturbation))
   shutil.move(output, new_output)
-  fam.postprocess_datadir(new_output)
   fam.perturbate_species_tree(new_output, perturbation)
+  fam.postprocess_datadir(new_output)
   
   print("Final output directory: " + new_output)
   print("")
