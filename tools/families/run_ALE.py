@@ -136,7 +136,7 @@ def run_ALE_on_families(datadir, with_transfers, cores):
   saved_metrics.save_metrics(datadir, method_name, (time.time() - start), "runtimes") 
   extract_ALE_results(datadir, ml_output_dir, with_transfers, os.path.join(datadir, "families"))
 
-def run_exabayes_and_ALE(datadir, is_dna, cores, runs = NUM_RUNS, chains = NUM_CHAINS, redo = False):
+def run_exabayes_and_ALE(datadir, is_dna, cores, runs = NUM_RUNS, chains = NUM_CHAINS, generations = EXA_GEN, frequency = EXA_FREQ, burnin = PER_RUN_BURN_IN, redo_exabayes = False):
   if (runs < 0):
     runs = NUM_RUNS
   if (chains < 0):
@@ -144,15 +144,34 @@ def run_exabayes_and_ALE(datadir, is_dna, cores, runs = NUM_RUNS, chains = NUM_C
   cwd = os.getcwd()
   try:
     run_dir = os.path.join(datadir, "runs")
+    parameters = os.path.join(run_dir, "parameters.txt")
+    open(parameters, "w").write(datadir + " " + str(int(is_dna)) + " " + str(cores) + " " + str(runs) + " " + str(chains) + " " + str(generations) + " " + str(frequency) + " " + str(burnin) + " " + str(int(redo_exabayes)))
+        
     datadir = os.path.abspath(datadir)
     os.chdir(run_dir)
-    run_exabayes.run_exabayes_on_families(datadir, EXA_GEN, EXA_FREQ, runs, chains, PER_RUN_BURN_IN, is_dna, cores, redo)
+    if (run_exabayes):
+      run_exabayes.run_exabayes_on_families(datadir, generations, frequency, runs, chains, burnin, is_dna, cores, redo_exabayes)
     run_ALE_on_families(datadir, True, cores)
     run_ALE_on_families(datadir, False, cores)
     run_exabayes.clean_exabayes(datadir)
     clean_ALE(datadir)
   finally:
     os.chdir(cwd)
+
+def restart_exabayes_and_ALE(datadir, cores):
+  run_dir = os.path.join(datadir, "runs")
+  parameters_file = os.path.join(run_dir, "parameters.txt")
+  p = open(parameters_file).readlines()[0].split()
+  print("Restarting exabayes and ALE with the parameters: " + " ".join(p))
+  datadir = p[0]
+  is_dna = int(p[1])
+  runs = int(p[3])
+  chains =  int(p[4])
+  generations = int(p[5])
+  frequency = int(p[6])
+  burnin = int(p[7])
+  redo_exabayes = True
+  run_exabayes_and_ALE(datadir, is_dna, cores, runs, chains, generations, frequency, burnin, redo_exabayes)
 
 if (__name__== "__main__"):
   max_args_number = 4
@@ -163,7 +182,7 @@ if (__name__== "__main__"):
   datadir = sys.argv[1]
   is_dna = int(sys.argv[2]) != 0
   cores = int(sys.argv[3])
-  run_exabayes_and_ALE(datadir, is_dna, cores)
+  redo_exabayes_and_ALE(datadir, is_dna, cores)
 
 #
 

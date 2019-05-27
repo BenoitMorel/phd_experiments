@@ -58,9 +58,11 @@ def generate_exabayes_commands_file(datadir, generations, frequency, runs, chain
       msa_converter.msa_convert(fasta_alignment, phy_alignment, "fasta", "iphylip_relaxed", mapping_dictionnary)
       run_id = family
       checkpoint_id = ""
-      while (os.isfile(os.path.join(exabayes_family_dir, "ExaBayes_checkpoint." + run_id))):
-        checkpoint_id = run_id
-        run_id += "_redo"
+      if (os.path.isfile(os.path.join(exabayes_family_dir, "ExaBayes_checkpoint." + run_id))):
+        checkpoint_id = "previous"
+        for f in os.listdir(exabayes_family_dir):
+          if (family in f):
+            shutil.move(os.path.join(exabayes_family_dir, f), os.path.join(exabayes_family_dir, f.replace(family, checkpoint_id)))
       command = []
       command.append(family)
       command.append("1")
@@ -144,6 +146,8 @@ def run_exabayes_on_families(datadir, generations, frequency, runs, chains, burn
   if (not redo):
     shutil.rmtree(output_dir, True)
   exp.mkdir(output_dir)
+  parameters = os.path.join(output_dir, "parameters.txt")
+  open(parameters, "w").write("Parameters: " + datadir + " " + str(generations) + " " + str(frequency) + " " + str(runs) + " " + str(chains) + " " + str(burnin) + " " + str(int(is_dna)) + " " + str(cores) + " " + str(int(redo)))
   scheduler_commands_file = generate_exabayes_commands_file(datadir, generations, frequency, runs, chains, is_dna, cores, output_dir)
   start = time.time()
   scheduler.run_scheduler(scheduler_commands_file, exp.exabayes_exec, cores, output_dir, "exabayes_run.logs")
@@ -164,6 +168,7 @@ def clean_exabayes(datadir):
 if (__name__== "__main__"):
   if len(sys.argv) != 10:
     print("Syntax error: python run_exabayes.py datadir generations frequency runs chains cores burnin is_dna redo.")
+    print(len(sys.argv))
     sys.exit(0)
 
   datadir = sys.argv[1]
@@ -171,10 +176,10 @@ if (__name__== "__main__"):
   frequency = int(sys.argv[3])
   runs = int(sys.argv[4])
   chains = int(sys.argv[5])
-  cores = int(sys.argv[6])
-  burnin = int(sys.argv[7])
-  is_dna = int(sys.argv[8]) != 0
-  redo = int(sys.argv[9])
+  burnin = int(sys.argv[6])
+  is_dna = int(sys.argv[7]) != 0
+  cores = int(sys.argv[8])
+  redo = int(sys.argv[9] != 0)
   run_exabayes_on_families(datadir, generations, frequency, runs, chains, burnin, is_dna, cores, redo)
 
 
