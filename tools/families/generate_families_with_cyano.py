@@ -2,12 +2,8 @@ import sys
 import os
 import shutil
 import ete3
+import fam
 
-def mymakedirs(path):
-  try:
-    os.makedirs(path)
-  except:
-    pass
 
 def read_tree(tree):
   lines = open(tree).readlines()
@@ -36,44 +32,39 @@ def generate_mapping_file(input_tree_file, mapping_file, treerecs_mapping_file):
     for gene in genes:
       treerecs_writer.write(gene + " " + species + "\n")
 
-def generate_families_with_empirical(msas_dir, trees_dir, species_tree, dataset_dir):
-  families_dir = os.path.join(dataset_dir, "families")
-  all_alignments_dir = os.path.join(dataset_dir, "alignments")
-  mymakedirs(families_dir)
-  mymakedirs(all_alignments_dir)
-  shutil.copy(species_tree, os.path.join(dataset_dir, "speciesTree.newick"))
+def generate_families_with_empirical(msas_dir, trees_dir, species_tree, datadir):
+  fam.init_top_directories(datadir) 
+  shutil.copy(species_tree, fam.get_species_tree(datadir))
   trees_dico = {}
+  
   for tree in os.listdir(trees_dir):
     family_name = tree.split(".")[0]
     trees_dico[family_name] = os.path.join(trees_dir, tree)
   
   for msa in os.listdir(msas_dir):
-    family_name = msa.split(".")[0]
-    family_path = os.path.join(families_dir, family_name)
-    mymakedirs(family_path)
+    family = msa.split(".")[0]
+    fam.init_family_directories(datadir, family)
+
     msa_source = os.path.join(msas_dir, msa)
-    msa_dest = os.path.join(family_path, "alignment.msa")
+    msa_dest = fam.get_alignment(datadir, family)
     tree_source = trees_dico[family_name]
-    tree_dest = os.path.join(family_path, "trueGeneTree.newick")
-    mapping_file = os.path.join(family_path, "mapping.link")
-    treerecs_mapping_file = os.path.join(family_path, "treerecs_mapping.link")
+    tree_dest = fam.get_true_tree(datadir, family)
+    mapping_file = fam.get_mappings(datadir, family)
+    treerecs_mapping_file = fam.get_treerecs_mappings(datadir, family)
     shutil.copy(msa_source, msa_dest)
     shutil.copy(tree_source, tree_dest)
-    shutil.copy(msa_source, os.path.join(all_alignments_dir, msa))
     generate_mapping_file(tree_source, mapping_file, treerecs_mapping_file)
-    shutil.copy(species_tree, os.path.join(family_path, "speciesTree.newick"))
+  fam.postprocess_datadir(datadir)
 
 
-
-print("For now, this script should only work for cyano dataset")
 if (len(sys.argv) != 5):
-  print("Syntax: python generate_families_with_empirical.py msas_dir trees_dir species_tree dataset_diri")
+  print("Syntax: python generate_families_with_empirical.py msas_dir trees_dir species_tree datadiri")
   exit(1)
 
 msas_dir = sys.argv[1]
 trees_dir = sys.argv[2]
 species_tree = sys.argv[3]
-dataset_dir = sys.argv[4]
-generate_families_with_empirical(msas_dir, trees_dir, species_tree, dataset_dir)
+datadir = sys.argv[4]
+generate_families_with_empirical(msas_dir, trees_dir, species_tree, datadir)
 
 

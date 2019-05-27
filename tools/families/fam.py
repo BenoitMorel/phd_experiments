@@ -263,6 +263,7 @@ def write_phyldog_mapping(species_to_genes_dict, output_file):
 ######################
 
 def init_top_directories(datadir):
+  mkdir(datadir)
   mkdir(get_species_dir(datadir))
   mkdir(get_adjacencies_dir(datadir))
   mkdir(get_families_dir(datadir))
