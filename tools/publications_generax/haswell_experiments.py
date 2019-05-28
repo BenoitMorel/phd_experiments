@@ -10,15 +10,15 @@ datasets = []
 cores = 64
 do_generate = 1
 
-if (False):
+if (True):
   run_filter = RunFilter()
   run_filter.EXA_runs = 2
   run_filter.EXA_chains = 2
   #common.submit_multiple_experiments_haswell(["ensembl_96_ncrna_primates"], 0, 512, run_filter = run_filter)
-  common.submit_multiple_experiments_haswell(["ensembl_96_ncrna_fishes"], 0, 512)
-  common.submit_multiple_experiments_haswell(["ensembl_96_ncrna_sauropsids"], 0, 512)
-  #common.submit_multiple_experiments_haswell(["cyano_simulated"], 0, 512)
-  #common.submit_multiple_experiments_haswell(["jsim_s5_f1_sites50_dna4_bl0.5_d0.25_l0.25_t0.0"], 1, 16)
+  #common.submit_multiple_experiments_haswell(["ensembl_96_ncrna_fishes"], 0, 512)
+  #common.submit_multiple_experiments_haswell(["ensembl_96_ncrna_sauropsids"], 0, 512)
+  common.submit_multiple_experiments_haswell(["cyano_simulated"], 0, 512)
+  #common.submit_multiple_experiments_haswell(["cyano_empirical"], 0, 512)
   exit(0)
 
 
@@ -30,7 +30,7 @@ if (False):
   exit(0)
 
 
-if (True):
+if (False):
   fixed_point_dl = "jsim_s19_f100_sites500_dna4_bl0.5_d0.25_l0.25_t0.0_p0.0"
   datasets.append(fixed_point_dl)
   common.add_dataset(datasets, fixed_point_dl, ["p0.1", "p0.2", "p0.3", "p0.5", "p0.75"])
@@ -41,10 +41,10 @@ if (True):
   #common.add_dataset(datasets, fixed_point_dl, ["s5", "s10", "s27", "s41"])
   
 
-if (True):
-  fixed_point_dtl = "jsimdtl_s19_f100_sites500_dna4_bl0.5_d0.1_l0.2_t0.1_p0.0"
+if (False):
+  fixed_point_dtl = "jsimdtl_s19_f100_sites500_dna4_bl0.5_d0.1_l0.2_t0.1_p0.1"
   datasets.append(fixed_point_dtl)
-  common.add_dataset(datasets, fixed_point_dtl, ["p0.1", "p0.2", "p0.3", "p0.5", "p0.75"])
+  common.add_dataset(datasets, fixed_point_dtl, ["p0.2", "p0.3", "p0.5", "p0.75"])
   #common.add_dataset(datasets, fixed_point_dtl, ["s5", "s10", "s12", "s16", "s27", "s41"])
   #common.add_dataset(datasets, fixed_point_dtl, ["sites100", "sites250", "sites750", "sites1000"])
   #common.add_dataset(datasets, fixed_point_dtl, ["bl0.01", "bl0.05", "bl0.1", "bl0.2", "bl1.0", "bl2.0"])
