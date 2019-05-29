@@ -154,7 +154,8 @@ def run_exabayes_and_ALE(datadir, is_dna, cores, runs = NUM_RUNS, chains = NUM_C
     run_ALE_on_families(datadir, True, cores)
     run_ALE_on_families(datadir, False, cores)
     run_exabayes.clean_exabayes(datadir)
-    clean_ALE(datadir)
+    if (not redo_exabayes):
+      clean_ALE(datadir)
   finally:
     os.chdir(cwd)
 

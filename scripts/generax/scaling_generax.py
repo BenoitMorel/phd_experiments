@@ -10,9 +10,9 @@ import saved_metrics
 def run(datadir, starting_tree, with_transfer, cores, resultsdir):
   additional_arguments = []
   additional_arguments.append("--rec-model")
-  dataset = os.path.basename(datadir)
+  dataset = os.path.basename(os.path.normpath(datadir))
   method = "GeneRax-"
-  metric_name = "generax-" + starting_tree + "-"
+  metric_name = "scaling-" + starting_tree + "-"
   if (with_transfer):
     metric_name += "DTL"
     additional_arguments.append("UndatedDTL")
@@ -26,9 +26,16 @@ def run(datadir, starting_tree, with_transfer, cores, resultsdir):
 
 def launch(datadir, starting_tree, with_transfer, cluster, cores):
   command = ["python"]
-  command.extend(sys.argv)
+  command.append(os.path.realpath(__file__))
+  command.append(datadir)
+  command.append(starting_tree)
+  command.append(str(with_transfer))
+  command.append(cluster)
+  command.append(str(cores))
   command.append("--exprun")
-  resultsdir = os.path.join("ScalingGeneRax", datadir, starting_tree, "run")
+  dataset = os.path.basename(os.path.normpath(datadir))
+  print(command)
+  resultsdir = os.path.join("ScalingGeneRax", dataset, starting_tree, "run")
   resultsdir = exp.create_result_dir(resultsdir, [])
   command.append(resultsdir)
   submit_path = os.path.join(resultsdir, "submit.sh")

@@ -81,7 +81,7 @@ def run_notung_on_families(datadir, threshold, cores):
   print(command.split(" "))
   start = time.time()
   subprocess.check_call(command.split(" "), stdout = sys.stdout)
-  saved_metrics.save_metrics(datadir, "Notung", (time.time() - start), "runtimes") 
+  saved_metrics.save_metrics(datadir, "notung" + str(int(threshold)), (time.time() - start), "runtimes") 
   back_convert_notung_files(datadir, threshold)
 
 

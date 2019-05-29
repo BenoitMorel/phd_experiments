@@ -282,9 +282,7 @@ def add_dataset(datasets, fixed_point, strings_to_replace):
 
 
 def plot(datasets_rf_dico, x_param, fixed_params_dico, methods, x_label, y_label, output):
-  print(x_param)
   datasets_to_plot = get_datasets_to_plot(datasets_rf_dico, fixed_params_dico, x_param)
-  #print(datasets_to_plot)
   datasets_to_plot.sort(key = lambda t: float(fam.get_param_from_dataset_name(x_param, t)))
   df = pd.DataFrame()
   f, ax = plt.subplots(1)
@@ -293,7 +291,6 @@ def plot(datasets_rf_dico, x_param, fixed_params_dico, methods, x_label, y_label
   for method in methods:
     fake_df[method] = []
   for dataset in datasets_to_plot:
-    #print(float(fam.get_param_from_dataset_name(x_param,     dataset)))
     fake_df[x_param].append(float(fam.get_param_from_dataset_name(x_param, dataset)))
     rf_dico = datasets_rf_dico[dataset]
     for method in methods:
@@ -301,15 +298,12 @@ def plot(datasets_rf_dico, x_param, fixed_params_dico, methods, x_label, y_label
         print("Warning: missing data for method " + method + " and dataset " + dataset)
     for method in rf_dico:
       if (not method in methods):
-        #print("Unknown method " + method)
         continue
       fake_df[method].append(float(rf_dico[method]))
   for elem in fake_df:
     print("\t" + str(elem))
-    print("\t" + str(fake_df[elem]))
     df[elem] = fake_df[elem]
  
-  print("PLOT WITH POINT")
   for method in methods:
     style = "solid"
     plt.plot(x_param, method, data=df, marker='.', linestyle = style, linewidth=2, label = method, markersize=12)
