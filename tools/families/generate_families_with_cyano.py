@@ -47,7 +47,7 @@ def generate_families_with_empirical(msas_dir, trees_dir, species_tree, datadir)
 
     msa_source = os.path.join(msas_dir, msa)
     msa_dest = fam.get_alignment(datadir, family)
-    tree_source = trees_dico[family_name]
+    tree_source = trees_dico[family]
     tree_dest = fam.get_true_tree(datadir, family)
     mapping_file = fam.get_mappings(datadir, family)
     treerecs_mapping_file = fam.get_treerecs_mappings(datadir, family)

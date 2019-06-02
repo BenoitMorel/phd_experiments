@@ -15,10 +15,10 @@ if (True):
   run_filter.EXA_runs = 2
   run_filter.EXA_chains = 2
   #common.submit_multiple_experiments_haswell(["ensembl_96_ncrna_primates"], 0, 512, run_filter = run_filter)
-  #common.submit_multiple_experiments_haswell(["ensembl_96_ncrna_fishes"], 0, 512)
-  #common.submit_multiple_experiments_haswell(["ensembl_96_ncrna_sauropsids"], 0, 512)
-  common.submit_multiple_experiments_haswell(["cyano_simulated"], 0, 512)
-  #common.submit_multiple_experiments_haswell(["cyano_empirical"], 0, 512)
+  #common.submit_multiple_experiments_haswell(["ensembl_96_ncrna_fishes"], 0, 512, run_filter = run_filter)
+  #common.submit_multiple_experiments_haswell(["ensembl_96_ncrna_sauropsids"], 0, 512, run_filter = run_filter)
+  #common.submit_multiple_experiments_haswell(["cyano_simulated"], 0, 512, run_filter = run_filter)
+  common.submit_multiple_experiments_haswell(["cyano_empirical"], 0, 512, run_filter = run_filter)
   exit(0)
 
 

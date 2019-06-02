@@ -38,7 +38,7 @@ jsim_species_to_params[16] = (3, 6)
 
 
 
-protein_datasets = ["swiss", "cyano_simulated", "sub_t0.05_s0.5_cyano_empirical", "sub_t0.01_s0.2_ensembl_8880_15"]
+protein_datasets = ["swiss", "cyano_simulated", "cyano_empirical", "sub_t0.05_s0.5_cyano_empirical", "sub_t0.01_s0.2_ensembl_8880_15"]
 
 def run_all_decostar(datasets):
   for dataset in datasets:
