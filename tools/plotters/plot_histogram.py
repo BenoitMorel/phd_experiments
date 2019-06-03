@@ -23,7 +23,7 @@ def plot_histogram(xlabels, yvalues, title, xcaption, ycaption, output):
 
 
 if (__name__ == "__main__"):
-    objects = ('Python', 'C++', 'Java', 'Perl', 'Scala', 'Lisp')
+    objects = ['Python', 'C++', 'Java', 'Perl', 'Scala', 'Lisp']
     performance = [10,8,6,4,2,1]
-    plot_histogram(objects, performance, "title",  "pif", "paf", "show.png")
+    plot_histogram(objects, performance, "title",  "pif", "paf", "show")
 
