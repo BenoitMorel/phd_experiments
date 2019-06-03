@@ -80,7 +80,7 @@ def run_notung_on_families(datadir, threshold, cores):
   
   start = time.time()
   exp.run_with_scheduler("java", scheduler_commands_file, "onecore", cores, output_dir, "logs.txt")   
-  saved_metrics.save_metrics(datadir, "Notung", (time.time() - start), "runtimes") 
+  saved_metrics.save_metrics(datadir, "notung" + str(int(threshold)), (time.time() - start), "runtimes") 
   back_convert_notung_files(datadir, threshold)
 
 

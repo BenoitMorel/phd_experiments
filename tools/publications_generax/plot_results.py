@@ -14,95 +14,89 @@ def substract(datasets_dico, method):
     substract = float(dico[method])
     for m in dico:
       dico[m] = str(float(dico[m]) - substract)
-
     print(dataset)
     print(datasets_dico[dataset])
 
+def plot_rrf(x_labels, params_to_plot_dl, params_to_plot_dtl, fixed_params_dl, fixed_params_dtl):
+  methods_dl = ["raxml-ng", "notung80", "phyldog", "treerecs", "ale-dl", "generax-dl-raxml"]
+  methods_dtl = ["raxml-ng", "notung80", "phyldog", "treerecs", "ale-dtl", "generax-dtl-raxml"] 
+  rf_y_label =  "Average relative RF"
+  datasets_rf_dico_dl = common.get_metrics_for_datasets("jsim_", "average_rrf")
+  datasets_rf_dico_dtl = common.get_metrics_for_datasets("jsimdtl_", "average_rrf")
+  plotter_rf_dl = common.Plotter(datasets_rf_dico_dl, fixed_params_dl, methods_dl, x_labels, rf_y_label, "dl_rf")
+  plotter_rf_dtl = common.Plotter(datasets_rf_dico_dtl, fixed_params_dtl, methods_dl, x_labels, rf_y_label, "dtl_rf")
+  for param in params_to_plot_dl:
+    plotter_rf_dl(param)
+  for param in params_to_plot_dtl:
+    plotter_rf_dtl(param)
+
+
+def plot_runtimes(x_labels, params_to_plot_dl, params_to_plot_dtl, fixed_params_dl, fixed_params_dtl):
+  methods_dl = ["raxml-light", "notung80", "treerecs", "ale-dl", "generax-dl-raxml"] 
+  methods_dtl = ["raxml-light", "notung80", "treerecs", "ale-dtl", "generax-dtl-raxml"]
+  runtime_y_label = "Runtime with 40 cores (s)"
+  datasets_dico_dl = common.get_metrics_for_datasets("jsim_", "runtimes")
+  datasets_dico_dtl = common.get_metrics_for_datasets("jsimdtl_", "runtimes")
+  plotter_runtimes_dl = common.Plotter(datasets_dico_dl, fixed_params_dl, methods_dl, x_labels, runtime_y_label, "dl_runtimes")
+  plotter_runtimes_dtl = common.Plotter(datasets_dico_dtl, fixed_params_dtl, methods_dtl, x_labels, runtime_y_label, "dtl_runtimes")
+  for param in params_to_plot_dl:
+    plotter_runtimes_dl(param)
+  for param in params_to_plot_dtl:
+    plotter_runtimes_dtl(param)
+
+def plot_ll(x_labels, params_to_plot_dl, params_to_plot_dtl, fixed_params_dl, fixed_params_dtl):
+  methods_dl_rf = ["true", "raxml-ng", "notung80", "phyldog", "treerecs", "ale-dl", "generax-dl-raxml"]
+  methods_dtl_rf = ["true", "raxml-ng", "notung80", "phyldog", "treerecs", "ale-dtl", "generax-dtl-raxml"] 
+  ll_DL_y_label = "Joint likelihood difference with true trees"
+  ll_DTL_y_label = "Joint likelihood difference with true trees"
+  datasets_dico_dl = common.get_metrics_for_datasets("jsim_", "JointLL_DL")
+  datasets_dico_dtl = common.get_metrics_for_datasets("jsimdtl_", "JointLL_DTL")
+  try:
+    substract(datasets_dico_dl, "True")
+    substract(datasets_dico_dtl, "True")
+  except:
+    print("failed substracting likelihoods")
+    return
+  plotter_dl = common.Plotter(datasets_dico_dl, fixed_params_dl, methods_dl_ll, x_labels, ll_DL_y_label, "dl_ll")
+  plotter_dtl = common.Plotter(datasets_dico_dtl, fixed_params_dtl, methods_dtl_ll, x_labels, ll_DTL_y_label, "dtl_ll")
+  for param in params_to_plot_dl:
+    plotter_runtimes_dl(param)
+  for param in params_to_plot_dtl:
+    plotter_runtimes_dtl(param)
+
 if (__name__ == "__main__"): 
-
-
   x_labels = {}
   x_labels["species"] = "Number of taxa in the species tree"
   x_labels["loss_rate"] = "Average D(T)L rates"
   x_labels["bl"] = "Gene tree branch length multiplier"
   x_labels["dl_ratio"] = "Rates ratio D/L (L is fixed)"
   x_labels["sites"] = "Number of sites"
-  #x_labels["families"] = "Number of gene families"
   x_labels["dt_ratio"] = "Rates ratio D/T (D+T is fixed)"
+  x_labels["perturbation"] = "Species tree relative RF distance to the true species tree"
   
-  methods_dl_rf = ["raxml-ng", "phyldog", "treerecs", "ale-dl", "generax-dl-random"] #, "GeneRax-DL-Raxml"]
-  methods_dtl_rf = ["raxml-ng", "phyldog", "treerecs", "ale-dtl", "generax-dtl-random"] #, "GeneRax-DTL-Raxml"]
-
-  methods_dl_runtimes = list(methods_dl_rf)
-  methods_dl_runtimes[0] = "raxml-light"
-  methods_dl_runtimes.remove("phyldog")
-  methods_dtl_runtimes = list(methods_dtl_rf)
-  methods_dtl_runtimes[0] = "raxml-light"
-  methods_dtl_runtimes.remove("phyldog")
+  params_to_plot_dl = ["bl", "sites", "loss_rate", "dl_ratio", "species", "perturbation"]
+  fixed_params_dl = {}
+  fixed_params_dl["species"] = "19"
+  fixed_params_dl["bl"] = "0.5"
+  fixed_params_dl["loss_rate"] = "0.25"
+  fixed_params_dl["dl_ratio"] = "1.0"
+  fixed_params_dl["sites"] = "500"
+  fixed_params_dl["families"] = "100"
+  fixed_params_dl["perturbation"] = "0.0"
   
-  methods_dl_ll = ["True"]
-  methods_dl_ll.extend(methods_dl_rf)
-  methods_dtl_ll = ["True"]
-  methods_dtl_ll.extend(methods_dtl_rf)
+  params_to_plot_dtl = ["sites", "loss_rate", "bl", "species", "dt_ratio", "perturbation"]
+  fixed_params_dtl = {}
+  fixed_params_dtl["species"] = "19"
+  fixed_params_dtl["loss_rate"] = "0.2"
+  fixed_params_dtl["dt_ratio"] = "1.0"
+  fixed_params_dtl["bl"] = "0.5"
+  fixed_params_dtl["families"] = "100"
+  fixed_params_dtl["sites"] = "500"
+  fixed_params_dtl["perturbation"] = "0.0"
   
-  params_to_plot_dl = ["bl", "sites", "loss_rate", "dl_ratio", "species"]
-  params_to_plot_dtl = ["sites", "loss_rate", "bl", "species", "dt_ratio"]
-  
-  rf_y_label =  "Average relative RF"
-  runtime_y_label = "Runtime with 40 cores (s)"
-  ll_DL_y_label = "Joint likelihood difference with true trees"
-  ll_DTL_y_label = "Joint likelihood difference with true trees"
-
-  prefix = "jsim_"
-  datasets_rf_dico = common.get_metrics_for_datasets(prefix, "average_rrf")
-  datasets_runtimes_dico = common.get_metrics_for_datasets(prefix, "runtimes")
-  #datasets_ll_dico = common.get_metrics_for_datasets(prefix, "joint_likelihood_DL")
-  try:
-    substract(datasets_ll_dico, "True")
-  except:
-    print("failed substracting likelihoods")
-
-  fixed_params = {}
-  fixed_params["species"] = "19"
-  fixed_params["bl"] = "0.5"
-  fixed_params["loss_rate"] = "0.25"
-  fixed_params["dl_ratio"] = "1.0"
-  fixed_params["sites"] = "500"
-  fixed_params["families"] = "100"
-  
-  plotter_rf = common.Plotter(datasets_rf_dico, fixed_params, methods_dl_rf, x_labels, rf_y_label, "dl_rf")
-  #plotter_ll = common.Plotter(datasets_ll_dico, fixed_params, methods_dl_ll, x_labels, ll_DL_y_label, "dl_ll")
-  plotter_runtimes = common.Plotter(datasets_runtimes_dico, fixed_params, methods_dl_runtimes, x_labels, runtime_y_label, "dl_runtimes")
-  for param in params_to_plot_dl:
-    plotter_rf(param)
-    plotter_runtimes(param)
-    #plotter_ll(param)
-  
-  prefix = "jsimdtl_"
-  datasets_rf_dico = common.get_metrics_for_datasets(prefix, "average_rrf")
-  datasets_runtimes_dico = common.get_metrics_for_datasets(prefix, "runtimes")
-  #datasets_ll_dico = common.get_metrics_for_datasets(prefix, "joint_likelihood_DTL")
-  try:
-    substract(datasets_ll_dico, "True")
-  except:
-    print("failed substracting likelihoods")
-  
-  fixed_params = {}
-  fixed_params["species"] = "19"
-  fixed_params["loss_rate"] = "0.2"
-  fixed_params["dt_ratio"] = "1.0"
-  fixed_params["bl"] = "0.5"
-  fixed_params["families"] = "100"
-  fixed_params["sites"] = "500"
-  plotter_rf = common.Plotter(datasets_rf_dico, fixed_params, methods_dtl_rf, x_labels, rf_y_label, "dtl_rf")
-  #plotter_ll = common.Plotter(datasets_ll_dico, fixed_params, methods_dtl_ll, x_labels, ll_DTL_y_label, "dtl_ll")
-  plotter_runtimes = common.Plotter(datasets_runtimes_dico, fixed_params, methods_dtl_runtimes, x_labels, runtime_y_label, "dtl_runtimes")
-  for param in params_to_plot_dtl:
-    plotter_rf(param)
-    plotter_runtimes(param)
-    #plotter_ll(param)
-
-
+  plot_runtimes(x_labels, params_to_plot_dl, params_to_plot_dtl, fixed_params_dl, fixed_params_dtl)
+  plot_rrf(x_labels, params_to_plot_dl, params_to_plot_dtl, fixed_params_dl, fixed_params_dtl)
+  plot_ll(x_labels, params_to_plot_dl, params_to_plot_dtl, fixed_params_dl, fixed_params_dtl)
 
 
 
