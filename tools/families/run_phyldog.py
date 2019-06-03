@@ -12,49 +12,6 @@ import experiments as exp
 import nhx_to_newick
 
 
-def generate_scheduler_commands_file(datadir, is_dna, cores, output_dir):
-  families_dir = fam.get_families_dir(datadir)
-  results_dir = os.path.join(output_dir, "results")
-  scheduler_commands_file = os.path.join(output_dir, "commands.txt")
-  with open(scheduler_commands_file, "w") as writer:
-    for family in fam.get_families_list(datadir):
-      phyldog_dir = fam.get_misc_dir(datadir, family)
-      command = []
-      command.append(family)
-      command.append("1")
-      command.append("1")
-      command.append("species.tree.file=" + fam.get_phyldog_species_tree(datadir))
-      command.append("gene.tree.file=" + fam.get_raxml_tree(datadir, family))
-      command.append("input.sequence.file=" + fam.get_alignment(datadir, family))
-      command.append("taxaseq.file=" + fam.get_mappings(datadir, family))
-      command.append("likelihood.evaluator=PLL")
-      if (is_dna):
-        print("is dna")
-        command.append("model=GTR")
-      else:
-        print("is protein")
-        command.append("model=LG08")
-      if (not is_dna):
-        command.append("alphabet=Protein")
-      os.makedirs(os.path.join(results_dir, family))
-      command.append("output.file=" + os.path.join(phyldog_dir, "phyldog"))
-      command.append("branch.expected.numbers.optimization=average")
-      writer.write(" ".join(command) + "\n")
-  return scheduler_commands_file
-     
-def generate_scheduler_command(command_file, cores, output_dir):
-  command = ""
-  parallelization = "onecore"
-  command += "mpirun -np " + str(cores) + " "
-  command += exp.mpischeduler_exec + " "
-  command += "--" + parallelization + "-scheduler "
-  command += exp.phyldog_light_exec + " "
-  command += command_file + " "
-  command += output_dir + " " 
-  command += "0"
-  return command 
-
-
 def get_phyldog_run_dir(datadir):
   return os.path.join(datadir, "runs", "phyldog_run")
 
@@ -127,7 +84,9 @@ def generate_options(datadir, is_dna):
     writer.write("yes" + "\n") # opt gene trees
     writer.write("48" + "\n") # max time (hours)
   prepare_data_script = os.path.join(exp.tools_root, "families", "prepareData.py")
-  subprocess.check_call(["/bin/bash", "-c", "python " + prepare_data_script + " < " + prepare_input])
+  logs = open(os.path.join(phyldog_run_dir, "options_logs.txt"), "w")
+  
+  subprocess.check_call(["/bin/bash", "-c", "python " + prepare_data_script + " < " + prepare_input], stdout = logs)
   time.sleep(1)
   for family in fam.get_families_list(datadir):
     option_file = os.path.join(phyldog_run_dir, "options", family + ".opt")
@@ -154,7 +113,7 @@ def run_phyldog(datadir, cores):
     logs = open(os.path.join(phyldog_run_dir, "logs.txt"), "w")
     os.chdir(phyldog_run_dir)
     start = time.time()
-    subprocess.check_call(command, stdout = logs)
+    subprocess.check_call(command, stdout = logs, stderr = logs)
     saved_metrics.save_metrics(datadir, "Phyldog", (time.time() - start), "runtimes") 
     print("end EXECUTE PHYLDOG")
   finally:

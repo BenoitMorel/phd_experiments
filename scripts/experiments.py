@@ -248,3 +248,21 @@ def getAndDelete(arg, arguments, default_value):
   else:
     return default_value
 
+def run_with_scheduler(executable, command_file, parallelization, cores, scheduler_output_dir, logname = None):
+  command = ""
+  out = sys.stdout
+  if (logname != None):
+    out = open(os.path.join(scheduler_output_dir, logname), "w")
+
+  isMPI = (parallelization == "onecore") or (parallelization == "split")
+  if (isMPI):
+    command += "mpirun -np " + str(cores) + " "
+  command += mpischeduler_exec + " "
+  command += "--" + parallelization + "-scheduler "
+  command += str(cores) + " "
+  command += executable + " "
+  command += command_file + " "
+  command += scheduler_output_dir 
+  print("Running " + command)
+  subprocess.check_call(command.split(" "), stdout = out, stderr = out)
+

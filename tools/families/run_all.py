@@ -24,6 +24,8 @@ class RunFilter():
     self.analyze = analyze
     self.EXA_runs = -1 # use default values in run_ALE.py 
     self.EXA_chains = -1 # use default values in run_ALE.py 
+    self.EXA_frequencies = -1
+    self.EXA_generations = -1
 
   def disable_all(self):
     self.raxml = False
@@ -93,7 +95,7 @@ def run_reference_methods(dataset_dir, is_dna, starting_trees, bs_trees, cores, 
     print("Run ALE...")
     sys.stdout.flush()
     try:
-      run_ALE.run_exabayes_and_ALE(dataset_dir, is_dna, cores, chains = run_filter.EXA_chains, runs = run_filter.EXA_runs)
+      run_ALE.run_exabayes_and_ALE(dataset_dir, is_dna, cores, chains = run_filter.EXA_chains, runs = run_filter.EXA_runs, frequency = run_filter.EXA_frequencies, generations = run_filter.EXA_generations)
     except Exception as exc:
       print("Failed running ALE")
       print(exc)

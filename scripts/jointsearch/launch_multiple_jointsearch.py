@@ -45,25 +45,6 @@ def generate_scheduler_commands_file(families_dir, starting_tree, strategy, node
   return scheduler_commands_file
 
 
-def generate_scheduler_command(command_file, parallelization, cores, scheduler_output_dir):
-  command = ""
-  isMPI = (parallelization == "onecore") or (parallelization == "split")
-  if (isMPI):
-    command += "mpirun -np " + str(cores) + " "
-  command += exp.mpischeduler_exec + " "
-  command += "--" + parallelization + "-scheduler "
-  if (parallelization == "split"):
-    command += exp.joint_search_lib + " "
-  elif (parallelization == "openmp" or parallelization == "onecore" or parallelization == "fork"):
-    command += exp.joint_search_exec + " "
-  else:
-    print("Unknown scheduler parallelization " + parallelization)
-    sys.exit(0)
-  command += command_file + " "
-  command += scheduler_output_dir + " " 
-  command += "0"
-  return command.split(" ")
-
 def extract_trees(data_family_dir, results_family_dir, prefix):
   results_dir = os.path.join(results_family_dir, "results")
   for msa in os.listdir(results_dir):
@@ -89,6 +70,14 @@ def launch(dataset, strategy, starting_tree, cluster, cores, additional_argument
   command.append(resultsdir)
   exp.submit(submit_path, " ".join(command), cores, cluster) 
 
+def get_exec(parallelization):
+  if (parallelization == "split"):
+    return exp.joint_search_lib
+  elif (parallelization == "openmp" or parallelization == "onecore" or parallelization == "fork"):
+    return exp.joint_search_exec 
+  else:
+    print("Unknown scheduler parallelization " + parallelization)
+    sys.exit(0)
 
 def run(dataset, strategy, starting_tree, cores, additional_arguments, resultsdir):
   is_protein = exp.checkAndDelete("--protein", additional_arguments)
@@ -99,9 +88,7 @@ def run(dataset, strategy, starting_tree, cores, additional_arguments, resultsdi
   scheduler_output_dir = os.path.join(resultsdir, "scheduler_run")
   os.makedirs(scheduler_output_dir)
   scheduler_commands_file = generate_scheduler_commands_file(families_dir, starting_tree, strategy, nodes_per_core, additional_arguments, cores, resultsdir, scheduler_output_dir)
-  command = generate_scheduler_command(scheduler_commands_file, parallelization, cores,  scheduler_output_dir)
-  print("Running " + " ".join(command))
-  subprocess.check_call(command)
+  exp.run_with_scheduler(get_exec(parallelization), scheduler_commands_file, parallelization, cores,  scheduler_output_dir)
   extract_trees(os.path.join(datadir, "families"), os.path.join(resultsdir, "scheduler_run"), run_name)
   analyze_dataset.analyze(datadir, run_name)
   print("Output in " + resultsdir)

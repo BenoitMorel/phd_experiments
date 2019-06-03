@@ -47,18 +47,6 @@ def generate_scheduler_commands_file(dataset_dir, cores, output_dir):
       writer.write(" ".join(command) + "\n")
   return scheduler_commands_file
      
-def generate_scheduler_command(command_file, cores, output_dir):
-  command = ""
-  parallelization = "onecore"
-  command += "mpirun -np " + str(cores) + " "
-  command += exp.mpischeduler_exec + " "
-  command += "--" + parallelization + "-scheduler "
-  command += exp.phyldog_light_exec + " "
-  command += command_file + " "
-  command += output_dir + " " 
-  command += "0"
-  return command 
-
 def extract_phyldog_trees(families_dir):
   for family in os.listdir(families_dir):
     phyldogTree = os.path.join(families_dir, family, "phyldog", "phyldog_reconciled.tree")
@@ -72,9 +60,7 @@ def run_phyldog_on_families(dataset_dir, cores):
   output_dir = os.path.join(dataset_dir, "phyldog_run")
   mymakedirs(output_dir)
   scheduler_commands_file = generate_scheduler_commands_file(dataset_dir, cores, output_dir)
-  command = generate_scheduler_command(scheduler_commands_file, cores, output_dir)
-  print(command.split(" "))
-#  subprocess.check_call(command.split(" "))
+  exp.run_with_scheduler(scheduler_commands_file, "onecore", cores, output_dir)   
   extract_phyldog_trees(os.path.join(dataset_dir, "families"))
 
 if (__name__== "__main__"):
