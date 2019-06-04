@@ -7,10 +7,8 @@ import concurrent.futures
 import fam
 sys.path.insert(0, 'scripts')
 sys.path.insert(0, os.path.join("tools", "families"))
-sys.path.insert(0, os.path.join("tools", "scheduler"))
 sys.path.insert(0, os.path.join("tools", "trees"))
 sys.path.insert(0, os.path.join("tools", "msa_edition"))
-import scheduler
 import saved_metrics
 import experiments as exp
 import msa_converter
@@ -133,7 +131,7 @@ def extract_exabayes_results(exabayes_run_dir, families_dir, burnin):
 
   with concurrent.futures.ProcessPoolExecutor() as executor:
     executor.map(extract_exabayes_family, params)
-  shutil.rmtree( os.path.join(exabayes_run_dir, "results"))
+  #shutil.rmtree( os.path.join(exabayes_run_dir, "results"))
   print("Finished extracting exabayes results " + str(time.time() - start) + "s")
   sys.stdout.flush()
   
@@ -150,7 +148,7 @@ def run_exabayes_on_families(datadir, generations, frequency, runs, chains, burn
   open(parameters, "w").write("Parameters: " + datadir + " " + str(generations) + " " + str(frequency) + " " + str(runs) + " " + str(chains) + " " + str(burnin) + " " + str(int(is_dna)) + " " + str(cores) + " " + str(int(redo)))
   scheduler_commands_file = generate_exabayes_commands_file(datadir, generations, frequency, runs, chains, is_dna, cores, output_dir)
   start = time.time()
-  scheduler.run_scheduler(scheduler_commands_file, exp.exabayes_exec, cores, output_dir, "exabayes_run.logs")
+  exp.run_with_scheduler(exp.exabayes_exec, scheduler_commands_file, "onecore", cores, output_dir, "logs.txt")   
   saved_metrics.save_metrics(datadir, "ExaBayes", (time.time() - start), "runtimes") 
   print("Finished running exabayes after " + str(time.time() - start) + "s")
   sys.stdout.flush()

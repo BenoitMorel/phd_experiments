@@ -28,6 +28,8 @@ def perturbate_tree(tree):
     parent_node.add_child(swap)
 
 def perturbate(input_tree_path, output_tree_path, min_aRF):
+    if (float(min_aRF) == 0.0):
+      return
     original_tree = Tree(open(input_tree_path).read(), format=1)
     tree = Tree(open(input_tree_path).read(), format=1)
     for i in range(0, 10000):

@@ -77,10 +77,9 @@ def run_notung_on_families(datadir, threshold, cores):
   os.makedirs(output_dir)
   generate_notung_files(datadir)
   scheduler_commands_file = generate_scheduler_commands_file(datadir,  threshold, cores, output_dir)
-  command = generate_scheduler_command(scheduler_commands_file, cores, output_dir)
-  print(command.split(" "))
+  
   start = time.time()
-  subprocess.check_call(command.split(" "), stdout = sys.stdout)
+  exp.run_with_scheduler("java", scheduler_commands_file, "onecore", cores, output_dir, "logs.txt")   
   saved_metrics.save_metrics(datadir, "notung" + str(int(threshold)), (time.time() - start), "runtimes") 
   back_convert_notung_files(datadir, threshold)
 

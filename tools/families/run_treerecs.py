@@ -53,19 +53,6 @@ def generate_scheduler_commands_file(datadir, is_dna, cores, output_dir):
       writer.write(" ".join(command) + "\n")
   return scheduler_commands_file
      
-def generate_scheduler_command(command_file, cores, output_dir):
-  command = ""
-  parallelization = "onecore"
-  command += "mpirun -np " + str(cores) + " "
-  command += exp.mpischeduler_exec + " "
-  command += "--" + parallelization + "-scheduler "
-  command += exp.treerecs_exec + " "
-  command += command_file + " "
-  command += output_dir + " " 
-  command += "0"
-  print(command)
-  return command 
-
 def extract_treerecs_trees(datadir):
   families_dir = os.path.join(datadir, "families")
   for family in os.listdir(families_dir):
@@ -84,10 +71,9 @@ def run_treerecs_on_families(datadir, is_dna, cores):
   shutil.rmtree(output_dir, True)
   os.makedirs(output_dir)
   scheduler_commands_file = generate_scheduler_commands_file(datadir, is_dna, cores, output_dir)
-  command = generate_scheduler_command(scheduler_commands_file, cores, output_dir)
-  print(command.split(" "))
+  
   start = time.time()
-  subprocess.check_call(command.split(" "), stdout = sys.stdout)
+  exp.run_with_scheduler(exp.treerecs_exec, scheduler_commands_file, "onecore", cores, output_dir, "logs.txt")   
   saved_metrics.save_metrics(datadir, "Treerecs", (time.time() - start), "runtimes") 
   extract_treerecs_trees(datadir)
   

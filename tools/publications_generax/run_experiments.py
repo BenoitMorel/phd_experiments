@@ -26,7 +26,7 @@ if (False):
   #datasets.append("zsim_s8_f100_sites200_dna4_bl1.0_d0.02_l0.02_t0.0")
   #datasets.append("zsim_s15_f100_sites200_dna4_bl1.0_d0.03_l.03_t0.0")
   #datasets.append("zsim_s5_f100_sites100_dna4_bl1.0_d0.1_l0.1_t0.0")
-  run_filter = RunFilter(ALE=False)
+  run_filter = RunFilter()
   #common.generate_all_datasets(datasets)
 
   #common.run_all_reference_methods(datasets, cores, run_filter)
@@ -43,7 +43,11 @@ if (False):
   #common.add_dataset(datasets, fixed_point_dl, ["p0.1", "p0.2"])
   common.generate_all_datasets(datasets)
   
-  run_filter = RunFilter(generax = False, phyldog = False)
+  run_filter = RunFilter()
+  run_filter.EXA_runs = 1
+  run_filter.EXA_chains = 1
+  run_filter.EXA_frequencies = 10
+  run_filter.EXA_generations = 30000
   common.run_all_reference_methods(datasets, run_filter = run_filter)
 
 if (False):

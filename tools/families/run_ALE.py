@@ -6,10 +6,8 @@ import time
 import fam
 sys.path.insert(0, 'scripts')
 sys.path.insert(0, os.path.join("tools", "families"))
-sys.path.insert(0, os.path.join("tools", "scheduler"))
 sys.path.insert(0, os.path.join("tools", "trees"))
 sys.path.insert(0, os.path.join("tools", "msa_edition"))
-import scheduler
 import saved_metrics
 import experiments as exp
 import msa_converter
@@ -131,8 +129,8 @@ def run_ALE_on_families(datadir, with_transfers, cores):
   commands_observe = generate_ALE_observe_commands_file(datadir, cores, observe_output_dir)
   commands_ml = generate_ALE_ml_commands_file(datadir, with_transfers, cores, ml_output_dir)
   start = time.time()
-  scheduler.run_scheduler(commands_observe, exp.ale_observe_exec, cores, observe_output_dir, method_name + "_observe_run.logs")
-  scheduler.run_scheduler(commands_ml, exp.ale_ml_exec, cores, ml_output_dir, method_name + "_ml_run.logs")
+  exp.run_with_scheduler(exp.ale_observe_exec, commands_observe, "onecore", cores, observe_output_dir, method_name + "_ml_run.logs")
+  exp.run_with_scheduler(exp.ale_ml_exec, commands_ml, "onecore", cores, ml_output_dir, method_name + "_ml_run.logs")
   saved_metrics.save_metrics(datadir, method_name, (time.time() - start), "runtimes") 
   extract_ALE_results(datadir, ml_output_dir, with_transfers, os.path.join(datadir, "families"))
 
@@ -141,6 +139,12 @@ def run_exabayes_and_ALE(datadir, is_dna, cores, runs = NUM_RUNS, chains = NUM_C
     runs = NUM_RUNS
   if (chains < 0):
     chains = NUM_CHAINS
+  if (generations < 0):
+    generations = EXA_GEN
+  if (frequency < 0):
+    frequency = EXA_FREQ
+  if (burnin < 0):
+    burnin = PER_RUN_BURN_IN
   cwd = os.getcwd()
   try:
     run_dir = os.path.join(datadir, "runs")
