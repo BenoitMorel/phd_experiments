@@ -119,20 +119,27 @@ def extract_ALE_results(datadir, ALE_run_dir, with_transfers, families_dir):
     force_move(prefix + ".uml_rec", family_misc_dir)
 
 def run_ALE_on_families(datadir, with_transfers, cores):
-  method_name = get_method_name(with_transfers)
-  observe_output_dir = get_observe_run_dir(datadir, with_transfers)
-  ml_output_dir = os.path.join(datadir, "runs",  "ALE", method_name + "_ml_run")
-  shutil.rmtree(observe_output_dir, True)
-  shutil.rmtree(ml_output_dir, True)
-  os.makedirs(observe_output_dir)
-  os.makedirs(ml_output_dir)
-  commands_observe = generate_ALE_observe_commands_file(datadir, cores, observe_output_dir)
-  commands_ml = generate_ALE_ml_commands_file(datadir, with_transfers, cores, ml_output_dir)
-  start = time.time()
-  exp.run_with_scheduler(exp.ale_observe_exec, commands_observe, "onecore", cores, observe_output_dir, method_name + "_ml_run.logs")
-  exp.run_with_scheduler(exp.ale_ml_exec, commands_ml, "onecore", cores, ml_output_dir, method_name + "_ml_run.logs")
-  saved_metrics.save_metrics(datadir, method_name, (time.time() - start), "runtimes") 
-  extract_ALE_results(datadir, ml_output_dir, with_transfers, os.path.join(datadir, "families"))
+  try:
+    cwd = os.getcwd()
+    method_name = get_method_name(with_transfers)
+    observe_output_dir = get_observe_run_dir(datadir, with_transfers)
+    ml_output_dir = os.path.join(datadir, "runs",  "ALE", method_name + "_ml_run")
+    shutil.rmtree(observe_output_dir, True)
+    shutil.rmtree(ml_output_dir, True)
+    os.makedirs(observe_output_dir)
+    os.makedirs(ml_output_dir)
+    commands_observe = generate_ALE_observe_commands_file(datadir, cores, observe_output_dir)
+    commands_ml = generate_ALE_ml_commands_file(datadir, with_transfers, cores, ml_output_dir)
+    start = time.time()
+    os.chdir(observe_output_dir)
+    exp.run_with_scheduler(exp.ale_observe_exec, commands_observe, "onecore", cores, observe_output_dir, method_name + "_ml_run.logs")
+    os.chdir(ml_output_dir)
+    exp.run_with_scheduler(exp.ale_ml_exec, commands_ml, "onecore", cores, ml_output_dir, method_name + "_ml_run.logs")
+    cwd = os.getcwd()
+    saved_metrics.save_metrics(datadir, method_name, (time.time() - start), "runtimes") 
+    extract_ALE_results(datadir, ml_output_dir, with_transfers, os.path.join(datadir, "families"))
+  finally:
+    cwd = os.getcwd()
 
 def run_exabayes_and_ALE(datadir, is_dna, cores, runs = NUM_RUNS, chains = NUM_CHAINS, generations = EXA_GEN, frequency = EXA_FREQ, burnin = PER_RUN_BURN_IN, redo_exabayes = False):
   if (runs < 0):
