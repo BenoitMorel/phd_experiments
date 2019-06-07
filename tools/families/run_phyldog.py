@@ -129,7 +129,7 @@ def extract_phyldog(datadir):
       nhx_to_newick.nhx_to_newick(phyldog_tree, fam.get_phyldog_tree(datadir, family))
     except:
       print("Phyldog failed to infer tree " + phyldog_tree)
-      shutil.copy(fam.get_raxml_tree(datadir, family), new_phyldog_tree)
+      shutil.copy(fam.get_raxml_tree(datadir, family), fam.get_phyldog_tree(datadir, family))
 
 
 if (__name__== "__main__"):

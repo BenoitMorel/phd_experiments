@@ -1,5 +1,11 @@
 import os
 
+def get_all_metric_names(dataset_dir):
+  res =  os.listdir(os.path.join(dataset_dir, "metrics"))
+  for i in range(0, len(res)):
+    res[i] = res[i].split(".")[0]
+  return res
+
 def get_metrics(dataset_dir, metric_name):
   dico = {}
   try:

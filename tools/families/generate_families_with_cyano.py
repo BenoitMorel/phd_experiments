@@ -3,6 +3,8 @@ import os
 import shutil
 import ete3
 import fam
+sys.path.insert(0, 'tools/msa_edition')
+import msa_converter
 
 
 def read_tree(tree):
@@ -32,7 +34,7 @@ def generate_mapping_file(input_tree_file, mapping_file, treerecs_mapping_file):
     for gene in genes:
       treerecs_writer.write(gene + " " + species + "\n")
 
-def generate_families_with_empirical(msas_dir, trees_dir, species_tree, datadir):
+def generate_families_with_empirical(msas_dir, trees_dir, species_tree, datadir, do_convert):
   fam.init_top_directories(datadir) 
   shutil.copy(species_tree, fam.get_species_tree(datadir))
   trees_dico = {}
@@ -51,20 +53,25 @@ def generate_families_with_empirical(msas_dir, trees_dir, species_tree, datadir)
     tree_dest = fam.get_true_tree(datadir, family)
     mapping_file = fam.get_mappings(datadir, family)
     treerecs_mapping_file = fam.get_treerecs_mappings(datadir, family)
-    shutil.copy(msa_source, msa_dest)
+    if (do_convert):
+      msa_converter.msa_convert(msa_source, msa_dest, "phylip_relaxed", "fasta")
+    else:
+      shutil.copy(msa_source, msa_dest)
     shutil.copy(tree_source, tree_dest)
     generate_mapping_file(tree_source, mapping_file, treerecs_mapping_file)
   fam.postprocess_datadir(datadir)
 
 
-if (len(sys.argv) != 5):
-  print("Syntax: python generate_families_with_empirical.py msas_dir trees_dir species_tree datadiri")
+if (len(sys.argv) != 6):
+  print("Syntax: python generate_families_with_empirical.py msas_dir trees_dir species_tree datadiri do_convert_msas")
+  print("set do_convert_msas to 1 for empirical and 0 for simulated")
   exit(1)
 
 msas_dir = sys.argv[1]
 trees_dir = sys.argv[2]
 species_tree = sys.argv[3]
 datadir = sys.argv[4]
-generate_families_with_empirical(msas_dir, trees_dir, species_tree, datadir)
+do_convert = int(sys.argv[5]) != 0
+generate_families_with_empirical(msas_dir, trees_dir, species_tree, datadir, do_convert)
 
 

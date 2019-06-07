@@ -3,8 +3,12 @@ import sys
 import subprocess
 
 sys.path.insert(0, 'scripts')
+sys.path.insert(0, 'scripts/generax')
+sys.path.insert(0, 'tools/families')
 import experiments as exp
 import common
+import scaling_generax
+import fam
 
 
 def substract(datasets_dico, method):
@@ -64,7 +68,7 @@ def plot_ll(x_labels, params_to_plot_dl, params_to_plot_dtl, fixed_params_dl, fi
   for param in params_to_plot_dtl:
     plotter_runtimes_dtl(param)
 
-if (__name__ == "__main__"): 
+def plot_simulated_metrics():
   x_labels = {}
   x_labels["species"] = "Number of taxa in the species tree"
   x_labels["loss_rate"] = "Average D(T)L rates"
@@ -98,6 +102,15 @@ if (__name__ == "__main__"):
   plot_rrf(x_labels, params_to_plot_dl, params_to_plot_dtl, fixed_params_dl, fixed_params_dtl)
   plot_ll(x_labels, params_to_plot_dl, params_to_plot_dtl, fixed_params_dl, fixed_params_dtl)
 
+def plot_scaling():
+  datasets = ["ensembl_96_ncrna_primates", "cyano_empirical"]
+  for dataset in datasets:
+    datadir = fam.get_datadir(dataset)
+    scaling_generax.plot_scaling_metric(datadir)
+
+if (__name__ == "__main__"):
+  plot_simulated_metrics()
+  plot_scaling()  
 
 
-  
+

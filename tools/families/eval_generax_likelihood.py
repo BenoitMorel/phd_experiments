@@ -2,6 +2,8 @@ import sys
 import os
 import shutil
 sys.path.insert(0, 'scripts/generax')
+sys.path.insert(0, 'scripts')
+import experiments as exp
 import launch_generax
 import saved_metrics
 import fam
@@ -54,15 +56,34 @@ def eval_and_save_likelihood(dataset_dir, starting_tree, with_transfers, is_prot
     else:
       metric_name += "_DL"
     saved_metrics.save_metrics(dataset_dir, starting_tree, stats[metric], metric_name)
+
+def launch(dataset_dir, starting_tree, is_protein, cluster, cores):
+  dataset = os.path.basename(os.path.normpath(dataset_dir)) 
+  command = ["python"]
+  command.append(dataset_dir)
+  command.append(starting_tree)
+  command.append(str(is_protein))
+  command.append(str(cores))
+  command.append("--exprun")
+  resultsdir = os.path.join("EvalGeneraxLikelihood", dataset, starting_tree)
+  resultsdir = exp.create_result_dir(resultsdir, [])
+  submit_path = os.path.join(resultsdir, "submit.sh")
+  exp.submit(submit_path, " ".join(command), cores, cluster) 
+
      
 if (__name__ == "__main__"): 
-  if (len(sys.argv) != 6): 
-     print("Syntax: python " + os.path.basename(__file__) + " dataset_dir starting_tree with_transfers is_protein ")
+  is_run = ("--exprun" in sys.argv)
+  if (len(sys.argv) < 6): 
+     print("Syntax: python " + os.path.basename(__file__) + " dataset_dir starting_tree is_protein cores cluster")
+     print("starting_tree can be all")
      exit(1)
   dataset_dir = sys.argv[1]
   starting_tree = sys.argv[2]
-  with_transfers = int(sys.argv[3])
-  is_protein =  int(sys.argv[4])
+  is_protein =  int(sys.argv[3])
   cores =  int(sys.argv[4])
-  eval_and_save_likelihood(dataset_dir, starting_tree, with_transfers, is_protein, cores)
-
+  if (is_run):
+    eval_and_save_likelihood(dataset_dir, starting_tree, False, is_protein, cores)
+    eval_and_save_likelihood(dataset_dir, starting_tree, True, is_protein, cores)
+  else:
+    cluster = sys.argv[5]
+    launch(dataset_dir, starting_tree, is_protein, cluster, cores)

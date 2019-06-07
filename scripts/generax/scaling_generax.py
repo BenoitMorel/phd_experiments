@@ -4,8 +4,10 @@ import time
 import launch_generax
 sys.path.insert(0, 'scripts')
 sys.path.insert(0, 'tools/families')
+sys.path.insert(0, 'tools/plotters')
 import experiments as exp
 import saved_metrics
+import plot_line
 
 def run(datadir, starting_tree, with_transfer, cores, resultsdir):
   additional_arguments = []
@@ -41,6 +43,30 @@ def launch(datadir, starting_tree, with_transfer, cluster, cores):
   submit_path = os.path.join(resultsdir, "submit.sh")
   exp.submit(submit_path, " ".join(command), cores, cluster) 
 
+
+def plot_scaling_metric(datadir):
+  dataset = os.path.basename(os.path.normpath(datadir))
+  print("dataset " + dataset)
+  for metric_name in saved_metrics.get_all_metric_names(datadir):
+    if (not metric_name.startswith("scaling-")):
+      continue
+    metrics = saved_metrics.get_metrics(datadir, metric_name)
+    output_file = dataset + "-" + metric_name + ".svg"
+    xvalues = []
+    yvalues = []
+    for key in metrics:
+      xvalues.append(int(key))
+      yvalues.append(float(metrics[key]))
+    xvalues, yvalues = (list(t) for t in zip(*sorted(zip(xvalues, yvalues))))    
+    print(xvalues)
+    print(yvalues)
+    cost_per_cores = yvalues[1] * xvalues[1]
+    for i in range(0, len(xvalues)):
+        yvalues[i] = cost_per_cores / yvalues[i]
+    yvalues_list = [yvalues, xvalues]
+    lines_captions = ["GeneRax", "Theoretical optimum"]
+    plot_line.plot_line(xvalues, yvalues_list, "GeneRax parallel efficiency",  "Cores", "Speedup", output_file, lines_captions)
+    print("Output file: " + output_file)
 
 if (__name__ == "__main__"):
   print(sys.argv)

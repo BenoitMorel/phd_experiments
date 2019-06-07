@@ -13,8 +13,6 @@ def read_tree(tree):
 def convert_to_notung_tree(input_tree, input_species_tree, mapping_file, notung_tree, notung_species_tree, notung_mapping):
   mapping = {}
   back_mapping = {}
-  print(mapping_file)
-  print(input_tree)
   for line in open(mapping_file).readlines():
     line_split = line.split(":")
     species = line_split[0].replace("_", "XXX")
@@ -22,7 +20,6 @@ def convert_to_notung_tree(input_tree, input_species_tree, mapping_file, notung_
     for gene in line_split[1][:-1].split(";"):
       mapping[gene] = species
 
-  print(mapping)
   tree = read_tree(input_tree)
   for leaf in tree.get_leaves():
     back_mapping[leaf.name + "_S" + mapping[leaf.name]] = leaf.name

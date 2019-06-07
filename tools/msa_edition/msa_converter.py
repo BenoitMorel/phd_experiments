@@ -1,7 +1,7 @@
 import sys
 import os
 import ete3
-  
+
 def msa_convert(input_file, output_file, input_format, output_format, prefixes_dictionnary = None):
   lines = open(input_file).readlines()
   input_str = ""
