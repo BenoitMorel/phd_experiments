@@ -53,11 +53,12 @@ def generate_scheduler_commands_file(datadir, starting_tree, strategy, nodes_per
 
 
 def extract_trees(datadir, results_family_dir, prefix):
+  print("run name " + prefix)
   results_dir = os.path.join(results_family_dir, "results")
   for family in fam.get_families_list(datadir):
     family_results = fam.get_results(datadir, family)
     source = os.path.join(results_dir, family, "jointsearch.newick")
-    dest = os.path.join(family_results, "generax-js" + "GeneTree.newick")
+    dest = os.path.join(family_results, prefix + "GeneTree.newick")
     shutil.copy(source, dest)
 
 
