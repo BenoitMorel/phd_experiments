@@ -9,21 +9,29 @@ import exp_jointsearch_utils as utils
 import msa_analyzer
 import subprocess
 import shutil
+import fam
 
 parallelization = "split"
 nodes_per_core = 2
-datasets = utils.get_generax_datasets()
 
-def generate_scheduler_commands_file(families_dir, starting_tree, strategy, nodes_per_core, additional_arguments, cores, output_dir, scheduler_output_dir):
+def get_generax_datasets():
+  root_datadir = os.path.join(exp.benoit_datasets_root, "families")
+  datasets = {}
+  for dataset in os.listdir(root_datadir):
+    datasets[dataset] = os.path.join(root_datadir, dataset)
+  return datasets
+datasets = get_generax_datasets()
+
+def generate_scheduler_commands_file(datadir, starting_tree, strategy, nodes_per_core, additional_arguments, cores, output_dir, scheduler_output_dir):
   scheduler_commands_file = os.path.join(output_dir, "commands.txt")
   results_dir = os.path.join(scheduler_output_dir, "results")
   with open(scheduler_commands_file, "w") as writer:
-    for family in os.listdir(families_dir):
-      family_path = os.path.join(families_dir, family)
-      gene_tree = utils.get_gene_tree(family_path, starting_tree)
+    for family in fam.get_families_list(datadir):
+      family_path = fam.get_family_path(datadir, family)
+      gene_tree = fam.get_gene_tree(family_path, starting_tree)
       if (gene_tree != "__random__" and len(open(gene_tree).readlines()) == 0):
         continue
-      alignment =  os.path.join(family_path, "alignment.msa")
+      alignment =  fam.get_alignment(datadir, family)
       tree_size = msa_analyzer.get_taxa_number(alignment)
       if (0 == nodes_per_core):
         writer.write(family + " 1 " + str(tree_size) + " ")
@@ -32,9 +40,8 @@ def generate_scheduler_commands_file(families_dir, starting_tree, strategy, node
         cores = max(min(int(tree_size / nodes_per_core), max_cores), 1)
         writer.write(family + " " + str(cores) + " " + str(tree_size) + " ")
       writer.write("-g " + gene_tree + " ")
-      writer.write("-s " + os.path.join(family_path, "speciesTree.newick") +  " ")
-      mapping = os.path.join(family_path, "mapping.link")
-      writer.write("-m " + mapping + " ")
+      writer.write("-s " + fam.get_species_tree(datadir) +  " ")
+      writer.write("-m " + fam.get_mappings(datadir, family) + " ")
       writer.write("-a " + alignment +  " ")
       os.makedirs(os.path.join(results_dir, family))
       writer.write("-p " + os.path.join(results_dir, family, "jointsearch") + " ") 
@@ -45,16 +52,12 @@ def generate_scheduler_commands_file(families_dir, starting_tree, strategy, node
   return scheduler_commands_file
 
 
-def extract_trees(data_family_dir, results_family_dir, prefix):
+def extract_trees(datadir, results_family_dir, prefix):
   results_dir = os.path.join(results_family_dir, "results")
-  for msa in os.listdir(results_dir):
-    output_msa_dir = os.path.join(data_family_dir, msa, "results")
-    try:
-      os.mkdir(output_msa_dir)
-    except:
-      pass
-    source = os.path.join(results_dir, msa, "jointsearch.newick")
-    dest = os.path.join(output_msa_dir, prefix + ".newick")
+  for family in fam.get_families_list(datadir):
+    family_results = fam.get_results(datadir, family)
+    source = os.path.join(results_dir, family, "jointsearch.newick")
+    dest = os.path.join(family_results, "generax-js" + "GeneTree.newick")
     shutil.copy(source, dest)
 
 
@@ -87,9 +90,9 @@ def run(dataset, strategy, starting_tree, cores, additional_arguments, resultsdi
   families_dir = os.path.join(datadir, "families")
   scheduler_output_dir = os.path.join(resultsdir, "scheduler_run")
   os.makedirs(scheduler_output_dir)
-  scheduler_commands_file = generate_scheduler_commands_file(families_dir, starting_tree, strategy, nodes_per_core, additional_arguments, cores, resultsdir, scheduler_output_dir)
+  scheduler_commands_file = generate_scheduler_commands_file(datadir, starting_tree, strategy, nodes_per_core, additional_arguments, cores, resultsdir, scheduler_output_dir)
   exp.run_with_scheduler(get_exec(parallelization), scheduler_commands_file, parallelization, cores,  scheduler_output_dir)
-  extract_trees(os.path.join(datadir, "families"), os.path.join(resultsdir, "scheduler_run"), run_name)
+  extract_trees(datadir, os.path.join(resultsdir, "scheduler_run"), run_name)
   analyze_dataset.analyze(datadir, run_name)
   print("Output in " + resultsdir)
 
@@ -106,7 +109,6 @@ if (__name__ == "__main__"):
     print("Syntax error: python " + os.path.basename(__file__) + "  dataset strategy starting_tree cluster cores [additional paremeters].\n Suggestions of datasets: ")
     for dataset in datasets:
       print("\t" + dataset)
-    print("strategy: " + ",".join(utils.get_possible_strategies()))
     sys.exit(1)
   
   dataset = sys.argv[1]
@@ -115,7 +117,6 @@ if (__name__ == "__main__"):
   cluster = sys.argv[4]
   cores = int(sys.argv[5])
   additional_arguments = sys.argv[min_args_number:]
-  utils.check_inputs(starting_tree, strategy)
 
   if (is_run):
     run(dataset, strategy, starting_tree, cores, additional_arguments, resultsdir)

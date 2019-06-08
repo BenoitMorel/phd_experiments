@@ -38,7 +38,8 @@ if (False):
 
 # experiments on DTL rates optimization
 if (True):
-  fixed_point_dl = "jsimdtl_s19_f3_sites200_dna4_bl1.0_d0.1_l0.2_t0.1_p0.0"
+  fixed_point_dl = "jsimdtl_s10_f50_sites50_dna4_bl5.0_d0.1_l0.2_t0.1_p0.0"
+  #fixed_point_dl = "jsimdtl_s19_f3_sites200_dna4_bl1.0_d0.1_l0.2_t0.1_p0.0"
   datasets.append(fixed_point_dl)
   #common.add_dataset(datasets, fixed_point_dl, ["p0.1", "p0.2"])
   common.generate_all_datasets(datasets)

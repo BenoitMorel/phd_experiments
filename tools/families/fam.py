@@ -82,6 +82,9 @@ def get_mappings_dir(datadir, family):
 # per-family files
 #####################
 
+def get_results(datadir, family):
+  return os.path.join(get_family_path(datadir, family), "results")
+
 def get_alignment(datadir, family):
   return os.path.join(get_family_path(datadir, family), "alignment.msa")
 
@@ -193,6 +196,7 @@ def get_ran_methods(datadir):
       method = get_method_name(one_family_dir, os.path.join(directory, tree))
       if (method != None and method != "raxmls"):
         methods.append(method)
+  print(methods)
   return methods
 
 def get_param_from_dataset_name(parameter, dataset):
