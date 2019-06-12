@@ -124,6 +124,9 @@ def get_alignment_file(datadir):
 def get_raxml_model(datadir):
   return os.path.join(datadir, "raxmlBestModel.txt")
 
+def get_raw_rf_cells_file(datadir):
+  return os.path.join(datadir, "metrics", "rf_cells.pickle")
+
 
 def get_gene_tree(familydir, tree):
   gene_trees_dir = os.path.join(familydir, "gene_trees")
