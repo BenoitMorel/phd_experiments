@@ -72,7 +72,7 @@ def get_invalid_methods(trees, methods):
 def get_methods_to_compare(methods):
   methods_to_compare = []
   for method in methods:
-    methods_to_compare.append((method, "true"))
+    methods_to_compare.append(("true", method))
   return methods_to_compare
 
 def get_method_key(m1, m2):
@@ -120,17 +120,21 @@ def get_method_keys_from_rf_cells(rf_cells):
     break
   return method_keys
 
-def export_metric(datadir, metric_dict, metric_name):
+def export_metric(datadir, metric_dict, metric_name, benched_method):
   printer = AlignedPrinter()
   saved_metrics.save_dico(datadir, metric_dict, metric_name)
   for method_key in metric_dict:
-    printer.add("- " + method_key + ":",  str(metric_dict[method_key]))
+    split = method_key.split(" - ")
+    suffix = ""
+    if (benched_method == split[0] or benched_method == split[1]):
+      suffix += "\t <-- "
+    printer.add("- " + method_key + ":",  str(metric_dict[method_key]) + suffix)
   printer.sort_right_float()
   printer.display()
   print("")
 
 
-def compute_and_export_metrics(datadir):
+def compute_and_export_metrics(datadir, benched_method):
   rf_cells = load_rf_cells(datadir)
   method_keys = get_method_keys_from_rf_cells(rf_cells)
   total_nodes = {}
@@ -156,20 +160,24 @@ def compute_and_export_metrics(datadir):
     average_rrf[key] = total_rrf[key] / families_number
     relative_arf[key] = total_rf[key] / total_nodes[key]
   print("Average relative RF:")
-  export_metric(datadir, average_rrf, "average_rrf")
-  print("Relative average RF:")
-  export_metric(datadir, relative_arf, "relative_arf")
+  export_metric(datadir, average_rrf, "average_rrf", benched_method)
+  
+  #print("Relative average RF:")
+  #export_metric(datadir, relative_arf, "relative_arf")
 
 
 
 
 if __name__ == '__main__':
   if (len(sys.argv) < 2):
-    print("Syntax: families_dir [method]")
+    print("Syntax: families_dir [benched_method]")
     exit(1)
   print(" ".join(sys.argv))
   datadir = sys.argv[1]
+  benched_method = ""
+  if (len(sys.argv) > 2):
+    benched_method = sys.argv[2]
   compute_and_save_rf_cells(datadir)
-  compute_and_export_metrics(datadir)
+  compute_and_export_metrics(datadir, benched_method)
 
 
