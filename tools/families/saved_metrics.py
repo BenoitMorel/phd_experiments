@@ -35,7 +35,7 @@ def save_dico(dataset_dir, dico, metric_name):
     pass
   with open(os.path.join(dataset_dir, "metrics", metric_name + ".txt"), "w") as writer:
     for key, value in sorted(dico.items(), key=lambda x: float(x[1])):
-      writer.write(key + " " + value + "\n")
+      writer.write(key + " " + str(value) + "\n")
 
 def save_metrics(dataset_dir, method_key, metric_value, metric_name):
   method_key = method_key.lower()
