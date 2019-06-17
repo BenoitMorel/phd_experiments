@@ -5,11 +5,13 @@ import subprocess
 sys.path.insert(0, 'scripts')
 sys.path.insert(0, 'scripts/generax')
 sys.path.insert(0, 'tools/families')
+sys.path.insert(0, 'tools/plotters')
 import experiments as exp
 import common
 import scaling_generax
 import fam
-
+import boxplot
+import rf_cells
 
 def substract(datasets_dico, method):
   for dataset in datasets_dico:
@@ -108,9 +110,35 @@ def plot_scaling():
     datadir = fam.get_datadir(dataset)
     scaling_generax.plot_scaling_metric(datadir)
 
-if (__name__ == "__main__"):
-  plot_simulated_metrics()
-  plot_scaling()  
+def plot_boxplots():
+  methods = ["raxml", "treerecs", "generax-dtl-random"]
+  models = ["JC", "GTR+G"]
+  datasets = ["jsimdtl_s19_f100_sites500_dna4_bl0.5_d0.1_l0.2_t0.1_p0.0"]
+  for model in models:
+    print("model " + model)
+    runs = []
+    for method in methods:
+      runs.append(fam.get_run_name(method, model))
+    bp = boxplot.BoxPlot(ylabel = "rf distances")
+    data = {}
+    for run in runs:
+      data[run] = []
+    for dataset in datasets:
+      cells = rf_cells.load_rf_cells(fam.get_datadir(dataset))
+      for family in cells:
+        family_cells = cells[family]
+        for run in runs:
+          cell = rf_cells.get_rf_to_true(family_cells, run)
+          data[run].append(cell[0] / cell[1])
+    for run in data:
+      bp.add_elem(run, data[run])
+    output = "plop." + model + ".svg"
+    bp.plot(output)
+    print("plot " + output)
 
+if (__name__ == "__main__"):
+  #plot_simulated_metrics()
+  #plot_scaling()  
+  plot_boxplots()
 
 

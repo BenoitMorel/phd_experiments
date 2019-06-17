@@ -182,9 +182,13 @@ def get_method_name_aux(tree_path):
   else:
     return tree.replace("GeneTree.newick", "").replace(".newick", "")
 
-def get_run_name(tree_file):
+def get_run_name(method, model):
+  return method + "." + model
+
+def get_run_name_from_tree(tree_file):
   split = os.path.basename(tree_file).split(".")
   return split[0] + "." + split[1]
+
 
 def get_successful_runs(datadir):
   runs = []
@@ -194,7 +198,7 @@ def get_successful_runs(datadir):
   directories_to_check.append(os.path.join(one_family_dir, "gene_trees"))
   for directory in directories_to_check:
     for tree in os.listdir(directory):
-      run_name = get_run_name(tree)
+      run_name = get_run_name_from_tree(tree)
       if (not "raxmlMultiple" in run_name):
         runs.append(run_name)
   return runs

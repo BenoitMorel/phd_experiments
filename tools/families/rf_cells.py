@@ -97,6 +97,9 @@ def save_rf_cells(datadir, rf_cells):
 def load_rf_cells(datadir):
   return pickle.load(open(fam.get_raw_rf_cells_file(datadir), "rb"))
 
+def get_rf_to_true(cells, run_name):
+  return cells[get_run_key(fam.get_run_name("true", "true"), run_name)]
+
 def compute_and_save_rf_cells(datadir):
   runs = fam.get_successful_runs(datadir)
   print("Reading trees...")
