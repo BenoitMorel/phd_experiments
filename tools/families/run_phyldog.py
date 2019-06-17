@@ -10,29 +10,29 @@ import saved_metrics
 import fam
 import experiments as exp
 import nhx_to_newick
+import sequence_model
 
+def get_phyldog_run_dir(datadir, subst_model):
+  return fam.get_run_dir(datadir, subst_model, "phyldog_run")
 
-def get_phyldog_run_dir(datadir):
-  return os.path.join(datadir, "runs", "phyldog_run")
-
-def clean_phyldog(datadir):
-  phyldog_run_dir = get_phyldog_run_dir(datadir)
+def clean_phyldog(datadir, subst_model):
+  phyldog_run_dir = get_phyldog_run_dir(datadir, subst_model)
   dataset_name = os.path.basename(datadir)
   print("CLEANING " + dataset_name)
   for f in os.listdir(phyldog_run_dir):
     if (f.startswith("tmpPLL") and  (dataset_name.replace(".", "_") in f.replace(".", "_"))):
       os.remove(os.path.join(phyldog_run_dir, f))
 
-def run_phyldog_on_families(datadir, is_dna, cores):
-  output_dir = get_phyldog_run_dir(datadir)
+def run_phyldog_on_families(datadir, subst_model, cores):
+  output_dir = get_phyldog_run_dir(datadir, subst_model)
   shutil.rmtree(output_dir, True)
   os.makedirs(output_dir)
-  generate_options(datadir, is_dna)
+  generate_options(datadir, subst_model)
   start = time.time()
-  run_phyldog(datadir, cores)
+  run_phyldog(datadir, subst_model, cores)
   saved_metrics.save_metrics(datadir, "Phyldog", (time.time() - start), "runtimes") 
-  extract_phyldog(datadir)
-  clean_phyldog(datadir)
+  extract_phyldog(datadir, subst_model)
+  clean_phyldog(datadir, subst_model)
 
 
 def add_starting_tree(option_file, tree_path):
@@ -49,8 +49,8 @@ def add_starting_tree(option_file, tree_path):
     writer.write("gene.tree.file=" + tree_path + "\n")
     writer.write("use.quality.filters=0\n")
 
-def generate_options(datadir, is_dna):
-  phyldog_run_dir = get_phyldog_run_dir(datadir)
+def generate_options(datadir, subst_model):
+  phyldog_run_dir = get_phyldog_run_dir(datadir, subst_model)
   prepare_input = os.path.join(phyldog_run_dir, "prepare_input.txt")
   datadir = os.path.abspath(datadir)
   phyldog_run_dir = os.path.abspath(phyldog_run_dir)
@@ -62,15 +62,17 @@ def generate_options(datadir, is_dna):
     phyldog_mapping = fam.get_mappings(datadir, family)
     new_phyldog_mapping = os.path.join(mappings_dir, family + ".link")
     exp.relative_symlink(phyldog_mapping, new_phyldog_mapping)
-    old_raxml_tree = fam.get_raxml_tree(datadir, family)
+    old_raxml_tree = fam.get_raxml_tree(datadir, subst_model, family)
     new_raxml_tree = os.path.join(all_raxml_trees_dir, family + ".newick")
     exp.relative_symlink(old_raxml_tree, new_raxml_tree) 
   with open(prepare_input, "w") as writer:
     writer.write(os.path.join(datadir, "alignments") + "\n")
-    if (is_dna):
-      writer.write("DNA\n" )
+    if (sequence_model.is_dna(subst_model)):
+      writer.write("1\n" )
     else:
-      writer.write("PROTEIN\n")
+      writer.write("0\n")
+    writer.write(sequence_model.get_phyldog_model(subst_model) + "\n")
+    writer.write(str(sequence_model.get_gamma_rates(subst_model)) + "\n")
     writer.write("FASTA\n")
     writer.write(os.path.join(phyldog_run_dir, "mappings") + "\n")
     writer.write(os.path.join(phyldog_run_dir, "options") + "\n")
@@ -90,18 +92,16 @@ def generate_options(datadir, is_dna):
   time.sleep(1)
   for family in fam.get_families_list(datadir):
     option_file = os.path.join(phyldog_run_dir, "options", family + ".opt")
-    add_starting_tree(option_file, fam.get_raxml_tree(datadir, family))
+    add_starting_tree(option_file, fam.get_raxml_tree(datadir, subst_model, family))
 
 
    
-def run_phyldog(datadir, cores):
+def run_phyldog(datadir, subst_model, cores):
   cwd = os.getcwd()
   try:
     families_number = len(os.listdir(os.path.join(datadir, "families")))
-    print("plop")
-    print(str(families_number) + " families")
     cores = str(min(families_number, int(cores)))
-    phyldog_run_dir = get_phyldog_run_dir(datadir)
+    phyldog_run_dir = get_phyldog_run_dir(datadir, subst_model)
     command = []
     command.append("mpirun")
     command.append("-n")
@@ -120,28 +120,28 @@ def run_phyldog(datadir, cores):
     os.chdir(cwd)
 
 
-def extract_phyldog(datadir):
-  results_dir = os.path.join(get_phyldog_run_dir(datadir), "results")
+def extract_phyldog(datadir, subst_model):
+  results_dir = os.path.join(get_phyldog_run_dir(datadir, subst_model), "results")
   families_dir = os.path.join(datadir, "families")
   for family in os.listdir(families_dir):
     phyldog_tree = os.path.join(results_dir, family + ".ReconciledTree")
     try:
-      nhx_to_newick.nhx_to_newick(phyldog_tree, fam.get_phyldog_tree(datadir, family))
+      nhx_to_newick.nhx_to_newick(phyldog_tree, fam.get_phyldog_tree(datadir, subst_model, family))
     except:
       print("Phyldog failed to infer tree " + phyldog_tree)
-      shutil.copy(fam.get_raxml_tree(datadir, family), fam.get_phyldog_tree(datadir, family))
+      shutil.copy(fam.get_raxml_tree(datadir, family), fam.get_phyldog_tree(datadir, subst_model, family))
 
 
 if (__name__== "__main__"):
   max_args_number = 4
   if len(sys.argv) < max_args_number:
-    print("Syntax error: python run_phyldog.py datadir is_dna cores.")
+    print("Syntax error: python run_phyldog.py datadir subst_model cores.")
     print("Cluster can be either normal, haswell or magny")
     sys.exit(0)
 
 
   datadir = sys.argv[1]
-  is_dna = int(sys.argv[2]) != 0
+  subst_model = sys.argv[2]
   cores = int(sys.argv[3])
-  run_phyldog_on_families(datadir, is_dna, cores)
+  run_phyldog_on_families(datadir, subst_model, cores)
 

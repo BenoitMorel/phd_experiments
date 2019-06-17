@@ -11,23 +11,23 @@ import convert_to_notung_tree
 import time
 import saved_metrics
   
-def generate_notung_files(datadir):
+def generate_notung_files(datadir, subst_model):
   for family in fam.get_families_list(datadir):
-    misc_dir = fam.get_misc_dir(datadir, family)
-    input_tree = fam.get_raxml_tree(datadir, family) 
+    misc_dir = fam.get_family_misc_dir(datadir, family)
+    input_tree = fam.get_raxml_tree(datadir, subst_model, family) 
     input_species_tree = fam.get_species_tree(datadir)
     mapping_file = fam.get_mappings(datadir, family)
-    notung_tree = os.path.join(misc_dir, "raxmlGeneTree.notung")
+    notung_tree = os.path.join(misc_dir, "raxmlGeneTree." + subst_model + ".notung")
     notung_species_tree = os.path.join(misc_dir, "speciesTree.notung")
     notung_mapping = os.path.join(misc_dir, "mapping.notung")
     convert_to_notung_tree.convert_to_notung_tree(input_tree, input_species_tree, mapping_file, notung_tree, notung_species_tree, notung_mapping)
 
-def back_convert_notung_files(datadir, threshold):
+def back_convert_notung_files(datadir, subst_model, threshold):
   for family in fam.get_families_list(datadir):
-    misc_dir = fam.get_misc_dir(datadir, family)
-    notung_tree = os.path.join(misc_dir, "raxmlGeneTree.notung.rearrange.0")
+    misc_dir = fam.get_family_misc_dir(datadir, family)
+    notung_tree = os.path.join(misc_dir, "raxmlGeneTree." + subst_model + ".notung.rearrange.0")
     notung_mapping = os.path.join(misc_dir, "mapping.notung")
-    output_tree = fam.get_notung_tree(datadir, family, threshold)
+    output_tree = fam.get_notung_tree(datadir, subst_model, family, threshold)
     convert_to_notung_tree.back_convert_notung_tree(notung_tree, notung_mapping, output_tree)
 
 def generate_scheduler_command(command_file, cores, output_dir):
@@ -42,21 +42,20 @@ def generate_scheduler_command(command_file, cores, output_dir):
   command += "0"
   return command 
   
-def generate_scheduler_commands_file(datadir, threshold, cores, output_dir):
+def generate_scheduler_commands_file(datadir, subst_model, threshold, cores, output_dir):
   results_dir = os.path.join(output_dir, "results")
   scheduler_commands_file = os.path.join(output_dir, "commands.txt")
   speciesTree = os.path.join(datadir, "misc", "speciesTree.notung")
   with open(scheduler_commands_file, "w") as writer:
     for family in fam.get_families_list(datadir):
-      misc_dir = fam.get_misc_dir(datadir, family)
+      misc_dir = fam.get_family_misc_dir(datadir, family)
       command = []
       command.append(family)
       command.append("1")
       command.append("1")
-      #command.append("java")
       command.append("-jar")
       command.append(exp.notung_jar)
-      command.append(os.path.join(misc_dir, "raxmlGeneTree.notung"))
+      command.append(os.path.join(misc_dir, "raxmlGeneTree." + subst_model + ".notung"))
       command.append("-s")
       command.append(os.path.join(misc_dir, "speciesTree.notung"))
       command.append("--speciestag")
@@ -71,31 +70,32 @@ def generate_scheduler_commands_file(datadir, threshold, cores, output_dir):
       writer.write(" ".join(command) + "\n")
   return scheduler_commands_file
 
-def run_notung_on_families(datadir, threshold, cores):
-  output_dir = os.path.join(datadir, "runs", "notung" + str(threshold) + "_run")
+def run_notung_on_families(datadir, subst_model, threshold, cores):
+  output_dir = fam.get_run_dir(datadir, subst_model, "notung" + str(threshold) + "_run")
   shutil.rmtree(output_dir, True)
   os.makedirs(output_dir)
-  generate_notung_files(datadir)
-  scheduler_commands_file = generate_scheduler_commands_file(datadir,  threshold, cores, output_dir)
+  generate_notung_files(datadir, subst_model)
+  scheduler_commands_file = generate_scheduler_commands_file(datadir, subst_model, threshold, cores, output_dir)
   
   start = time.time()
   exp.run_with_scheduler("java", scheduler_commands_file, "onecore", cores, output_dir, "logs.txt")   
   saved_metrics.save_metrics(datadir, "notung" + str(int(threshold)), (time.time() - start), "runtimes") 
-  back_convert_notung_files(datadir, threshold)
+  back_convert_notung_files(datadir, subst_model, threshold)
 
 
 if (__name__== "__main__"):
   max_args_number = 4
   if len(sys.argv) < max_args_number:
-    print("Syntax error: python run_notung datadir threshold cores.")
+    print("Syntax error: python run_notung datadir subst_model threshold cores.")
     sys.exit(0)
 
 
   datadir = sys.argv[1]
-  threshold = int(sys.argv[2])
-  cores = int(sys.argv[3])
+  subst_model = sys.argv[2]
+  threshold = int(sys.argv[3])
+  cores = int(sys.argv[4])
 
-  run_notung_on_families(datadir, threshold, cores)
+  run_notung_on_families(datadir, subst_model, threshold, cores)
 
 
 

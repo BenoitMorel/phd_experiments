@@ -3,6 +3,25 @@ import sys
 sys.path.insert(0, 'scripts')
 import experiments as exp
 
+
+def get_model(subst_model):
+  return subst_model.split("+")[0]
+
+def get_gamma_rates(subst_model):
+  if ("G" in subst_model.split("+")):
+    return 4
+  else:
+    return 1
+
+def is_dna(subst_model):
+  dna_models = ["JC", "GTR"]
+  return get_model(subst_model) in dna_models
+
+def get_phyldog_model(subst_model):
+  return get_model(subst_model)
+  
+
+
 def extract_raxml_model(raxml_model_file):
   res = lambda:0
   line = open(raxml_model_file).readlines()[0]

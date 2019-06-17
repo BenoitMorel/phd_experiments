@@ -4,7 +4,7 @@ import subprocess
 sys.path.insert(0, 'scripts')
 sys.path.insert(0, 'tools/families')
 import saved_metrics
-import analyze_dataset
+import rf_cells
 import experiments as exp
 import shutil
 import time
@@ -28,8 +28,8 @@ def get_generax_datasets():
 
 datasets = get_generax_datasets()
 
-def build_generax_families_file(dataset, starting_tree, is_protein, output):
-  families_dir = os.path.join(dataset, "families")
+def build_generax_families_file(datadir, starting_tree, subst_model, output):
+  families_dir = os.path.join(datadir, "families")
   with open(output, "w") as writer:
     writer.write("[FAMILIES]\n")
     plop = 0
@@ -37,19 +37,17 @@ def build_generax_families_file(dataset, starting_tree, is_protein, output):
       
       family_path = os.path.join(families_dir, family)
       writer.write("- " + family + "\n")
-      writer.write("starting_gene_tree = " + fam.get_gene_tree(family_path, starting_tree) + "\n")
+      writer.write("starting_gene_tree = " + fam.get_gene_tree(datadir, subst_model, family, starting_tree) + "\n")
       writer.write("alignment = " + fam.get_alignment_file(family_path) + "\n")
-      writer.write("mapping = " + fam.get_mappings(dataset, family) + "\n")
+      writer.write("mapping = " + fam.get_mappings(datadir, family) + "\n")
       raxml_model = ""
       if (starting_tree != "random"):
-        raxml_model = fam.get_raxml_model(family_path)
+        raxml_model = fam.get_raxml_best_model(datadir, subst_model, family)
+      print("raxml model " + raxml_model)
       if (os.path.isfile(raxml_model)):
         writer.write("subst_model = " + raxml_model + "\n")
       else:
-        if (is_protein):
-          writer.write("subst_model = LG\n")
-        else:
-          writer.write("subst_model = GTR\n")
+        writer.write("subst_model = " + subst_model + "\n")
 
 def get_generax_command(generax_families_file, species_tree, strategy, additional_arguments, output_dir, mode, cores):
     executable = exp.generax_exec
@@ -92,42 +90,37 @@ def get_mode_from_additional_arguments(additional_arguments):
   return mode
 
 
-def extract_trees(data_family_dir, results_family_dir, prefix):
+def extract_trees(datadir, results_family_dir, prefix, subst_model):
   results_dir = os.path.join(results_family_dir, "results")
-  for msa in os.listdir(results_dir):
-    output_msa_dir = os.path.join(data_family_dir, msa, "results")
-    try:
-      os.mkdir(output_msa_dir)
-    except:
-      pass
-    source = os.path.join(results_dir, msa, "geneTree.newick")
-    dest = os.path.join(output_msa_dir, prefix + "GeneTree.newick")
+  for family in os.listdir(results_dir):
+    source = os.path.join(results_dir, family, "geneTree.newick")
+    dest = fam.build_gene_tree_path(datadir, subst_model, family, prefix)
+    print("saving tree in " + dest)
     shutil.copy(source, dest)
 
 
-def run(dataset, strategy, starting_tree, cores, additional_arguments, resultsdir, do_analyze = True):
-  is_protein = exp.checkAndDelete("--protein", additional_arguments)
+def run(dataset, subst_model, strategy, starting_tree, cores, additional_arguments, resultsdir, do_analyze = True):
   run_name = exp.getAndDelete("--run", additional_arguments, "lastRun") 
   mode = get_mode_from_additional_arguments(additional_arguments)
   if (not dataset in datasets):
     print("Error: " + dataset + " is not in " + str(datasets))
     exit(1)
   datadir = datasets[dataset]
-  generax_families_file = os.path.join(resultsdir, "generax_families.txt")
-  build_generax_families_file(datadir, starting_tree, is_protein, generax_families_file)
+  generax_families_file = os.path.join(resultsdir, "families.txt")
+  build_generax_families_file(datadir, starting_tree, subst_model, generax_families_file)
   start = time.time()
   run_generax(datadir, strategy, generax_families_file, mode, cores, additional_arguments, resultsdir)
   saved_metrics.save_metrics(datadir, run_name, (time.time() - start), "runtimes") 
-  extract_trees(os.path.join(datadir, "families"), os.path.join(resultsdir, "generax"), run_name)
+  extract_trees(datadir, os.path.join(resultsdir, "generax"), run_name, subst_model)
   try:
     if (do_analyze):
-      analyze_dataset.analyze(datadir, run_name)
+      rf_cells.analyze(datadir, run_name)
   except:
     print("Analyze failed!!!!")
 
   print("Output in " + resultsdir)
 
-def launch(dataset, strategy, starting_tree, cluster, cores, additional_arguments):
+def launch(dataset, subst_model, strategy, starting_tree, cluster, cores, additional_arguments):
   command = ["python"]
   command.extend(sys.argv)
   command.append("--exprun")
@@ -145,19 +138,20 @@ if (__name__ == "__main__"):
     resultsdir = sys.argv[-1]
     sys.argv = sys.argv[:-2]
     
-  min_args_number = 6
+  min_args_number = 7
   if (len(sys.argv) < min_args_number):
     for dataset in datasets:
       print("\t" + dataset)
     print("strategy: " + ",".join(get_possible_strategies()))
-    print("Syntax error: python " + os.path.basename(__file__) + "  dataset strategy starting_tree cluster cores [additional paremeters].\n Suggestions of datasets: ")
+    print("Syntax error: python " + os.path.basename(__file__) + "  dataset subst_model strategy starting_tree cluster cores [additional paremeters].\n Suggestions of datasets: ")
     sys.exit(1)
 
   dataset = sys.argv[1]
-  strategy = sys.argv[2]
-  starting_tree = sys.argv[3]
-  cluster = sys.argv[4]
-  cores = int(sys.argv[5])
+  subst_model = sys.argv[2]
+  strategy = sys.argv[3]
+  starting_tree = sys.argv[4]
+  cluster = sys.argv[5]
+  cores = int(sys.argv[6])
   additional_arguments = sys.argv[min_args_number:]
   check_inputs(strategy)
 
@@ -166,9 +160,9 @@ if (__name__ == "__main__"):
     exit(1)
 
   if (is_run):
-    run(dataset, strategy, starting_tree, cores, additional_arguments, resultsdir)
+    run(dataset, subst_model, strategy, starting_tree, cores, additional_arguments, resultsdir)
   else:
-    launch(dataset, strategy, starting_tree, cluster, cores, additional_arguments)
+    launch(dataset, subst_model, strategy, starting_tree, cluster, cores, additional_arguments)
 
 
 

@@ -29,6 +29,9 @@ def get_adjacencies_dir(datadir):
 def get_families_dir(datadir):
   return os.path.join(datadir, "families")
 
+def get_misc_dir(datadir):
+  return os.path.join(datadir, "misc")
+
 def get_alignments_dir(datadir):
   return os.path.join(datadir, "alignments")
 
@@ -72,7 +75,7 @@ def get_family_path(datadir, family):
 def get_gene_tree_dir(datadir, family):
   return os.path.join(get_family_path(datadir, family), "gene_trees")
 
-def get_misc_dir(datadir, family):
+def get_family_misc_dir(datadir, family):
   return os.path.join(get_family_path(datadir, family), "misc")
 
 def get_mappings_dir(datadir, family):
@@ -82,6 +85,15 @@ def get_mappings_dir(datadir, family):
 # per-family files
 #####################
 
+def build_gene_tree_path_from_run(datadir, family, run):
+  return os.path.join(get_gene_tree_dir(datadir, family), run + ".geneTree.newick")
+
+def build_gene_tree_path(datadir, subst_model, family, method):
+  return os.path.join(get_gene_tree_dir(datadir, family), method + "." + subst_model + ".geneTree.newick")
+
+def build_misc_file_path(datadir, subst_model, family, method):
+  return os.path.join(get_family_misc_dir(datadir, family), method + "." + subst_model + ".txt")
+
 def get_results(datadir, family):
   return os.path.join(get_family_path(datadir, family), "results")
 
@@ -89,27 +101,24 @@ def get_alignment(datadir, family):
   return os.path.join(get_family_path(datadir, family), "alignment.msa")
 
 def get_true_tree(datadir, family):
-  return os.path.join(get_gene_tree_dir(datadir, family), "trueGeneTree.newick")
+  return build_gene_tree_path(datadir, "true", family, "true")
 
-def get_random_tree(datadir, family):
-  return os.path.join(get_gene_tree_dir(datadir, family), "randomGeneTree.newick")
+def get_raxml_tree(datadir, subst_model, family):
+  return build_gene_tree_path(datadir, subst_model, family, "raxml")
 
-def get_raxml_tree(datadir, family):
-  return os.path.join(get_gene_tree_dir(datadir, family), "raxmlGeneTree.newick")
+def get_raxml_multiple_trees(datadir, subst_model, family):
+  return build_gene_tree_path(datadir, subst_model, family, "raxmlMultiple")
 
-def get_raxml_multiple_trees(datadir, family):
-  return os.path.join(get_gene_tree_dir(datadir, family), "raxmlGeneTrees.newick")
+def get_phyldog_tree(datadir, subst_model, family):
+  return build_gene_tree_path(datadir, subst_model, family, "phyldog")
 
-def get_phyldog_tree(datadir, family):
-  return os.path.join(get_gene_tree_dir(datadir, family), "phyldogGeneTree.newick")
+def get_treerecs_tree(datadir, subst_model, family):
+  return build_gene_tree_path(datadir, subst_model, family, "treerecs")
 
-def get_treerecs_tree(datadir, family):
-  return os.path.join(get_gene_tree_dir(datadir, family), "treerecsGeneTree.newick")
+def get_notung_tree(datadir, subst_model, family, threshold):
+  return build_gene_tree_path(datadir, subst_model, family,  "notung" + str(threshold))
 
-def get_notung_tree(datadir, family, threshold):
-  return os.path.join(get_gene_tree_dir(datadir, family), "notung" + str(threshold) + "GeneTree.newick")
-
-def get_ale_tree(datadir, family, method):
+def get_ale_tree(datadir, subst_model, family, method):
   return os.path.join(get_gene_tree_dir(datadir, family), method + "GeneTree.newick")
 
 def get_mappings(datadir, family):
@@ -121,30 +130,28 @@ def get_treerecs_mappings(datadir, family):
 def get_alignment_file(datadir):
   return os.path.join(datadir, "alignment.msa")
 
-def get_raxml_model(datadir):
-  return os.path.join(datadir, "raxmlBestModel.txt")
+def get_raxml_best_model(datadir, subst_model, family):
+  return build_misc_file_path(datadir, subst_model, family, "raxmlBestModel")
 
 def get_raw_rf_cells_file(datadir):
-  return os.path.join(datadir, "metrics", "rf_cells.pickle")
+  return os.path.join(datadir, "misc", "rf_cells.pickle")
 
 
-def get_gene_tree(familydir, tree):
-  gene_trees_dir = os.path.join(familydir, "gene_trees")
+def get_gene_tree(datadir, subst_model, family, tree):
+  gene_trees_dir = get_gene_tree_dir(datadir, family)
   lower_tree = tree.lower()
   if (lower_tree == "raxml-ng"):
-    return os.path.join(gene_trees_dir, "raxmlGeneTree.newick")
+    return get_raxml_tree(datadir, subst_model, family)
   elif (lower_tree == "raxmls"):
-    return os.path.join(gene_trees_dir, "raxmlGeneTrees.newick")
+    return get_raxml_multiple_trees(datadir, subst_model, family)
   elif (lower_tree == "true"):
-    return os.path.join(gene_trees_dir, "trueGeneTree.newick")
+    return get_true_tree(datadir, family)
   elif (lower_tree == "treerecs"):
     return os.path.join(gene_trees_dir, "treerecsGeneTree.newick")
   elif (lower_tree == "phyldog"):
     return os.path.join(gene_trees_dir, "phyldogGeneTree.newick")
   elif ("notung" in lower_tree):
     return os.path.join(gene_trees_dir, lower_tree + "GeneTree.newick")
-  elif ("generax" in lower_tree):
-    return os.path.join(familydir, "results", lower_tree + "GeneTree.newick")
   elif ("ale" in lower_tree):
     return os.path.join(gene_trees_dir, tree + "GeneTree.newick")
   elif (lower_tree == "random"):
@@ -154,7 +161,7 @@ def get_gene_tree(familydir, tree):
     else:
       return "__random__";
   else:
-    return tree
+    return build_gene_tree_path(datadir, subst_model, family, lower_tree)
 
 def get_method_name_aux(tree_path):
   tree = os.path.basename(tree_path)
@@ -174,7 +181,23 @@ def get_method_name_aux(tree_path):
     return "random"
   else:
     return tree.replace("GeneTree.newick", "").replace(".newick", "")
-  
+
+def get_run_name(tree_file):
+  split = os.path.basename(tree_file).split(".")
+  return split[0] + "." + split[1]
+
+def get_successful_runs(datadir):
+  runs = []
+  families_dir = os.path.join(datadir, "families")
+  one_family_dir = os.path.join(families_dir, os.listdir(families_dir)[0])
+  directories_to_check = []
+  directories_to_check.append(os.path.join(one_family_dir, "gene_trees"))
+  for directory in directories_to_check:
+    for tree in os.listdir(directory):
+      run_name = get_run_name(tree)
+      if (not "raxmlMultiple" in run_name):
+        runs.append(run_name)
+  return runs
 
 def get_method_name(family_dir, tree_path):
   if (not tree_path.endswith(".newick")):
@@ -184,15 +207,14 @@ def get_method_name(family_dir, tree_path):
     return None
   return method_name
 
+
 def get_ran_methods(datadir):
   methods = []
   families_dir = os.path.join(datadir, "families")
   one_family_dir = os.path.join(families_dir, os.listdir(families_dir)[0])
   print(one_family_dir)
   directories_to_check = []
-  directories_to_check.append(one_family_dir)
   directories_to_check.append(os.path.join(one_family_dir, "gene_trees"))
-  directories_to_check.append(os.path.join(one_family_dir, "results"))
 
   for directory in directories_to_check:
     for tree in os.listdir(directory):
@@ -278,16 +300,23 @@ def init_top_directories(datadir):
   mkdir(get_adjacencies_dir(datadir))
   mkdir(get_families_dir(datadir))
   mkdir(get_alignments_dir(datadir))
+  mkdir(get_misc_dir(datadir))
 
 def init_family_directories(datadir, family):
   mkdir(get_gene_tree_dir(datadir, family))
-  mkdir(get_misc_dir(datadir, family))
+  mkdir(get_family_misc_dir(datadir, family))
   mkdir(get_mappings_dir(datadir, family))
 
 def init_families_directories(datadir, families):
   for family in families:
     init_family_directories(datadir, family)
 
+def get_run_dir(datadir, substmodel, run_name = None):
+  res =  os.path.join(datadir, "runs", substmodel)
+  exp.mkdir(res)
+  if (run_name != None):
+    res = os.path.join(res, run_name)
+  return res
 
 def postprocess_datadir(datadir):
   # phyldog species trees

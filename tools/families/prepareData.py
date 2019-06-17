@@ -38,27 +38,9 @@ if __name__ == '__main__':
   print (SEQDIR + " exists and contains "+str(len(listAlns))+" files, presumably all alignments.\n")
   
   #Data type
-  DATATYPE = input("What alphabet? DNA or RNA or CODON or PROTEIN?\t").upper()
-  if (not ( "DNA".startswith(DATATYPE) or "RNA".startswith(DATATYPE) or "CODON".startswith(DATATYPE) or "PROTEIN".startswith(DATATYPE) ) ): 
-    while (not ( "DNA".startswith(DATATYPE) or "RNA".startswith(DATATYPE) or "CODON".startswith(DATATYPE) or "PROTEIN".startswith(DATATYPE) ) ) :
-      print (DATATYPE + " is not an option I understand for an alphabet.\n")
-      DATATYPE = input("What alphabet? DNA or CODON or PROTEIN?\t").upper()
-  if ("DNA".startswith(DATATYPE) or "RNA".startswith(DATATYPE) ) :
-    if ("DNA".startswith(DATATYPE)):
-      print ("Alphabet: DNA\n")
-    else:
-      print ("Alphabet: RNA\n")  
-    print ("We are going to be setting a GTR+Gamma4 model, by default, in all gene family-specific option files.\n")
-    print ("This can be changed directly in the family-specific option files along with many other options.\n")
-  elif ("CODON".startswith(DATATYPE)):
-    print ("Alphabet: CODON\n")
-    print ("We are going to be setting a YN98 model with a universal code, by default, in all gene family-specific option files.\n")
-    print ("This can be changed directly in the family-specific option files along with many other options.\n")
-  else :
-    print ("Alphabet: PROTEIN\n")
-    print ("We are going to be setting a LG08+Gamma4 model, by default, in all gene family-specific option files.\n")
-    print ("This can be changed directly in the family-specific option files along with many other options.\n")
-  
+  IS_DNA = input("What subst model??\t")
+  SUBST_MODEL = input("What subst model??\t")
+  GAMMA_RATES = input("Gamme rate??")
   #File format
   DATAFORMAT = input("What alignment format? FASTA or MASE or PHYLIP or CLUSTAL or DCSE or NEXUS?\t").upper()
   while (not ( "FASTA".startswith(DATAFORMAT) or "MASE".startswith(DATAFORMAT) or "PHYLIP".startswith(DATAFORMAT) or "CLUSTAL".startswith(DATAFORMAT) or "DCSE".startswith(DATAFORMAT) or "NEXUS".startswith(DATAFORMAT) ) ) :
@@ -258,24 +240,15 @@ if __name__ == '__main__':
       fopt.write("init.gene.tree=bionj\n") #the program will build a starting user gene tree
       fopt.write("output.starting.gene.tree.file=$(RESULT)$(DATA).StartingTree\n")
       fopt.write("\n######## Second, model options ########\n")
-      if ("DNA".startswith(DATATYPE) ):
+      if (int(IS_DNA) != 0):
         fopt.write("alphabet=DNA\n")
-        fopt.write("model=GTR(a=1.17322, b=0.27717, c=0.279888, d=0.41831, e=0.344783, theta=0.523374, theta1=0.542411, theta2=0.499195)\n")
-        fopt.write("rate_distribution=Gamma(n=4,alpha=1)\n")
-      elif ("RNA".startswith(DATATYPE) ):
-        fopt.write("alphabet=RNA\n")
-        fopt.write("model=GTR( initFreqs=observed )\n")
-        fopt.write("rate_distribution=Gamma(n=4,alpha=1)\n")
-      elif ("CODON".startswith(DATATYPE) ):
-        fopt.write("alphabet=Codon(letter=DNA)\n")
-        fopt.write("input.sequence.remove_stop_codons = yes\n")
-        fopt.write("genetic_code=Standard\n")
-        fopt.write("model=YN98( kappa=1, omega=1.0, initFreqs=observed )\n")
-      elif ("PROTEIN".startswith(DATATYPE) ):
-        print("START WITH PROTEIN")
+      else:
         fopt.write("alphabet=Protein\n")
-        fopt.write("model=LG08+F(initFreqs=observed )\n")
-        fopt.write("rate_distribution=Gamma(n=4,alpha=1)\n")
+      fopt.write("model=" + SUBST_MODEL + "\n")
+      fopt.write("rate_distribution=Gamma(n=" + GAMMA_RATES + ",alpha=1)\n")
+      #fopt.write("model=GTR(a=1.17322, b=0.27717, c=0.279888, d=0.41831, e=0.344783, theta=0.523374, theta1=0.542411, theta2=0.499195)\n")
+      #fopt.write("rate_distribution=Gamma(n=4,alpha=1)\n")
+        #fopt.write("model=LG08+F(initFreqs=observed )\n")
       #fopt.write("optimization.ignore_parameter=dist_Gamma.alpha, GTR.a, GTR.b, GTR.c, GTR.d, GTR.e, GTR.theta, GTR.theta1, GTR.theta2\n")
       #fopt.write("\n######## Then, algorithm options ########\n")
       #fopt.write("heuristics.level=0\n")
@@ -286,12 +259,12 @@ if __name__ == '__main__':
       else:
         fopt.write("optimization.topology=no\n")       
       fopt.write("optimization.topology.algorithm_nni.method=fast\n")
-      fopt.write("optimization.tolerance=0.01\n")
+      fopt.write("optimization.tolerance=0.000001\n")
       fopt.write("optimization.method_DB.nstep=0\n")
       fopt.write("optimization.topology.numfirst=false\n")
-      fopt.write("optimization.topology.tolerance.before=100\n")
-      fopt.write("optimization.topology.tolerance.during=100\n")
-      fopt.write("optimization.max_number_f_eval=1000000\n")
+      fopt.write("optimization.topology.tolerance.before=10000\n")
+      fopt.write("optimization.topology.tolerance.during=10000\n")
+      fopt.write("optimization.max_number_f_eval=10000000\n")
       fopt.write("optimization.final=none\n")
       fopt.write("optimization.verbose=0\n")
       fopt.write("optimization.message_handler=none\n")

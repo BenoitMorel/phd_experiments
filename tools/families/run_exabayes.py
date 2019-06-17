@@ -36,7 +36,7 @@ def generate_config_file(config_file, num_gen, sampling_freq, runs, chains):
     writer.write("  convergenceCriterion none\n")
     writer.write("end;")
 
-def generate_exabayes_commands_file(datadir, generations, frequency, runs, chains, is_dna, cores, output_dir):
+def generate_exabayes_commands_file(datadir, generations, frequency, runs, chains, subst_model, cores, output_dir):
   results_dir = os.path.join(output_dir, "results")
   scheduler_commands_file = os.path.join(output_dir, "commands.txt")
   exp.mkdir(results_dir)
@@ -68,7 +68,7 @@ def generate_exabayes_commands_file(datadir, generations, frequency, runs, chain
       command.append("-f")
       command.append(phy_alignment)
       command.append("-m")
-      if (is_dna):
+      if (subst_model):
         command.append("DNA")
       else:
         command.append("PROT")
@@ -135,18 +135,18 @@ def extract_exabayes_results(exabayes_run_dir, families_dir, burnin):
   print("Finished extracting exabayes results " + str(time.time() - start) + "s")
   sys.stdout.flush()
   
-def get_exabayes_output_dir(datadir):
-  return os.path.join(datadir, "runs", "exabayes_run")
+def get_exabayes_output_dir(datadir, subst_model):
+  return fam.get_run_dir(datadir, subst_model, exabayes_run)
   
 
-def run_exabayes_on_families(datadir, generations, frequency, runs, chains, burnin, is_dna, cores, redo = False):
-  output_dir = get_exabayes_output_dir(datadir)
+def run_exabayes_on_families(datadir, generations, frequency, runs, chains, burnin, subst_model, cores, redo = False):
+  output_dir = get_exabayes_output_dir(datadir, subst_model)
   if (not redo):
     shutil.rmtree(output_dir, True)
   exp.mkdir(output_dir)
   parameters = os.path.join(output_dir, "parameters.txt")
-  open(parameters, "w").write("Parameters: " + datadir + " " + str(generations) + " " + str(frequency) + " " + str(runs) + " " + str(chains) + " " + str(burnin) + " " + str(int(is_dna)) + " " + str(cores) + " " + str(int(redo)))
-  scheduler_commands_file = generate_exabayes_commands_file(datadir, generations, frequency, runs, chains, is_dna, cores, output_dir)
+  open(parameters, "w").write("Parameters: " + datadir + " " + str(generations) + " " + str(frequency) + " " + str(runs) + " " + str(chains) + " " + str(burnin) + " " + str(int(subst_model)) + " " + str(cores) + " " + str(int(redo)))
+  scheduler_commands_file = generate_exabayes_commands_file(datadir, generations, frequency, runs, chains, subst_model, cores, output_dir)
   start = time.time()
   exp.run_with_scheduler(exp.exabayes_exec, scheduler_commands_file, "onecore", cores, output_dir, "logs.txt")   
   saved_metrics.save_metrics(datadir, "ExaBayes", (time.time() - start), "runtimes") 
@@ -154,18 +154,18 @@ def run_exabayes_on_families(datadir, generations, frequency, runs, chains, burn
   sys.stdout.flush()
   extract_exabayes_results(output_dir, os.path.join(datadir, "families"), burnin)
 
-def clean_exabayes(datadir):
+def clean_exabayes(datadir, subst_model):
   families_dir = os.path.join(datadir, "families")
   for family in os.listdir(families_dir):
     family_dir = os.path.join(families_dir, family)
     family_misc_dir = os.path.join(family_dir, "misc")
     treelist = os.path.join(family_misc_dir, family + ".treelist")
     os.remove(os.path.join(treelist))
-  shutil.rmtree(get_exabayes_output_dir(datadir))
+  shutil.rmtree(get_exabayes_output_dir(datadir, subst_model))
 
 if (__name__== "__main__"):
   if len(sys.argv) != 10:
-    print("Syntax error: python run_exabayes.py datadir generations frequency runs chains cores burnin is_dna redo.")
+    print("Syntax error: python run_exabayes.py datadir generations frequency runs chains cores burnin subst_model redo.")
     print(len(sys.argv))
     sys.exit(0)
 
@@ -175,10 +175,10 @@ if (__name__== "__main__"):
   runs = int(sys.argv[4])
   chains = int(sys.argv[5])
   burnin = int(sys.argv[6])
-  is_dna = int(sys.argv[7]) != 0
+  subst_model = sys.argv[7]
   cores = int(sys.argv[8])
   redo = int(sys.argv[9] != 0)
-  run_exabayes_on_families(datadir, generations, frequency, runs, chains, burnin, is_dna, cores, redo)
+  run_exabayes_on_families(datadir, generations, frequency, runs, chains, burnin, subst_model, cores, redo)
 
 
 #

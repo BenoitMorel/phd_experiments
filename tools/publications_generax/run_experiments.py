@@ -39,11 +39,28 @@ if (False):
 # experiments on DTL rates optimization
 if (True):
   datasets.append("jsimdtl_s19_f100_sites500_dna4_bl0.5_d0.1_l0.2_t0.1_p0.0")
-  datasets.append("jsim_s19_f100_sites500_dna4_bl0.5_d0.25_l0.25_t0.0_p0.0")
+  #datasets.append("jsimdtl_s19_f100_sites500_dna4_bl0.5_d0.1_l0.2_t0.1_p0.0")
+  #datasets.append("jsim_s19_f100_sites500_dna4_bl0.5_d0.25_l0.25_t0.0_p0.0")
   #common.generate_all_datasets(datasets)
   
-  run_filter = RunFilter(ALE=False)
-  common.run_all_reference_methods(datasets, run_filter = run_filter)
+  run_filter = RunFilter()
+  run_filter.disable_all()
+  #run_filter.raxml = True
+  #run_filter.pargenes = True
+  #run_filter.generax = True
+  #run_filter.treerecs = True
+  run_filter.phyldog = True
+  #run_filter.notung = True
+  #run_filter.ALE = True
+  #run_filter.EXA_chains = 1
+  #run_filter.EXA_runs = 1
+  #run_filter.EXA_frequencies = 10
+  #run_filter.EXA_generations = 10000
+  run_filter.analyze = True
+  #common.run_all_reference_methods(datasets, "JC", run_filter = run_filter)
+  #common.run_all_reference_methods(datasets, "JC+G", run_filter = run_filter)
+  common.run_all_reference_methods(datasets, "GTR", run_filter = run_filter)
+  #common.run_all_reference_methods(datasets, "GTR+G", run_filter = run_filter)
 
 if (False):
   fixed_point_dl = "jsim_s19_f100_sites500_dna4_bl0.5_d0.25_l0.25_t0.0"

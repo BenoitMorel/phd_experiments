@@ -86,21 +86,19 @@ def generate_dataset(dataset):
     print("Unknown simulator for dataset " + dataset)
     sys.exit(1)
 
-def run_reference_methods(dataset, cores = 40, run_filter = RunFilter()):
+def run_reference_methods(dataset, subst_model, cores = 40, run_filter = RunFilter()):
   print("*************************************")
   print("Run reference methods for " + dataset)
   print("*************************************")
   dataset_dir = os.path.join("../BenoitDatasets/families", dataset)
-  is_dna = (not dataset in protein_datasets)
   starting_trees = 10
   bs_trees = 100
   save_sdtout = sys.stdout
-  print("IS DNA " + str(is_dna))
-  redirected_file = os.path.join(dataset_dir, "logs_run_all.txt")
+  redirected_file = os.path.join(dataset_dir, "logs_run_all." + subst_model + ".txt")
   print("Redirected logs to " + redirected_file)
   sys.stdout.flush()
   sys.stdout = open(redirected_file, "w")
-  run_all.run_reference_methods(dataset_dir, is_dna, starting_trees, bs_trees, cores, run_filter)
+  run_all.run_reference_methods(dataset_dir, subst_model, starting_trees, bs_trees, cores, run_filter)
   sys.stdout = save_sdtout
   print("End of run_all")
   sys.stdout.flush()
@@ -125,9 +123,9 @@ def run_all_ALE(datasets, is_dna, cores = 40):
     dataset_dir = os.path.join("../BenoitDatasets/families", dataset)
     run_ALE.run_exabayes_and_ALE(dataset_dir, is_dna, cores)
 
-def run_all_reference_methods(datasets, cores = 40, run_filter = RunFilter()):
+def run_all_reference_methods(datasets, subst_model, cores = 40, run_filter = RunFilter()):
   for dataset in datasets:
-    run_reference_methods(dataset, cores, run_filter)
+    run_reference_methods(dataset, subst_model, cores, run_filter)
 
 def run_all_generax_weighted(datasets, cores, weight):
   for dataset in datasets:

@@ -15,7 +15,7 @@ if (__name__== "__main__"):
   max_args_number = 2
   if len(sys.argv) != max_args_number:
     print("Syntax error: python run_ALE.py datadir is_dna cores.")
-    sys.exit(0)
+    sys.exit(1)
 
   datadir = sys.argv[1]
   run_random(datadir)

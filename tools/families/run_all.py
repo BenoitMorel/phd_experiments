@@ -8,7 +8,7 @@ import run_ALE
 import fam
 import run_generax
 import eval_generax_likelihood
-import analyze_dataset
+import rf_cells
 
 class RunFilter():
   
@@ -38,22 +38,22 @@ class RunFilter():
     self.eval_joint_ll = False
     self.analyze = False
 
-def run_reference_methods(dataset_dir, is_dna, starting_trees, bs_trees, cores, run_filter = RunFilter()):
+def run_reference_methods(dataset_dir, subst_model, starting_trees, bs_trees, cores, run_filter = RunFilter()):
   if (run_filter.raxml):
     print("Run pargenes light...")
     sys.stdout.flush()
-    raxml.run_pargenes_and_extract_trees(dataset_dir, is_dna, 1, 0, cores, "RAxML-light", False)
+    raxml.run_pargenes_and_extract_trees(dataset_dir, subst_model, 1, 0, cores, "RAxML-light", False)
     sys.stdout.flush()
   if (run_filter.pargenes):
     print("Run pargenes and extract trees...")
     sys.stdout.flush()
-    raxml.run_pargenes_and_extract_trees(dataset_dir, is_dna, starting_trees, bs_trees, cores)
+    raxml.run_pargenes_and_extract_trees(dataset_dir, subst_model, starting_trees, bs_trees, cores)
     sys.stdout.flush()
   if (run_filter.treerecs):
     print("Run treerecs...")
     sys.stdout.flush()
     try:
-      treerecs.run_treerecs_on_families(dataset_dir, is_dna, cores)
+      treerecs.run_treerecs_on_families(dataset_dir, subst_model, cores)
     except Exception as exc:
       print("Failed running Treerecs")
       print(exc)
@@ -62,7 +62,7 @@ def run_reference_methods(dataset_dir, is_dna, starting_trees, bs_trees, cores, 
     print("Run phyldog...")
     sys.stdout.flush()
     try:
-      phyldog.run_phyldog_on_families(dataset_dir, is_dna, cores)
+      phyldog.run_phyldog_on_families(dataset_dir, subst_model, cores)
     except Exception as exc:
       print("Failed running Phyldog")
       print(exc)
@@ -71,7 +71,7 @@ def run_reference_methods(dataset_dir, is_dna, starting_trees, bs_trees, cores, 
     sys.stdout.flush()
     threshold = 80
     try:
-      notung.run_notung_on_families(dataset_dir, threshold, cores)
+      notung.run_notung_on_families(dataset_dir, subst_model,  threshold, cores)
     except Exception as exc:
       print("Failed running Notung")
       print(exc)
@@ -86,7 +86,7 @@ def run_reference_methods(dataset_dir, is_dna, starting_trees, bs_trees, cores, 
     print("Run Generax")
     sys.stdout.flush()
     try:
-      run_generax.run_generax_on_families(dataset_dir, is_dna, cores)
+      run_generax.run_generax_on_families(dataset_dir, subst_model, cores)
     except Exception as exc:
       print("Failed running GeneRax")
       print(exc)
@@ -95,7 +95,7 @@ def run_reference_methods(dataset_dir, is_dna, starting_trees, bs_trees, cores, 
     print("Run ALE...")
     sys.stdout.flush()
     try:
-      run_ALE.run_exabayes_and_ALE(dataset_dir, is_dna, cores, chains = run_filter.EXA_chains, runs = run_filter.EXA_runs, frequency = run_filter.EXA_frequencies, generations = run_filter.EXA_generations)
+      run_ALE.run_exabayes_and_ALE(dataset_dir, subst_model, cores, chains = run_filter.EXA_chains, runs = run_filter.EXA_runs, frequency = run_filter.EXA_frequencies, generations = run_filter.EXA_generations)
     except Exception as exc:
       print("Failed running ALE")
       print(exc)
@@ -103,8 +103,8 @@ def run_reference_methods(dataset_dir, is_dna, starting_trees, bs_trees, cores, 
   if (run_filter.eval_joint_ll):
     print("Evaluating joint likelihoods...")
     try:
-      eval_generax_likelihood.eval_and_save_likelihood(dataset_dir, "all", False, is_dna, cores)  
-      eval_generax_likelihood.eval_and_save_likelihood(dataset_dir, "all", True, is_dna, cores)  
+      eval_generax_likelihood.eval_and_save_likelihood(dataset_dir, "all", False, subst_model, cores)  
+      eval_generax_likelihood.eval_and_save_likelihood(dataset_dir, "all", True, subst_model, cores)  
     except Exception as exc:
       print("Failed evaluating joint likelihoods")
       print(exc)
@@ -113,18 +113,18 @@ def run_reference_methods(dataset_dir, is_dna, starting_trees, bs_trees, cores, 
     print("Run analyze...")
     sys.stdout.flush()
     try:
-      analyze_dataset.analyze(dataset_dir)
+      rf_cells.analyze(dataset_dir)
     except Exception as exc:
       print("Failed running analyze")
       print(exc)
 
 if __name__ == "__main__":
   if (len(sys.argv) != 6):
-    print("syntax: python run_raxml_all.py dataset_dir is_dna starting_trees bs_trees cores")
+    print("syntax: python run_raxml_all.py dataset_dir subst_model starting_trees bs_trees cores")
     sys.exit(1)
   dataset_dir = sys.argv[1]
-  is_dna = (int(sys.argv[2]) != 0)
+  subst_model = sys.argv[2]
   starting_trees = sys.argv[3]
   bs_trees = sys.argv[4]
   cores = int(sys.argv[5])
-  run_reference_methods(dataset_dir, is_dna, starting_trees, bs_trees, cores)
+  run_reference_methods(dataset_dir, subst_model, starting_trees, bs_trees, cores)

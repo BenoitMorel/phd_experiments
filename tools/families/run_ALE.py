@@ -13,7 +13,7 @@ import experiments as exp
 import msa_converter
 import cut_node_names 
 import re
-import  run_exabayes
+import  run_mrbayes
 
 # ALE
 ALE_SAMPLES = 1
@@ -141,7 +141,7 @@ def run_ALE_on_families(datadir, with_transfers, cores):
   finally:
     cwd = os.getcwd()
 
-def run_exabayes_and_ALE(datadir, is_dna, cores, runs = NUM_RUNS, chains = NUM_CHAINS, generations = EXA_GEN, frequency = EXA_FREQ, burnin = PER_RUN_BURN_IN, redo_exabayes = False):
+def run_mrbayes_and_ALE(datadir, subst_model, cores, runs = NUM_RUNS, chains = NUM_CHAINS, generations = EXA_GEN, frequency = EXA_FREQ, burnin = PER_RUN_BURN_IN, redo_mrbayes = False):
   if (runs < 0):
     runs = NUM_RUNS
   if (chains < 0):
@@ -156,45 +156,45 @@ def run_exabayes_and_ALE(datadir, is_dna, cores, runs = NUM_RUNS, chains = NUM_C
   try:
     run_dir = os.path.join(datadir, "runs")
     parameters = os.path.join(run_dir, "parameters.txt")
-    open(parameters, "w").write(datadir + " " + str(int(is_dna)) + " " + str(cores) + " " + str(runs) + " " + str(chains) + " " + str(generations) + " " + str(frequency) + " " + str(burnin) + " " + str(int(redo_exabayes)))
+    open(parameters, "w").write(datadir + " " + str(int(subst_model)) + " " + str(cores) + " " + str(runs) + " " + str(chains) + " " + str(generations) + " " + str(frequency) + " " + str(burnin) + " " + str(int(redo_mrbayes)))
         
     datadir = os.path.abspath(datadir)
     os.chdir(run_dir)
-    if (run_exabayes):
-      run_exabayes.run_exabayes_on_families(datadir, generations, frequency, runs, chains, burnin, is_dna, cores, redo_exabayes)
+    if (run_mrbayes):
+      run_mrbayes.run_mrbayes_on_families(datadir, generations, frequency, runs, chains, burnin, subst_model, cores, redo_mrbayes)
     run_ALE_on_families(datadir, True, cores)
     run_ALE_on_families(datadir, False, cores)
-    run_exabayes.clean_exabayes(datadir)
-    if (not redo_exabayes):
+    run_mrbayes.clean_mrbayes(datadir, subst_model)
+    if (not redo_mrbayes):
       clean_ALE(datadir)
   finally:
     os.chdir(cwd)
 
-def restart_exabayes_and_ALE(datadir, cores):
+def restart_mrbayes_and_ALE(datadir, cores):
   run_dir = os.path.join(datadir, "runs")
   parameters_file = os.path.join(run_dir, "parameters.txt")
   p = open(parameters_file).readlines()[0].split()
-  print("Restarting exabayes and ALE with the parameters: " + " ".join(p))
+  print("Restarting mrbayes and ALE with the parameters: " + " ".join(p))
   datadir = p[0]
-  is_dna = int(p[1])
+  subst_model = int(p[1])
   runs = int(p[3])
   chains =  int(p[4])
   generations = int(p[5])
   frequency = int(p[6])
   burnin = int(p[7])
-  redo_exabayes = True
-  run_exabayes_and_ALE(datadir, is_dna, cores, runs, chains, generations, frequency, burnin, redo_exabayes)
+  redo_mrbayes = True
+  run_mrbayes_and_ALE(datadir, subst_model, cores, runs, chains, generations, frequency, burnin, redo_mrbayes)
 
 if (__name__== "__main__"):
   max_args_number = 4
   if len(sys.argv) < max_args_number:
-    print("Syntax error: python run_ALE.py datadir is_dna cores.")
+    print("Syntax error: python run_ALE.py datadir subst_model cores.")
     sys.exit(0)
 
   datadir = sys.argv[1]
-  is_dna = int(sys.argv[2]) != 0
+  subst_model = sys.argv[2]
   cores = int(sys.argv[3])
-  redo_exabayes_and_ALE(datadir, is_dna, cores)
+  redo_mrbayes_and_ALE(datadir, subst_model, cores)
 
 #
 
