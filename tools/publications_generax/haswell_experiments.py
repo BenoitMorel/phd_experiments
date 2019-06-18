@@ -9,7 +9,7 @@ from run_all import RunFilter
 
 
 
-if (True):
+if (False):
   subst_models = ["LG", "LG+G"]
   datasets = ["cyano_simulated"]
   cores = 512
@@ -25,7 +25,7 @@ if (True):
 
 
 
-if (False):
+if (True):
   subst_models = ["GTR+G"]
   datasets = []
   cores = 64
@@ -41,7 +41,7 @@ if (False):
   common.add_dataset(datasets, fixed_point_dl, ["sites100", "sites500", "sites750"])
   common.add_dataset(datasets, fixed_point_dl, ["bl0.01", "bl0.05", "bl0.1", "bl0.2", "bl1.0", "bl2.0"])
   common.add_dataset(datasets, fixed_point_dl, ["s5", "s10", "s27", "s41"])
-  
+ 
   common.add_dataset(datasets, fixed_point_dtl, ["p0.1", "p0.2", "p0.3", "p0.5"])
   common.add_dataset(datasets, fixed_point_dtl, ["s5", "s10", "s12", "s16", "s27", "s41"])
   common.add_dataset(datasets, fixed_point_dtl, ["sites100", "sites500", "sites750"])

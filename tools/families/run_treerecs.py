@@ -13,16 +13,13 @@ def generate_scheduler_commands_file(datadir, subst_model, cores, output_dir):
   results_dir = os.path.join(output_dir, "results")
   scheduler_commands_file = os.path.join(output_dir, "commands.txt")
   speciesTree = fam.get_species_tree(datadir)
-  model = "GTR"
-  if (not subst_model):
-    model = "LG"
   with open(scheduler_commands_file, "w") as writer:
     for family in fam.get_families_list(datadir):
       family_dir = fam.get_family_path(datadir, family)
       treerecs_dir = fam.get_family_misc_dir(datadir, family)
       alignment_descriptor = os.path.join(treerecs_dir, "alignment_descriptor." + subst_model + ".txt")
       with open(alignment_descriptor, "w") as ali_writer:
-        ali_writer.write(model + "\n" + os.path.abspath(os.path.join(family_dir, "alignment.msa")))
+        ali_writer.write(subst_model + "\n" + os.path.abspath(os.path.join(family_dir, "alignment.msa")))
       treerecs_output = os.path.join(treerecs_dir, "treerecs_output." + subst_model)
       mapping_file = fam.get_treerecs_mappings(datadir, family)
       command = []

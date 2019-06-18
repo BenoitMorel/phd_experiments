@@ -33,12 +33,10 @@ def get_mrbayes_lset_line(subst_model):
   line = "\t"
   rates = get_gamma_rates(subst_model)
   line += "lset "
-  if (model == "nst=GTR"):
-    line += "6"
+  if (model == "GTR"):
+    line += "nst=6"
   elif (model == "JC"):
     line += "nst=2"
-  else:
-    assert(False)
   if (rates == 1):
     line += " rates=equal"
   else:
