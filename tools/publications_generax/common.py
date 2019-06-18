@@ -191,7 +191,7 @@ def get_runtimes(dataset):
 
 def get_results(dataset):
   #try:
-    analyse_script = os.path.join(exp.tools_root, "families", "analyze_dataset.py")
+    analyse_script = exp.rf_cells_tool
     dataset_path = os.path.join(exp.benoit_datasets_root, "families", dataset)
     cmd = []
     cmd.append("python")
@@ -200,9 +200,6 @@ def get_results(dataset):
     print(" ".join(cmd))
     logs = subprocess.check_output(cmd).decode("utf-8")
     return get_rf_from_logs(logs) 
-  #except:
-  #  print("Failed to get RF distances from dataset " + dataset)
-  #  return None
 
 def run_all_analyzes(datasets):
   for dataset in datasets:
