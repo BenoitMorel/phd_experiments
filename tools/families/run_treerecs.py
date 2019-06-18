@@ -68,7 +68,6 @@ def extract_treerecs_trees(datadir, subst_model):
 
 def run_treerecs_on_families(datadir, subst_model, cores):
   output_dir = fam.get_run_dir(datadir, subst_model, "treerecs_run")
-  output_dir = os.path.join(datadir, "runs", "treerecs_run")
   shutil.rmtree(output_dir, True)
   os.makedirs(output_dir)
   scheduler_commands_file = generate_scheduler_commands_file(datadir, subst_model, cores, output_dir)
