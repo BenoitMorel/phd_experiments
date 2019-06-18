@@ -173,7 +173,7 @@ def run_mrbayes_and_ALE(datadir, subst_model, cores, runs = NUM_RUNS, chains = N
       run_mrbayes.run_mrbayes_on_families(datadir, generations, frequency, runs, chains, burnin, subst_model, cores)
     run_ALE_on_families(datadir, subst_model, True, cores)
     run_ALE_on_families(datadir, subst_model, False, cores)
-    #run_mrbayes.remove_mrbayes_run(datadir, subst_model)
+    run_mrbayes.remove_mrbayes_run(datadir, subst_model)
     if (not redo_mrbayes):
       clean_ALE(datadir, subst_model)
   finally:
