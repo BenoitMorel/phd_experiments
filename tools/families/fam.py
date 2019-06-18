@@ -35,6 +35,13 @@ def get_misc_dir(datadir):
 def get_alignments_dir(datadir):
   return os.path.join(datadir, "alignments")
 
+def get_run_dir(datadir, substmodel, run_name = None):
+  res =  os.path.join(datadir, "runs", substmodel)
+  exp.mkdir(res)
+  if (run_name != None):
+    res = os.path.join(res, run_name)
+  return res
+
 ######################
 # global files
 #####################
@@ -305,6 +312,7 @@ def init_top_directories(datadir):
   mkdir(get_families_dir(datadir))
   mkdir(get_alignments_dir(datadir))
   mkdir(get_misc_dir(datadir))
+  mkdir(get_run_dir(datadir))
 
 def init_family_directories(datadir, family):
   mkdir(get_gene_tree_dir(datadir, family))
@@ -315,12 +323,6 @@ def init_families_directories(datadir, families):
   for family in families:
     init_family_directories(datadir, family)
 
-def get_run_dir(datadir, substmodel, run_name = None):
-  res =  os.path.join(datadir, "runs", substmodel)
-  exp.mkdir(res)
-  if (run_name != None):
-    res = os.path.join(res, run_name)
-  return res
 
 def postprocess_datadir(datadir):
   # phyldog species trees
