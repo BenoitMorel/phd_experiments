@@ -7,7 +7,7 @@ sys.path.insert(0, os.path.join("tools", "families"))
 from run_all import RunFilter
 
 datasets = []
-cores = 40
+cores = 4
 
 
 # EMPIRICAL EXPERIMENTS
@@ -44,7 +44,7 @@ if (True):
   #common.generate_all_datasets(datasets)
   
   run_filter = RunFilter()
-  run_filter.disable_all()
+  #run_filter.disable_all()
   #run_filter.raxml = True
   #run_filter.pargenes = True
   #run_filter.generax = True
@@ -53,12 +53,12 @@ if (True):
   #run_filter.notung = True
   run_filter.ALE = True
   run_filter.EXA_chains = 1
-  run_filter.EXA_runs = 4 
+  run_filter.EXA_runs = 1
   run_filter.EXA_frequencies = 100
   run_filter.EXA_generations = 1000
   run_filter.EXA_burnin = 0
   run_filter.analyze = True
-  common.run_all_reference_methods(datasets, "JC", run_filter = run_filter)
+  common.run_all_reference_methods(datasets, "JC", cores = 8, run_filter = run_filter)
   #common.run_all_reference_methods(datasets, "JC+G", run_filter = run_filter)
   #common.run_all_reference_methods(datasets, "GTR", run_filter = run_filter)
   #common.run_all_reference_methods(datasets, "GTR+G", run_filter = run_filter)

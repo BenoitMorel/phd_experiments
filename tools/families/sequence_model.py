@@ -29,7 +29,7 @@ def get_mrbayes_preset_line(subst_model):
 def get_mrbayes_lset_line(subst_model):
   model = get_model(subst_model)
   line = "\t"
-  rates = str(get_gamma_rates(subst_model))
+  rates = get_gamma_rates(subst_model)
   line += "lset nst="
   if (model == "GTR" or model == "LG"):
     line += "6"
@@ -37,7 +37,11 @@ def get_mrbayes_lset_line(subst_model):
     line += "2"
   else:
     assert(False)
-  line += " rates=invgamma ngammacat=" + "4" + ";\n"
+  if (rates == 1):
+    line += " rates=equal"
+  else:
+    line += " rates=gamma ngammacat=" + str(rates)
+  line += ";\n"
   return line
 
 def extract_raxml_model(raxml_model_file):

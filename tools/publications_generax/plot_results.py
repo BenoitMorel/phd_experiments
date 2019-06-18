@@ -111,9 +111,9 @@ def plot_scaling():
     scaling_generax.plot_scaling_metric(datadir)
 
 def plot_boxplots():
-  methods = ["raxml", "treerecs", "generax-dtl-random"]
-  models = ["JC", "GTR+G"]
-  datasets = ["jsimdtl_s19_f100_sites500_dna4_bl0.5_d0.1_l0.2_t0.1_p0.0"]
+  methods = ["raxml", "treerecs", "notung80", "phyldog", "ale-dtl"]
+  models = ["GTR+G"]
+  datasets = ["cyano_simulated"]
   for model in models:
     print("model " + model)
     runs = []

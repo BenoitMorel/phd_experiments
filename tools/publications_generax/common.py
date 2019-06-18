@@ -326,11 +326,12 @@ class Plotter(object):
   def __call__(self, parameter):
     plot(self.datasets_values_dico, parameter, self.fixed_parameters, self.methods, self.x_labels,  self.y_label, self.prefix + "_" + parameter + ".svg")
 
-def submit_single_experiment_haswell(dataset, do_generate, cores, run_filter = RunFilter()):
+def submit_single_experiment_haswell(dataset, subst_model, do_generate, cores, run_filter = RunFilter()):
   command = []
   command.append("python")
   command.append(os.path.join(exp.tools_root, "publications_generax", "single_experiment.py"))
   command.append(dataset)
+  command.append(subst_model)
   command.append(str(do_generate))
   command.append(str(cores))
   results_dir = os.path.join("single_experiments", dataset)
@@ -343,8 +344,9 @@ def submit_single_experiment_haswell(dataset, do_generate, cores, run_filter = R
   submit_path = os.path.join(results_dir, "sub_generax.sh")
   exp.submit(submit_path, " ".join(command), cores, "haswell") 
 
-def submit_multiple_experiments_haswell(datasets, do_generate, cores, run_filter = RunFilter()):
+def submit_multiple_experiments_haswell(datasets, subst_models, do_generate, cores, run_filter = RunFilter()):
   for dataset in datasets:
-    submit_single_experiment_haswell(dataset, do_generate, cores, run_filter)
+    for subst_model in subst_models:
+      submit_single_experiment_haswell(dataset, subst_model, do_generate, cores, run_filter)
   
 

@@ -35,9 +35,10 @@ def get_misc_dir(datadir):
 def get_alignments_dir(datadir):
   return os.path.join(datadir, "alignments")
 
-def get_run_dir(datadir, substmodel, run_name = None):
-  res =  os.path.join(datadir, "runs", substmodel)
-  exp.mkdir(res)
+def get_run_dir(datadir, subst_model = None, run_name = None):
+  res =  os.path.join(datadir, "runs")
+  if (subst_model != None):
+    res = os.path.join(res, subst_model)
   if (run_name != None):
     res = os.path.join(res, run_name)
   return res
