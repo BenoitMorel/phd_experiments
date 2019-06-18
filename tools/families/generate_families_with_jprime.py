@@ -76,6 +76,8 @@ def generate_seqgen_sequence(families, sites, model, output, seed):
     command.append(jprime_tree)
     command.append("-a")
     command.append("1.0")
+    command.append("-i")
+    command.append("0.1")
     command.append("-z")
     command.append(str(int(i) + int(seed)))
     command.extend(seqgen_model_cmd_samples[i % len(seqgen_model_cmd_samples)])

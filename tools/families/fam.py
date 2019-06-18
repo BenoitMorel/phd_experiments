@@ -119,7 +119,7 @@ def get_notung_tree(datadir, subst_model, family, threshold):
   return build_gene_tree_path(datadir, subst_model, family,  "notung" + str(threshold))
 
 def get_ale_tree(datadir, subst_model, family, method):
-  return os.path.join(get_gene_tree_dir(datadir, family), method + "GeneTree.newick")
+  return build_gene_tree_path(datadir, subst_model, family, method)
 
 def get_mappings(datadir, family):
   return os.path.join(get_mappings_dir(datadir, family), "mapping.link")

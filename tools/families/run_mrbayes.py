@@ -19,14 +19,15 @@ def get_mrbayes_output_dir(datadir, subst_model):
   return fam.get_run_dir(datadir, subst_model, "mrbayes_run")
       
 
-def generate_config_file(mrbayes_config, generations, frequency, runs, chains, nexus_alignment, subst_model, output_prefix):
+def generate_config_file(mrbayes_config, generations, frequency, chains, nexus_alignment, subst_model, seed, output_prefix):
   with open(mrbayes_config, "w") as writer:
     writer.write("\tbegin mrbayes;\n")
+    writer.write("\tset seed=" + str(seed) + ";\n")
     writer.write("\tset autoclose=yes nowarn=yes;\n")
     writer.write("\texecute " + nexus_alignment + ";\n")
     writer.write(sequence_model.get_mrbayes_preset_line(subst_model))
     writer.write(sequence_model.get_mrbayes_lset_line(subst_model))
-    writer.write("\tmcmc nruns=" + str(runs) + " ngen=" + str(generations) + " samplefreq=" + str(frequency) + " file=" + output_prefix + ";\n")
+    writer.write("\tmcmc nruns=1" + " nchains=" + str(chains) + " ngen=" + str(generations) + " samplefreq=" + str(frequency) + " file=" + output_prefix + ";\n")
     writer.write("end;")
 
 def get_mapping_dictionnary(mapping_file):
@@ -50,39 +51,96 @@ def generate_mrbayes_commands_file(datadir, generations, frequency, runs, chains
       family_dir = fam.get_family_path(datadir, family)
       mrbayes_family_dir = os.path.join(results_dir, family)
       exp.mkdir(mrbayes_family_dir)
-      mrbayes_config = os.path.join(mrbayes_family_dir, "mrbayes_config.nex")
       nexus_alignment = os.path.join(family_dir, "species_prefixed_alignment.nex")
       fasta_alignment = os.path.join(family_dir, "alignment.msa")
       mapping_dictionnary = get_mapping_dictionnary(fam.get_mappings(datadir, family))
       msa_converter.msa_convert(fasta_alignment, nexus_alignment, "fasta", "nexus", mapping_dictionnary)
-      output_prefix = os.path.join(mrbayes_family_dir, family)
-      generate_config_file(mrbayes_config, generations, frequency, runs, chains, nexus_alignment, subst_model, output_prefix)
-      command = []
-      command.append(family)
-      command.append("1")
-      command.append("1")
-      command.append(mrbayes_config)
-      writer.write(" ".join(command) + "\n")
+      for run in range(0, runs):
+        mrbayes_config = os.path.join(mrbayes_family_dir, "mrbayes_config_run" + str(run) + "." + subst_model + ".nex")
+        output_prefix = os.path.join(mrbayes_family_dir, family) + str(run)
+        generate_config_file(mrbayes_config, generations, frequency, chains, nexus_alignment, subst_model, run + 42, output_prefix)
+        command = []
+        command.append(family + "__" + str(run))
+        command.append("1")
+        command.append("1")
+        command.append(mrbayes_config)
+        writer.write(" ".join(command) + "\n")
   return scheduler_commands_file
-  
-def extract_mrbayes_results(datadir, burnin):
+
+def get_treelist(datadir, subst_model, family):
+  return os.path.join(get_mrbayes_output_dir(datadir, subst_model), "results", family, family + ".treelist")
+
+def remove_mrbayes_run(datadir, subst_model):
+  output_dir = os.path.abspath(get_mrbayes_output_dir(datadir, subst_model))
+  shutil.rmtree(output_dir, True)
+
+def extract_mrbayes_family(params):
+  datadir, subst_model, family, mrbayes_dir, burnin = params
+  family_mist_dir = fam.get_family_misc_dir(datadir, family) 
+  output = get_treelist(datadir, subst_model, family)
+  with open(output, "w") as writer:
+    d = os.path.join(mrbayes_dir, "results", family)
+    for topologies in os.listdir(d):
+      if (not topologies.endswith(".t")):
+        continue
+      topologies = os.path.join(d, topologies)
+      lines = open(topologies).readlines()
+      is_translation = False
+      translator = {}
+      tree_index = 0
+      for line in lines:
+        if ("tree gen" in line):
+          tree_index += 1
+          if (tree_index <= burnin):
+            continue
+          is_translation = False
+          tree = line.split(" ")[-1]
+          writer.write(rename_leaves.rename_leaves(tree, translator) + "\n")
+          continue
+        if ("translate" in line):
+          is_translation = True
+          continue
+        if (is_translation):
+          split = line.split(" ")
+          left = split[-2]
+          right = split[-1][:-2]
+          translator[left] = right
+
+def extract_mrbayes_results(datadir, subst_model, burnin):
   output_dir = get_mrbayes_output_dir(datadir, subst_model)
-  print("TODO IMPLEMENT")
+  start = time.time()
+  print("Extracting mrbayes results...")
+  params = []
+  for family in fam.get_families_list(datadir):
+    params.append((datadir, subst_model, family, output_dir, burnin))
+  with concurrent.futures.ProcessPoolExecutor() as executor:
+    executor.map(extract_mrbayes_family, params)
+
+  print("Finished extracting mrbayes results " + str(time.time() - start) + "s")
+  sys.stdout.flush()
 
 def run_mrbayes_on_families(datadir, generations, frequency, runs, chains, burnin, subst_model, cores):
-  output_dir = get_mrbayes_output_dir(datadir, subst_model)
-  shutil.rmtree(output_dir, True)
-  exp.mkdir(output_dir)
-  parameters = os.path.join(output_dir, "parameters.txt")
-  open(parameters, "w").write("Parameters: " + datadir + " " + str(generations) + " " + str(frequency) + " " + str(runs) + " " + str(chains) + " " + str(burnin) + " " + str(subst_model) + " " + str(cores))
-  scheduler_commands_file = generate_mrbayes_commands_file(datadir, generations, frequency, runs, chains, subst_model, cores, output_dir)
-  start = time.time()
-  exp.run_with_scheduler(exp.mrbayes_exec, scheduler_commands_file, "onecore", cores, output_dir, "logs.txt")   
-  saved_metrics.save_metrics(datadir, "mrbayes", (time.time() - start), "runtimes") 
-  print("Finished running mrbayes after " + str(time.time() - start) + "s")
-  sys.stdout.flush()
-  extract_mrbayes_results(datadir, burnin)
-  print("TODO SET CHAINS")
+  output_dir = os.path.abspath(get_mrbayes_output_dir(datadir, subst_model))
+  datadir = os.path.abspath(datadir)
+  cwd = os.getcwd()
+  try:
+    shutil.rmtree(output_dir, True)
+    exp.mkdir(output_dir)
+    print("chdir " + output_dir)
+    os.chdir(output_dir)
+    output_dir = os.path.relpath(output_dir)
+    datadir = os.path.relpath(datadir)
+    parameters = os.path.join(output_dir, "parameters.txt")
+    open(parameters, "w").write("Parameters: " + datadir + " " + str(generations) + " " + str(frequency) + " " + str(runs) + " " + str(chains) + " " + str(burnin) + " " + str(subst_model) + " " + str(cores))
+    scheduler_commands_file = generate_mrbayes_commands_file(datadir, generations, frequency, runs, chains, subst_model, cores, output_dir)
+    start = time.time()
+    exp.run_with_scheduler(exp.mrbayes_exec, scheduler_commands_file, "onecore", cores, output_dir, "logs.txt")   
+    saved_metrics.save_metrics(datadir, "mrbayes", (time.time() - start), "runtimes") 
+    print("Finished running mrbayes after " + str(time.time() - start) + "s")
+    sys.stdout.flush()
+    extract_mrbayes_results(datadir, subst_model, burnin)
+  finally:
+    os.chdir(cwd)
 
 if (__name__== "__main__"):
   if len(sys.argv) != 9:
