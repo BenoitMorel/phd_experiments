@@ -30,7 +30,7 @@ def run_phyldog_on_families(datadir, subst_model, cores):
   generate_options(datadir, subst_model)
   start = time.time()
   run_phyldog(datadir, subst_model, cores)
-  saved_metrics.save_metrics(datadir, "Phyldog", (time.time() - start), "runtimes") 
+  saved_metrics.save_metrics(datadir, fam.get_run_name("Phyldog", subst_model), (time.time() - start), "runtimes") 
   extract_phyldog(datadir, subst_model)
   clean_phyldog(datadir, subst_model)
 

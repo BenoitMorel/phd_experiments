@@ -9,7 +9,7 @@ from run_all import RunFilter
 
 
 
-if (False):
+if (True):
   subst_models = ["LG", "LG+G"]
   datasets = ["cyano_simulated"]
   cores = 512
@@ -17,19 +17,25 @@ if (False):
   run_filter = RunFilter()
   run_filter.EXA_runs = 4
   run_filter.EXA_chains = 2
-  run_filter.EXA_generations = 500000
-  run_filter.EXA_frequencies = 500
+  run_filter.EXA_generations = 1000000
+  run_filter.EXA_frequencies = 1000
   run_filter.EXA_burnin = 100
-  common.submit_multiple_experiments_haswell(datasets, subst_models, do_generate, cores)
+  common.submit_multiple_experiments_haswell(datasets, subst_models, do_generate, cores, run_filter)
 
 
 
 
-if (True):
+if (False):
   subst_models = ["GTR+G"]
   datasets = []
   cores = 64
   do_generate = 1
+  run_filter = RunFilter()
+  run_filter.EXA_runs = 4
+  run_filter.EXA_chains = 2
+  run_filter.EXA_generations = 1000000
+  run_filter.EXA_frequencies = 1000
+  run_filter.EXA_burnin = 100
   fixed_point_dl = "jsim_s19_f100_sites250_dna4_bl0.5_d0.25_l0.25_t0.0_p0.0"
   fixed_point_dtl = "jsimdtl_s19_f100_sites250_dna4_bl0.5_d0.1_l0.2_t0.1_p0.0"
   datasets.append(fixed_point_dl)
@@ -49,7 +55,7 @@ if (True):
   common.add_dataset(datasets, fixed_point_dtl, ["d0.01_l0.02_t0.01", "d0.05_l0.1_t0.05", "d0.15_l0.3_t0.15", "d0.2_l0.4_t0.2"])
   common.add_dataset(datasets, fixed_point_dtl, ["d0.01_l0.2_t0.19", "d0.05_l0.2_t0.15", "d0.15_l0.2_t0.05", "d0.19_l0.2_t0.01"])
   
-  common.submit_multiple_experiments_haswell(datasets, subst_models, do_generate, cores)
+  common.submit_multiple_experiments_haswell(datasets, subst_models, do_generate, cores, run_filter)
   
 
 

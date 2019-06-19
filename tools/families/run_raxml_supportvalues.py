@@ -100,7 +100,7 @@ def run_pargenes_and_extract_trees(datadir, subst_model, starting_trees, bs_tree
   shutil.rmtree(pargenes_dir, True)
   start = time.time()
   run_pargenes(datadir, pargenes_dir, subst_model, starting_trees, bs_trees, cores)
-  saved_metrics.save_metrics(datadir, saved_metrics_key, (time.time() - start), "runtimes") 
+  saved_metrics.save_metrics(datadir, fam.get_run_name(saved_metrics_key, subst_model), (time.time() - start), "runtimes") 
   if (extract_trees):
     export_pargenes_trees(pargenes_dir, subst_model, datadir)
 

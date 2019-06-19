@@ -1,3 +1,4 @@
+import time
 import sys
 import os
 import common
@@ -6,12 +7,16 @@ sys.path.insert(0, os.path.join("tools", "families"))
 from run_all import RunFilter
 
 def run_single_experiment(dataset, subst_model, do_generate, cores, run_filter = RunFilter()):
-  if (do_generate):
-    common.generate_dataset(dataset)
-  common.run_reference_methods(dataset, subst_model, cores, run_filter)
-  #common.compute_likelihoods([dataset], cores)  
-  #common.run_all_analyzes([dataset])
-
+  start = time.time()
+  try:
+    if (do_generate):
+      common.generate_dataset(dataset)
+    common.run_reference_methods(dataset, subst_model, cores, run_filter)
+    #common.compute_likelihoods([dataset], cores)  
+    #common.run_all_analyzes([dataset])
+  finally:
+    elapsed = time.time() - start
+    print("End of single experiment. Elapsed time: " + str(elapsed) + "s")
 
 if (__name__ == "__main__"): 
   if (len(sys.argv) < 5):
