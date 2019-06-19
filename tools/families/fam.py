@@ -112,7 +112,7 @@ def get_true_tree(datadir, family):
   return build_gene_tree_path(datadir, "true", family, "true")
 
 def get_raxml_tree(datadir, subst_model, family):
-  return build_gene_tree_path(datadir, subst_model, family, "raxml")
+  return build_gene_tree_path(datadir, subst_model, family, "raxml-ng")
 
 def get_raxml_multiple_trees(datadir, subst_model, family):
   return build_gene_tree_path(datadir, subst_model, family, "raxmlMultiple")
@@ -196,7 +196,6 @@ def get_run_name(method, model):
 def get_run_name_from_tree(tree_file):
   split = os.path.basename(tree_file).split(".")
   return split[0] + "." + split[1]
-
 
 def get_successful_runs(datadir):
   runs = []

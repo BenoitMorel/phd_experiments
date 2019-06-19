@@ -33,17 +33,20 @@ def build_generax_families_file(datadir, starting_tree, subst_model, output):
   with open(output, "w") as writer:
     writer.write("[FAMILIES]\n")
     plop = 0
+    print("starting gene tree " + starting_tree)
     for family in os.listdir(families_dir):
       
       family_path = os.path.join(families_dir, family)
       writer.write("- " + family + "\n")
-      writer.write("starting_gene_tree = " + fam.get_gene_tree(datadir, subst_model, family, starting_tree) + "\n")
+      gene_tree = fam.build_gene_tree_path_from_run(datadir, family, starting_tree)
+      if (starting_tree == "random"):
+        gene_tree = "__random__"
+      writer.write("starting_gene_tree = " + gene_tree + "\n")
       writer.write("alignment = " + fam.get_alignment_file(family_path) + "\n")
       writer.write("mapping = " + fam.get_mappings(datadir, family) + "\n")
       raxml_model = ""
       if (starting_tree != "random"):
         raxml_model = fam.get_raxml_best_model(datadir, subst_model, family)
-      print("raxml model " + raxml_model)
       if (os.path.isfile(raxml_model)):
         writer.write("subst_model = " + raxml_model + "\n")
       else:

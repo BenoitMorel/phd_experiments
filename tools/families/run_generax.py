@@ -3,6 +3,7 @@ import os
 import subprocess
 sys.path.insert(0, 'scripts')
 import experiments as exp
+import fam
 
 def run_generax_instance(dataset, starting_tree, with_transfers, method, subst_model, per_sp_rates, cores = 40):
   command = []
@@ -34,9 +35,9 @@ def run_generax_on_families(dataset_dir, subst_model, cores, raxml = True, rando
   dataset = os.path.basename(dataset_dir)
   if (raxml):
     if (dl):
-      run_generax_instance(dataset, "raxml-ng", False, "generax-dl-raxml", subst_model, False, cores)
+      run_generax_instance(dataset, fam.get_run_name("raxml-ng", subst_model), False, "generax-dl-raxml", subst_model, False, cores)
     if (dtl):
-      run_generax_instance(dataset, "raxml-ng", True, "generax-dtl-raxml", subst_model, False, cores)
+      run_generax_instance(dataset, fam.get_run_name("raxml-ng", subst_model), True, "generax-dtl-raxml", subst_model, False, cores)
   if (random):
     if (dl):
       run_generax_instance(dataset, "random", False, "generax-dl-random", subst_model, False, cores)
