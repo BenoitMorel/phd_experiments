@@ -3,6 +3,7 @@ import os
 import subprocess
 sys.path.insert(0, 'scripts')
 import experiments as exp
+import fam
 
 def run_generax_instance(dataset, starting_tree, with_transfers, method, subst_model, per_sp_rates, cores = 40):
   command = []
@@ -25,7 +26,7 @@ def run_generax_instance(dataset, starting_tree, with_transfers, method, subst_m
     command.append("--per-species-rates")
     method = method + "-psr"
   command.append("--run")
-  command.append(method)
+  command.append(fam.get_run_name(method, subst_model))
   print("-> Running " + " ".join(command))
   subprocess.check_call(command)
     

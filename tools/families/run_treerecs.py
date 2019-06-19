@@ -19,7 +19,8 @@ def generate_scheduler_commands_file(datadir, subst_model, cores, output_dir):
       treerecs_dir = fam.get_family_misc_dir(datadir, family)
       alignment_descriptor = os.path.join(treerecs_dir, "alignment_descriptor." + subst_model + ".txt")
       with open(alignment_descriptor, "w") as ali_writer:
-        ali_writer.write(subst_model + "\n" + os.path.abspath(os.path.join(family_dir, "alignment.msa")))
+        cut_model = subst_model.split("+")[0]
+        ali_writer.write(cut_model + "\n" + os.path.abspath(os.path.join(family_dir, "alignment.msa")))
       treerecs_output = os.path.join(treerecs_dir, "treerecs_output." + subst_model)
       mapping_file = fam.get_treerecs_mappings(datadir, family)
       command = []
