@@ -10,7 +10,7 @@ from run_all import RunFilter
 
 
 if (True):
-  subst_models = ["GTR+G"]
+  subst_models = ["LG", "LG+G"]
   datasets = ["cyano_simulated"]
   cores = 512
   do_generate = 0

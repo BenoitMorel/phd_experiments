@@ -90,11 +90,11 @@ def get_mode_from_additional_arguments(additional_arguments):
   return mode
 
 
-def extract_trees(datadir, results_family_dir, prefix, subst_model):
+def extract_trees(datadir, results_family_dir, run_name, subst_model):
   results_dir = os.path.join(results_family_dir, "results")
   for family in os.listdir(results_dir):
     source = os.path.join(results_dir, family, "geneTree.newick")
-    dest = fam.build_gene_tree_path(datadir, subst_model, family, prefix)
+    dest = fam.build_gene_tree_path_from_run(datadir, family, run_name)
     print("saving tree in " + dest)
     shutil.copy(source, dest)
 
