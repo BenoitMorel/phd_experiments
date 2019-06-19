@@ -136,9 +136,35 @@ def plot_boxplots():
     bp.plot(output)
     print("plot " + output)
 
+def plot_model_boxplots():
+  methods = ["raxml-ng", "treerecs", "notung80", "generax-dl-random"]
+  models = ["JC", "GTR+G"]
+  dico = {}
+  datasets = ["jsimdtl_s5_f10_sites100_dna4_bl0.5_d0.1_l0.2_t0.1_p0.0"]
+  for model in models:
+    model_dico = {}
+    for method in methods:
+      model_dico[method] = []
+    dico[model] = model_dico
+
+  for dataset in datasets:
+    cells = rf_cells.load_rf_cells(fam.get_datadir(dataset))
+    for family in cells:
+      family_cells = cells[family]
+      for model in models:
+        for method in methods:
+          cell = rf_cells.get_rf_to_true(family_cells, fam.get_run_name(method, model))
+          dico[model][method].append(cell[0] / cell[1])
+  gbp = boxplot.GroupBoxPlot(data = dico, title = None, xlabel = "Methods", ylabel = "Relative RF distance", hue_label = "Substitution model")
+  output = os.path.abspath("grouped_box_plot.svg")
+  gbp.plot(output)
+  print("Output in " + output)
+
+
+
 if (__name__ == "__main__"):
   #plot_simulated_metrics()
   #plot_scaling()  
-  plot_boxplots()
-
+  #plot_boxplots()
+  plot_model_boxplots()
 
