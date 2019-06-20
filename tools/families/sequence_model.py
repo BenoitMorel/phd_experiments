@@ -23,6 +23,8 @@ def get_phyldog_model(subst_model):
 def get_mrbayes_preset_line(subst_model):
   if (get_model(subst_model) == "LG"):
     return "\tprset aamodelpr=fixed(lg);\n"
+  elif(get_model(subst_model) == "DAYHOFF"):
+    return "\tprset aamodelpr=fixed(dayhoff);\n"
   elif(get_model(subst_model) == "JC"):
     return "\tprset statefreqpr=fixed(equal);\n"
   else:
