@@ -23,9 +23,12 @@ def substract(datasets_dico, method):
     print(dataset)
     print(datasets_dico[dataset])
 
-def plot_rrf(x_labels, params_to_plot_dl, params_to_plot_dtl, fixed_params_dl, fixed_params_dtl):
-  methods_dl = ["raxml-ng", "notung80", "phyldog", "treerecs", "ale-dl", "generax-dl-raxml"]
-  methods_dtl = ["raxml-ng", "notung80", "phyldog", "treerecs", "ale-dtl", "generax-dtl-raxml"] 
+def get_runs(methods, model):
+  return [fam.get_run_name(method, model) for method in methods]
+
+def plot_rrf(x_labels, params_to_plot_dl, params_to_plot_dtl, fixed_params_dl, fixed_params_dtl, subst_model):
+  methods_dl = get_runs(["raxml-ng", "notung80", "phyldog", "treerecs", "ale-dl", "generax-dl-raxml"], subst_model)
+  methods_dtl = get_runs(["raxml-ng", "notung80", "phyldog", "treerecs", "ale-dtl", "generax-dtl-raxml"], subst_model)
   rf_y_label =  "Average relative RF"
   datasets_rf_dico_dl = common.get_metrics_for_datasets("jsim_", "average_rrf")
   datasets_rf_dico_dtl = common.get_metrics_for_datasets("jsimdtl_", "average_rrf")
@@ -71,6 +74,8 @@ def plot_ll(x_labels, params_to_plot_dl, params_to_plot_dtl, fixed_params_dl, fi
     plotter_runtimes_dtl(param)
 
 def plot_simulated_metrics():
+  subst_model = "GTR+G"
+    
   x_labels = {}
   x_labels["species"] = "Number of taxa in the species tree"
   x_labels["loss_rate"] = "Average D(T)L rates"
@@ -86,7 +91,7 @@ def plot_simulated_metrics():
   fixed_params_dl["bl"] = "0.5"
   fixed_params_dl["loss_rate"] = "0.25"
   fixed_params_dl["dl_ratio"] = "1.0"
-  fixed_params_dl["sites"] = "500"
+  fixed_params_dl["sites"] = "300"
   fixed_params_dl["families"] = "100"
   fixed_params_dl["perturbation"] = "0.0"
   
@@ -97,12 +102,12 @@ def plot_simulated_metrics():
   fixed_params_dtl["dt_ratio"] = "1.0"
   fixed_params_dtl["bl"] = "0.5"
   fixed_params_dtl["families"] = "100"
-  fixed_params_dtl["sites"] = "500"
+  fixed_params_dtl["sites"] = "300"
   fixed_params_dtl["perturbation"] = "0.0"
   
-  plot_runtimes(x_labels, params_to_plot_dl, params_to_plot_dtl, fixed_params_dl, fixed_params_dtl)
-  plot_rrf(x_labels, params_to_plot_dl, params_to_plot_dtl, fixed_params_dl, fixed_params_dtl)
-  plot_ll(x_labels, params_to_plot_dl, params_to_plot_dtl, fixed_params_dl, fixed_params_dtl)
+  #plot_runtimes(x_labels, params_to_plot_dl, params_to_plot_dtl, fixed_params_dl, fixed_params_dtl)
+  plot_rrf(x_labels, params_to_plot_dl, params_to_plot_dtl, fixed_params_dl, fixed_params_dtl, subst_model)
+  #plot_ll(x_labels, params_to_plot_dl, params_to_plot_dtl, fixed_params_dl, fixed_params_dtl)
 
 def plot_scaling():
   datasets = ["ensembl_96_ncrna_primates", "cyano_empirical"]
