@@ -12,8 +12,6 @@ def run_single_experiment(dataset, subst_model, do_generate, cores, run_filter =
     if (do_generate):
       common.generate_dataset(dataset)
     common.run_reference_methods(dataset, subst_model, cores, run_filter)
-    #common.compute_likelihoods([dataset], cores)  
-    #common.run_all_analyzes([dataset])
   finally:
     elapsed = time.time() - start
     print("End of single experiment. Elapsed time: " + str(elapsed) + "s")

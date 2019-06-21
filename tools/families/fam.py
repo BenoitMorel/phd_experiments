@@ -190,6 +190,9 @@ def get_method_name_aux(tree_path):
   else:
     return tree.replace("GeneTree.newick", "").replace(".newick", "")
 
+def get_method_from_run(run):
+  return run.split(".")[0]
+
 def get_run_name(method, model):
   return method + "." + model
 

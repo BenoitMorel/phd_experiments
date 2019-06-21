@@ -33,7 +33,7 @@ def plot_rrf(x_labels, params_to_plot_dl, params_to_plot_dtl, fixed_params_dl, f
   datasets_rf_dico_dl = common.get_metrics_for_datasets("jsim_", "average_rrf")
   datasets_rf_dico_dtl = common.get_metrics_for_datasets("jsimdtl_", "average_rrf")
   plotter_rf_dl = common.Plotter(datasets_rf_dico_dl, fixed_params_dl, methods_dl, x_labels, rf_y_label, "dl_rf")
-  plotter_rf_dtl = common.Plotter(datasets_rf_dico_dtl, fixed_params_dtl, methods_dl, x_labels, rf_y_label, "dtl_rf")
+  plotter_rf_dtl = common.Plotter(datasets_rf_dico_dtl, fixed_params_dtl, methods_dtl, x_labels, rf_y_label, "dtl_rf")
   for param in params_to_plot_dl:
     plotter_rf_dl(param)
   for param in params_to_plot_dtl:
@@ -74,7 +74,7 @@ def plot_ll(x_labels, params_to_plot_dl, params_to_plot_dtl, fixed_params_dl, fi
     plotter_runtimes_dtl(param)
 
 def plot_simulated_metrics():
-  subst_model = "GTR+G"
+  subst_model = "gtr+g"
     
   x_labels = {}
   x_labels["species"] = "Number of taxa in the species tree"
@@ -91,7 +91,7 @@ def plot_simulated_metrics():
   fixed_params_dl["bl"] = "0.5"
   fixed_params_dl["loss_rate"] = "0.25"
   fixed_params_dl["dl_ratio"] = "1.0"
-  fixed_params_dl["sites"] = "300"
+  fixed_params_dl["sites"] = "250"
   fixed_params_dl["families"] = "100"
   fixed_params_dl["perturbation"] = "0.0"
   
@@ -102,7 +102,7 @@ def plot_simulated_metrics():
   fixed_params_dtl["dt_ratio"] = "1.0"
   fixed_params_dtl["bl"] = "0.5"
   fixed_params_dtl["families"] = "100"
-  fixed_params_dtl["sites"] = "300"
+  fixed_params_dtl["sites"] = "250"
   fixed_params_dtl["perturbation"] = "0.0"
   
   #plot_runtimes(x_labels, params_to_plot_dl, params_to_plot_dtl, fixed_params_dl, fixed_params_dtl)
@@ -117,7 +117,7 @@ def plot_scaling():
 
 def plot_boxplots():
   methods = ["raxml", "treerecs", "notung80", "phyldog", "ale-dtl"]
-  models = ["GTR+G"]
+  models = ["gtr+g"]
   datasets = ["cyano_simulated"]
   for model in models:
     print("model " + model)

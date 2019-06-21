@@ -11,7 +11,7 @@ def get_metrics(dataset_dir, metric_name):
   try:
     with open(os.path.join(dataset_dir, "metrics", metric_name + ".txt")) as writer:
       for line in writer.readlines():
-        split = line.split(" ")
+        split = line.split(" : ")
         dico[split[0].lower()] = split[1].replace("\n", "")
   except:
     return None
@@ -22,7 +22,7 @@ def get_metrics_methods(dataset_dir, metric_name):
   try:
     with open(os.path.join(dataset_dir, "metrics", metric_name + ".txt")) as writer:
       for line in writer.readlines():
-        split = line.split(" ")
+        split = line.split(" : ")
         methods.append(split[0])
   except:
     pass
@@ -35,7 +35,7 @@ def save_dico(dataset_dir, dico, metric_name):
     pass
   with open(os.path.join(dataset_dir, "metrics", metric_name + ".txt"), "w") as writer:
     for key, value in sorted(dico.items(), key=lambda x: float(x[1])):
-      writer.write(key + " " + str(value) + "\n")
+      writer.write(key + " : " + str(value) + "\n")
 
 def save_metrics(dataset_dir, method_key, metric_value, metric_name):
   method_key = method_key.lower()

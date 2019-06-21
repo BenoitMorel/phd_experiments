@@ -8,9 +8,9 @@ from run_all import RunFilter
 
 
 
-
+# CYANO SIMULATED PLOTS
 if (True):
-  subst_models = ["LG", "LG+G"]
+  subst_models = ["DAYHOFF", "DAYHOFF+G"] #["LG", "LG+G"]
   datasets = ["cyano_simulated"]
   cores = 512
   do_generate = 0
@@ -20,11 +20,12 @@ if (True):
   run_filter.EXA_generations = 1000000
   run_filter.EXA_frequencies = 1000
   run_filter.EXA_burnin = 100
+  run_filter.eval_joint_ll = False
   common.submit_multiple_experiments_haswell(datasets, subst_models, do_generate, cores, run_filter)
 
 
 
-
+# PARAMETERS SIMULATED PLOTS
 if (False):
   subst_models = ["GTR+G"]
   datasets = []
@@ -36,6 +37,7 @@ if (False):
   run_filter.EXA_generations = 1000000
   run_filter.EXA_frequencies = 1000
   run_filter.EXA_burnin = 100
+  run_filter.eval_joint_ll = False
   fixed_point_dl = "jsim_s19_f100_sites250_dna4_bl0.5_d0.25_l0.25_t0.0_p0.0"
   fixed_point_dtl = "jsimdtl_s19_f100_sites250_dna4_bl0.5_d0.1_l0.2_t0.1_p0.0"
   datasets.append(fixed_point_dl)
@@ -47,7 +49,7 @@ if (False):
   common.add_dataset(datasets, fixed_point_dl, ["sites100", "sites500", "sites750"])
   common.add_dataset(datasets, fixed_point_dl, ["bl0.01", "bl0.05", "bl0.1", "bl0.2", "bl1.0", "bl2.0"])
   common.add_dataset(datasets, fixed_point_dl, ["s5", "s10", "s27", "s41"])
- 
+
   common.add_dataset(datasets, fixed_point_dtl, ["p0.1", "p0.2", "p0.3", "p0.5"])
   common.add_dataset(datasets, fixed_point_dtl, ["s5", "s10", "s12", "s16", "s27", "s41"])
   common.add_dataset(datasets, fixed_point_dtl, ["sites100", "sites500", "sites750"])
@@ -57,5 +59,27 @@ if (False):
   
   common.submit_multiple_experiments_haswell(datasets, subst_models, do_generate, cores, run_filter)
   
+
+# EMPIRICAL PLOTS
+if (False):
+  subst_models_dna = ["GTR+G"]
+  datasets_dna = ["ensembl_96_ncrna_primates"]
+  subst_models_prot = ["LG+G"]
+  datasets_prot = ["cyano_empirical"]
+  cores = 512
+  do_generate = 0
+  run_filter = RunFilter()
+  run_filter.EXA_runs = 4
+  run_filter.EXA_chains = 2
+  run_filter.EXA_generations = 500000
+  run_filter.EXA_frequencies = 500
+  run_filter.EXA_burnin = 100
+  run_filter.eval_joint_ll = True
+ 
+  common.submit_multiple_experiments_haswell(datasets_dna, subst_models_dna, do_generate, cores, run_filter)
+  common.submit_multiple_experiments_haswell(datasets_prot, subst_models_prot, do_generate, cores, run_filter)
+
+
+
 
 

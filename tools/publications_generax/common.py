@@ -288,13 +288,18 @@ def plot(datasets_rf_dico, x_param, fixed_params_dico, methods, x_label, y_label
   for dataset in datasets_to_plot:
     fake_df[x_param].append(float(fam.get_param_from_dataset_name(x_param, dataset)))
     rf_dico = datasets_rf_dico[dataset]
+    print(rf_dico)
     for method in methods:
-      if (not method in rf_dico):
+      print(method)
+      print(methods)
+      method_pair = "true.true - " + method
+      if (not method_pair in rf_dico):
         print("Warning: missing data for method " + method + " and dataset " + dataset)
-    for method in rf_dico:
+    for method_pair in rf_dico:
+      method = method_pair.split(" - ")[1]
       if (not method in methods):
         continue
-      fake_df[method].append(float(rf_dico[method]))
+      fake_df[method].append(float(rf_dico[method_pair]))
   for elem in fake_df:
     print("\t" + str(elem))
     df[elem] = fake_df[elem]
