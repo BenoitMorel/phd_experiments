@@ -37,15 +37,18 @@ class GroupBoxPlot:
   data is a dict of dict:   data[model][method] = values
   for each method, there is one boxplot per model with the values
   """
-  def __init__(self, data, title = None, ylabel = None, xlabel = "x", hue_label = "hue"):
+  def __init__(self, data, title = None, ylabel = None, xlabel = "x", hue_label = "hue", order = None):
     self._title = title
     self._xlabel = xlabel
     self._ylabel = ylabel
     self._hue_label = hue_label
+    self._order = order
+    self._x_number = 0
     hue_vector = []
     x_vector = []
     values_vector = []
     for hue in data:
+      self._x_number = len(data[hue])
       for x in data[hue]:
         for value in data[hue][x]:
           hue_vector.append(hue)
@@ -58,8 +61,10 @@ class GroupBoxPlot:
     self._df = pd.DataFrame(data = dataFrameDico)
 
   def plot(self, output):
-    ax = sns.boxplot(data = self._df, hue = self._hue_label, x = self._xlabel, y = "values")
-    plt.xticks(rotation = 45)
+    ax = sns.boxplot(data = self._df, hue = self._hue_label, x = self._xlabel, y = "values", order = self._order)
+    if (self._x_number > 4):
+      print(self._x_number)
+      plt.xticks(rotation = 45)
     if (self._title != None):
       ax.set_title(self._title)
     if (self._ylabel != None):

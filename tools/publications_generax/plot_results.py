@@ -137,10 +137,12 @@ def plot_boxplots():
     print("plot " + output)
 
 def plot_model_boxplots():
-  methods = ["raxml-ng", "treerecs", "notung80", "generax-dl-random"]
-  models = ["JC", "GTR+G"]
+  methods = ["raxml-ng", "ale-dtl", "generax-dtl-random"]
+  models = ["LG+G", "DAYHOFF"]
   dico = {}
-  datasets = ["jsimdtl_s5_f10_sites100_dna4_bl0.5_d0.1_l0.2_t0.1_p0.0"]
+  datasets = ["cyano_simulated"]
+  title = "Simulated cyanobacteriai dataset with 1099 families"
+        
   for model in models:
     model_dico = {}
     for method in methods:
@@ -155,7 +157,7 @@ def plot_model_boxplots():
         for method in methods:
           cell = rf_cells.get_rf_to_true(family_cells, fam.get_run_name(method, model))
           dico[model][method].append(cell[0] / cell[1])
-  gbp = boxplot.GroupBoxPlot(data = dico, title = None, xlabel = "Methods", ylabel = "Relative RF distance", hue_label = "Substitution model")
+  gbp = boxplot.GroupBoxPlot(data = dico, title = title, ylabel = "Relative RF distance", hue_label = "Substitution model", order = methods)
   output = os.path.abspath("grouped_box_plot.svg")
   gbp.plot(output)
   print("Output in " + output)
