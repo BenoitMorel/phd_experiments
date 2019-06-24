@@ -5,6 +5,8 @@ import seaborn as sns
 sns.set_style("darkgrid")
 
 def plot_histogram(xlabels, yvalues, title, xcaption, ycaption, output):
+    print(xlabels)
+    print(yvalues)
     y_pos = np.arange(len(xlabels))
     fig, ax = plt.subplots()
     plt.bar(y_pos, yvalues, align='center')

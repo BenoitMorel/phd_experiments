@@ -7,11 +7,14 @@ sys.path.insert(0, 'scripts/generax')
 sys.path.insert(0, 'tools/families')
 sys.path.insert(0, 'tools/plotters')
 import experiments as exp
+import plot_histogram
 import common
 import scaling_generax
 import fam
 import boxplot
 import rf_cells
+import saved_metrics
+import math
 
 def substract(datasets_dico, method):
   for dataset in datasets_dico:
@@ -167,11 +170,57 @@ def plot_model_boxplots():
   gbp.plot(output)
   print("Output in " + output)
 
+def plot_runtimes():
+  datasets = ["cyano_empirical"]
+  model = "LG+G"
+  methods_to_plot = []
+  methods_to_plot.append(["raxml-light"])
+  methods_to_plot.append(["notung80", "raxml-ng"])
+  methods_to_plot.append(["treerecs", "raxml-ng"])
+  #methods_to_plot.append(["phyldog", "raxml-ng"])
+  methods_to_plot.append(["ale-dtl", "mrbayes"])
+  methods_to_plot.append(["generax-dtl-raxml", "raxml-light"])
+  methods_to_plot.append(["generax-dtl-random"])
 
+  methods_display_name = {}
+  methods_display_name["raxml-light"] = "RAxML-NG"
+  methods_display_name["ale-dtl"] = "ALE"
+  methods_display_name["generax-dtl-raxml"] = "GeneRax-RAxML"
+  methods_display_name["generax-dtl-random"] = "GeneRax-random"
+  methods_display_name["treerecs"] = "Treerecs"
+  methods_display_name["notung80"] = "Notung"
+
+
+  for dataset in datasets:
+    output = "runtimes_" + dataset + ".svg"
+    datadir = fam.get_datadir(dataset)
+    dico = {} # dico[run] = runtime
+    runs = saved_metrics.get_metrics_methods(datadir, "runtimes")
+    saved_metrics_dict = saved_metrics.get_metrics(datadir, "runtimes")
+    for run in runs:
+      if (model.lower() in run.lower()):
+        dico[fam.get_method_from_run(run)] = float(saved_metrics_dict[run])
+    
+    xlabels = []
+    yvalues_individual = []
+    yvalues_cumulated = []
+    for method in methods_to_plot:
+      xlabels.append(methods_display_name[method[0]])
+      yvalues_individual.append(dico[method[0]])
+      cumulated_time = 0.0
+      for m in method:
+        cumulated_time += dico[m]
+      yvalues_cumulated.append(cumulated_time)
+
+    output = "runtimes_" + dataset
+    plot_histogram.plot_histogram(xlabels, yvalues_individual, title = "Individual runtimes", xcaption = "", ycaption = "runtime", output = output + "_individual.svg")
+    plot_histogram.plot_histogram(xlabels, yvalues_cumulated, title = "Overall runtimes", xcaption = "", ycaption = "runtime", output = output + "_cumulated.svg")
 
 if (__name__ == "__main__"):
   #plot_simulated_metrics()
   #plot_scaling()  
   #plot_boxplots()
-  plot_model_boxplots()
+  #plot_model_boxplots()
+  plot_runtimes()
+
 
