@@ -136,6 +136,8 @@ def run_mrbayes_on_families(datadir, generations, frequency, runs, chains, burni
     start = time.time()
     exp.run_with_scheduler(exp.mrbayes_exec, scheduler_commands_file, "onecore", cores, output_dir, "logs.txt")   
     saved_metrics.save_metrics(datadir, fam.get_run_name("mrbayes", subst_model), (time.time() - start), "runtimes") 
+    lb = fam.get_lb_from_run(output_dir)
+    saved_metrics.save_metrics(datadir, fam.get_run_name("mrbayes", subst_model), (time.time() - start) * lb, "seqtimes") 
     print("Finished running mrbayes after " + str(time.time() - start) + "s")
     sys.stdout.flush()
     extract_mrbayes_results(datadir, subst_model, burnin)

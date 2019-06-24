@@ -304,6 +304,18 @@ def write_phyldog_mapping(species_to_genes_dict, output_file):
     for species in species_to_genes_dict:
       writer.write(species + ":" + ";".join(species_to_genes_dict[species]) + "\n")
 
+######################
+#  Misc
+######################
+
+def get_lb_from_run(run_dir):
+  lines = open(os.path.join(run_dir, "statistics.svg")).readlines()
+  for line in lines:
+    if (", lb = " in line):
+      return float(line.split("lb = ")[1].split("<")[0])
+  assert(False)
+  return None
+
 #######################
 #  Directory helpers
 ######################
