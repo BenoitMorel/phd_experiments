@@ -72,7 +72,7 @@ def get_treelist(datadir, subst_model, family):
 
 def remove_mrbayes_run(datadir, subst_model):
   output_dir = os.path.abspath(get_mrbayes_output_dir(datadir, subst_model))
-  shutil.rmtree(os.path.join(output_dir, "results", True))
+  shutil.rmtree(os.path.join(output_dir, "results"), True)
 
 def extract_mrbayes_family(params):
   datadir, subst_model, family, mrbayes_dir, burnin = params
