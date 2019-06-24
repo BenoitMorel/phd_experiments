@@ -114,6 +114,7 @@ def run(dataset, subst_model, strategy, starting_tree, cores, additional_argumen
   start = time.time()
   run_generax(datadir, strategy, generax_families_file, mode, cores, additional_arguments, resultsdir)
   saved_metrics.save_metrics(datadir, run_name, (time.time() - start), "runtimes") 
+  saved_metrics.save_metrics(datadir, run_name, (time.time() - start), "seqtimes") 
   extract_trees(datadir, os.path.join(resultsdir, "generax"), run_name, subst_model)
   try:
     if (do_analyze):

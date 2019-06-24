@@ -31,6 +31,7 @@ def run_phyldog_on_families(datadir, subst_model, cores):
   start = time.time()
   run_phyldog(datadir, subst_model, cores)
   saved_metrics.save_metrics(datadir, fam.get_run_name("Phyldog", subst_model), (time.time() - start), "runtimes") 
+  saved_metrics.save_metrics(datadir, fam.get_run_name("Phyldog", subst_model), (time.time() - start), "seqtimes") 
   extract_phyldog(datadir, subst_model)
   clean_phyldog(datadir, subst_model)
 

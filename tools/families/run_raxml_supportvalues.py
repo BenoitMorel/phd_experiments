@@ -101,6 +101,8 @@ def run_pargenes_and_extract_trees(datadir, subst_model, starting_trees, bs_tree
   start = time.time()
   run_pargenes(datadir, pargenes_dir, subst_model, starting_trees, bs_trees, cores)
   saved_metrics.save_metrics(datadir, fam.get_run_name(saved_metrics_key, subst_model), (time.time() - start), "runtimes") 
+  lb = fam.get_lb_from_run(os.path.join(pargenes_dir, "mlsearch_run"))
+  saved_metrics.save_metrics(datadir, fam.get_run_name(saved_metrics_key, subst_model), (time.time() - start) * lb, "seqtimes") 
   if (extract_trees):
     export_pargenes_trees(pargenes_dir, subst_model, datadir)
 
