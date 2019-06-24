@@ -3,11 +3,11 @@ import sys
 import os 
 import re
 import pickle
-import pandas as pd
-import matplotlib
-matplotlib.use('Agg')
+import matplotlib.pyplot as plt; plt.rcdefaults()
+import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
+sns.set_style("darkgrid")
 
 sys.path.insert(0, 'scripts')
 import experiments as exp
