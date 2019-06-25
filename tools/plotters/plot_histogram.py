@@ -26,13 +26,17 @@ def plot_histogram(xlabels, yvalues, title, xcaption, ycaption, output):
 """
     data[category][class] = value
 """
-def plot_grouped_histogram(data, title = None, xcaption = None, ycaption = None, cat_name = "categories", class_name = "classes", values_name = "values", kind = "bar", output = "show"):
+def plot_grouped_histogram(data, title = None, xcaption = None, ycaption = None, cat_name = "categories", class_name = "classes", values_name = "values", kind = "bar", start_at_min_y = False, output = "show"):
   values_vec = []
   categories_vec = []
   classes_vec = []
+  min_value = 99999999999999
+  max_value = -9999999999999
   for category in data:
     for classs in data[category]:
       value = data[category][classs]
+      min_value = min(min_value, value)
+      max_value = max(max_value, value)
       values_vec.append(value)
       categories_vec.append(category)
       classes_vec.append(classs)
@@ -43,6 +47,9 @@ def plot_grouped_histogram(data, title = None, xcaption = None, ycaption = None,
   df = pd.DataFrame(data = dataFrameDico)
   f = sns.factorplot(data = df, x = class_name, hue = cat_name, y = values_name, kind = kind)
   plt.xticks(rotation = 45)
+  if (start_at_min_y):
+    epsilon = (max_value - min_value) / 10.0
+    f.set(ylim=(min_value - epsilon, max_value + epsilon))
   if (title != None):
     f.fig.suptitle(title)
   f.fig.tight_layout()

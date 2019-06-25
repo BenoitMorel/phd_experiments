@@ -51,7 +51,7 @@ def plot_ll():
       for run in runs:
         if (model.lower() in run.lower()):
           method = fam.get_method_from_run(run)
-          dico[cat][method] = float(saved_metrics_dict[cat][run])
+          dico[cat][method] = -float(saved_metrics_dict[cat][run])
     
     xlabels = []
     yvalues = {}
@@ -63,7 +63,7 @@ def plot_ll():
         yvalues[cat][x] = dico[cat][method[0]]
     
     output = "joint_likelihood__" + dataset
-    plot_histogram.plot_grouped_histogram(yvalues, cat_name = "Category", class_name = "Methods", values_name = "Time (s)", kind = "point") #,  output = output + ".svg")
+    plot_histogram.plot_grouped_histogram(yvalues, cat_name = "Category", class_name = "Methods", values_name = "Time (s)", start_at_min_y = True) #,  output = output + ".svg")
      
 
 
