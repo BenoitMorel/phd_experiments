@@ -26,28 +26,27 @@ def plot_histogram(xlabels, yvalues, title, xcaption, ycaption, output):
 """
     data[category][class] = value
 """
-def plot_grouped_histogram(title, xcaption = None, ycaption = None, output = "show"):
+def plot_grouped_histogram(data, title = None, xcaption = None, ycaption = None, cat_name = "categories", class_name = "classes", values_name = "values", kind = "bar", output = "show"):
   values_vec = []
   categories_vec = []
   classes_vec = []
   for category in data:
     for classs in data[category]:
-      values_vec.append(data[category][classs])
+      value = data[category][classs]
+      values_vec.append(value)
       categories_vec.append(category)
       classes_vec.append(classs)
   dataFrameDico = {}
-  dataFrameDico["classes"] = classes_vec
-  dataFrameDico["categories"] = categories_vec
-  dataFrameDico["values"] = values_vec
+  dataFrameDico[class_name] = classes_vec
+  dataFrameDico[cat_name] = categories_vec
+  dataFrameDico[values_name] = values_vec
   df = pd.DataFrame(data = dataFrameDico)
-  #y_pos = np.arange(len(xlabels))
-  sns.factorplot(data = df, x = "classes", hue = "categories", y = "values", kind = "bar")
-  #plt.xticks(rotation = 45)
-  #if (title != None):
-  #  ax.set_title(title)
-  #ax.get_figure().tight_layout()
+  f = sns.factorplot(data = df, x = class_name, hue = cat_name, y = values_name, kind = kind)
+  plt.xticks(rotation = 45)
+  if (title != None):
+    f.fig.suptitle(title)
+  f.fig.tight_layout()
   if (output == "show"):
-    print("show")
     plt.show()
   else:
     plt.savefig(output)
@@ -68,6 +67,6 @@ if (__name__ == "__main__"):
     for i in range(0, len(objects)):
       data["blabla"][objects[i]] = blabla[i]
       data["performance"][objects[i]] = performance[i]
-    plot_grouped_histogram(data, output = "show")
+    plot_grouped_histogram(data = data, output = "show")
 
 
