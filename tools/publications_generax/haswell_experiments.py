@@ -9,7 +9,7 @@ from run_all import RunFilter
 
 
 # CYANO SIMULATED PLOTS
-if (True):
+if (False):
   subst_models = ["DAYHOFF", "DAYHOFF+G"] #["LG", "LG+G"]
   datasets = ["cyano_simulated"]
   cores = 512
@@ -61,7 +61,7 @@ if (False):
   
 
 # EMPIRICAL PLOTS
-if (False):
+if (True):
   subst_models_dna = ["GTR+G"]
   datasets_dna = ["ensembl_96_ncrna_primates"]
   subst_models_prot = ["LG+G"]
@@ -69,15 +69,16 @@ if (False):
   cores = 512
   do_generate = 0
   run_filter = RunFilter()
+  #run_filter.disable_all()
   run_filter.EXA_runs = 4
   run_filter.EXA_chains = 2
-  run_filter.EXA_generations = 500000
-  run_filter.EXA_frequencies = 500
+  run_filter.EXA_generations = 1000000
+  run_filter.EXA_frequencies = 1000
   run_filter.EXA_burnin = 100
-  run_filter.eval_joint_ll = True
+  #run_filter.eval_joint_ll = True
  
-  common.submit_multiple_experiments_haswell(datasets_dna, subst_models_dna, do_generate, cores, run_filter)
   common.submit_multiple_experiments_haswell(datasets_prot, subst_models_prot, do_generate, cores, run_filter)
+  common.submit_multiple_experiments_haswell(datasets_dna, subst_models_dna, do_generate, cores, run_filter)
 
 
 
