@@ -15,6 +15,12 @@ import boxplot
 import rf_cells
 import saved_metrics
 
+
+def plot(yvalues, output):
+  print(yvalues)
+  plot_histogram.plot_grouped_histogram(yvalues, cat_name = "Category", class_name = "Methods", values_name = "Time (s)", log_scale = True,  output = output)
+
+
 def plot_runtimes():
   datasets = ["cyano_empirical"]
   model = "LG+G"
@@ -30,14 +36,14 @@ def plot_runtimes():
   methods_display_name = {}
   methods_display_name["raxml-light"] = "RAxML-NG"
   methods_display_name["ale-dtl"] = "ALE"
-  methods_display_name["generax-dtl-raxml"] = "GeneRax-RAxML"
-  methods_display_name["generax-dtl-random"] = "GeneRax-random"
+  methods_display_name["generax-dtl-raxml"] = "GeneRax-raxml"
+  methods_display_name["generax-dtl-random"] = "GeneRax-rdm"
   methods_display_name["treerecs"] = "Treerecs"
   methods_display_name["notung80"] = "Notung"
 
   for dataset in datasets:
     output = "runtimes_" + dataset + ".svg"
-    categories = ["runtimes", "seqtimes"]
+    categories = ["Parallel", "Sequential"]
     datadir = fam.get_datadir(dataset)
     dico = {} # dico[cat][run] = runtime
     for cat in categories:
@@ -48,12 +54,11 @@ def plot_runtimes():
     for run in runs:
       if (model.lower() in run.lower()):
         method = fam.get_method_from_run(run)
-        dico["runtimes"][method] = float(saved_metrics_runtimes[run])
+        dico["Parallel"][method] = float(saved_metrics_runtimes[run])
         if (run in saved_metrics_seqtimes):
-          dico["seqtimes"][method] = float(saved_metrics_seqtimes[run])
+          dico["Sequential"][method] = float(saved_metrics_seqtimes[run])
         else:
-          dico["seqtimes"][method] = float(saved_metrics_runtimes[run])
-    
+          dico["Sequential"][method] = float(saved_metrics_runtimes[run])
     xlabels = []
     yvalues_individual = {}
     yvalues_cumulated = {}
@@ -70,7 +75,7 @@ def plot_runtimes():
         yvalues_cumulated[cat][x] = cumulated_time
     
     output = "runtimes_" + dataset
-    plot_histogram.plot_grouped_histogram(yvalues_individual, cat_name = "Category", class_name = "Methods", values_name = "Time (s)",  output = output + "_individual.svg")
-    plot_histogram.plot_grouped_histogram(yvalues_cumulated, cat_name = "Category", class_name = "Methods", values_name = "Time (s)",  output = output + "_cumulated.svg")
+    plot(yvalues_individual, output + "_individual.svg")
+    plot(yvalues_cumulated, output + "_cumulated.svg")
      
 
