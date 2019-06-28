@@ -10,13 +10,14 @@ import saved_metrics
 import plot_line
 
 def get_run_name(starting_tree, with_transfer, subst_model, cores):
-  run_name = "scalinggenerax-" + starting_tree + "."
+  run_name = "scaling-c" + str(cores) + "-generax-"
   if (with_transfer):
-    run_name += "dtl."
+    run_name += "dtl-"
   else:
-    run_name += "dl."
+    run_name += "dl-"
+  run_name += starting_tree.replace("raxml-ng", "raxml")
+  run_name + "."
   run_name += subst_model
-  run_name += "-c" + str(cores)
   return run_name
 
 def run(datadir, subst_model, starting_tree, with_transfer, cores, resultsdir):
