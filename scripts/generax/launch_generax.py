@@ -38,7 +38,7 @@ def build_generax_families_file(datadir, starting_tree, subst_model, output):
       
       family_path = os.path.join(families_dir, family)
       writer.write("- " + family + "\n")
-      gene_tree = fam.build_gene_tree_path_from_run(datadir, family, starting_tree)
+      gene_tree = fam.build_gene_tree_path(datadir, subst_model, family, starting_tree)
       if (starting_tree == "random"):
         gene_tree = "__random__"
       writer.write("starting_gene_tree = " + gene_tree + "\n")
@@ -97,13 +97,14 @@ def extract_trees(datadir, results_family_dir, run_name, subst_model):
   results_dir = os.path.join(results_family_dir, "results")
   for family in os.listdir(results_dir):
     source = os.path.join(results_dir, family, "geneTree.newick")
-    dest = fam.build_gene_tree_path_from_run(datadir, family, run_name)
-    print("saving tree in " + dest)
+    dest = fam.build_gene_tree_path_from_run(datadir, family, run_name + "." + subst_model)
     shutil.copy(source, dest)
 
 
 def run(dataset, subst_model, strategy, starting_tree, cores, additional_arguments, resultsdir, do_analyze = True):
   run_name = exp.getAndDelete("--run", additional_arguments, "lastRun") 
+  print("Run name " + run_name)
+  sys.stdout.flush()
   mode = get_mode_from_additional_arguments(additional_arguments)
   if (not dataset in datasets):
     print("Error: " + dataset + " is not in " + str(datasets))
@@ -136,6 +137,7 @@ def launch(dataset, subst_model, strategy, starting_tree, cluster, cores, additi
   
 
 if (__name__ == "__main__"): 
+  print("launch_generax " + str(sys.argv))
   is_run = ("--exprun" in sys.argv)
   resultsdir = ""
   if (is_run):
