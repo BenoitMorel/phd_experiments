@@ -17,13 +17,40 @@ import saved_metrics
 
 
 def plot(yvalues, output):
-  print(yvalues)
   plot_histogram.plot_grouped_histogram(yvalues, cat_name = "Category", class_name = "Methods", values_name = "Time (s)", log_scale = True,  output = output)
 
+def get_cores_number(run):
+  return int(run.split("-")[1][1:])
+
+def get_min_scaling_runs(run, runs):
+  best_index = -1
+  min_cores = 5555555
+  for i in range(0, len(runs)):
+    current = runs[i]
+    if (not current.startswith("scaling") or not run in current):
+      continue
+    current_cores = get_cores_number(current)
+    if (current_cores < min_cores):
+      best_index = i
+      min_cores = current_cores
+  if (best_index == -1):
+    print("WARNING: NO SCALING RUN FOR RUN " + run)
+    return None
+  return runs[best_index]
+
+def get_generax_seq_runtime(run, runs, run_cores, metrics):
+  print("treat " + run)
+  scaling_run = get_min_scaling_runs(run, runs)
+  if (scaling_run == None):
+    return metrics[run]
+  scaling_cores = get_cores_number(scaling_run)
+  scaling_time = float(metrics[scaling_run])
+  return scaling_time * float(scaling_cores) / float(run_cores)
 
 def plot_runtimes():
   datasets = ["cyano_empirical"]
   model = "LG+G"
+  cores = 512
   methods_to_plot = []
   methods_to_plot.append(["raxml-light"])
   methods_to_plot.append(["notung80", "raxml-ng"])
@@ -55,7 +82,9 @@ def plot_runtimes():
       if (model.lower() in run.lower()):
         method = fam.get_method_from_run(run)
         dico["Parallel"][method] = float(saved_metrics_runtimes[run])
-        if (run in saved_metrics_seqtimes):
+        if ("generax" in method and method in methods_display_name):
+          dico["Sequential"][method] = get_generax_seq_runtime(run, runs, cores, saved_metrics_runtimes)
+        elif (run in saved_metrics_seqtimes):
           dico["Sequential"][method] = float(saved_metrics_seqtimes[run])
         else:
           dico["Sequential"][method] = float(saved_metrics_runtimes[run])
