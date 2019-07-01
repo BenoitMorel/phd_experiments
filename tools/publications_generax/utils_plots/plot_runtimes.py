@@ -49,20 +49,20 @@ def get_generax_seq_runtime(run, runs, run_cores, metrics):
 def plot(yvalues, output):
   plot_histogram.plot_grouped_histogram(yvalues, cat_name = "Category", class_name = "Methods", values_name = "Time (s)", log_scale = True,  output = output)
 
-def plot_all_stacked_plots(dico, categories, dataset, methods_to_plot, methods_display_name):
+def plot_all_stacked_plots(dico, categories, dataset, cores, methods_to_plot, methods_display_name):
   for cat in categories:
     stacked_data = [[], []]
     stack_labels = ["methods", "precomputations"]
     xlabels = []
     for method in methods_to_plot:
       xlabels.append(methods_display_name[method[0]])
-      stacked_data[0].append(dico[cat][method[0]]) # methods
+      stacked_data[0].append(dico[cat][method[0]] * float(cores)) # methods
       if (len(method) > 1): # precomputations
-        stacked_data[1].append(dico[cat][method[1]])
+        stacked_data[1].append(dico[cat][method[1]] * float(cores))
       else:
         stacked_data[1].append(0.0)
     output = "stacked_runtimes_" + cat + "_" + dataset + ".svg"
-    stacked_plot.stacked_plot(data = stacked_data, stack_labels = stack_labels, caption_title = None, xlabels = xlabels, output = output) 
+    stacked_plot.stacked_plot(data = stacked_data, stack_labels = stack_labels, caption_title = None, xlabels = xlabels, ylabel = "Time (s)", output = output) 
 
 def get_dico_values(categories, datadir, methods_display_name, model, cores):
   dico = {}
@@ -132,7 +132,7 @@ def plot_runtimes():
     stacked_data = {}
     dico = get_dico_values(categories, datadir, methods_display_name, model, cores)
     plot_all_barplots(dico, categories, dataset, methods_to_plot, methods_display_name)
-    plot_all_stacked_plots(dico, categories, dataset, methods_to_plot, methods_display_name)
+    plot_all_stacked_plots(dico, categories, dataset, cores, methods_to_plot, methods_display_name)
 
 
         
