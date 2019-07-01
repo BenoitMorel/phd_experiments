@@ -45,16 +45,22 @@ def plot_boxplots():
     print("plot " + output)
 
 def plot_model_boxplots():
-  methods = ["raxml-ng", "ale-dtl", "generax-dtl-random"]
-  models = ["LG+G", "DAYHOFF"]
+  methods = {}
+  methods["generax-dtl-random"] = "GeneRax"
+  methods["ale-dtl"] = "ALE"
+  methods["treerecs"] = "Treerecs"
+  methods["notung80"] = "Notung"
+  methods["raxml-ng"] = "RAxML-NG"
+  order = ["GeneRax", "ALE", "Treerecs",  "Notung", "RAxML-NG"]
+  models = ["DAYHOFF", "LG+G"]
   dico = {}
   datasets = ["cyano_simulated"]
-  title = "Simulated cyanobacteriai dataset with 1099 families"
+  title = "Simulated cyanobacteria (1099 families)"
         
   for model in models:
     model_dico = {}
     for method in methods:
-      model_dico[method] = []
+      model_dico[methods[method]] = []
     dico[model] = model_dico
 
   for dataset in datasets:
@@ -64,9 +70,9 @@ def plot_model_boxplots():
       for model in models:
         for method in methods:
           cell = rf_cells.get_rf_to_true(family_cells, fam.get_run_name(method, model))
-          dico[model][method].append(cell[0] / cell[1])
-  gbp = boxplot.GroupBoxPlot(data = dico, title = title, ylabel = "Relative RF distance", hue_label = "Substitution model", order = methods)
-  output = os.path.abspath("grouped_box_plot.svg")
+          dico[model][methods[method]].append(cell[0] / cell[1])
+  gbp = boxplot.GroupBoxPlot(data = dico, title = title, ylabel = "Relative RF distance", hue_label = "Substitution model", order = order)
+  output = os.path.abspath("cyano_simulated_boxplot.svg")
   gbp.plot(output)
   print("Output in " + output)
 

@@ -6,8 +6,6 @@ import pandas as pd
 sns.set_style("darkgrid")
 
 def plot_histogram(xlabels, yvalues, title, xcaption, ycaption, output):
-    print(xlabels)
-    print(yvalues)
     y_pos = np.arange(len(xlabels))
     fig, ax = plt.subplots()
     plt.bar(y_pos, yvalues, align='center')
@@ -22,7 +20,6 @@ def plot_histogram(xlabels, yvalues, title, xcaption, ycaption, output):
         plt.show()
     else:
         plt.savefig(output)
-        plt.close()
 """
     data[category][class] = value
 """
@@ -64,7 +61,6 @@ def plot_grouped_histogram(data, title = None, xcaption = None, ycaption = None,
   else:
     print("Saving plot in " + output)
     plt.savefig(output)
-
   
     
 
