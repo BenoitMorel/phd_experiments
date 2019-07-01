@@ -23,7 +23,7 @@ def plot_histogram(xlabels, yvalues, title, xcaption, ycaption, output):
 """
     data[category][class] = value
 """
-def plot_grouped_histogram(data, title = None, xcaption = None, ycaption = None, cat_name = "categories", class_name = "classes", values_name = "values", kind = "bar", start_at_min_y = False, log_scale = False, output = "show"):
+def plot_grouped_histogram(data, title = None, xcaption = None, ycaption = None, cat_name = "categories", class_name = "classes", values_name = "values", kind = "bar", start_at_min_y = False, log_scale = False, x_order = None, output = "show"):
   values_vec = []
   categories_vec = []
   classes_vec = []
@@ -42,14 +42,15 @@ def plot_grouped_histogram(data, title = None, xcaption = None, ycaption = None,
   dataFrameDico[cat_name] = categories_vec
   dataFrameDico[values_name] = values_vec
   df = pd.DataFrame(data = dataFrameDico)
-  f = sns.factorplot(data = df, x = class_name, hue = cat_name, y = values_name, kind = kind, legend = False)
+  print(x_order)
+  f = sns.factorplot(data = df, x = class_name, hue = cat_name, y = values_name, kind = kind, order = x_order, legend = False)
   f.despine(left=True)
   #f._legend.set_title('')
   plt.gca().legend().set_title('')
   plt.gca().set_xlabel('')
   if (log_scale):
     f.set(yscale="log")
-  plt.xticks(rotation = 45)
+  plt.xticks(rotation = 90)
   if (start_at_min_y):
     epsilon = (max_value - min_value) / 10.0
     f.set(ylim=(min_value - epsilon, max_value + epsilon))

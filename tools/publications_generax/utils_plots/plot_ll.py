@@ -17,14 +17,14 @@ import saved_metrics
 
 def aux(dataset, model):
   methods_to_plot = []
-  methods_to_plot.append(["raxml-ng"])
-  methods_to_plot.append(["notung80"])
-  methods_to_plot.append(["treerecs"])
+  methods_to_plot.append("raxml-ng")
+  methods_to_plot.append("notung80")
+  methods_to_plot.append("treerecs")
   #methods_to_plot.append(["phyldog", "raxml-ng"])
-  methods_to_plot.append(["ale-dl"])
-  methods_to_plot.append(["ale-dtl"])
-  methods_to_plot.append(["generax-dl-random"])
-  methods_to_plot.append(["generax-dtl-random"])
+  methods_to_plot.append("ale-dl")
+  methods_to_plot.append("ale-dtl")
+  methods_to_plot.append("generax-dl-random")
+  methods_to_plot.append("generax-dtl-random")
 
   methods_display_name = {}
   methods_display_name["raxml-ng"] = "RAxML-NG"
@@ -54,18 +54,20 @@ def aux(dataset, model):
       if (model.lower() in run.lower()):
         method = fam.get_method_from_run(run)
         dico[cat][method] = -float(saved_metrics_dict[cat][run])
-    
-  xlabels = []
+  
+  x_order = []
   yvalues = {}
+  for method in methods_to_plot:
+    x_order.append(methods_display_name[method])
   for cat in categories:
     yvalues[categories[cat]] = {}
   for cat in categories:
     for method in methods_to_plot:
-      x = methods_display_name[method[0]]
-      yvalues[categories[cat]][x] = dico[cat][method[0]]
+      x = methods_display_name[method]
+      yvalues[categories[cat]][x] = dico[cat][method]
   
   output = "joint_likelihood__" + dataset
-  plot_histogram.plot_grouped_histogram(yvalues, cat_name = "Category", class_name = "Methods", values_name = "Absolulte log-likelihoods", start_at_min_y = True, output = output + ".svg")
+  plot_histogram.plot_grouped_histogram(yvalues, cat_name = "Category", class_name = "Methods", values_name = "Absolulte log-likelihoods", start_at_min_y = True, x_order = x_order, output = output + ".svg")
      
 
 
