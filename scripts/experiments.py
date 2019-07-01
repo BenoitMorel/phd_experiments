@@ -240,6 +240,7 @@ def checkAndDelete(arg, arguments):
   return False
 
 def getAndDelete(arg, arguments, default_value):
+  print ("looking for " + arg + " in " + str(arguments))
   if (arg in arguments):
     index = arguments.index(arg)
     res = arguments[index + 1]

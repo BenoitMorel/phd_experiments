@@ -102,7 +102,7 @@ def get_rf_to_true(cells, run_name):
 
 def compute_and_save_rf_cells(datadir):
   runs = fam.get_successful_runs(datadir)
-  print("Reading trees...")
+  print("Reading trees from " + str(runs) + "...")
   trees = read_all_trees(datadir, runs)
   print("Checking invalid runs...")
   #invalid_runs = get_invalid_runs(trees, runs)
