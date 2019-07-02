@@ -5,7 +5,7 @@ import seaborn as sns
 import pandas as pd
 sns.set_style("darkgrid")
 
-def plot_histogram(xlabels, yvalues, title, xcaption, ycaption, output):
+def plot_histogram(xlabels, yvalues, title = None, xcaption = None, ycaption = None,start_at_min_y = False,  output = "show"):
     print(xlabels)
     print(yvalues)
     y_pos = np.arange(len(xlabels))
@@ -16,6 +16,11 @@ def plot_histogram(xlabels, yvalues, title, xcaption, ycaption, output):
     plt.xticks(range(len(xlabels)), size='small')
     plt.xlabel(xcaption)
     plt.ylabel(ycaption)
+    if (start_at_min_y):
+      max_value = max(yvalues)
+      min_value = min(yvalues)
+      epsilon = (max_value - min_value) / 10.0
+      f.set(ylim=(min_value - epsilon, max_value + epsilon))
     plt.title(title)
     fig.tight_layout()
     if (output == "show"):

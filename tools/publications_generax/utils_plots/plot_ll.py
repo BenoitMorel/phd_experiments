@@ -65,9 +65,15 @@ def aux(dataset, model):
       yvalues[categories[cat]][x] = dico[cat][method[0]]
   
   output = "joint_likelihood__" + dataset
+  # GROUPED HISTOGRAM
   plot_histogram.plot_grouped_histogram(yvalues, cat_name = "Category", class_name = "Methods", values_name = "Absolulte log-likelihoods", start_at_min_y = True, output = output + ".svg")
-     
-
+  print(yvalues)   
+  # SIMPLE HISTOGRAMS
+  for cat in categories:
+    print(cat)
+    simple_xlabels = list(yvalues[categories[cat]].keys())
+    simple_yvalues = list(yvalues[categories[cat]].values())
+    plot_histogram.plot_histogram(simple_xlabels, simple_yvalues, start_at_min_y = True)
 
 def plot_ll():
   datasets = ["cyano_empirical", "ensembl_96_ncrna_primates"]
