@@ -4,7 +4,7 @@ sys.path.insert(0, 'tools/publications_generax/utils_plots')
 import plot_scaling
 import plot_rrf
 import plot_boxplots
-import plot_runtimes
+#import plot_runtimes
 import plot_ll
 
 
