@@ -7,7 +7,7 @@ sys.path.insert(0, 'scripts/generax')
 sys.path.insert(0, 'tools/families')
 sys.path.insert(0, 'tools/plotters')
 import experiments as exp
-import stacked_plot
+#import stacked_plot
 import plot_histogram
 import common
 import scaling_generax
@@ -49,6 +49,7 @@ def get_generax_seq_runtime(run, runs, run_cores, metrics):
 def plot(yvalues, output):
   plot_histogram.plot_grouped_histogram(yvalues, cat_name = "Category", class_name = "Methods", values_name = "Time (s)", log_scale = True,  output = output)
 
+"""
 def plot_all_stacked_plots(dico, categories, dataset, cores, methods_to_plot, methods_display_name):
   for cat in categories:
     stacked_data = [[], []]
@@ -63,7 +64,7 @@ def plot_all_stacked_plots(dico, categories, dataset, cores, methods_to_plot, me
         stacked_data[1].append(0.0)
     output = "stacked_runtimes_" + cat + "_" + dataset + ".svg"
     stacked_plot.stacked_plot(data = stacked_data, stack_labels = stack_labels, caption_title = None, xlabels = xlabels, ylabel = "Time (s)", output = output) 
-
+"""
 def get_dico_values(categories, datadir, methods_display_name, model, cores):
   dico = {}
   runs = saved_metrics.get_metrics_methods(datadir, "runtimes")
@@ -103,6 +104,17 @@ def plot_all_barplots(dico, categories, dataset, methods_to_plot, methods_displa
     output = "runtimes_" + dataset
     plot(yvalues_individual, output + "_individual.svg")
     plot(yvalues_cumulated, output + "_cumulated.svg")
+    
+def plot_scalings(dico, categories, dataset, methods_to_plot, methods_display_name):
+  xlabels = []
+  yvalues = []
+  for method in methods_to_plot:
+    parallel_runtime = dico["Parallel"][method[0]]
+    sequential_runtime = dico["Sequential"][method[0]]
+    efficiency = sequential_runtime / parallel_runtime
+    xlabels.append(method[0])
+    yvalues.append(efficiency)
+  plot_histogram.plot_histogram(xlabels, yvalues, title = None, xcaption = None, ycaption = None,start_at_min_y = False, output = "show")
 
 def plot_runtimes():
   datasets = ["cyano_empirical"]
@@ -132,7 +144,8 @@ def plot_runtimes():
     stacked_data = {}
     dico = get_dico_values(categories, datadir, methods_display_name, model, cores)
     plot_all_barplots(dico, categories, dataset, methods_to_plot, methods_display_name)
-    plot_all_stacked_plots(dico, categories, dataset, cores, methods_to_plot, methods_display_name)
+    plot_scalings(dico, categories, dataset, methods_to_plot, methods_display_name)
+    #plot_all_stacked_plots(dico, categories, dataset, cores, methods_to_plot, methods_display_name)
 
 
         

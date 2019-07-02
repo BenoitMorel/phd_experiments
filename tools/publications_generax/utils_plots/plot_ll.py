@@ -72,8 +72,10 @@ def aux(dataset, model):
   # SIMPLE HISTOGRAMS
   for cat in categories:
     simple_xlabels = x_order
-    simple_yvalues = list(yvalues[categories[cat]].values())
-    output = "simple_ll_" + dataset + "_" + cat
+    simple_yvalues  = []
+    for x in x_order:
+      simple_yvalues.append(yvalues[categories[cat]][x])
+    output = "simple_ll_" + dataset + "_" + cat + ".svg"
     plot_histogram.plot_histogram(simple_xlabels, simple_yvalues, ycaption = "Absolute log-likelihiood", start_at_min_y = True, output = output)
 
 def plot_ll():

@@ -27,6 +27,7 @@ def plot_histogram(xlabels, yvalues, title = None, xcaption = None, ycaption = N
     if (output == "show"):
         plt.show()
     else:
+        print("Saving plot in " + output)
         plt.savefig(output)
 """
     data[category][class] = value

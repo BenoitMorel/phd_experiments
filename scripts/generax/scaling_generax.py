@@ -63,6 +63,7 @@ def plot_scaling_metric(datadir):
   dataset = os.path.basename(os.path.normpath(datadir))
   print("dataset " + dataset)
   for metric_name in saved_metrics.get_all_metric_names(datadir):
+    print(metric_name)
     if (not metric_name.startswith("scaling-")):
       continue
     metrics = saved_metrics.get_metrics(datadir, metric_name)
