@@ -15,23 +15,19 @@ import boxplot
 import rf_cells
 import saved_metrics
 
-def aux(dataset, model):
+def aux(dataset, model, recModel):
   methods_to_plot = []
   methods_to_plot.append("raxml-ng")
   methods_to_plot.append("notung80")
   methods_to_plot.append("treerecs")
   #methods_to_plot.append(["phyldog", "raxml-ng"])
-  methods_to_plot.append("ale-dl")
-  methods_to_plot.append("ale-dtl")
-  methods_to_plot.append("generax-dl-random")
-  methods_to_plot.append("generax-dtl-random")
+  methods_to_plot.append("ale-" + recModel.lower())
+  methods_to_plot.append("generax-" + recModel.lower() + "-random")
 
   methods_display_name = {}
   methods_display_name["raxml-ng"] = "RAxML-NG"
-  methods_display_name["ale-dl"] = "ALE-DL"
-  methods_display_name["ale-dtl"] = "ALE-DTL"
-  methods_display_name["generax-dl-random"] = "GeneRax-DL"
-  methods_display_name["generax-dtl-random"] = "GeneRax-DTL"
+  methods_display_name["ale-" + recModel.lower()] = "ALE-" + recModel
+  methods_display_name["generax-" + recModel.lower() + "-random"] = "GeneRax-" + recModel
   methods_display_name["treerecs"] = "Treerecs"
   methods_display_name["notung80"] = "Notung"
 
@@ -70,15 +66,14 @@ def aux(dataset, model):
   # GROUPED HISTOGRAM
   plot_histogram.plot_grouped_histogram(yvalues, cat_name = "Category", class_name = "Methods", values_name = "Absolute log-likelihood", start_at_min_y = True, x_order = x_order, output = output + ".svg")
   # SIMPLE HISTOGRAMS
-  for cat in categories:
-    simple_xlabels = x_order
-    simple_yvalues  = []
-    for x in x_order:
-      simple_yvalues.append(yvalues[categories[cat]][x])
-    output = "simple_ll_" + dataset + "_" + cat + ".svg"
-    plot_histogram.plot_histogram(simple_xlabels, simple_yvalues, ycaption = "Absolute log-likelihiood", start_at_min_y = True, output = output)
+  simple_xlabels = x_order
+  simple_yvalues  = []
+  for x in x_order:
+    simple_yvalues.append(yvalues[recModel][x])
+  output = "simple_ll_" + dataset + "_" + recModel + ".svg"
+  plot_histogram.plot_histogram(simple_xlabels, simple_yvalues, ycaption = "Absolute log-likelihiood", start_at_min_y = True, output = output)
 
 def plot_ll():
   datasets = ["cyano_empirical", "ensembl_96_ncrna_primates"]
-  aux("cyano_empirical", "LG+G")
-  aux("ensembl_96_ncrna_primates", "GTR+G")
+  aux("cyano_empirical", "LG+G", "DTL")
+  aux("ensembl_96_ncrna_primates", "GTR+G", "DL")

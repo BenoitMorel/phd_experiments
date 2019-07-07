@@ -52,7 +52,11 @@ def plot_model_boxplots():
   methods["notung80"] = "Notung"
   methods["raxml-ng"] = "RAxML-NG"
   order = ["GeneRax", "ALE", "Treerecs",  "Notung", "RAxML-NG"]
-  models = ["DAYHOFF", "LG+G"]
+  models = ["LG+G", "DAYHOFF"]
+  models_to_display = {}
+  models_to_display["LG+G"] = "True model"
+  models_to_display["DAYHOFF"] = "Wrong model"
+  
   dico = {}
   datasets = ["cyano_simulated"]
   title = "Simulated cyanobacteria (1099 families)"

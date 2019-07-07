@@ -114,7 +114,8 @@ def plot_scalings(dico, categories, dataset, methods_to_plot, methods_display_na
     efficiency = sequential_runtime / parallel_runtime
     xlabels.append(method[0])
     yvalues.append(efficiency)
-  plot_histogram.plot_histogram(xlabels, yvalues, title = None, xcaption = None, ycaption = None,start_at_min_y = False, output = "show")
+  output = "method_scaling_" + dataset + ".svg"
+  plot_histogram.plot_histogram(xlabels, yvalues, title = None, xcaption = None, ycaption = "Parallel efficiency",start_at_min_y = False, output = output)
 
 def plot_runtimes():
   datasets = ["cyano_empirical"]
