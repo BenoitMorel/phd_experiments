@@ -57,7 +57,6 @@ def plot_all_stacked_plots(dico, categories, dataset, cores):
   methods_to_plot.append(["ale-dtl", "mrbayes"])
   methods_to_plot.append(["generax-dtl-raxml", "raxml-light"])
   methods_to_plot.append(["generax-dtl-random"])
-  methods_to_plot.append(["generax-dl-random"])
 
   methods_display_name = {}
   methods_display_name["raxml-light"] = "RAxML-NG"
@@ -69,7 +68,7 @@ def plot_all_stacked_plots(dico, categories, dataset, cores):
   methods_display_name["notung80"] = "Notung"
   for cat in categories:
     stacked_data = [[], []]
-    stack_labels = ["methods", "precomputations"]
+    stack_labels = ["Tool", "Pre-processing"]
     xlabels = []
     for method in methods_to_plot:
       xlabels.append(methods_display_name[method[0]])
@@ -81,7 +80,7 @@ def plot_all_stacked_plots(dico, categories, dataset, cores):
     output = "stacked_runtimes_" + cat + "_" + dataset + ".svg"
     stacked_plot.stacked_plot(data = stacked_data, stack_labels = stack_labels, caption_title = None, xlabels = xlabels, ylabel = "Time (s)", output = output) 
 
-def get_dico_values(categories, datadir, methods_display_name, model, cores):
+def get_dico_values(categories, datadir, model, cores):
   dico = {}
   runs = saved_metrics.get_metrics_methods(datadir, "runtimes")
   for cat in categories:
@@ -93,7 +92,7 @@ def get_dico_values(categories, datadir, methods_display_name, model, cores):
       method = fam.get_method_from_run(run)
       parallel_runtime = float(saved_metrics_runtimes[run])
       sequential_runtime = parallel_runtime
-      if ("generax" in method and method in methods_display_name):
+      if ("generax" in method):
         sequential_runtime = get_generax_seq_runtime(run, runs, cores, saved_metrics_runtimes)
       elif (run in saved_metrics_seqtimes):
         sequential_runtime = float(saved_metrics_seqtimes[run])
@@ -110,7 +109,6 @@ def plot_all_barplots(dico, categories, dataset):
   methods_to_plot.append(["ale-dtl", "mrbayes"])
   methods_to_plot.append(["generax-dtl-raxml", "raxml-light"])
   methods_to_plot.append(["generax-dtl-random"])
-  methods_to_plot.append(["generax-dl-random"])
 
   methods_display_name = {}
   methods_display_name["raxml-light"] = "RAxML-NG"
@@ -145,7 +143,6 @@ def plot_scalings(dico, categories, dataset):
   methods_to_plot.append(["ale-dtl", "mrbayes"])
   methods_to_plot.append(["generax-dtl-raxml", "raxml-light"])
   methods_to_plot.append(["generax-dtl-random"])
-  methods_to_plot.append(["generax-dl-random"])
 
   methods_display_name = {}
   methods_display_name["raxml-light"] = "RAxML-NG"
@@ -160,7 +157,7 @@ def plot_scalings(dico, categories, dataset):
     parallel_runtime = dico["Parallel"][method[0]]
     sequential_runtime = dico["Sequential"][method[0]]
     efficiency = sequential_runtime / parallel_runtime
-    xlabels.append(method[0])
+    xlabels.append(methods_display_name[method[0]])
     yvalues.append(efficiency)
   output = "method_scaling_" + dataset + ".svg"
   plot_histogram.plot_histogram(xlabels, yvalues, title = None, xcaption = None, ycaption = "Parallel efficiency",start_at_min_y = False, output = output)
@@ -176,7 +173,7 @@ def plot_runtimes():
     categories = ["Parallel", "Sequential"]
     datadir = fam.get_datadir(dataset)
     stacked_data = {}
-    dico = get_dico_values(categories, datadir, methods_display_name, model, cores)
+    dico = get_dico_values(categories, datadir, model, cores)
     #plot_all_barplots(dico, categories, dataset)
     plot_scalings(dico, categories, dataset)
     plot_all_stacked_plots(dico, categories, dataset, cores)
