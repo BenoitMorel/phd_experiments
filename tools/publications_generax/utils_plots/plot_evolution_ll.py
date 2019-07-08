@@ -25,6 +25,6 @@ def plot_evolution_ll(log_file):
     iterations.append(index)
     index += 1
   output = "likelihood_evolution.svg"
-  plot_two_arrays.plot_two_arrays(output, iterations, reconciliation_ll, sequences_ll, "Search step", "Reconciliation LL", "Sequences LL", force_same_scale = True)
+  plot_two_arrays.plot_two_arrays(output, iterations, reconciliation_ll, sequences_ll, "Tree search", "Reconciliation log-likelihood", "Sequences log-likelihood", force_same_scale = True)
 
 plot_evolution_ll("generax_logs.out")
