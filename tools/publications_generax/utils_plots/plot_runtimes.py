@@ -7,7 +7,7 @@ sys.path.insert(0, 'scripts/generax')
 sys.path.insert(0, 'tools/families')
 sys.path.insert(0, 'tools/plotters')
 import experiments as exp
-#import stacked_plot
+import stacked_plot
 import plot_histogram
 import common
 import scaling_generax
@@ -49,8 +49,24 @@ def get_generax_seq_runtime(run, runs, run_cores, metrics):
 def plot(yvalues, output):
   plot_histogram.plot_grouped_histogram(yvalues, cat_name = "Category", class_name = "Methods", values_name = "Time (s)", log_scale = True,  output = output)
 
-"""
-def plot_all_stacked_plots(dico, categories, dataset, cores, methods_to_plot, methods_display_name):
+def plot_all_stacked_plots(dico, categories, dataset, cores):
+  methods_to_plot = []
+  methods_to_plot.append(["raxml-light"])
+  methods_to_plot.append(["notung80", "raxml-ng"])
+  methods_to_plot.append(["treerecs", "raxml-ng"])
+  methods_to_plot.append(["ale-dtl", "mrbayes"])
+  methods_to_plot.append(["generax-dtl-raxml", "raxml-light"])
+  methods_to_plot.append(["generax-dtl-random"])
+  methods_to_plot.append(["generax-dl-random"])
+
+  methods_display_name = {}
+  methods_display_name["raxml-light"] = "RAxML-NG"
+  methods_display_name["ale-dtl"] = "ALE"
+  methods_display_name["generax-dtl-raxml"] = "GeneRax-Raxml"
+  methods_display_name["generax-dtl-random"] = "GeneRax-Random"
+  methods_display_name["generax-dl-random"] = "GeneRax-DL-Random"
+  methods_display_name["treerecs"] = "Treerecs"
+  methods_display_name["notung80"] = "Notung"
   for cat in categories:
     stacked_data = [[], []]
     stack_labels = ["methods", "precomputations"]
@@ -64,7 +80,7 @@ def plot_all_stacked_plots(dico, categories, dataset, cores, methods_to_plot, me
         stacked_data[1].append(0.0)
     output = "stacked_runtimes_" + cat + "_" + dataset + ".svg"
     stacked_plot.stacked_plot(data = stacked_data, stack_labels = stack_labels, caption_title = None, xlabels = xlabels, ylabel = "Time (s)", output = output) 
-"""
+
 def get_dico_values(categories, datadir, methods_display_name, model, cores):
   dico = {}
   runs = saved_metrics.get_metrics_methods(datadir, "runtimes")
@@ -86,26 +102,58 @@ def get_dico_values(categories, datadir, methods_display_name, model, cores):
       dico["Sequential"][method] = sequential_runtime
   return dico
     
-def plot_all_barplots(dico, categories, dataset, methods_to_plot, methods_display_name):    
-    xlabels = []
-    yvalues_individual = {}
-    yvalues_cumulated = {}
-    for cat in categories:
-      yvalues_individual[cat] = {}
-      yvalues_cumulated[cat] = {}
-    for cat in categories:
-      for method in methods_to_plot:
-        x = methods_display_name[method[0]]
-        yvalues_individual[cat][x] = dico[cat][method[0]]
-        cumulated_time = 0.0
-        for m in method:
-          cumulated_time += dico[cat][m]
-        yvalues_cumulated[cat][x] = cumulated_time
-    output = "runtimes_" + dataset
-    plot(yvalues_individual, output + "_individual.svg")
-    plot(yvalues_cumulated, output + "_cumulated.svg")
+def plot_all_barplots(dico, categories, dataset):    
+  methods_to_plot = []
+  methods_to_plot.append(["raxml-light"])
+  methods_to_plot.append(["notung80", "raxml-ng"])
+  methods_to_plot.append(["treerecs", "raxml-ng"])
+  methods_to_plot.append(["ale-dtl", "mrbayes"])
+  methods_to_plot.append(["generax-dtl-raxml", "raxml-light"])
+  methods_to_plot.append(["generax-dtl-random"])
+  methods_to_plot.append(["generax-dl-random"])
+
+  methods_display_name = {}
+  methods_display_name["raxml-light"] = "RAxML-NG"
+  methods_display_name["ale-dtl"] = "ALE"
+  methods_display_name["generax-dtl-raxml"] = "GeneRax-Raxml"
+  methods_display_name["generax-dtl-random"] = "GeneRax-Random"
+  methods_display_name["treerecs"] = "Treerecs"
+  methods_display_name["notung80"] = "Notung"
+  xlabels = []
+  yvalues_individual = {}
+  yvalues_cumulated = {}
+  for cat in categories:
+    yvalues_individual[cat] = {}
+    yvalues_cumulated[cat] = {}
+  for cat in categories:
+    for method in methods_to_plot:
+      x = methods_display_name[method[0]]
+      yvalues_individual[cat][x] = dico[cat][method[0]]
+      cumulated_time = 0.0
+      for m in method:
+        cumulated_time += dico[cat][m]
+      yvalues_cumulated[cat][x] = cumulated_time
+  output = "runtimes_" + dataset
+  plot(yvalues_individual, output + "_individual.svg")
+  plot(yvalues_cumulated, output + "_cumulated.svg")
     
-def plot_scalings(dico, categories, dataset, methods_to_plot, methods_display_name):
+def plot_scalings(dico, categories, dataset):
+  methods_to_plot = []
+  methods_to_plot.append(["raxml-light"])
+  methods_to_plot.append(["notung80", "raxml-ng"])
+  methods_to_plot.append(["treerecs", "raxml-ng"])
+  methods_to_plot.append(["ale-dtl", "mrbayes"])
+  methods_to_plot.append(["generax-dtl-raxml", "raxml-light"])
+  methods_to_plot.append(["generax-dtl-random"])
+  methods_to_plot.append(["generax-dl-random"])
+
+  methods_display_name = {}
+  methods_display_name["raxml-light"] = "RAxML-NG"
+  methods_display_name["ale-dtl"] = "ALE"
+  methods_display_name["generax-dtl-raxml"] = "GeneRax-Raxml"
+  methods_display_name["generax-dtl-random"] = "GeneRax-Random"
+  methods_display_name["treerecs"] = "Treerecs"
+  methods_display_name["notung80"] = "Notung"
   xlabels = []
   yvalues = []
   for method in methods_to_plot:
@@ -121,22 +169,7 @@ def plot_runtimes():
   datasets = ["cyano_empirical"]
   model = "LG+G"
   cores = 512
-  methods_to_plot = []
-  methods_to_plot.append(["raxml-light"])
-  methods_to_plot.append(["notung80", "raxml-ng"])
-  methods_to_plot.append(["treerecs", "raxml-ng"])
-  #methods_to_plot.append(["phyldog", "raxml-ng"])
-  methods_to_plot.append(["ale-dtl", "mrbayes"])
-  methods_to_plot.append(["generax-dtl-raxml", "raxml-light"])
-  methods_to_plot.append(["generax-dtl-random"])
-
-  methods_display_name = {}
-  methods_display_name["raxml-light"] = "RAxML-NG"
-  methods_display_name["ale-dtl"] = "ALE"
-  methods_display_name["generax-dtl-raxml"] = "GeneRax-raxml"
-  methods_display_name["generax-dtl-random"] = "GeneRax-rdm"
-  methods_display_name["treerecs"] = "Treerecs"
-  methods_display_name["notung80"] = "Notung"
+  
 
   for dataset in datasets:
     output = "runtimes_" + dataset + ".svg"
@@ -144,9 +177,9 @@ def plot_runtimes():
     datadir = fam.get_datadir(dataset)
     stacked_data = {}
     dico = get_dico_values(categories, datadir, methods_display_name, model, cores)
-    plot_all_barplots(dico, categories, dataset, methods_to_plot, methods_display_name)
-    plot_scalings(dico, categories, dataset, methods_to_plot, methods_display_name)
-    #plot_all_stacked_plots(dico, categories, dataset, cores, methods_to_plot, methods_display_name)
+    #plot_all_barplots(dico, categories, dataset)
+    plot_scalings(dico, categories, dataset)
+    plot_all_stacked_plots(dico, categories, dataset, cores)
 
 
         
