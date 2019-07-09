@@ -18,7 +18,7 @@ def get_speciesrax_datasets():
 
 datasets = get_speciesrax_datasets()
 
-def build_speciesrax_families_file(dataset, starting_tree, is_protein, output):
+def build_speciesrax_families_file(dataset, starting_tree, subst_model, output):
   families_dir = os.path.join(dataset, "families")
   with open(output, "w") as writer:
     writer.write("[FAMILIES]\n")
@@ -27,19 +27,16 @@ def build_speciesrax_families_file(dataset, starting_tree, is_protein, output):
       
       family_path = os.path.join(families_dir, family)
       writer.write("- " + family + "\n")
-      writer.write("starting_gene_tree = " + fam.get_gene_tree(family_path, starting_tree) + "\n")
+      writer.write("starting_gene_tree = " + fam.get_gene_tree(dataset, subst_model, family, starting_tree) + "\n")
       writer.write("alignment = " + fam.get_alignment_file(family_path) + "\n")
-      writer.write("mapping = " + fam.get_mappings(dataset) + "\n")
+      writer.write("mapping = " + fam.get_mappings(dataset, family) + "\n")
       raxml_model = ""
       if (starting_tree != "random"):
-        raxml_model = fam.get_raxml_model(family_path)
+        raxml_model = fam.get_raxml_best_model(dataset, subst_model, family)
       if (os.path.isfile(raxml_model)):
         writer.write("subst_model = " + raxml_model + "\n")
       else:
-        if (is_protein):
-          writer.write("subst_model = LG\n")
-        else:
-          writer.write("subst_model = GTR\n")
+        writer.write("subst_model = " + subst_model + "\n")
 
 def get_speciesrax_command(speciesrax_families_file, species_tree, additional_arguments, output_dir, mode, cores):
     executable = exp.speciesrax_exec
@@ -63,7 +60,7 @@ def get_speciesrax_command(speciesrax_families_file, species_tree, additional_ar
     return " ".join(command)
 
 def run_speciesrax(datadir, speciesrax_families_file, mode, cores, additional_arguments, resultsdir):
-  species_tree = os.path.join(datadir, "speciesTree.newick")
+  species_tree = fam.get_species_tree(datadir)
   command = get_speciesrax_command(speciesrax_families_file, species_tree, additional_arguments, resultsdir, mode, cores)
   print(command)
   subprocess.check_call(command.split(" "), stdout = sys.stdout)
@@ -93,8 +90,7 @@ def extract_trees(data_family_dir, results_family_dir, prefix):
     shutil.copy(source, dest)
 
 
-def run(dataset, starting_tree, cores, additional_arguments, resultsdir):
-  is_protein = exp.checkAndDelete("--protein", additional_arguments)
+def run(dataset, subst_model, starting_tree, cores, additional_arguments, resultsdir):
   run_name = exp.getAndDelete("--run", additional_arguments, "lastRun") 
   mode = get_mode_from_additional_arguments(additional_arguments)
   if (not dataset in datasets):
@@ -102,14 +98,14 @@ def run(dataset, starting_tree, cores, additional_arguments, resultsdir):
     exit(1)
   datadir = datasets[dataset]
   speciesrax_families_file = os.path.join(resultsdir, "speciesrax_families.txt")
-  build_speciesrax_families_file(datadir, starting_tree, is_protein, speciesrax_families_file)
+  build_speciesrax_families_file(datadir, starting_tree, subst_model, speciesrax_families_file)
   start = time.time()
   run_speciesrax(datadir, speciesrax_families_file, mode, cores, additional_arguments, resultsdir)
   saved_metrics.save_metrics(datadir, run_name, (time.time() - start), "runtimes") 
 
   print("Output in " + resultsdir)
 
-def launch(dataset, starting_tree, cluster, cores, additional_arguments):
+def launch(dataset, subst_model, starting_tree, cluster, cores, additional_arguments):
   command = ["python"]
   command.extend(sys.argv)
   command.append("--exprun")
@@ -127,7 +123,7 @@ if (__name__ == "__main__"):
     resultsdir = sys.argv[-1]
     sys.argv = sys.argv[:-2]
     
-  min_args_number = 5
+  min_args_number = 6
   if (len(sys.argv) < min_args_number):
     print("Syntax error: python " + os.path.basename(__file__) + "  dataset starting_tree cluster cores [additional paremeters].\n Suggestions of datasets: ")
     for dataset in datasets:
@@ -135,9 +131,10 @@ if (__name__ == "__main__"):
     sys.exit(1)
 
   dataset = sys.argv[1]
-  starting_tree = sys.argv[2]
-  cluster = sys.argv[3]
-  cores = int(sys.argv[4])
+  subst_model = sys.argv[2]
+  starting_tree = sys.argv[3]
+  cluster = sys.argv[4]
+  cores = int(sys.argv[5])
   additional_arguments = sys.argv[min_args_number:]
 
   if (starting_tree == "raxml"):
@@ -145,9 +142,9 @@ if (__name__ == "__main__"):
     exit(1)
 
   if (is_run):
-    run(dataset, starting_tree, cores, additional_arguments, resultsdir)
+    run(dataset, subst_model, starting_tree, cores, additional_arguments, resultsdir)
   else:
-    launch(dataset, starting_tree, cluster, cores, additional_arguments)
+    launch(dataset, subst_model, starting_tree, cluster, cores, additional_arguments)
 
 
 
