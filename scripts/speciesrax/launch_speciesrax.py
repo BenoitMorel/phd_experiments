@@ -8,6 +8,7 @@ import experiments as exp
 import shutil
 import time
 import fam
+from ete3 import Tree
 
 def get_speciesrax_datasets():
   root_datadir = os.path.join(exp.benoit_datasets_root, "families")
@@ -90,7 +91,16 @@ def extract_trees(data_family_dir, results_family_dir, prefix):
     shutil.copy(source, dest)
 
 
+def analyze_results(datadir, resultsdir):
+  true_species_tree = Tree(fam.get_species_tree(datadir), format = 1)
+  inferred_species_tree = Tree(os.path.join(resultsdir, "speciesrax", "inferred_species_tree.newick"), format = 1)
+  rooted_rf = true_species_tree.robinson_foulds(inferred_species_tree, unrooted_trees = False)
+  unrooted_rf = true_species_tree.robinson_foulds(inferred_species_tree, unrooted_trees = True)
+  print("Rooted RF: " + str(rooted_rf[0]))
+  print("Unrooted RF: " + str(unrooted_rf[0]))
+
 def run(dataset, subst_model, starting_tree, cores, additional_arguments, resultsdir):
+  print("Output in " + resultsdir)
   run_name = exp.getAndDelete("--run", additional_arguments, "lastRun") 
   mode = get_mode_from_additional_arguments(additional_arguments)
   if (not dataset in datasets):
@@ -102,8 +112,7 @@ def run(dataset, subst_model, starting_tree, cores, additional_arguments, result
   start = time.time()
   run_speciesrax(datadir, speciesrax_families_file, mode, cores, additional_arguments, resultsdir)
   saved_metrics.save_metrics(datadir, run_name, (time.time() - start), "runtimes") 
-
-  print("Output in " + resultsdir)
+  analyze_results(datadir, resultsdir) 
 
 def launch(dataset, subst_model, starting_tree, cluster, cores, additional_arguments):
   command = ["python"]
