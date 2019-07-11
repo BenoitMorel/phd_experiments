@@ -90,18 +90,32 @@ def extract_trees(data_family_dir, results_family_dir, prefix):
     dest = os.path.join(output_msa_dir, prefix + ".newick")
     shutil.copy(source, dest)
 
+def av_rf(rf_cell):
+  return float(rf_cell[0]) / float(rf_cell[1])
 
 def analyze_results(datadir, resultsdir):
   true_species_tree = Tree(fam.get_species_tree(datadir), format = 1)
+  starting_species_tree = Tree(os.path.join(resultsdir, "speciesrax", "starting_species_tree.newick"), format = 1)
   inferred_species_tree = Tree(os.path.join(resultsdir, "speciesrax", "inferred_species_tree.newick"), format = 1)
-  rooted_rf = true_species_tree.robinson_foulds(inferred_species_tree, unrooted_trees = False)
-  unrooted_rf = true_species_tree.robinson_foulds(inferred_species_tree, unrooted_trees = True)
-  print("Rooted RF: " + str(rooted_rf[0]))
-  print("Unrooted RF: " + str(unrooted_rf[0]))
+  starting_rooted_rf = true_species_tree.robinson_foulds(starting_species_tree, unrooted_trees = False)
+  starting_unrooted_rf = true_species_tree.robinson_foulds(starting_species_tree, unrooted_trees = True)
+  inferred_rooted_rf = true_species_tree.robinson_foulds(inferred_species_tree, unrooted_trees = False)
+  inferred_unrooted_rf = true_species_tree.robinson_foulds(inferred_species_tree, unrooted_trees = True)
+  print("Starting species tree:")
+  print("  Rooted RF: " + str(av_rf(starting_rooted_rf)))
+  print("  Unrooted RF: " + str(av_rf(starting_unrooted_rf)))
+  print("Inferred species tree:")
+  print("  Rooted RF: " + str(av_rf(inferred_rooted_rf)))
+  print("  Unrooted RF: " + str(av_rf(inferred_unrooted_rf)))
+
+def extract_results(datadir, subst_model, resultsdir, run_name):
+  src = os.path.join(resultsdir, "speciesrax", "inferred_species_tree.newick")
+  dest = fam.get_species_tree(datadir, subst_model, run_name)
+  shutil.copyfile(src, dest)
 
 def run(dataset, subst_model, starting_tree, cores, additional_arguments, resultsdir):
   print("Output in " + resultsdir)
-  run_name = exp.getAndDelete("--run", additional_arguments, "lastRun") 
+  run_name = exp.getAndDelete("--run", additional_arguments, "speciesRax") 
   mode = get_mode_from_additional_arguments(additional_arguments)
   if (not dataset in datasets):
     print("Error: " + dataset + " is not in " + str(datasets))
@@ -113,6 +127,7 @@ def run(dataset, subst_model, starting_tree, cores, additional_arguments, result
   run_speciesrax(datadir, speciesrax_families_file, mode, cores, additional_arguments, resultsdir)
   saved_metrics.save_metrics(datadir, run_name, (time.time() - start), "runtimes") 
   analyze_results(datadir, resultsdir) 
+  extract_results(datadir, subst_model, resultsdir, run_name)
 
 def launch(dataset, subst_model, starting_tree, cluster, cores, additional_arguments):
   command = ["python"]
