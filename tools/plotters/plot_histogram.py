@@ -5,10 +5,17 @@ import seaborn as sns
 import pandas as pd
 sns.set_style("darkgrid")
 
-def plot_histogram(xlabels, yvalues, title = None, xcaption = None, ycaption = None,start_at_min_y = False, output = "show"):
+def plot_histogram(xlabels, yvalues, title = None, xcaption = None, ycaption = None,start_at_min_y = False, reverse_bar = False, output = "show"):
     y_pos = np.arange(len(xlabels))
     fig, ax = plt.subplots()
-    plt.bar(y_pos, yvalues, align='center')
+    bottom = 0
+    yvaluesbar = yvalues[:]
+    if (reverse_bar):
+      plop = 100000000
+      bottom = -plop
+      for i in range(0, len(yvalues)):
+        yvaluesbar[i] = plop - abs(yvalues[i])
+    plt.bar(y_pos, yvaluesbar, align='center', bottom = bottom)
     plt.xticks(y_pos, xlabels)
     plt.xticks(rotation=45)
     plt.xticks(range(len(xlabels)), size='small')

@@ -49,7 +49,7 @@ def aux(dataset, model, recModel):
     for run in runs:
       if (model.lower() in run.lower()):
         method = fam.get_method_from_run(run)
-        dico[cat][method] = -float(saved_metrics_dict[cat][run])
+        dico[cat][method] = float(saved_metrics_dict[cat][run])
   
   x_order = []
   yvalues = {}
@@ -71,7 +71,7 @@ def aux(dataset, model, recModel):
   for x in x_order:
     simple_yvalues.append(yvalues[recModel][x])
   output = "simple_ll_" + dataset + "_" + recModel + ".svg"
-  plot_histogram.plot_histogram(simple_xlabels, simple_yvalues, ycaption = "Absolute log-likelihiood", start_at_min_y = True, output = output)
+  plot_histogram.plot_histogram(simple_xlabels, simple_yvalues, ycaption = "Absolute log-likelihiood", start_at_min_y = True, reverse_bar = True,  output = output)
 
 def plot_ll():
   datasets = ["cyano_empirical", "ensembl_96_ncrna_primates"]
