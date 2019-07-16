@@ -23,6 +23,7 @@ import run_phyldog
 import saved_metrics
 import eval_generax_likelihood
 import run_decostar
+import run_all_species
 
 # couples of (species interval, seed) to get a given number of species node
 jsim_species_to_params = {}
@@ -85,6 +86,21 @@ def generate_dataset(dataset):
   else:
     print("Unknown simulator for dataset " + dataset)
     sys.exit(1)
+
+
+def run_species_methods(datasets, subst_model, cores, run_filter):
+  for dataset in datasets:
+    print("Run reference species methods for " + dataset)
+    dataset_dir = os.path.join("../BenoitDatasets/families", dataset)
+    save_sdtout = sys.stdout
+    redirected_file = os.path.join(dataset_dir, "species_logs_run_all." + subst_model + ".txt")
+    print("Redirected logs to " + redirected_file)
+    sys.stdout.flush()
+    sys.stdout = open(redirected_file, "w")
+    run_all_species.run_reference_methods(dataset_dir, subst_model, cores, run_filter)
+    sys.stdout = save_sdtout
+    print("End of run_all")
+    sys.stdout.flush()
 
 def run_reference_methods(dataset, subst_model, cores = 40, run_filter = RunFilter()):
   print("*************************************")

@@ -42,28 +42,29 @@ def export_pargenes_trees(pargenes_dir, subst_model, datadir):
   families_dir = os.path.join(datadir, "families")
   # tca scores
   concatenated_dir = os.path.join(pargenes_dir, "concatenated_bootstraps")
-  for concatenation in os.listdir(concatenated_dir):
-    family = "_".join(concatenation.split("_")[:-1]) # remove everything after the last
-    tca_score = 0.0
-    try:
-      tca_score = tca.get_tca(os.path.join(concatenated_dir, concatenation), family)
-    except:
-      print("failed to extract tca score for " + concatenation)
-      continue
-    try:
-      output = os.path.join(families_dir, family, "tca.txt")
-      open(output, "w").write(str(tca_score))
-    except:
-      continue
-  # support trees
-  support_trees_dir = os.path.join(pargenes_dir, "supports_run", "results")
-  for support_tree in os.listdir(support_trees_dir):
-    if (not support_tree.endswith("support")):
-      continue
-    family = "_".join(support_tree.split("_")[:-1]) # remove everything after the last _
-    old_raxml_tree = os.path.join(support_trees_dir, support_tree)
-    new_raxml_tree = fam.get_raxml_tree(datadir, subst_model, family)
-    shutil.copyfile(old_raxml_tree, new_raxml_tree)
+  if (os.path.isdir(concatenated_dir)):
+    for concatenation in os.listdir(concatenated_dir):
+      family = "_".join(concatenation.split("_")[:-1]) # remove everything after the last
+      tca_score = 0.0
+      try:
+        tca_score = tca.get_tca(os.path.join(concatenated_dir, concatenation), family)
+      except:
+        print("failed to extract tca score for " + concatenation)
+        continue
+      try:
+        output = os.path.join(families_dir, family, "tca.txt")
+        open(output, "w").write(str(tca_score))
+      except:
+        continue
+    # support trees
+    support_trees_dir = os.path.join(pargenes_dir, "supports_run", "results")
+    for support_tree in os.listdir(support_trees_dir):
+      if (not support_tree.endswith("support")):
+        continue
+      family = "_".join(support_tree.split("_")[:-1]) # remove everything after the last _
+      old_raxml_tree = os.path.join(support_trees_dir, support_tree)
+      new_raxml_tree = fam.get_raxml_tree(datadir, subst_model, family)
+      shutil.copyfile(old_raxml_tree, new_raxml_tree)
 
   # ml trees
   ml_trees_dir = os.path.join(pargenes_dir, "mlsearch_run", "results")
