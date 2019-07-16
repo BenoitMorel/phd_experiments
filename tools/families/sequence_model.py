@@ -13,6 +13,9 @@ def get_gamma_rates(subst_model):
   else:
     return 1
 
+def is_invariant_sites(subst_model):
+  return "+I" in subst_model
+
 def is_dna(subst_model):
   dna_models = ["JC", "GTR"]
   return get_model(subst_model) in dna_models
@@ -40,9 +43,15 @@ def get_mrbayes_lset_line(subst_model):
   elif (model == "JC"):
     line += "nst=2"
   if (rates == 1):
-    line += " rates=equal"
+    if (is_invariant_sites(subst_model)):
+      line += " rates=propinv"
+    else:
+      line += " rates=equal"
   else:
-    line += " rates=gamma ngammacat=" + str(rates)
+    if (is_invariant_sites(subst_model)):
+      line += " rates=invgamma ngammacat=" + str(rates)
+    else:
+      line += " rates=gamma ngammacat=" + str(rates)
   line += ";\n"
   return line
 

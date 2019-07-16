@@ -1,8 +1,0 @@
-#################
-#  MULTI RAXML  #
-#################
-Multi-raxml was called as follow:
-/hits/basement/sco/morel/github/phd_experiments/../multi-raxml/multi-raxml/multi-raxml.py -a /hits/basement/sco/morel/github/phd_experiments/../datasets/ensembl_8880_15/fasta_files/ -o /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/ensembl/no_bootstraps/haswell_256/run_4/multiraxml_run -r /hits/basement/sco/morel/github/phd_experiments/datasets/multi-raxml/option_files/raxml_global_options.txt -b 0 -c 256
-
-Checkpoint: 0
-Redirecting logs to /hits/basement/sco/morel/github/phd_experiments/results/multi-raxml/ensembl/no_bootstraps/haswell_256/run_4/multiraxml_run/multi_raxml_logs.txt

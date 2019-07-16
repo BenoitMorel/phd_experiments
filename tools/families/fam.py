@@ -47,8 +47,10 @@ def get_run_dir(datadir, subst_model = None, run_name = None):
 # global files
 #####################
 
-def get_species_tree(datadir):
-  return os.path.join(get_species_dir(datadir), "speciesTree.newick")
+def get_species_tree(datadir, method = "true", subst_model = "GTR"):
+  if (method == "true"):
+    return os.path.join(get_species_dir(datadir), "speciesTree.newick")
+  return os.path.join(get_species_dir(datadir), method + "." + subst_model + ".speciesTree.newick")
 
 def get_true_species_tree(datadir):
   return os.path.join(get_species_dir(datadir), "trueSpeciesTree.newick")
@@ -141,8 +143,11 @@ def get_alignment_file(datadir):
 def get_raxml_best_model(datadir, subst_model, family):
   return build_misc_file_path(datadir, subst_model, family, "raxmlBestModel")
 
-def get_raw_rf_cells_file(datadir):
-  return os.path.join(datadir, "misc", "rf_cells.pickle")
+def get_raw_rf_cells_file(datadir, rooted = False):
+  if (rooted):
+    return os.path.join(datadir, "misc", "rooted_rf_cells.pickle")
+  else:
+    return os.path.join(datadir, "misc", "rf_cells.pickle")
 
 
 def get_gene_tree(datadir, subst_model, family, tree):
@@ -315,6 +320,7 @@ def get_lb_from_run(run_dir):
       return float(line.split("lb = ")[1].split("<")[0])
   assert(False)
   return None
+
 
 #######################
 #  Directory helpers
