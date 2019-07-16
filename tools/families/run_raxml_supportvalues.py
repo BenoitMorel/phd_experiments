@@ -12,7 +12,8 @@ import saved_metrics
 import run_raxml_supportvalues as raxml
 
 def run_pargenes(datadir, pargenes_dir, subst_model, starting_trees, bs_trees, cores):
-  
+  parsimony_trees = int(starting_trees) / 2
+  random_trees = starting_trees - parsimony_trees
   raxml_command = "--model " + subst_model + " --blopt nr_safe"
   command = []
   command.append("python")
@@ -26,7 +27,9 @@ def run_pargenes(datadir, pargenes_dir, subst_model, starting_trees, bs_trees, c
   command.append("-c")
   command.append(str(cores))
   command.append("-s")
-  command.append(str(starting_trees))
+  command.append(str(random_trees))
+  command.append("-p")
+  command.append(str(parsimony_trees))
   command.append("-R")
   command.append(raxml_command)
   command.append("--continue")

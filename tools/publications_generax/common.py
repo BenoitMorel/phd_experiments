@@ -102,7 +102,7 @@ def run_reference_methods(dataset, subst_model, cores = 40, run_filter = RunFilt
   print("Run reference methods for " + dataset)
   print("*************************************")
   dataset_dir = os.path.join("../BenoitDatasets/families", dataset)
-  starting_trees = 10
+  starting_trees = 20
   bs_trees = 100
   save_sdtout = sys.stdout
   redirected_file = os.path.join(dataset_dir, "logs_run_all." + subst_model + ".txt")
