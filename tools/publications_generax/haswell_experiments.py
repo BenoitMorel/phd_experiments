@@ -9,10 +9,10 @@ from run_all import RunFilter
 
 
 # CYANO SIMULATED PLOTS
-if (False):
-  subst_models = ["LG+G"]
+if (True):
+  subst_models = ["LG+G", "DAYHOFF"]
   datasets = ["cyano_simulated"]
-  cores = 64
+  cores = 512
   do_generate = 0
   run_filter = RunFilter()
   run_filter.disable_all()
@@ -23,7 +23,7 @@ if (False):
   run_filter.EXA_generations = 1000000
   run_filter.EXA_frequencies = 1000
   run_filter.EXA_burnin = 100
-  run_filter.eval_joint_ll = False
+  run_filter.eval_joint_ll = True
   common.submit_multiple_experiments_haswell(datasets, subst_models, do_generate, cores, run_filter)
 
 

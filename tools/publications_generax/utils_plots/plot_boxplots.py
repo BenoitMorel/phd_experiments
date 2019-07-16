@@ -65,7 +65,7 @@ def plot_model_boxplots():
     model_dico = {}
     for method in methods:
       model_dico[methods[method]] = []
-    dico[model] = model_dico
+    dico[models_to_display[model]] = model_dico
 
   for dataset in datasets:
     cells = rf_cells.load_rf_cells(fam.get_datadir(dataset))
@@ -74,7 +74,7 @@ def plot_model_boxplots():
       for model in models:
         for method in methods:
           cell = rf_cells.get_rf_to_true(family_cells, fam.get_run_name(method, model))
-          dico[model][methods[method]].append(cell[0] / cell[1])
+          dico[models_to_display[model]][methods[method]].append(cell[0] / cell[1])
   gbp = boxplot.GroupBoxPlot(data = dico, title = title, ylabel = "Relative RF distance", hue_label = "Substitution model", order = order)
   output = os.path.abspath("cyano_simulated_boxplot.svg")
   gbp.plot(output)
