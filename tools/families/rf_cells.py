@@ -46,28 +46,28 @@ def get_gene_trees_list(datadir, family, run):
   tree_path = fam.build_gene_tree_path_from_run(datadir, family, run)
   return read_trees_list(tree_path)
 
-def read_trees_for_family(datadir, family, runs):
+def read_trees_for_family(datadir, family, runs, invalid_runs):
   family_trees = {}
   for run in runs:
-      family_trees[run] = get_gene_trees_list(datadir, family, run)
+    trees = get_gene_trees_list(datadir, family, run)
+    try:
+      family_trees[run] = trees
+    except:
+      invalid_runs.add(run)
+      continue
+    for tree in trees:
+      if (rooted and len(tree.get_tree_root().get_children()) != 2):
+        invalid_runs.add(run)
+        break
   return family_trees
 
-def read_all_trees(datadir, runs):
+
+def read_all_trees(datadir, runs, rooted, invalid_runs):
   trees = {}
   families = fam.get_families_list(datadir)
   for family in families:
-    trees[family] = read_trees_for_family(datadir, family, runs)
+    trees[family] = read_trees_for_family(datadir, family, runs, invalid_runs)
   return trees
-
-def get_invalid_runs(trees, runs):
-  invalid_runs = []
-  for run in runs:
-    for family in trees:
-      if (not run in trees[family]):
-        print("invalid run: " + run)
-        invalid_runs.append(run)
-        break
-  return invalid_runs
 
 def get_runs_to_compare(runs):
   runs_to_compare = []
@@ -78,7 +78,7 @@ def get_runs_to_compare(runs):
 def get_run_key(m1, m2):
   return m1 + " - " + m2
 
-def compute_all_rf_cells(trees, runs_to_compare):
+def compute_all_rf_cells(trees, runs_to_compare, rooted):
   rf_cells = {}
   for family in trees:
     family_trees = trees[family]
@@ -87,32 +87,32 @@ def compute_all_rf_cells(trees, runs_to_compare):
       key = get_run_key(run1, run2)
       trees1 = family_trees[run1]
       trees2 = family_trees[run2]
-      rf_cells[family][key] = rf_distance.ete3_average_rf_from_list(trees1, trees2) 
+      rf_cells[family][key] = rf_distance.ete3_average_rf_from_list(trees1, trees2, rooted) 
   return rf_cells
 
-def save_rf_cells(datadir, rf_cells):
-  output = fam.get_raw_rf_cells_file(datadir)
+def save_rf_cells(datadir, rf_cells, rooted):
+  output = fam.get_raw_rf_cells_file(datadir, rooted)
   pickle.dump(rf_cells, open(output, "wb"))
 
-def load_rf_cells(datadir):
-  return pickle.load(open(fam.get_raw_rf_cells_file(datadir), "rb"))
+def load_rf_cells(datadir, rooted):
+  return pickle.load(open(fam.get_raw_rf_cells_file(datadir, rooted), "rb"))
 
 def get_rf_to_true(cells, run_name):
   return cells[get_run_key(fam.get_run_name("true", "true"), run_name)]
 
-def compute_and_save_rf_cells(datadir):
+def compute_and_save_rf_cells(datadir, rooted):
   runs = fam.get_successful_runs(datadir)
-  print("Reading trees...")
-  trees = read_all_trees(datadir, runs)
+  print("Reading trees from " + str(runs) + "...")
+  invalid_runs = set() 
+  trees = read_all_trees(datadir, runs, rooted, invalid_runs)
   print("Checking invalid runs...")
-  #invalid_runs = get_invalid_runs(trees, runs)
-  print("Removing invalid runs... (NOT IMPLEMENTED)")
-  pass
+  runs = [x for x in runs if x not in invalid_runs]
+  print(runs) 
   runs_to_compare = get_runs_to_compare(runs)
   print("Computing RF distances...") 
-  rf_cells = compute_all_rf_cells(trees, runs_to_compare)
+  rf_cells = compute_all_rf_cells(trees, runs_to_compare, rooted)
   print("Saving cells")
-  save_rf_cells(datadir, rf_cells) 
+  save_rf_cells(datadir, rf_cells, rooted) 
 
 
 def get_run_keys_from_rf_cells(rf_cells):
@@ -137,8 +137,8 @@ def export_metric(datadir, metric_dict, metric_name, benched_run):
   print("")
 
 
-def compute_and_export_metrics(datadir, benched_run):
-  rf_cells = load_rf_cells(datadir)
+def compute_and_export_metrics(datadir, benched_run, rooted):
+  rf_cells = load_rf_cells(datadir, rooted)
   run_keys = get_run_keys_from_rf_cells(rf_cells)
   total_nodes = {}
   total_rf = {}
@@ -168,20 +168,23 @@ def compute_and_export_metrics(datadir, benched_run):
   #print("Relative average RF:")
   #export_metric(datadir, relative_arf, "relative_arf")
 
-def analyze(datadir, benched_run = "lastRun"):
-  compute_and_save_rf_cells(datadir)
-  compute_and_export_metrics(datadir, benched_run)
+def analyze(datadir, benched_run = "lastRun", rooted = False):
+  compute_and_save_rf_cells(datadir, rooted)
+  compute_and_export_metrics(datadir, benched_run, rooted)
 
 
 
 if __name__ == '__main__':
   if (len(sys.argv) < 2):
-    print("Syntax: families_dir [benched_run]")
+    print("Syntax: families_dir [benched_run root]")
     exit(1)
   print(" ".join(sys.argv))
   datadir = sys.argv[1]
   benched_run = ""
   if (len(sys.argv) > 2):
     benched_run = sys.argv[2]
-  analyze(datadir, benched_run)
+  rooted = False
+  if (len(sys.argv) > 3):
+    rooted = int(sys.argv[3]) != 0
+  analyze(datadir, benched_run, rooted)
 

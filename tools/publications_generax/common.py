@@ -3,11 +3,6 @@ import sys
 import os 
 import re
 import pickle
-import matplotlib.pyplot as plt; plt.rcdefaults()
-import numpy as np
-import matplotlib.pyplot as plt
-import seaborn as sns
-sns.set_style("darkgrid")
 
 sys.path.insert(0, 'scripts')
 import experiments as exp
@@ -234,22 +229,6 @@ def compute_likelihoods(datasets, cores = 40):
       except:
         print("Failed to eval joint likelihood on " + dataset + " for method " + tree)
 
-def get_datasets_to_plot(datasets_rf_dico, fixed_params_dico, x_param):
-
-  datasets_to_plot = []
-  for dataset in datasets_rf_dico:
-    ok = True
-    for fixed_param in fixed_params_dico:
-      if (fixed_param == x_param):
-        continue
-      dataset_param_value = fam.get_param_from_dataset_name(fixed_param, dataset)
-      if (dataset_param_value != fixed_params_dico[fixed_param]):
-        ok = False
-        continue
-    if (ok):
-      datasets_to_plot.append(dataset)
-  return datasets_to_plot
-
 def get_metrics_for_datasets(datasets_prefix, metric_name):
   datasets = get_available_datasets(datasets_prefix)
   datasets_rf_dico = {}
@@ -291,58 +270,6 @@ def add_dataset(datasets, fixed_point, strings_to_replace):
       exit(1)
     datasets.append(dataset)
 
-
-def plot(datasets_rf_dico, x_param, fixed_params_dico, methods, x_label, y_label, output):
-  datasets_to_plot = get_datasets_to_plot(datasets_rf_dico, fixed_params_dico, x_param)
-  datasets_to_plot.sort(key = lambda t: float(fam.get_param_from_dataset_name(x_param, t)))
-  df = pd.DataFrame()
-  f, ax = plt.subplots(1)
-  fake_df = {}
-  fake_df[x_param] = []
-  for method in methods:
-    fake_df[method] = []
-  for dataset in datasets_to_plot:
-    fake_df[x_param].append(float(fam.get_param_from_dataset_name(x_param, dataset)))
-    rf_dico = datasets_rf_dico[dataset]
-    print(rf_dico)
-    for method in methods:
-      print(method)
-      print(methods)
-      method_pair = "true.true - " + method
-      if (not method_pair in rf_dico):
-        print("Warning: missing data for method " + method + " and dataset " + dataset)
-    for method_pair in rf_dico:
-      method = method_pair.split(" - ")[1]
-      if (not method in methods):
-        continue
-      fake_df[method].append(float(rf_dico[method_pair]))
-  for elem in fake_df:
-    print("\t" + str(elem))
-    df[elem] = fake_df[elem]
- 
-  for method in methods:
-    style = "solid"
-    plt.plot(x_param, method, data=df, marker='.', linestyle = style, linewidth=2, label = method, markersize=12)
-    #ax.set_ylim(bottom=0)
-  plt.xlabel(x_label[x_param])
-  plt.ylabel(y_label)
-  plt.legend()
-  plt.savefig(output)
-  print("Saving result in " + output)
-  plt.close()
-
-
-class Plotter(object):
-  def __init__(self, datasets_values_dico, fixed_parameters, methods, x_labels, y_label, prefix):
-    self.datasets_values_dico = datasets_values_dico
-    self.fixed_parameters = fixed_parameters
-    self.methods = methods
-    self.x_labels = x_labels
-    self.prefix = prefix
-    self.y_label = y_label
-  
-  def __call__(self, parameter):
-    plot(self.datasets_values_dico, parameter, self.fixed_parameters, self.methods, self.x_labels,  self.y_label, self.prefix + "_" + parameter + ".svg")
 
 def submit_single_experiment_haswell(dataset, subst_model, do_generate, cores, run_filter = RunFilter()):
   command = []

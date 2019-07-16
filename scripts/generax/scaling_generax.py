@@ -9,8 +9,22 @@ import experiments as exp
 import saved_metrics
 import plot_line
 
-def run(datadir, starting_tree, with_transfer, cores, resultsdir):
+def get_run_name(starting_tree, with_transfer, subst_model, cores):
+  run_name = "scaling-c" + str(cores) + "-generax-"
+  if (with_transfer):
+    run_name += "dtl-"
+  else:
+    run_name += "dl-"
+  run_name += starting_tree.replace("raxml-ng", "raxml")
+  run_name + "."
+  run_name += subst_model
+  return run_name
+
+def run(datadir, subst_model, starting_tree, with_transfer, cores, resultsdir):
+  
   additional_arguments = []
+  additional_arguments.append("--run")
+  additional_arguments.append(get_run_name(starting_tree, with_transfer, subst_model, cores)) 
   additional_arguments.append("--rec-model")
   dataset = os.path.basename(os.path.normpath(datadir))
   method = "GeneRax-"
@@ -22,14 +36,15 @@ def run(datadir, starting_tree, with_transfer, cores, resultsdir):
     metric_name += "DL"
     additional_arguments.append("UndatedDL")
   start_time = time.time()
-  launch_generax.run(dataset, "SPR", starting_tree, cores, additional_arguments, resultsdir, False)
+  launch_generax.run(dataset, subst_model, "SPR", starting_tree, cores, additional_arguments, resultsdir, False)
   elapsed_time = time.time() - start_time
   saved_metrics.save_metrics(datadir, str(cores), str(elapsed_time), metric_name)
 
-def launch(datadir, starting_tree, with_transfer, cluster, cores):
+def launch(datadir, subst_model, starting_tree, with_transfer, cluster, cores):
   command = ["python"]
   command.append(os.path.realpath(__file__))
   command.append(datadir)
+  command.append(subst_model)
   command.append(starting_tree)
   command.append(str(with_transfer))
   command.append(cluster)
@@ -37,7 +52,7 @@ def launch(datadir, starting_tree, with_transfer, cluster, cores):
   command.append("--exprun")
   dataset = os.path.basename(os.path.normpath(datadir))
   print(command)
-  resultsdir = os.path.join("ScalingGeneRax", dataset, starting_tree, "run")
+  resultsdir = os.path.join("ScalingGeneRax", dataset, starting_tree, get_run_name(starting_tree, with_transfer, subst_model, cores))
   resultsdir = exp.create_result_dir(resultsdir, [])
   command.append(resultsdir)
   submit_path = os.path.join(resultsdir, "submit.sh")
@@ -48,6 +63,7 @@ def plot_scaling_metric(datadir):
   dataset = os.path.basename(os.path.normpath(datadir))
   print("dataset " + dataset)
   for metric_name in saved_metrics.get_all_metric_names(datadir):
+    print(metric_name)
     if (not metric_name.startswith("scaling-")):
       continue
     metrics = saved_metrics.get_metrics(datadir, metric_name)
@@ -69,21 +85,20 @@ def plot_scaling_metric(datadir):
     print("Output file: " + output_file)
 
 if (__name__ == "__main__"):
-  print(sys.argv)
   results_dir = exp.getAndDelete("--exprun", sys.argv, "")  
-  print(sys.argv)
   is_run = (len(results_dir) > 0)
-  if (len(sys.argv) != 6):
-    print("Syntax: datadir starting_tree with_transfer cluster cores")
+  if (len(sys.argv) < 7):
+    print("Syntax: datadir subst_model starting_tree with_transfer cluster cores")
     exit(1)
   datadir = sys.argv[1]
-  starting_tree = sys.argv[2]
-  with_transfer = (int(sys.argv[3]) != 0)
-  cluster = sys.argv[4]
-  cores = int(sys.argv[5])
+  subst_model = sys.argv[2]
+  starting_tree = sys.argv[3]
+  with_transfer = (int(sys.argv[4]) != 0)
+  cluster = sys.argv[5]
+  cores = int(sys.argv[6])
   if (is_run):
-    run(datadir, starting_tree, with_transfer, cores, results_dir)
+    run(datadir, subst_model, starting_tree, with_transfer, cores, results_dir)
   else:
-    launch(datadir, starting_tree, with_transfer, cluster, cores)
+    launch(datadir, subst_model, starting_tree, with_transfer, cluster, cores)
 
   
