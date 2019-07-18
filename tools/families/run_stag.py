@@ -12,10 +12,12 @@ import fam
 
 def init_gene_trees_file(datadir, subst_model, stag_gene_trees_dir):
   exp.mkdir(stag_gene_trees_dir) 
+  print("datadir " + datadir)
   for family in fam.get_families_list(datadir):
     gene_tree = fam.get_raxml_tree(datadir, subst_model, family)
     dest = os.path.join(stag_gene_trees_dir, family + ".newick")
     shutil.copyfile(gene_tree, dest)
+    print("copy " + gene_tree + " " + dest)
 
 def init_mappings(datadir, output_mapping_file):
   dico = {}
@@ -33,6 +35,7 @@ def init_mappings(datadir, output_mapping_file):
     for species in dico:
       for gene in dico[species]:
         writer.write(gene + " " + species + "\n")
+  print("wrote into " + output_mapping_file)
 
 def run_stag(datadir, subst_model):
   output_dir = fam.get_run_dir(datadir, subst_model, "stag_run")

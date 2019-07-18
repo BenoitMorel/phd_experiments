@@ -4,6 +4,7 @@ from ete3 import Tree
 import numpy
 import math
 sys.path.insert(0, os.path.join("tools", "trees"))
+sys.path.insert(0, os.path.join("tools", "print"))
 sys.path.insert(0, os.path.join("tools", "families"))
 from read_tree import read_tree
 from read_tree import read_trees_list
@@ -15,32 +16,7 @@ import concurrent.futures
 import saved_metrics
 import fam
 import pickle
-
-class AlignedPrinter:
-  def __init__(self):
-    self._lefts = []
-    self._rights = []
-
-  def add(self, left, right):
-    self._lefts.append(left)
-    self._rights.append(right)
-
-  def sort_right_float(self):
-    floating_array = []
-    for elem in self._rights:
-      floating_array.append(elem.split()[0])
-    self._lefts = [x for _,x in sorted(zip(floating_array, self._lefts))]
-    self._rights = [x for _,x in sorted(zip(floating_array, self._rights))]
-
-  def display(self):
-    max_chars = 0
-    for l in self._lefts:
-      max_chars = max(max_chars, len(l))
-    for i in range(0, len(self._lefts)):
-      l = self._lefts[i]
-      r = self._rights[i]
-      to_print = l + " " * (max_chars - len(l) + 1) + r
-      print(to_print)
+from aligned_printer import AlignedPrinter
 
 def get_gene_trees_list(datadir, family, run):
   tree_path = fam.build_gene_tree_path_from_run(datadir, family, run)
