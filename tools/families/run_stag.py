@@ -41,7 +41,7 @@ def run_stag(datadir, subst_model):
   output_dir = fam.get_run_dir(datadir, subst_model, "stag_run")
   shutil.rmtree(output_dir, True)
   os.makedirs(output_dir)
-  output_species_tree = fam.get_species_tree(datadir, "stag", subst_model) 
+  output_species_tree = fam.get_species_tree(datadir, subst_model, "stag") 
   stag_gene_trees_dir = os.path.join(output_dir, "stag_gene_trees")
   init_gene_trees_file(datadir, subst_model, stag_gene_trees_dir)
   mapping_file = os.path.join(output_dir, "stag_mapping.txt")

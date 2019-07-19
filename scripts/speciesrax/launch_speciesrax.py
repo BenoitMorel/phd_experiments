@@ -85,18 +85,6 @@ def get_mode_from_additional_arguments(additional_arguments):
   return mode
 
 
-def extract_trees(data_family_dir, results_family_dir, prefix):
-  results_dir = os.path.join(results_family_dir, "results")
-  for msa in os.listdir(results_dir):
-    output_msa_dir = os.path.join(data_family_dir, msa, "results")
-    try:
-      os.mkdir(output_msa_dir)
-    except:
-      pass
-    source = os.path.join(results_dir, msa, "geneTree.newick")
-    dest = os.path.join(output_msa_dir, prefix + ".newick")
-    shutil.copy(source, dest)
-
 def av_rf(rf_cell):
   return float(rf_cell[0]) / float(rf_cell[1])
 
@@ -118,11 +106,13 @@ def analyze_results(datadir, resultsdir):
 def extract_results(datadir, subst_model, resultsdir, run_name):
   src = os.path.join(resultsdir, "speciesrax", "inferred_species_tree.newick")
   dest = fam.get_species_tree(datadir, subst_model, run_name)
+  print("extracting result in " + run_name)
   shutil.copyfile(src, dest)
 
 def run(dataset, subst_model, starting_species_tree, starting_gene_trees, cores, additional_arguments, resultsdir):
   print("Output in " + resultsdir)
-  run_name = exp.getAndDelete("--run", additional_arguments, "speciesRax") 
+  default_run_name = "speciesRax_" + starting_species_tree + "_" + starting_gene_trees
+  run_name = exp.getAndDelete("--run", additional_arguments, default_run_name) 
   mode = get_mode_from_additional_arguments(additional_arguments)
   if (not dataset in datasets):
     print("Error: " + dataset + " is not in " + str(datasets))

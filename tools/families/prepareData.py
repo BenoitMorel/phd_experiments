@@ -120,6 +120,7 @@ if __name__ == '__main__':
     else:
       print ("Starting species tree: MRP\n")
     
+  opt_species_tree = False 
 
   #Do we optimize the species tree?
   TOPOSPECIES = input("Do you want to optimize the species tree topology?\t").upper()
@@ -128,6 +129,7 @@ if __name__ == '__main__':
     TOPOSPECIES = input("Do you want to optimize the species tree topology?\t").upper()
   if ("YES".startswith(TOPOSPECIES) ):
     print ("Optimizing the species tree topology.\n")
+    opt_species_tree = True
   else:
     print ("NOT optimizing the species tree topology.\n")
 
@@ -256,9 +258,14 @@ if __name__ == '__main__':
       fopt.write("\n######## Finally, optimization options ########\n")
       if ("YES".startswith(TOPOGENE) ):
         fopt.write("optimization.topology=yes\n")
+        if (opt_species_tree):
+          fopt.write("rearrangement.gene.tree=nni\n")
+        else:
+          fopt.write("rearrangement.gene.tree=spr\n")
+          fopt.write("SPR.limit.gene.tree=5\n")
       else:
         fopt.write("optimization.topology=no\n")       
-      fopt.write("optimization.topology.algorithm_nni.method=fast\n")
+      #fopt.write("optimization.topology.algorithm_nni.method=fast\n")
       fopt.write("optimization.tolerance=0.000001\n")
       fopt.write("optimization.method_DB.nstep=0\n")
       fopt.write("optimization.topology.numfirst=false\n")

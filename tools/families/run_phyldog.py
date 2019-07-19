@@ -23,11 +23,11 @@ def clean_phyldog(datadir, subst_model):
     if (f.startswith("tmpPLL") and  (dataset_name.replace(".", "_") in f.replace(".", "_"))):
       os.remove(os.path.join(phyldog_run_dir, f))
 
-def run_phyldog_on_families(datadir, subst_model, cores):
+def run_phyldog_on_families(datadir, subst_model, cores, opt_species_tree = False, opt_gene_trees = True):
   output_dir = get_phyldog_run_dir(datadir, subst_model)
   shutil.rmtree(output_dir, True)
   os.makedirs(output_dir)
-  generate_options(datadir, subst_model)
+  generate_options(datadir, subst_model, opt_species_tree, opt_gene_trees)
   start = time.time()
   run_phyldog(datadir, subst_model, cores)
   saved_metrics.save_metrics(datadir, fam.get_run_name("Phyldog", subst_model), (time.time() - start), "runtimes") 
@@ -50,7 +50,7 @@ def add_starting_tree(option_file, tree_path):
     writer.write("gene.tree.file=" + tree_path + "\n")
     writer.write("use.quality.filters=0\n")
 
-def generate_options(datadir, subst_model):
+def generate_options(datadir, subst_model, opt_species_tree, opt_gene_trees):
   phyldog_run_dir = get_phyldog_run_dir(datadir, subst_model)
   prepare_input = os.path.join(phyldog_run_dir, "prepare_input.txt")
   datadir = os.path.abspath(datadir)
@@ -80,11 +80,17 @@ def generate_options(datadir, subst_model):
     writer.write(os.path.join(phyldog_run_dir, "results") + "\n")
     writer.write("yes" + "\n")
     writer.write(fam.get_phyldog_species_tree(datadir) + "\n")
-    writer.write("no" + "\n") #opt species tree
+    if (opt_species_tree):
+      writer.write("yes" + "\n") #opt species tree
+    else:
+      writer.write("no" + "\n") #opt species tree
     writer.write("yes" + "\n") # opt dup loss
     writer.write("average" + "\n") # branchwise DL opt
     writer.write("no" + "\n") # same number of genes ?
-    writer.write("yes" + "\n") # opt gene trees
+    if (opt_gene_trees):
+      writer.write("yes" + "\n") #opt gene trees
+    else:
+      writer.write("no" + "\n") #opt gene trees
     writer.write("48" + "\n") # max time (hours)
   prepare_data_script = os.path.join(exp.tools_root, "families", "prepareData.py")
   logs = open(os.path.join(phyldog_run_dir, "options_logs.txt"), "w")
@@ -144,5 +150,5 @@ if (__name__== "__main__"):
   datadir = sys.argv[1]
   subst_model = sys.argv[2]
   cores = int(sys.argv[3])
-  run_phyldog_on_families(datadir, subst_model, cores)
+  run_phyldog_on_families(datadir, subst_model, cores, False, True)
 
