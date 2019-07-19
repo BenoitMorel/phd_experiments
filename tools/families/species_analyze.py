@@ -3,9 +3,11 @@ import os
 from ete3 import Tree
 sys.path.insert(0, os.path.join("tools", "trees"))
 sys.path.insert(0, os.path.join("tools", "families"))
+sys.path.insert(0, os.path.join("tools", "print"))
 from read_tree import read_tree
 import saved_metrics
 import fam
+from aligned_printer import AlignedPrinter
 
 
 def get_runs(datadir):
@@ -27,22 +29,30 @@ def analyze(datadir):
   for run in runs:
     trees[run] = read_tree(get_species_tree(datadir, run))
 
+  print("")
   print("Rooted average RF:")
+  rooted_printer = AlignedPrinter()
   for run in trees:
     try:
       tree = trees[run]
       rooted_rf_cell = true_tree.robinson_foulds(tree, unrooted_trees=False)
       rooted_arf = float(rooted_rf_cell[0]) / float(rooted_rf_cell[1])
-      print(run + ":\t" + str(rooted_arf)) 
+      rooted_printer.add(run + ":", str(rooted_arf))
     except:
       pass
+  rooted_printer.sort_right_float()
+  rooted_printer.display()
 
+  print("")
   print("Unrooted average RF:")
+  unrooted_printer = AlignedPrinter()
   for run in trees:
     tree = trees[run]
     unrooted_rf_cell = true_tree.robinson_foulds(tree, unrooted_trees=True)
     unrooted_arf = float(unrooted_rf_cell[0]) / float(unrooted_rf_cell[1])
-    print(run + ":\t" + str(unrooted_arf)) 
+    unrooted_printer.add(run + ":", str(unrooted_arf))
+  unrooted_printer.sort_right_float()
+  unrooted_printer.display()
     
 
 

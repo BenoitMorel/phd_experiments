@@ -1,14 +1,11 @@
 import os
 import sys
 import run_raxml_supportvalues as raxml
-import run_treerecs as treerecs
-import run_phyldog as phyldog
-import run_notung as notung
-import run_ALE
 import fam
 import run_generax
-import eval_generax_likelihood
+import run_stag
 import species_analyze
+import run_speciesrax
 
 class SpeciesRunFilter():
   
@@ -29,12 +26,23 @@ def run_reference_methods(dataset_dir, subst_model, cores, run_filter = SpeciesR
   if (run_filter.pargenes):
     print("Run pargenes...")
     sys.stdout.flush()
-    raxml.run_pargenes_and_extract_trees(dataset_dir, subst_model, 10, 0, cores, "pargenes", True)
+    raxml.run_pargenes_and_extract_trees(dataset_dir, subst_model, 20, 10, cores, "pargenes", True)
     sys.stdout.flush()
   if (run_filter.stag):
     print("Run Stag")
+    try:
+      run_stag.run_stag(dataset_dir, subst_model)
+    except Exception as exc:
+      print("Failed running stag")
+      print(exc)
   if (run_filter.speciesrax):
     print("Run SpeciesRax")
+    try:
+      run_speciesrax.run_speciesrax_on_families(dataset_dir, subst_model, cores, dl = True, dtl = False)
+    except Exception as exc:
+      print("Failed running speciesrax")
+      print(exc)
+
   if (run_filter.analyze):
     print("Run analyze...")
     sys.stdout.flush()

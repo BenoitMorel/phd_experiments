@@ -11,6 +11,7 @@ def run_stag(stag_map, stag_gene_tree_dir, output_species_tree):
   command.append(exp.stag_script)
   command.append(stag_map)
   command.append(stag_gene_tree_dir)
+  print("Running " + " ".join(command))
   logs = subprocess.check_output(command)
   for line in logs.split("\n"):
     if (line.startswith("STAG species tree")):

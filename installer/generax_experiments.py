@@ -247,7 +247,9 @@ if (False):
   apply_diff(os.path.join(exp.github_root, "phd_experiments", "installer", "decostart_make_diff.txt"))#, reverse = True)
 
 if (True):
-  run_make(os.path.join(exp.github_root, "DeCoSTAR"))
+  pass
+  #git_update("https://github.com/Boussau/PHYLDOG", "PHYLDOG")
+  #install_phyldog("PHYLDOG")
 
 
 

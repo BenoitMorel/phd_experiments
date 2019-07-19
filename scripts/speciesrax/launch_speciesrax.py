@@ -60,8 +60,15 @@ def get_speciesrax_command(speciesrax_families_file, species_tree, additional_ar
     command.extend(additional_arguments)
     return " ".join(command)
 
-def run_speciesrax(datadir, speciesrax_families_file, mode, cores, additional_arguments, resultsdir):
-  species_tree = fam.get_species_tree(datadir)
+def run_speciesrax(datadir, starting_species_tree, speciesrax_families_file, mode, cores, additional_arguments, resultsdir):
+  species_tree = ""
+  if (starting_species_tree == "random"):
+    species_tree = "random"
+  elif (starting_species_tree == "true"):
+    species_tree = fam.get_species_tree(datadir)
+  else:
+    print("Error: invalid starting species tree " + starting_species_tree)
+    sys.exit(1)
   command = get_speciesrax_command(speciesrax_families_file, species_tree, additional_arguments, resultsdir, mode, cores)
   print(command)
   subprocess.check_call(command.split(" "), stdout = sys.stdout)
@@ -77,18 +84,6 @@ def get_mode_from_additional_arguments(additional_arguments):
     additional_arguments.remove("--gprof")
   return mode
 
-
-def extract_trees(data_family_dir, results_family_dir, prefix):
-  results_dir = os.path.join(results_family_dir, "results")
-  for msa in os.listdir(results_dir):
-    output_msa_dir = os.path.join(data_family_dir, msa, "results")
-    try:
-      os.mkdir(output_msa_dir)
-    except:
-      pass
-    source = os.path.join(results_dir, msa, "geneTree.newick")
-    dest = os.path.join(output_msa_dir, prefix + ".newick")
-    shutil.copy(source, dest)
 
 def av_rf(rf_cell):
   return float(rf_cell[0]) / float(rf_cell[1])
@@ -111,29 +106,31 @@ def analyze_results(datadir, resultsdir):
 def extract_results(datadir, subst_model, resultsdir, run_name):
   src = os.path.join(resultsdir, "speciesrax", "inferred_species_tree.newick")
   dest = fam.get_species_tree(datadir, subst_model, run_name)
+  print("extracting result in " + run_name)
   shutil.copyfile(src, dest)
 
-def run(dataset, subst_model, starting_tree, cores, additional_arguments, resultsdir):
+def run(dataset, subst_model, starting_species_tree, starting_gene_trees, cores, additional_arguments, resultsdir):
   print("Output in " + resultsdir)
-  run_name = exp.getAndDelete("--run", additional_arguments, "speciesRax") 
+  default_run_name = "speciesRax_" + starting_species_tree + "_" + starting_gene_trees
+  run_name = exp.getAndDelete("--run", additional_arguments, default_run_name) 
   mode = get_mode_from_additional_arguments(additional_arguments)
   if (not dataset in datasets):
     print("Error: " + dataset + " is not in " + str(datasets))
     exit(1)
   datadir = datasets[dataset]
   speciesrax_families_file = os.path.join(resultsdir, "speciesrax_families.txt")
-  build_speciesrax_families_file(datadir, starting_tree, subst_model, speciesrax_families_file)
+  build_speciesrax_families_file(datadir, starting_gene_trees, subst_model, speciesrax_families_file)
   start = time.time()
-  run_speciesrax(datadir, speciesrax_families_file, mode, cores, additional_arguments, resultsdir)
+  run_speciesrax(datadir, starting_species_tree, speciesrax_families_file, mode, cores, additional_arguments, resultsdir)
   saved_metrics.save_metrics(datadir, run_name, (time.time() - start), "runtimes") 
   analyze_results(datadir, resultsdir) 
   extract_results(datadir, subst_model, resultsdir, run_name)
 
-def launch(dataset, subst_model, starting_tree, cluster, cores, additional_arguments):
+def launch(dataset, subst_model, starting_species_tree, starting_gene_trees, cluster, cores, additional_arguments):
   command = ["python"]
   command.extend(sys.argv)
   command.append("--exprun")
-  resultsdir = os.path.join("SpeciesRax", dataset, "start_" + starting_tree, "run")
+  resultsdir = os.path.join("SpeciesRax", dataset, "species_" + starting_species_tree + "_genes_" + starting_gene_trees, "run")
   resultsdir = exp.create_result_dir(resultsdir, additional_arguments)
   submit_path = os.path.join(resultsdir, "submit.sh")
   command.append(resultsdir)
@@ -147,28 +144,29 @@ if (__name__ == "__main__"):
     resultsdir = sys.argv[-1]
     sys.argv = sys.argv[:-2]
     
-  min_args_number = 6
+  min_args_number = 7
   if (len(sys.argv) < min_args_number):
-    print("Syntax error: python " + os.path.basename(__file__) + "  dataset starting_tree cluster cores [additional paremeters].\n Suggestions of datasets: ")
+    print("Syntax error: python " + os.path.basename(__file__) + "  dataset subst_model starting_species_tree starting_gene_tree cluster cores [additional paremeters].\n Suggestions of datasets: ")
     for dataset in datasets:
       print("\t" + dataset)
     sys.exit(1)
 
   dataset = sys.argv[1]
   subst_model = sys.argv[2]
-  starting_tree = sys.argv[3]
-  cluster = sys.argv[4]
-  cores = int(sys.argv[5])
+  starting_species_tree = sys.argv[3]
+  starting_gene_trees = sys.argv[4]
+  cluster = sys.argv[5]
+  cores = int(sys.argv[6])
   additional_arguments = sys.argv[min_args_number:]
 
-  if (starting_tree == "raxml"):
+  if (starting_gene_trees == "raxml"):
     print("use raxml-ng instead of raxml please")
     exit(1)
 
   if (is_run):
-    run(dataset, subst_model, starting_tree, cores, additional_arguments, resultsdir)
+    run(dataset, subst_model, starting_species_tree, starting_gene_trees, cores, additional_arguments, resultsdir)
   else:
-    launch(dataset, subst_model, starting_tree, cluster, cores, additional_arguments)
+    launch(dataset, subst_model, starting_species_tree, starting_gene_trees, cluster, cores, additional_arguments)
 
 
 

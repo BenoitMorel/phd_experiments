@@ -47,7 +47,7 @@ def get_run_dir(datadir, subst_model = None, run_name = None):
 # global files
 #####################
 
-def get_species_tree(datadir, method = "true", subst_model = "GTR"):
+def get_species_tree(datadir, subst_model= "GTR", method = "true"):
   if (method == "true"):
     return os.path.join(get_species_dir(datadir), "speciesTree.newick")
   return os.path.join(get_species_dir(datadir), method + "." + subst_model + ".speciesTree.newick")
