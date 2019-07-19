@@ -49,8 +49,8 @@ def get_gene_trees_list(datadir, family, run):
 def read_trees_for_family(datadir, family, runs, invalid_runs):
   family_trees = {}
   for run in runs:
-    trees = get_gene_trees_list(datadir, family, run)
     try:
+      trees = get_gene_trees_list(datadir, family, run)
       family_trees[run] = trees
     except:
       invalid_runs.add(run)
