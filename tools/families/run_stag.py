@@ -17,7 +17,6 @@ def init_gene_trees_file(datadir, subst_model, stag_gene_trees_dir):
     gene_tree = fam.get_raxml_tree(datadir, subst_model, family)
     dest = os.path.join(stag_gene_trees_dir, family + ".newick")
     shutil.copyfile(gene_tree, dest)
-    print("copy " + gene_tree + " " + dest)
 
 def init_mappings(datadir, output_mapping_file):
   dico = {}

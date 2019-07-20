@@ -47,10 +47,13 @@ def get_run_dir(datadir, subst_model = None, run_name = None):
 # global files
 #####################
 
-def get_species_tree(datadir, subst_model= "GTR", method = "true"):
+def get_species_tree(datadir, subst_model= None, method = "true"):
   if (method == "true"):
     return os.path.join(get_species_dir(datadir), "speciesTree.newick")
-  return os.path.join(get_species_dir(datadir), method + "." + subst_model + ".speciesTree.newick")
+  if (subst_model != None):
+    return os.path.join(get_species_dir(datadir), method + "." + subst_model + ".speciesTree.newick")
+  else:
+    return os.path.join(get_species_dir(datadir), method + ".speciesTree.newick")
 
 def get_true_species_tree(datadir):
   return os.path.join(get_species_dir(datadir), "trueSpeciesTree.newick")
