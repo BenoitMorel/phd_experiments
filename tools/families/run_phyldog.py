@@ -16,7 +16,7 @@ def get_phyldog_run_name(opt_species_tree, subst_model):
   res = "Phyldog"
   if (opt_species_tree):
     res += "Species"
-  return fam.get_run_dir(res, subst_model)
+  return fam.get_run_name(res, subst_model)
 
 def get_phyldog_run_dir(datadir, subst_model):
   return fam.get_run_dir(datadir, subst_model, "phyldog_run")
@@ -141,8 +141,8 @@ def extract_phyldog(datadir, subst_model, opt_species_tree):
       print("Phyldog failed to infer tree " + phyldog_tree)
       shutil.copy(fam.get_raxml_tree(datadir, family), fam.get_phyldog_tree(datadir, subst_model, family))
   if (opt_species_tree):
-    species_tree = os.path.join(results_dir, "OutputSpeciesTree.tree")
-    new_species_tree = fam.get_species_tree(datadir, subst_model, get_phyldog_run_name(opt_species_tree, subst_model))
+    species_tree = os.path.join(results_dir, "OutputSpeciesTree_ConsensusDuplications.tree")
+    new_species_tree = fam.get_species_tree(datadir, None, get_phyldog_run_name(opt_species_tree, subst_model).lower())
     print("Saving phyldog tree in " + new_species_tree)
     shutil.copy(species_tree, new_species_tree)
 

@@ -52,8 +52,8 @@ def run_reference_methods(dataset_dir, subst_model, cores, run_filter = SpeciesR
   if (run_filter.speciesrax):
     print("Run SpeciesRax")
     try:
-      dtl = with_transfers(dataset_dir)
-      run_speciesrax.run_speciesrax_on_families(dataset_dir, subst_model, cores, dl = (not dtl), dtl = dtl)
+      #dtl = with_transfers(dataset_dir)
+      run_speciesrax.run_speciesrax_on_families(dataset_dir, subst_model, cores, dl = True, dtl = True)
     except Exception as exc:
       print("Failed running speciesrax")
       print(exc)
