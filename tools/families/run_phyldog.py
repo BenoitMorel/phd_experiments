@@ -12,6 +12,12 @@ import experiments as exp
 import nhx_to_newick
 import sequence_model
 
+def get_phyldog_run_name(opt_species_tree, subst_model):
+  res = "Phyldog"
+  if (opt_species_tree):
+    res += "Species"
+  return fam.get_run_name(res, subst_model)
+
 def get_phyldog_run_dir(datadir, subst_model):
   return fam.get_run_dir(datadir, subst_model, "phyldog_run")
 
@@ -23,16 +29,16 @@ def clean_phyldog(datadir, subst_model):
     if (f.startswith("tmpPLL") and  (dataset_name.replace(".", "_") in f.replace(".", "_"))):
       os.remove(os.path.join(phyldog_run_dir, f))
 
-def run_phyldog_on_families(datadir, subst_model, cores, opt_species_tree = False, opt_gene_trees = True):
+def run_phyldog_on_families(datadir, subst_model, cores, opt_species_tree = False):
   output_dir = get_phyldog_run_dir(datadir, subst_model)
   shutil.rmtree(output_dir, True)
   os.makedirs(output_dir)
-  generate_options(datadir, subst_model, opt_species_tree, opt_gene_trees)
+  generate_options(datadir, subst_model, opt_species_tree)
   start = time.time()
   run_phyldog(datadir, subst_model, cores)
-  saved_metrics.save_metrics(datadir, fam.get_run_name("Phyldog", subst_model), (time.time() - start), "runtimes") 
-  saved_metrics.save_metrics(datadir, fam.get_run_name("Phyldog", subst_model), (time.time() - start), "seqtimes") 
-  extract_phyldog(datadir, subst_model)
+  saved_metrics.save_metrics(datadir, get_phyldog_run_name(opt_species_tree, subst_model), (time.time() - start), "runtimes") 
+  saved_metrics.save_metrics(datadir, get_phyldog_run_name(opt_species_tree, subst_model), (time.time() - start), "seqtimes") 
+  extract_phyldog(datadir, subst_model, opt_species_tree)
   clean_phyldog(datadir, subst_model)
 
 
@@ -50,7 +56,7 @@ def add_starting_tree(option_file, tree_path):
     writer.write("gene.tree.file=" + tree_path + "\n")
     writer.write("use.quality.filters=0\n")
 
-def generate_options(datadir, subst_model, opt_species_tree, opt_gene_trees):
+def generate_options(datadir, subst_model, opt_species_tree):
   phyldog_run_dir = get_phyldog_run_dir(datadir, subst_model)
   prepare_input = os.path.join(phyldog_run_dir, "prepare_input.txt")
   datadir = os.path.abspath(datadir)
@@ -87,10 +93,7 @@ def generate_options(datadir, subst_model, opt_species_tree, opt_gene_trees):
     writer.write("yes" + "\n") # opt dup loss
     writer.write("average" + "\n") # branchwise DL opt
     writer.write("no" + "\n") # same number of genes ?
-    if (opt_gene_trees):
-      writer.write("yes" + "\n") #opt gene trees
-    else:
-      writer.write("no" + "\n") #opt gene trees
+    writer.write("yes" + "\n") #opt gene trees
     writer.write("48" + "\n") # max time (hours)
   prepare_data_script = os.path.join(exp.tools_root, "families", "prepareData.py")
   logs = open(os.path.join(phyldog_run_dir, "options_logs.txt"), "w")
@@ -127,7 +130,7 @@ def run_phyldog(datadir, subst_model, cores):
     os.chdir(cwd)
 
 
-def extract_phyldog(datadir, subst_model):
+def extract_phyldog(datadir, subst_model, opt_species_tree):
   results_dir = os.path.join(get_phyldog_run_dir(datadir, subst_model), "results")
   families_dir = os.path.join(datadir, "families")
   for family in os.listdir(families_dir):
@@ -137,18 +140,23 @@ def extract_phyldog(datadir, subst_model):
     except:
       print("Phyldog failed to infer tree " + phyldog_tree)
       shutil.copy(fam.get_raxml_tree(datadir, family), fam.get_phyldog_tree(datadir, subst_model, family))
-
+  if (opt_species_tree):
+    species_tree = os.path.join(results_dir, "OutputSpeciesTree_ConsensusDuplications.tree")
+    new_species_tree = fam.get_species_tree(datadir, None, get_phyldog_run_name(opt_species_tree, subst_model).lower())
+    print("Saving phyldog tree in " + new_species_tree)
+    shutil.copy(species_tree, new_species_tree)
 
 if (__name__== "__main__"):
-  max_args_number = 4
+  max_args_number = 5
   if len(sys.argv) < max_args_number:
-    print("Syntax error: python run_phyldog.py datadir subst_model cores.")
+    print("Syntax error: python run_phyldog.py datadir subst_model optimize_species_tree cores.")
     print("Cluster can be either normal, haswell or magny")
     sys.exit(0)
 
 
   datadir = sys.argv[1]
   subst_model = sys.argv[2]
-  cores = int(sys.argv[3])
-  run_phyldog_on_families(datadir, subst_model, cores, False, True)
+  opt_species_tree = int(sys.argv[3]) != 0
+  cores = int(sys.argv[4])
+  run_phyldog_on_families(datadir, subst_model, cores, opt_species_tree)
 

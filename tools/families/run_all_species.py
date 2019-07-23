@@ -6,21 +6,28 @@ import run_generax
 import run_stag
 import species_analyze
 import run_speciesrax
+import run_phyldog
 
 class SpeciesRunFilter():
   
-  def __init__(self, pargenes = True, stag = True, speciesrax = True, analyze = True):
+  def __init__(self, pargenes = True, stag = True, phyldog = True, speciesrax = True, analyze = True):
     self.pargenes = pargenes
     self.stag = stag
+    self.phyldog = phyldog
     self.speciesrax = speciesrax
+    
     self.analyze = analyze
 
 
   def disable_all(self):
     self.pargenes = False
     self.stag = False
+    self.phyldog = False
     self.speciesrax = False
     self.analyze = False
+
+def with_transfers(dataset_dir):
+  return float(dataset_dir.split("_")[-2][1:]) != 0.0
 
 def run_reference_methods(dataset_dir, subst_model, cores, run_filter = SpeciesRunFilter()):
   if (run_filter.pargenes):
@@ -33,12 +40,20 @@ def run_reference_methods(dataset_dir, subst_model, cores, run_filter = SpeciesR
     try:
       run_stag.run_stag(dataset_dir, subst_model)
     except Exception as exc:
-      print("Failed running stag")
+      print("Failed running STAG")
+      print(exc)
+  if (run_filter.phyldog):
+    print("Run Phyldgo")
+    try:
+      run_phyldog.run_phyldog_on_families(dataset_dir, subst_model, cores, True)
+    except Exception as exc:
+      print("Failed running Phyldog")
       print(exc)
   if (run_filter.speciesrax):
     print("Run SpeciesRax")
     try:
-      run_speciesrax.run_speciesrax_on_families(dataset_dir, subst_model, cores, dl = True, dtl = False)
+      #dtl = with_transfers(dataset_dir)
+      run_speciesrax.run_speciesrax_on_families(dataset_dir, subst_model, cores, dl = True, dtl = True)
     except Exception as exc:
       print("Failed running speciesrax")
       print(exc)

@@ -105,7 +105,7 @@ def analyze_results(datadir, resultsdir):
 
 def extract_results(datadir, subst_model, resultsdir, run_name):
   src = os.path.join(resultsdir, "speciesrax", "inferred_species_tree.newick")
-  dest = fam.get_species_tree(datadir, subst_model, run_name)
+  dest = fam.get_species_tree(datadir, None, run_name)
   print("extracting result in " + run_name)
   shutil.copyfile(src, dest)
 
