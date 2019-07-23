@@ -7,7 +7,7 @@ import shutil
 
 def run_stag(stag_map, stag_gene_tree_dir, output_species_tree):
   command = []
-  command.append("python")
+  command.append("python2")
   command.append(exp.stag_script)
   command.append(stag_map)
   command.append(stag_gene_tree_dir)

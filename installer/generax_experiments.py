@@ -246,8 +246,9 @@ if (False):
   subprocess.check_call(["./installer/install_recent_bpp.sh"], shell = True)
   apply_diff(os.path.join(exp.github_root, "phd_experiments", "installer", "decostart_make_diff.txt"))#, reverse = True)
 
+
 if (True):
-  pass
+  git_update("https://github.com/davidemms/STAG.git", "STAG")
   #git_update("https://github.com/Boussau/PHYLDOG", "PHYLDOG")
   #install_phyldog("PHYLDOG")
 
