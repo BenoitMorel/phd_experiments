@@ -70,7 +70,7 @@ def run_reference_methods(dataset_dir, subst_model, starting_trees, bs_trees, co
   if (run_filter.notung):
     print("Run notung...")
     sys.stdout.flush()
-    threshold = 80
+    threshold = 90
     try:
       notung.run_notung_on_families(dataset_dir, subst_model,  threshold, cores)
     except Exception as exc:
