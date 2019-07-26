@@ -10,11 +10,13 @@ from run_all import RunFilter
 
 # CYANO SIMULATED PLOTS
 if (True):
-  subst_models = ["LG+G+I", "DAYHOFF"]
+  subst_models = ["LG+G"] #["LG+G+I", "DAYHOFF"]
   datasets = ["cyano_simulated"]
-  cores = 512
+  cores = 128
   do_generate = 0
   run_filter = RunFilter()
+  run_filter.disable_all()
+  run_filter.phyldog = True
   run_filter.EXA_runs = 4
   run_filter.EXA_chains = 2
   run_filter.EXA_generations = 1000000
@@ -26,7 +28,7 @@ if (True):
 
 
 # PARAMETERS SIMULATED PLOTS
-if (True):
+if (False):
   subst_models = ["GTR+G"]
   datasets = []
   cores = 64

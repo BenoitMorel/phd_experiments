@@ -78,7 +78,10 @@ def generate_options(datadir, subst_model, opt_species_tree):
       writer.write("1\n" )
     else:
       writer.write("0\n")
-    writer.write(sequence_model.get_phyldog_model(subst_model) + "\n")
+    model = sequence_model.get_phyldog_model(subst_model)
+    if (model == "LG"):
+      model = "LG08"
+    writer.write(model + "\n")
     writer.write(str(sequence_model.get_gamma_rates(subst_model)) + "\n")
     writer.write("FASTA\n")
     writer.write(os.path.join(phyldog_run_dir, "mappings") + "\n")
