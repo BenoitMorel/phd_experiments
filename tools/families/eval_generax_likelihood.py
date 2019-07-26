@@ -19,7 +19,7 @@ def eval_likelihood(dataset_dir, run_name, with_transfers, subst_model, cores):
   shutil.rmtree(temp_dir, ignore_errors  = True)
   os.makedirs(temp_dir)
   generax_families_file = os.path.join(temp_dir, "families")
-  launch_generax.build_generax_families_file(dataset_dir, run_name, subst_model, generax_families_file)
+  launch_generax.build_generax_families_file(dataset_dir, fam.get_method_from_run(run_name), subst_model, generax_families_file)
   additional_arguments = []
   if (with_transfers):
     additional_arguments.append("--rec-model")

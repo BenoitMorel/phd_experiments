@@ -22,7 +22,7 @@ def get_gene_trees_list(datadir, family, run):
   tree_path = fam.build_gene_tree_path_from_run(datadir, family, run)
   return read_trees_list(tree_path)
 
-def read_trees_for_family(datadir, family, runs, invalid_runs):
+def read_trees_for_family(datadir, family, runs, rooted, invalid_runs):
   family_trees = {}
   for run in runs:
     try:
@@ -42,7 +42,7 @@ def read_all_trees(datadir, runs, rooted, invalid_runs):
   trees = {}
   families = fam.get_families_list(datadir)
   for family in families:
-    trees[family] = read_trees_for_family(datadir, family, runs, invalid_runs)
+    trees[family] = read_trees_for_family(datadir, family, runs, rooted, invalid_runs)
   return trees
 
 def get_runs_to_compare(runs):

@@ -11,7 +11,7 @@ from run_all_species import SpeciesRunFilter
 datasets = []
 cores = 40
 
-if (True):
+if (False):
   datasets = []
   subst_model = "GTR+G"
   #datasets.append("jsim_s12_f50_sites250_dna4_bl0.5_d0.2_l0.2_t0.0_p0.0")
@@ -37,11 +37,13 @@ if (True):
   common.run_species_methods(datasets, subst_model, cores = cores, run_filter = species_run_filter)
 
 
-if (False):
+if (True):
   datasets = []
   subst_model = "GTR+G+I"
   datasets.append("jsimdtl_s5_f10_sites100_dna4_bl0.5_d0.1_l0.2_t0.1_p0.0")
+  #common.generate_all_datasets(datasets)
   run_filter = RunFilter()
+  run_filter.eval_joint_ll = False
   common.run_all_reference_methods(datasets, subst_model, cores, run_filter)
  
 
