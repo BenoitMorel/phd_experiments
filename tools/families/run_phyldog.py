@@ -81,6 +81,8 @@ def generate_options(datadir, subst_model, opt_species_tree):
     model = sequence_model.get_phyldog_model(subst_model)
     if (model == "LG"):
       model = "LG08"
+    if (model == "WAG"):
+      model = "WAG01"
     writer.write(model + "\n")
     writer.write(str(sequence_model.get_gamma_rates(subst_model)) + "\n")
     writer.write("FASTA\n")

@@ -28,6 +28,8 @@ def get_mrbayes_preset_line(subst_model):
     return "\tprset aamodelpr=fixed(lg);\n"
   elif(get_model(subst_model) == "DAYHOFF"):
     return "\tprset aamodelpr=fixed(dayhoff);\n"
+  elif(get_model(subst_model) == "WAG"):
+    return "\tprset aamodelpr=fixed(wag);\n"
   elif(get_model(subst_model) == "JC"):
     return "\tprset statefreqpr=fixed(equal);\n"
   else:
