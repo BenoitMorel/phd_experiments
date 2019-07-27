@@ -1,13 +1,16 @@
+import matplotlib
+matplotlib.use('Agg')
 import os
 import sys
 import seaborn
-import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 
-if (len(sys.argv) != 3 or len(sys.argv) != 5):
+if (len(sys.argv) != 3 and len(sys.argv) != 5):
 
   print("Syntax error. Usage: python script.py results_directory plot_name [maxX maxY]")
+  print("Arguments number: " + str(len(sys.argv)))
+  exit(0)
 
 output_dir = sys.argv[1]
 plot_name = sys.argv[2]
@@ -35,7 +38,7 @@ for name in msa_names:
   for line in lines:
     if "Alignment comprises" in line:
       unique_sites = int(line.split(" ")[5])
-    if "taxa" in line:
+    if "taxa and" in line:
       taxa = int(line.split(" ")[4])
   if (unique_sites * taxa == 0):
     continue
