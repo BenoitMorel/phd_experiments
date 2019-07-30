@@ -8,11 +8,13 @@ sys.path.insert(0, 'scripts')
 sys.path.insert(0, os.path.join("tools", "families"))
 import experiments as exp
 import fam
+import run_raxml_supportvalues as run_pargenes
 
 def generate_scheduler_commands_file(datadir, subst_model, cores, output_dir):
   results_dir = os.path.join(output_dir, "results")
   scheduler_commands_file = os.path.join(output_dir, "commands.txt")
   speciesTree = fam.get_species_tree(datadir)
+  family_dimensions = run_pargenes.get_family_dimensions(os.path.abspath(datadir), subst_model)
   with open(scheduler_commands_file, "w") as writer:
     for family in fam.get_families_list(datadir):
       family_dir = fam.get_family_path(datadir, family)
@@ -26,7 +28,11 @@ def generate_scheduler_commands_file(datadir, subst_model, cores, output_dir):
       command = []
       command.append(family)
       command.append("1")
-      command.append("1")
+      if (family in family_dimensions):
+        dim = family_dimensions[family][1] * family_dimensions[family][0]
+        command.append(str(dim))
+      else:
+        command.append("1")
       command.append(exp.treerecs_exec)
       command.append("--seed")
       command.append("42")

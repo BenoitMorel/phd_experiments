@@ -10,6 +10,7 @@ import experiments as exp
 import convert_to_notung_tree
 import time
 import saved_metrics
+import run_raxml_supportvalues as run_pargenes
   
 def generate_notung_files(datadir, subst_model):
   for family in fam.get_families_list(datadir):
@@ -46,13 +47,18 @@ def generate_scheduler_commands_file(datadir, subst_model, threshold, cores, out
   results_dir = os.path.join(output_dir, "results")
   scheduler_commands_file = os.path.join(output_dir, "commands.txt")
   speciesTree = os.path.join(datadir, "misc", "speciesTree.notung")
+  family_dimensions = run_pargenes.get_family_dimensions(os.path.abspath(datadir), subst_model)
   with open(scheduler_commands_file, "w") as writer:
     for family in fam.get_families_list(datadir):
       misc_dir = fam.get_family_misc_dir(datadir, family)
       command = []
       command.append(family)
       command.append("1")
-      command.append("1")
+      if (family in family_dimensions):
+        dim = family_dimensions[family][1] * family_dimensions[family][0]
+        command.append(str(dim))
+      else:
+        command.append("1")
       command.append("-jar")
       command.append(exp.notung_jar)
       command.append(os.path.join(misc_dir, "raxmlGeneTree." + subst_model + ".notung"))
