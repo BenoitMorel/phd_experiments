@@ -92,19 +92,52 @@ class Plotter(object):
 def get_runs(methods, model):
   return [fam.get_run_name(method, model) for method in methods]
 
+
+def keys_sorted_by_values(dico, all_methods):
+  s = sorted(dico, key=dico.get) 
+  res = []
+  for k in s:
+    key = k.split(" - ")[1]
+    if (key in all_methods and not "true.true" in key):
+      res.append(key)
+  return res
+#return sorted(dico.items(), key=lambda kv: kv[1])
+
+def compute_best_method_percentage(datasets_rf_dico_dl, datasets_rf_dico_dtl, subst_model, best_methods_to_quantify, all_methods):
+  methods_set = set([])
+  for method in best_methods_to_quantify:
+    methods_set.add(method + "." + subst_model)
+  total_it = 0
+  best_it = 0
+  dicos = [datasets_rf_dico_dl, datasets_rf_dico_dtl]
+  for dico in dicos:
+    for run in dico:
+      dico_run = dico[run]
+      sorted_methods = keys_sorted_by_values(dico_run, all_methods)
+      if (sorted_methods[0] in methods_set):
+        best_it += 1
+      else:
+        print(sorted_methods[0] + " is best")
+      total_it += 1
+  percentage = 100.0 * float(best_it) / float(total_it) 
+  print("Methods " + str(best_methods_to_quantify) + " are best in " + str(percentage) + "% of the cases")
+
 def plot_rrf(x_labels, params_to_plot_dl, params_to_plot_dtl, fixed_params_dl, fixed_params_dtl, subst_model):
   methods_dico = {}
   methods_dico["raxml-ng." + subst_model] = "RAxML-NG"
-  methods_dico["notung80." + subst_model] = "Notung"
+  methods_dico["notung90." + subst_model] = "Notung"
   methods_dico["phyldog." + subst_model] = "Phyldog"
   methods_dico["treerecs." + subst_model] = "Treerecs"
   methods_dico["ale-dl." + subst_model] = "ALE-DL"
   methods_dico["ale-dtl." + subst_model] = "ALE-DTL"
   methods_dico["generax-dl-random." + subst_model] = "GeneRax-DL"
   methods_dico["generax-dtl-random." + subst_model] = "GeneRax-DTL"
+ 
   
-  methods_dl = get_runs(["raxml-ng", "notung80", "phyldog", "treerecs", "ale-dl", "generax-dl-random"], subst_model)
-  methods_dtl = get_runs(["raxml-ng", "notung80", "phyldog", "treerecs", "ale-dtl", "generax-dtl-random"], subst_model)
+
+  methods_dl = get_runs(["raxml-ng", "notung90", "phyldog", "treerecs", "ale-dl", "generax-dl-random"], subst_model)
+  methods_dtl = get_runs(["raxml-ng", "notung90", "phyldog", "treerecs", "ale-dtl", "generax-dtl-random"], subst_model)
+  
   rf_y_label =  "Average relative RF"
   datasets_rf_dico_dl = common.get_metrics_for_datasets("jsim_", "average_rrf")
   datasets_rf_dico_dtl = common.get_metrics_for_datasets("jsimdtl_", "average_rrf")
@@ -114,6 +147,10 @@ def plot_rrf(x_labels, params_to_plot_dl, params_to_plot_dtl, fixed_params_dl, f
     plotter_rf_dl(param)
   for param in params_to_plot_dtl:
     plotter_rf_dtl(param)
+  
+  #best_methods_to_quantify = ["ale-dl", "ale-dtl", "generax-dl-random", "generax-dtl-random"]
+  best_methods_to_quantify = ["generax-dl-random", "generax-dtl-random"]
+  compute_best_method_percentage(datasets_rf_dico_dl, datasets_rf_dico_dtl, subst_model, best_methods_to_quantify, methods_dico)
 
 def plot_simulated_metrics():
   subst_model = "gtr+g"

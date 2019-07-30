@@ -2,9 +2,10 @@ import matplotlib
 matplotlib.use('Agg')
 import os
 import sys
-import seaborn
+import seaborn as sns
 import matplotlib.pyplot as plt
 import numpy as np
+sns.set_style("darkgrid")
 
 if (len(sys.argv) != 3 and len(sys.argv) != 5):
 
@@ -53,12 +54,13 @@ ax.scatter(sites_array, taxa_array, marker='x')
 ax.grid()
 plt.xlabel("sites")
 plt.ylabel("taxa")
+plt.title("Gene family dimensions")
 axes = plt.gca()
 if (maxX != 0):
   axes.set_xlim([0,maxX])
 if (maxY != 0):
   axes.set_ylim([0,maxY])
-fig.savefig(plot_name + "_sites_taxa.png")
+fig.savefig(plot_name + "_sites_taxa.svg")
 
 plt.clf()
 fig, ax = plt.subplots()
@@ -69,7 +71,7 @@ if (maxX != 0):
   axes.set_xlim([0,maxX])
 if (maxY != 0):
   axes.set_ylim([0,maxY])
-fig.savefig(plot_name + "_sites.png")
+fig.savefig(plot_name + "_sites.svg")
 
 plt.clf()
 fig, ax = plt.subplots()
@@ -80,6 +82,6 @@ if (maxX != 0):
   axes.set_xlim([0,maxX])
 if (maxY != 0):
   axes.set_ylim([0,maxY])
-fig.savefig(plot_name + "_taxa.png")
+fig.savefig(plot_name + "_taxa.svg")
 
 print("result in " + plot_name + "_sites_taxa")

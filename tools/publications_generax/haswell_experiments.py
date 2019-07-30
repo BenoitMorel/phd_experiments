@@ -10,15 +10,13 @@ from run_all import RunFilter
 
 # CYANO SIMULATED PLOTS
 if (True):
-  subst_models = ["LG+G"] #["LG+G+I", "DAYHOFF"]
+  subst_models = ["LG+G+I"]#, "WAG"] #["LG+G+I", "DAYHOFF"]
   datasets = ["cyano_simulated"]
-  cores = 128
+  cores = 512
   do_generate = 0
   run_filter = RunFilter()
-  run_filter.disable_all()
-  run_filter.phyldog = True
-  run_filter.EXA_runs = 4
-  run_filter.EXA_chains = 2
+  run_filter.EXA_runs = 2
+  run_filter.EXA_chains = 4
   run_filter.EXA_generations = 1000000
   run_filter.EXA_frequencies = 1000
   run_filter.EXA_burnin = 100
@@ -33,13 +31,13 @@ if (False):
   datasets = []
   cores = 64
   do_generate = 1
-  run_filter = RunFilter()
-  run_filter.EXA_runs = 4
-  run_filter.EXA_chains = 2
+  un_filter = RunFilter()
+  run_filter.EXA_runs = 2
+  run_filter.EXA_chains = 4
   run_filter.EXA_generations = 1000000
   run_filter.EXA_frequencies = 1000
   run_filter.EXA_burnin = 100
-  #run_filter.eval_joint_ll = False
+  run_filter.eval_joint_ll = False
   fixed_point_dl = "jsim_s19_f100_sites250_dna4_bl0.5_d0.25_l0.25_t0.0_p0.0"
   fixed_point_dtl = "jsimdtl_s19_f100_sites250_dna4_bl0.5_d0.1_l0.2_t0.1_p0.0"
   datasets.append(fixed_point_dl)
@@ -72,8 +70,8 @@ if (False):
   do_generate = 0
   run_filter = RunFilter()
   #run_filter.disable_all()
-  run_filter.EXA_runs = 4
-  run_filter.EXA_chains = 2
+  run_filter.EXA_runs = 2
+  run_filter.EXA_chains = 4
   run_filter.EXA_generations = 1000000
   run_filter.EXA_frequencies = 1000
   run_filter.EXA_burnin = 100
