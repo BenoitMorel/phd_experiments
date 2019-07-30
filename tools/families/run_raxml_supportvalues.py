@@ -97,6 +97,24 @@ def export_pargenes_trees(pargenes_dir, subst_model, datadir):
       print("Cleaning family " + family)
       shutil.move(os.path.join(families_dir, family), garbage_dir)
 
+def get_family_dimensions(datadir, subst_model, pargenes_dir = "pargenes"):
+  pargenes_dir = fam.get_run_dir(datadir, subst_model, pargenes_dir)
+  parsing_results = os.path.join(pargenes_dir, "parse_run", "results")
+  dimensions = {}
+  for family in os.listdir(parsing_results):
+    log_file = os.path.join(parsing_results, family, family + ".raxml.log")
+    unique_sites = 1
+    taxa = 1
+    lines = open(log_file).readlines()
+    for line in lines:
+      if "Alignment comprises" in line:
+        unique_sites = int(line.split(" ")[5])
+      if "taxa and" in line:
+        taxa = int(line.split(" ")[4])
+    dimensions["_".join(family.split("_")[:-1])] = [unique_sites, taxa]
+  return dimensions
+  
+
 def run_pargenes_and_extract_trees(datadir, subst_model, starting_trees, bs_trees, cores, pargenes_dir = "pargenes", extract_trees = True):
   saved_metrics_key = "RAxML-NG"
   if (pargenes_dir != "pargenes"):

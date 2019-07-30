@@ -14,6 +14,7 @@ import experiments as exp
 import msa_converter
 import rename_leaves
 import sequence_model
+import run_raxml_supportvalues as run_pargenes
 
 def get_mrbayes_output_dir(datadir, subst_model):
   return fam.get_run_dir(datadir, subst_model, "mrbayes_run")
@@ -46,6 +47,7 @@ def generate_mrbayes_commands_file(datadir, generations, frequency, runs, chains
   results_dir = os.path.join(output_dir, "results")
   scheduler_commands_file = os.path.join(output_dir, "commands.txt")
   exp.mkdir(results_dir)
+  family_dimensions = run_pargenes.get_family_dimensions(os.path.abspath(datadir), subst_model)
   with open(scheduler_commands_file, "w") as writer:
     for family in sorted(fam.get_families_list(datadir)):
       family_dir = fam.get_family_path(datadir, family)
@@ -62,7 +64,11 @@ def generate_mrbayes_commands_file(datadir, generations, frequency, runs, chains
         command = []
         command.append(family + "__" + str(run))
         command.append("1")
-        command.append("1")
+        if (family in family_dimensions):
+          dim = family_dimensions[family][1] * family_dimensions[family][0]
+          command.append(str(dim))
+        else:
+          command.append("1")
         command.append(mrbayes_config)
         writer.write(" ".join(command) + "\n")
   return scheduler_commands_file

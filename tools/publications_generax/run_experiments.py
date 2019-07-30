@@ -39,10 +39,14 @@ if (False):
 
 if (True):
   datasets = []
-  subst_model = "GTR+G+I"
+  subst_model = "JC"
   datasets.append("jsimdtl_s5_f10_sites100_dna4_bl0.5_d0.1_l0.2_t0.1_p0.0")
   #common.generate_all_datasets(datasets)
   run_filter = RunFilter()
+  run_filter.disable_all()
+  run_filter.ALE = True
+  run_filter.EXA_generations = 10000
+  run_filter.EXA_burnin = 0
   run_filter.eval_joint_ll = False
   common.run_all_reference_methods(datasets, subst_model, cores, run_filter)
  
