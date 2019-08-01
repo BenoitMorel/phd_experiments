@@ -19,7 +19,7 @@ import math
 
 
 def plot_boxplots():
-  methods = ["raxml", "treerecs", "notung80", "phyldog", "ale-dtl"]
+  methods = ["raxml", "treerecs", "notung90", "phyldog", "ale-dtl"]
   models = ["gtr+g"]
   datasets = ["cyano_simulated"]
   for model in models:
@@ -49,13 +49,14 @@ def plot_model_boxplots():
   methods["generax-dtl-random"] = "GeneRax"
   methods["ale-dtl"] = "ALE"
   methods["treerecs"] = "Treerecs"
-  methods["notung80"] = "Notung"
+  methods["notung90"] = "Notung"
+  methods["phyldog"] = "Phyldog"
   methods["raxml-ng"] = "RAxML-NG"
-  order = ["GeneRax", "ALE", "Treerecs",  "Notung", "RAxML-NG"]
-  models = ["LG+G", "DAYHOFF"]
+  order = ["GeneRax", "ALE", "Treerecs",  "Phyldog", "Notung", "RAxML-NG"]
+  models = ["LG+G+I", "WAG"]
   models_to_display = {}
-  models_to_display["LG+G"] = "True model"
-  models_to_display["DAYHOFF"] = "Wrong model"
+  models_to_display["LG+G+I"] = "True model"
+  models_to_display["WAG"] = "Wrong model"
   
   dico = {}
   datasets = ["cyano_simulated"]
