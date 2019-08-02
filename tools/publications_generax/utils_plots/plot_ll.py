@@ -20,7 +20,7 @@ def aux(dataset, model, recModel):
   methods_to_plot.append("raxml-ng")
   methods_to_plot.append("notung80")
   methods_to_plot.append("treerecs")
-  #methods_to_plot.append(["phyldog", "raxml-ng"])
+  methods_to_plot.append("phyldog")
   methods_to_plot.append("ale-" + recModel.lower())
   methods_to_plot.append("generax-" + recModel.lower() + "-random")
 
@@ -30,8 +30,8 @@ def aux(dataset, model, recModel):
   methods_display_name["generax-" + recModel.lower() + "-random"] = "GeneRax-" + recModel
   methods_display_name["treerecs"] = "Treerecs"
   methods_display_name["notung80"] = "Notung"
+  methods_display_name["phyldog"] = "Phyldog"
 
-  output = "runtimes_" + dataset + ".svg"
   categories = {}
   categories["JointLL_DL"] = "DL"
   categories["JointLL_DTL"] = "DTL"
@@ -71,7 +71,7 @@ def aux(dataset, model, recModel):
   for x in x_order:
     simple_yvalues.append(yvalues[recModel][x])
   output = "simple_ll_" + dataset + "_" + recModel + ".svg"
-  plot_histogram.plot_histogram(simple_xlabels, simple_yvalues, ycaption = "Absolute log-likelihiood", start_at_min_y = True, reverse_bar = True,  output = output)
+  plot_histogram.plot_histogram(simple_xlabels, simple_yvalues, ycaption = "Absolute log-likelihood", start_at_min_y = True, reverse_bar = True,  output = output)
 
 def plot_ll():
   datasets = ["cyano_empirical", "ensembl_96_ncrna_primates"]

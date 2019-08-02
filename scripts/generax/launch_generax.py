@@ -45,7 +45,7 @@ def build_generax_families_file(datadir, starting_tree, subst_model, output):
       writer.write("alignment = " + fam.get_alignment_file(family_path) + "\n")
       writer.write("mapping = " + fam.get_mappings(datadir, family) + "\n")
       raxml_model = ""
-      if (starting_tree != "random"):
+      if (starting_tree != "random" and starting_tree != "true"):
         raxml_model = fam.get_raxml_best_model(datadir, subst_model, family)
       if (os.path.isfile(raxml_model)):
         writer.write("subst_model = " + raxml_model + "\n")

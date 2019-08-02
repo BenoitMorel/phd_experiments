@@ -27,9 +27,11 @@ def eval_likelihood(dataset_dir, run_name, with_transfers, subst_model, cores):
   else:
     additional_arguments.append("--rec-model")
     additional_arguments.append("UndatedDL")
-  sys.stdout = open(os.devnull, 'w')
-  launch_generax.run_generax(dataset_dir, "EVAL", generax_families_file, "normal", cores, additional_arguments, temp_dir)
-  sys.stdout = sys.__stdout__
+  #sys.stdout = open(os.devnull, 'w')
+  try:
+    launch_generax.run_generax(dataset_dir, "EVAL", generax_families_file, "normal", cores, additional_arguments, temp_dir)
+  finally:
+    sys.stdout = sys.__stdout__
   
   lines = open(os.path.join(temp_dir, "generax", "stats.txt")).readlines()
   stats = {}
