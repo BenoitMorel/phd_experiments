@@ -70,7 +70,7 @@ def save_rf_cells(datadir, rf_cells, rooted):
   output = fam.get_raw_rf_cells_file(datadir, rooted)
   pickle.dump(rf_cells, open(output, "wb"))
 
-def load_rf_cells(datadir, rooted):
+def load_rf_cells(datadir, rooted = False):
   return pickle.load(open(fam.get_raw_rf_cells_file(datadir, rooted), "rb"))
 
 def get_rf_to_true(cells, run_name):
