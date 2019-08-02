@@ -5,7 +5,7 @@ sys.path.insert(0, 'scripts')
 import experiments as exp
 import fam
 
-def run_generax_instance(dataset, starting_tree, with_transfers, method, subst_model, per_sp_rates, cores = 40):
+def run_generax_instance(dataset, starting_tree, with_transfers, method, subst_model, per_sp_rates, rec_radius = 0, cores = 40):
   command = []
   command.append("python")
   command.append(os.path.join(exp.scripts_root, "generax/launch_generax.py"))
@@ -25,24 +25,28 @@ def run_generax_instance(dataset, starting_tree, with_transfers, method, subst_m
   if (per_sp_rates):
     command.append("--per-species-rates")
     method = method + "-psr"
+  if (rec_radius > 0):
+    command.append("--rec-radius")
+    command.append(str(rec_radius))
+    method = method + "-rec-radius" + str(rec_radius)
   command.append("--run")
   command.append(fam.get_run_name(method, subst_model))
   print("-> Running " + " ".join(command))
   subprocess.check_call(command)
     
   
-def run_generax_on_families(dataset_dir, subst_model, cores, raxml = True, random = True, dl = True, dtl = True):
+def run_generax_on_families(dataset_dir, subst_model, cores, raxml = True, random = True, dl = True, dtl = True, rec_radius = 0):
   dataset = os.path.basename(dataset_dir)
   if (raxml):
     if (dl):
-      run_generax_instance(dataset, "raxml-ng", False, "generax-dl-raxml", subst_model, False, cores)
+      run_generax_instance(dataset, "raxml-ng", False, "generax-dl-raxml", subst_model, False, rec_radius, cores)
     if (dtl):
-      run_generax_instance(dataset, "raxml-ng", True, "generax-dtl-raxml", subst_model, False, cores)
+      run_generax_instance(dataset, "raxml-ng", True, "generax-dtl-raxml", subst_model, False, rec_radius, cores)
   if (random):
     if (dl):
-      run_generax_instance(dataset, "random", False, "generax-dl-random", subst_model, False, cores)
+      run_generax_instance(dataset, "random", False, "generax-dl-random", subst_model, False, rec_radius, cores)
     if (dtl):
-      run_generax_instance(dataset, "random", True, "generax-dtl-random", subst_model, False, cores)
+      run_generax_instance(dataset, "random", True, "generax-dtl-random", subst_model, False, rec_radius, cores)
   #run_generax_instance(dataset, "raxml-ng", False, "generax-dl-raxml", subst_model, True, cores)
   #run_generax_instance(dataset, "raxml-ng", True, "generax-dtl-raxml", subst_model, True, cores)
   

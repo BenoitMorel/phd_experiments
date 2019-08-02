@@ -19,6 +19,7 @@ class RunFilter():
     self.phyldog = phyldog
     self.notung = notung
     self.generax = generax
+    self.generaxrec = 0
     self.ALE = ALE
     self.eval_joint_ll = eval_joint_ll
     self.analyze = analyze
@@ -35,6 +36,7 @@ class RunFilter():
     self.phyldog = False
     self.notung = False
     self.generax = False
+    self.generaxrec = 0
     self.ALE = False  
     self.eval_joint_ll = False
     self.analyze = False
@@ -88,6 +90,15 @@ def run_reference_methods(dataset_dir, subst_model, starting_trees, bs_trees, co
     sys.stdout.flush()
     try:
       run_generax.run_generax_on_families(dataset_dir, subst_model, cores)
+    except Exception as exc:
+      print("Failed running GeneRax")
+      print(exc)
+    sys.stdout.flush()
+  if (run_filter.generaxrec > 0):
+    print("Run Generax Rec")
+    sys.stdout.flush()
+    try:
+      run_generax.run_generax_on_families(dataset_dir, subst_model, cores, True, True, True, True, run_filter.generaxrec)
     except Exception as exc:
       print("Failed running GeneRax")
       print(exc)

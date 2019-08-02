@@ -39,10 +39,19 @@ if (False):
 
 if (True):
   datasets = []
-  subst_model = "JC"
-  datasets.append("jsimdtl_s5_f10_sites100_dna4_bl0.5_d0.1_l0.2_t0.1_p0.0")
+  subst_model = "GTR"
+  #datasets.append("jsimdtl_s19_f50_sites200_dna4_bl0.5_d0.1_l0.2_t0.1_p0.0")
+  #datasets.append("jsim_s19_f50_sites200_dna4_bl0.5_d0.1_l0.2_t0.0_p0.0")
+  #datasets.append("jsimdtl_s41_f50_sites200_dna4_bl0.5_d0.1_l0.2_t0.1_p0.0")
+  datasets.append("jsim_s19_f100_sites100_dna4_bl0.5_d0.2_l0.2_t0.0_p0.0")
+  
+  
   #common.generate_all_datasets(datasets)
   run_filter = RunFilter()
+  run_filter.disable_all()
+  run_filter.ALE = False
+  run_filter.generaxrec = 5
+  run_filter.analyze = True
   run_filter.EXA_generations = 10000
   run_filter.EXA_burnin = 0
   run_filter.eval_joint_ll = False
