@@ -80,7 +80,7 @@ def run_treerecs_on_families(datadir, subst_model, cores):
   exp.run_with_scheduler(exp.treerecs_exec, scheduler_commands_file, "onecore", cores, output_dir, "logs.txt")   
   saved_metrics.save_metrics(datadir, fam.get_run_name("treerecs", subst_model), (time.time() - start), "runtimes") 
   lb = fam.get_lb_from_run(output_dir)
-  saved_metrics.save_metrics(datadir, "Treerecs", (time.time() - start) * lb, "seqtimes") 
+  saved_metrics.save_metrics(datadir, fam.get_run_name("treerecs", subst_model), (time.time() - start) * lb, "seqtimes") 
   extract_treerecs_trees(datadir, subst_model)
   
 if (__name__== "__main__"):

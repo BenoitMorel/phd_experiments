@@ -18,7 +18,7 @@ import saved_metrics
 def aux(dataset, model, recModel):
   methods_to_plot = []
   methods_to_plot.append("raxml-ng")
-  methods_to_plot.append("notung80")
+  methods_to_plot.append("notung90")
   methods_to_plot.append("treerecs")
   methods_to_plot.append("phyldog")
   methods_to_plot.append("ale-" + recModel.lower())
@@ -29,7 +29,7 @@ def aux(dataset, model, recModel):
   methods_display_name["ale-" + recModel.lower()] = "ALE-" + recModel
   methods_display_name["generax-" + recModel.lower() + "-random"] = "GeneRax-" + recModel
   methods_display_name["treerecs"] = "Treerecs"
-  methods_display_name["notung80"] = "Notung"
+  methods_display_name["notung90"] = "Notung"
   methods_display_name["phyldog"] = "Phyldog"
 
   categories = {}

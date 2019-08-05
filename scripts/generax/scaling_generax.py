@@ -16,7 +16,7 @@ def get_run_name(starting_tree, with_transfer, subst_model, cores):
   else:
     run_name += "dl-"
   run_name += starting_tree.replace("raxml-ng", "raxml")
-  run_name + "."
+  run_name += "."
   run_name += subst_model
   return run_name
 
@@ -71,7 +71,9 @@ def plot_scaling_metric(datadir):
     xvalues = []
     yvalues = []
     for key in metrics:
-      xvalues.append(int(key))
+      print(key)
+      print(metrics[key])
+      xvalues.append(int(key) - 1)
       yvalues.append(float(metrics[key]))
     xvalues, yvalues = (list(t) for t in zip(*sorted(zip(xvalues, yvalues))))    
     print(xvalues)

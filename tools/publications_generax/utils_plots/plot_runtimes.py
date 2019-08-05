@@ -41,9 +41,10 @@ def get_generax_seq_runtime(run, runs, run_cores, metrics):
   scaling_run = get_min_scaling_runs(run, runs)
   if (scaling_run == None):
     return metrics[run]
-  scaling_cores = get_cores_number(scaling_run)
+  scaling_cores = get_cores_number(scaling_run) - 1
   scaling_time = float(metrics[scaling_run])
-  return scaling_time * float(scaling_cores) / float(run_cores)
+
+  return scaling_time * float(scaling_cores) / float(run_cores) # -1 because one core is for master process 
 
 
 def plot(yvalues, output):
@@ -52,7 +53,7 @@ def plot(yvalues, output):
 def plot_all_stacked_plots(dico, categories, dataset, cores):
   methods_to_plot = []
   methods_to_plot.append(["raxml-light"])
-  methods_to_plot.append(["notung80", "raxml-ng"])
+  methods_to_plot.append(["notung90", "raxml-ng"])
   methods_to_plot.append(["treerecs", "raxml-ng"])
   methods_to_plot.append(["ale-dtl", "mrbayes"])
   methods_to_plot.append(["generax-dtl-raxml", "raxml-light"])
@@ -65,7 +66,7 @@ def plot_all_stacked_plots(dico, categories, dataset, cores):
   methods_display_name["generax-dtl-random"] = "GeneRax-Random"
   methods_display_name["generax-dl-random"] = "GeneRax-DL-Random"
   methods_display_name["treerecs"] = "Treerecs"
-  methods_display_name["notung80"] = "Notung"
+  methods_display_name["notung90"] = "Notung"
   for cat in categories:
     stacked_data = [[], []]
     stack_labels = ["Tool", "Pre-processing"]
@@ -104,7 +105,7 @@ def get_dico_values(categories, datadir, model, cores):
 def plot_all_barplots(dico, categories, dataset):    
   methods_to_plot = []
   methods_to_plot.append(["raxml-light"])
-  methods_to_plot.append(["notung80", "raxml-ng"])
+  methods_to_plot.append(["notung90", "raxml-ng"])
   methods_to_plot.append(["treerecs", "raxml-ng"])
   methods_to_plot.append(["ale-dtl", "mrbayes"])
   methods_to_plot.append(["generax-dtl-raxml", "raxml-light"])
@@ -116,7 +117,7 @@ def plot_all_barplots(dico, categories, dataset):
   methods_display_name["generax-dtl-raxml"] = "GeneRax-Raxml"
   methods_display_name["generax-dtl-random"] = "GeneRax-Random"
   methods_display_name["treerecs"] = "Treerecs"
-  methods_display_name["notung80"] = "Notung"
+  methods_display_name["notung90"] = "Notung"
   xlabels = []
   yvalues_individual = {}
   yvalues_cumulated = {}
@@ -138,7 +139,7 @@ def plot_all_barplots(dico, categories, dataset):
 def plot_scalings(dico, categories, dataset):
   methods_to_plot = []
   methods_to_plot.append(["raxml-light"])
-  methods_to_plot.append(["notung80", "raxml-ng"])
+  methods_to_plot.append(["notung90", "raxml-ng"])
   methods_to_plot.append(["treerecs", "raxml-ng"])
   methods_to_plot.append(["ale-dtl", "mrbayes"])
   methods_to_plot.append(["generax-dtl-raxml", "raxml-light"])
@@ -150,7 +151,7 @@ def plot_scalings(dico, categories, dataset):
   methods_display_name["generax-dtl-raxml"] = "GeneRax-Raxml"
   methods_display_name["generax-dtl-random"] = "GeneRax-Random"
   methods_display_name["treerecs"] = "Treerecs"
-  methods_display_name["notung80"] = "Notung"
+  methods_display_name["notung90"] = "Notung"
   xlabels = []
   yvalues = []
   for method in methods_to_plot:
