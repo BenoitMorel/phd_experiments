@@ -64,14 +64,14 @@ def aux(dataset, model, recModel):
   
   output = "joint_likelihood__" + dataset
   # GROUPED HISTOGRAM
-  plot_histogram.plot_grouped_histogram(yvalues, cat_name = "Category", class_name = "Methods", values_name = "Absolute log-likelihood", start_at_min_y = True, x_order = x_order, output = output + ".svg")
+  plot_histogram.plot_grouped_histogram(yvalues, cat_name = "Category", class_name = "Methods", values_name = "Joint log-likelihood", start_at_min_y = True, x_order = x_order, output = output + ".svg")
   # SIMPLE HISTOGRAMS
   simple_xlabels = x_order
   simple_yvalues  = []
   for x in x_order:
     simple_yvalues.append(yvalues[recModel][x])
   output = "simple_ll_" + dataset + "_" + recModel + ".svg"
-  plot_histogram.plot_histogram(simple_xlabels, simple_yvalues, ycaption = "Absolute log-likelihood", start_at_min_y = True, reverse_bar = True,  output = output)
+  plot_histogram.plot_histogram(simple_xlabels, simple_yvalues, ycaption = "Joint log-likelihood", start_at_min_y = True, reverse_bar = True,  output = output)
 
 def plot_ll():
   datasets = ["cyano_empirical", "ensembl_96_ncrna_primates"]

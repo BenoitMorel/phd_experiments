@@ -6,10 +6,16 @@ import common
 sys.path.insert(0, os.path.join("tools", "families"))
 from run_all import RunFilter
 
+sys.path.insert(0, 'scripts/generax')
+import scaling_generax
 
+run_cyano_simulated = False
+run_simulations = False
+run_empirical = False
+run_scaling = True
 
 # CYANO SIMULATED PLOTS
-if (True):
+if (run_cyano_simulated):
   subst_models = ["LG+G+I", "WAG"] #["LG+G+I", "DAYHOFF"]
   datasets = ["cyano_simulated"]
   cores = 512
@@ -29,7 +35,7 @@ if (True):
 
 
 # PARAMETERS SIMULATED PLOTS
-if (True):
+if (run_simulations):
   subst_models = ["GTR+G"]
   datasets = []
   cores = 64
@@ -66,7 +72,7 @@ if (True):
   
 
 # EMPIRICAL PLOTS
-if (False):
+if (run_empirical):
   subst_models_dna = ["GTR+G"]
   datasets_dna = ["ensembl_96_ncrna_primates"]
   subst_models_prot = ["LG+G"]
@@ -88,5 +94,16 @@ if (False):
 
 
 
+
+if (run_scaling):
+  dataset = "../BenoitDatasets/families/cyano_empirical"
+  starting_trees = ["raxml-ng", "random"]
+  models = [1] # with or without transfers
+  cores_set = [4, 8, 16, 32, 64, 128, 256, 512]
+  subst_model = "LG+G"
+  for cores in cores_set:
+    for tree in starting_trees:
+      for model in models:
+        scaling_generax.launch(dataset, subst_model, tree, model, "haswell", cores)
 
 
