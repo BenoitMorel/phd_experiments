@@ -56,6 +56,8 @@ def generate_scheduler_commands_file(datadir, subst_model, cores, output_dir):
       command.append("42")
       command.append("--siteratecategories")
       command.append(str(sequence_model.get_gamma_rates(subst_model)))
+      command.append("-sm")
+      command.append(sequence_model.get_deleterious_model(subst_model))
       command.append("-o")
       command.append(os.path.join(results, "deleterious"))
       writer.write(" ".join(command) + "\n")
