@@ -6,18 +6,24 @@ import common
 sys.path.insert(0, os.path.join("tools", "families"))
 from run_all import RunFilter
 
+sys.path.insert(0, 'scripts/generax')
+import scaling_generax
 
+run_cyano_simulated = True
+run_simulations = False
+run_empirical = False
+run_scaling = False
 
 # CYANO SIMULATED PLOTS
-if (True):
+if (run_cyano_simulated):
   subst_models = ["LG+G+I", "WAG"] #["LG+G+I", "DAYHOFF"]
   datasets = ["cyano_simulated"]
-  cores = 512
+  cores = 256
   do_generate = 0
   run_filter = RunFilter()
   run_filter.disable_all()
-  run_filter.generaxrec = 5
-  run_filter.analyse_script = True
+  run_filter.eccetera = True
+  run_filter.analyze = True
   run_filter.EXA_runs = 2
   run_filter.EXA_chains = 4
   run_filter.EXA_generations = 1000000
@@ -29,21 +35,17 @@ if (True):
 
 
 # PARAMETERS SIMULATED PLOTS
-if (True):
+if (run_simulations):
   subst_models = ["GTR+G"]
   datasets = []
   cores = 64
-  do_generate = 1
-  un_filter = RunFilter()
-  run_filter.disable_all()
-  run_filter.generaxrec = 5
-  run_filter.analyse_script = True
+  do_generate = 0
+  run_filter = RunFilter()
   run_filter.EXA_runs = 2
   run_filter.EXA_chains = 4
   run_filter.EXA_generations = 1000000
   run_filter.EXA_frequencies = 1000
   run_filter.EXA_burnin = 100
-  run_filter.eval_joint_ll = False
   fixed_point_dl = "jsim_s19_f100_sites250_dna4_bl0.5_d0.25_l0.25_t0.0_p0.0"
   fixed_point_dtl = "jsimdtl_s19_f100_sites250_dna4_bl0.5_d0.1_l0.2_t0.1_p0.0"
   datasets.append(fixed_point_dl)
@@ -67,15 +69,16 @@ if (True):
   
 
 # EMPIRICAL PLOTS
-if (False):
+if (run_empirical):
   subst_models_dna = ["GTR+G"]
   datasets_dna = ["ensembl_96_ncrna_primates"]
   subst_models_prot = ["LG+G"]
   datasets_prot = ["cyano_empirical"]
-  cores = 512
+  cores = 128
   do_generate = 0
   run_filter = RunFilter()
   run_filter.disable_all()
+  run_filter.generax = True
   run_filter.EXA_runs = 2
   run_filter.EXA_chains = 4
   run_filter.EXA_generations = 1000000
@@ -88,5 +91,16 @@ if (False):
 
 
 
+
+if (run_scaling):
+  dataset = "../BenoitDatasets/families/cyano_empirical"
+  starting_trees = ["random"] #["raxml-ng", "random"]
+  models = [1] # with or without transfers
+  cores_set = [4, 8, 16, 32, 64, 128, 256, 512]
+  subst_model = "LG+G"
+  for cores in cores_set:
+    for tree in starting_trees:
+      for model in models:
+        scaling_generax.launch(dataset, subst_model, tree, model, "haswell", cores)
 
 

@@ -4,6 +4,7 @@ import run_raxml_supportvalues as raxml
 import run_treerecs as treerecs
 import run_phyldog as phyldog
 import run_notung as notung
+import run_eccetera
 import run_ALE
 import fam
 import run_generax
@@ -12,12 +13,13 @@ import rf_cells
 
 class RunFilter():
   
-  def __init__(self, raxml = True, pargenes = True, treerecs = True, phyldog = True, notung = True, generax = True, ALE = True, eval_joint_ll = True, analyze = True):
+  def __init__(self, raxml = True, pargenes = True, treerecs = True, phyldog = True, notung = True, eccetera = True, generax = True, ALE = True, eval_joint_ll = True, analyze = True):
     self.raxml = raxml
     self.pargenes = pargenes
     self.treerecs = treerecs
     self.phyldog = phyldog
     self.notung = notung
+    self.eccetera = eccetera
     self.generax = generax
     self.generaxrec = 0
     self.ALE = ALE
@@ -35,6 +37,7 @@ class RunFilter():
     self.treerecs = False
     self.phyldog = False
     self.notung = False
+    self.eccetera = False
     self.generax = False
     self.generaxrec = 0
     self.ALE = False  
@@ -78,12 +81,15 @@ def run_reference_methods(dataset_dir, subst_model, starting_trees, bs_trees, co
     except Exception as exc:
       print("Failed running Notung")
       print(exc)
-    #threshold = 101
-    #try:
-    #  notung.run_notung_on_families(dataset_dir, threshold, cores)
-    #except Exception as exc:
-    #  print("Failed running Notung")
-    #  print(exc)
+  if (run_filter.eccetera):
+    print("Run eccetera...")
+    sys.stdout.flush()
+    threshold = 70
+    try:
+      run_eccetera.run_eccetera_on_families(dataset_dir, subst_model,  threshold, cores)
+    except Exception as exc:
+      print("Failed running Eccetera")
+      print(exc)
 
   if (run_filter.generax):
     print("Run Generax")

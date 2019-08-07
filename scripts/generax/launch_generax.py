@@ -101,7 +101,7 @@ def extract_trees(datadir, results_family_dir, run_name, subst_model):
     shutil.copy(source, dest)
 
 
-def run(dataset, subst_model, strategy, starting_tree, cores, additional_arguments, resultsdir, do_analyze = True):
+def run(dataset, subst_model, strategy, starting_tree, cores, additional_arguments, resultsdir, do_analyze = True, do_extract = True):
   run_name = exp.getAndDelete("--run", additional_arguments, "lastRun." +subst_model) 
   print("Run name " + run_name)
   sys.stdout.flush()
@@ -116,7 +116,8 @@ def run(dataset, subst_model, strategy, starting_tree, cores, additional_argumen
   run_generax(datadir, strategy, generax_families_file, mode, cores, additional_arguments, resultsdir)
   saved_metrics.save_metrics(datadir, run_name, (time.time() - start), "runtimes") 
   saved_metrics.save_metrics(datadir, run_name, (time.time() - start), "seqtimes") 
-  extract_trees(datadir, os.path.join(resultsdir, "generax"), run_name, subst_model)
+  if (do_extract):
+    extract_trees(datadir, os.path.join(resultsdir, "generax"), run_name, subst_model)
   try:
     if (do_analyze):
       rf_cells.analyze(datadir, run_name)

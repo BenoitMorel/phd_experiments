@@ -16,7 +16,7 @@ def get_run_name(starting_tree, with_transfer, subst_model, cores):
   else:
     run_name += "dl-"
   run_name += starting_tree.replace("raxml-ng", "raxml")
-  run_name + "."
+  run_name += "."
   run_name += subst_model
   return run_name
 
@@ -36,7 +36,7 @@ def run(datadir, subst_model, starting_tree, with_transfer, cores, resultsdir):
     metric_name += "DL"
     additional_arguments.append("UndatedDL")
   start_time = time.time()
-  launch_generax.run(dataset, subst_model, "SPR", starting_tree, cores, additional_arguments, resultsdir, False)
+  launch_generax.run(dataset, subst_model, "SPR", starting_tree, cores, additional_arguments, resultsdir, False, False)
   elapsed_time = time.time() - start_time
   saved_metrics.save_metrics(datadir, str(cores), str(elapsed_time), metric_name)
 
@@ -71,7 +71,9 @@ def plot_scaling_metric(datadir):
     xvalues = []
     yvalues = []
     for key in metrics:
-      xvalues.append(int(key))
+      print(key)
+      print(metrics[key])
+      xvalues.append(int(key) - 1)
       yvalues.append(float(metrics[key]))
     xvalues, yvalues = (list(t) for t in zip(*sorted(zip(xvalues, yvalues))))    
     print(xvalues)

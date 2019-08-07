@@ -149,6 +149,7 @@ def plot_rrf(x_labels, params_to_plot_dl, params_to_plot_dtl, fixed_params_dl, f
     plotter_rf_dtl(param)
   
   #best_methods_to_quantify = ["ale-dl", "ale-dtl", "generax-dl-random", "generax-dtl-random"]
+  #best_methods_to_quantify = ["generax-dl-random", "generax-dtl-random"]
   best_methods_to_quantify = ["generax-dl-random", "generax-dtl-random"]
   compute_best_method_percentage(datasets_rf_dico_dl, datasets_rf_dico_dtl, subst_model, best_methods_to_quantify, methods_dico)
 

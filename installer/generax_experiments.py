@@ -66,7 +66,7 @@ def apply_git_diff(repo_name, diff_file):
   call(["git", "apply", os.path.join(exp.installer_root, diff_file)])
   os.chdir(cwd)
 
-def wget(link, file_name, prefix = exp.github_root, unzip = True):
+def wget(link, file_name, prefix = exp.github_root, unzip = True, unzip_command = ["unzip"]):
   output = os.path.join(prefix, file_name)
   cwd = os.getcwd()
   os.chdir(prefix)
@@ -74,8 +74,9 @@ def wget(link, file_name, prefix = exp.github_root, unzip = True):
     print("Directory " + output + " already exists")
   else:
     call(["wget", "-O", file_name, link, "-P", exp.github_root])
+  unzip_command.append(output)
   if (not os.path.isdir(os.path.splitext(output)[0]) and unzip):
-    call(["unzip", output])
+    call(unzip_command)
   os.chdir(cwd)
 
 def install_with_cmake(repo_name, cmake_additional_commands = [], install = False):
@@ -245,10 +246,12 @@ if (False):
   git_update("https://github.com/WandrilleD/DeCoSTAR.git", "DeCoSTAR")
   subprocess.check_call(["./installer/install_recent_bpp.sh"], shell = True)
   apply_diff(os.path.join(exp.github_root, "phd_experiments", "installer", "decostart_make_diff.txt"))#, reverse = True)
+  git_update("https://github.com/davidemms/STAG.git", "STAG")
 
 
 if (True):
-  git_update("https://github.com/davidemms/STAG.git", "STAG")
+  wget("http://mbb.univ-montp2.fr/MBB/uploads/ecceTERA_1_2_4.tar.gz", "eccetera.tar.gz", unzip_command = ["tar", "-xf"])
+
   #git_update("https://github.com/Boussau/PHYLDOG", "PHYLDOG")
   #install_phyldog("PHYLDOG")
 

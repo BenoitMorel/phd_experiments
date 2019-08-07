@@ -77,6 +77,8 @@ ale_ml_exec = os.path.join(github_root, "ALE", "build", "bin", "ALEml_undated")
 deco_exec = os.path.join(github_root, "DeCo", "DeCo")
 decostar_exec = os.path.join(github_root, "DeCoSTAR", "bin/DeCoSTAR")
 guenomu_exec = os.path.join(github_root, "guenomu", "src", "guenomu")
+eccetera_root = os.path.join(github_root, "ecceTERA")
+eccetera_exec = os.path.join(eccetera_root, "bin", "ecceTERA_linux64")
 
 # constants
 mpi_scheduler_heuristic = "--split-scheduler"
