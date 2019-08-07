@@ -21,6 +21,7 @@ def aux(dataset, model, recModel):
   methods_to_plot.append("notung90")
   methods_to_plot.append("treerecs")
   methods_to_plot.append("phyldog")
+  methods_to_plot.append("eccetera")
   methods_to_plot.append("ale-" + recModel.lower())
   methods_to_plot.append("generax-" + recModel.lower() + "-random")
 
@@ -31,6 +32,7 @@ def aux(dataset, model, recModel):
   methods_display_name["treerecs"] = "Treerecs"
   methods_display_name["notung90"] = "Notung"
   methods_display_name["phyldog"] = "Phyldog"
+  methods_display_name["eccetera"] = "EcceTERA"
 
   categories = {}
   categories["JointLL_DL"] = "DL"

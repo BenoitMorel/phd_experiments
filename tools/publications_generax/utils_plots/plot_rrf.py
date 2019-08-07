@@ -127,6 +127,7 @@ def plot_rrf(x_labels, params_to_plot_dl, params_to_plot_dtl, fixed_params_dl, f
   methods_dico["raxml-ng." + subst_model] = "RAxML-NG"
   methods_dico["notung90." + subst_model] = "Notung"
   methods_dico["phyldog." + subst_model] = "Phyldog"
+  methods_dico["eccetera." + subst_model] = "EcceTERA"
   methods_dico["treerecs." + subst_model] = "Treerecs"
   methods_dico["ale-dl." + subst_model] = "ALE-DL"
   methods_dico["ale-dtl." + subst_model] = "ALE-DTL"
@@ -135,8 +136,8 @@ def plot_rrf(x_labels, params_to_plot_dl, params_to_plot_dtl, fixed_params_dl, f
  
   
 
-  methods_dl = get_runs(["raxml-ng", "notung90", "phyldog", "treerecs", "ale-dl", "generax-dl-random"], subst_model)
-  methods_dtl = get_runs(["raxml-ng", "notung90", "phyldog", "treerecs", "ale-dtl", "generax-dtl-random"], subst_model)
+  methods_dl = get_runs(["raxml-ng", "notung90", "eccetera", "phyldog", "treerecs", "ale-dl", "generax-dl-random"], subst_model)
+  methods_dtl = get_runs(["raxml-ng", "notung90", "eccetera", "phyldog", "treerecs", "ale-dtl", "generax-dtl-random"], subst_model)
   
   rf_y_label =  "Average relative RF"
   datasets_rf_dico_dl = common.get_metrics_for_datasets("jsim_", "average_rrf")

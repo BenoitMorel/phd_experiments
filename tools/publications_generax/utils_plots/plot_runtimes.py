@@ -140,6 +140,7 @@ def plot_scalings(dico, categories, dataset):
   methods_to_plot = []
   methods_to_plot.append(["raxml-light"])
   methods_to_plot.append(["notung90", "raxml-ng"])
+  methods_to_plot.append(["eccetera", "raxml-ng"])
   methods_to_plot.append(["treerecs", "raxml-ng"])
   methods_to_plot.append(["ale-dtl", "mrbayes"])
   methods_to_plot.append(["generax-dtl-raxml", "raxml-light"])
@@ -150,6 +151,7 @@ def plot_scalings(dico, categories, dataset):
   methods_display_name["ale-dtl"] = "ALE"
   methods_display_name["generax-dtl-raxml"] = "GeneRax-Raxml"
   methods_display_name["generax-dtl-random"] = "GeneRax-Random"
+  methods_display_name["eccetera"] = "EcceTERA"
   methods_display_name["treerecs"] = "Treerecs"
   methods_display_name["notung90"] = "Notung"
   xlabels = []
