@@ -54,6 +54,7 @@ pargenes_script_debug = os.path.join(pargenes_root, "pargenes", "pargenes-hpc-de
 mpischeduler_root = os.path.join(github_root, "MPIScheduler")
 mpischeduler_exec = os.path.join(mpischeduler_root, "build", "mpi-scheduler")
 raxml_root = os.path.join(github_root, "raxml-ng")
+raxml_exec = os.path.join(raxml_root, "bin", "raxml-ng-mpi")
 oldraxml_root = os.path.join(github_root, "standard-RAxML")
 oldraxml_exec = os.path.join(oldraxml_root, "raxmlHPC-AVX")
 bigdatasets_root = os.path.join(github_root, "datasets")

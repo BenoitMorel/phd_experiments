@@ -7,14 +7,7 @@ random_alignment_format = "fasta"
 def create_random_tree(msa_file, output_file):
   global random_alignment_format
   msa = None
-  try:
-    msa = ete3.SeqGroup(msa_file, format=random_alignment_format)
-  except:
-    if (random_alignment_format == "fasta"):
-      random_alignment_format = "phylip"
-    else:
-      random_alignment_format = "fasta"
-    msa = ete3.SeqGroup(msa_file, format=random_alignment_format)
+  msa = ete3.SeqGroup(msa_file, format="phylip_relaxed")
 
   tree = ete3.Tree()
   tree.populate(len(msa.get_entries()))
