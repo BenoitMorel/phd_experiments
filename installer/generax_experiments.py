@@ -250,8 +250,8 @@ if (False):
 
 
 if (True):
-  wget("http://mbb.univ-montp2.fr/MBB/uploads/ecceTERA_1_2_4.tar.gz", "eccetera.tar.gz", unzip_command = ["tar", "-xf"])
-
+  git_update("https://github.com/celinescornavacca/ecceTERA.git", "ecceTERA")
+  install_with_cmake("ecceTERA")
   #git_update("https://github.com/Boussau/PHYLDOG", "PHYLDOG")
   #install_phyldog("PHYLDOG")
 

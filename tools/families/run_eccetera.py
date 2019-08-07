@@ -27,6 +27,7 @@ def generate_scheduler_commands_file(datadir, subst_model, threshold, cores, out
   with open(scheduler_commands_file, "w") as writer:
     for family in fam.get_families_list(datadir):
       family_dir = fam.get_family_path(datadir, family)
+      mapping_file = fam.get_treerecs_mappings(datadir, family)
       eccetera_dir = fam.get_family_misc_dir(datadir, family)
       eccetera_output = "eccetera." + subst_model + "."
       input_tree = os.path.join(fam.get_family_misc_dir(datadir, family), "eccetera_input." + subst_model + ".geneTree")
@@ -49,8 +50,8 @@ def generate_scheduler_commands_file(datadir, subst_model, threshold, cores, out
       command.append("collapse.mode=1")
       command.append("collapse.threshold=" + str(threshold))
       command.append("compute.TD=false")
-      #mapping_file = fam.get_eccetera_mappings(datadir, family)
-      #command.append("gene.mapping.file=")
+      if(os.path.isfile(mapping_file)):
+        command.append("gene.mapping.file=" + mapping_file)
       writer.write(" ".join(command) + "\n")
   return scheduler_commands_file
      
