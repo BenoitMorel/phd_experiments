@@ -13,13 +13,14 @@ import rf_cells
 
 class RunFilter():
   
-  def __init__(self, raxml = True, pargenes = True, treerecs = True, phyldog = True, notung = True, eccetera = True, generax = True, ALE = True, eval_joint_ll = True, analyze = True):
+  def __init__(self, raxml = True, pargenes = True, treerecs = True, phyldog = True, notung = True, eccetera = True, deleterious = True, generax = True, ALE = True, eval_joint_ll = True, analyze = True):
     self.raxml = raxml
     self.pargenes = pargenes
     self.treerecs = treerecs
     self.phyldog = phyldog
     self.notung = notung
     self.eccetera = eccetera
+    self.deleterious = deleterious
     self.generax = generax
     self.generaxrec = 0
     self.ALE = ALE
@@ -38,6 +39,7 @@ class RunFilter():
     self.phyldog = False
     self.notung = False
     self.eccetera = False
+    self.deleterious = False
     self.generax = False
     self.generaxrec = 0
     self.ALE = False  
@@ -89,6 +91,14 @@ def run_reference_methods(dataset_dir, subst_model, starting_trees, bs_trees, co
       run_eccetera.run_eccetera_on_families(dataset_dir, subst_model,  threshold, cores)
     except Exception as exc:
       print("Failed running Eccetera")
+      print(exc)
+  if (run_filter.deleterious):
+    print("Run deleterious...")
+    sys.stdout.flush()
+    try:
+      run_deleterious.run_deleterious_on_families(dataset_dir, subst_model, cores)
+    except Exception as exc:
+      print("Failed running Deleterious")
       print(exc)
 
   if (run_filter.generax):

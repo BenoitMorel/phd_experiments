@@ -134,6 +134,9 @@ def get_treerecs_tree(datadir, subst_model, family):
 def get_eccetera_tree(datadir, subst_model, family):
   return build_gene_tree_path(datadir, subst_model, family, "eccetera")
 
+def get_deleterious_tree(datadir, subst_model, family):
+  return build_gene_tree_path(datadir, subst_model, family, "deleterious")
+
 def get_notung_tree(datadir, subst_model, family, threshold):
   return build_gene_tree_path(datadir, subst_model, family,  "notung" + str(threshold))
 
