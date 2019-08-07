@@ -36,7 +36,7 @@ def run(datadir, subst_model, starting_tree, with_transfer, cores, resultsdir):
     metric_name += "DL"
     additional_arguments.append("UndatedDL")
   start_time = time.time()
-  launch_generax.run(dataset, subst_model, "SPR", starting_tree, cores, additional_arguments, resultsdir, False)
+  launch_generax.run(dataset, subst_model, "SPR", starting_tree, cores, additional_arguments, resultsdir, False, False)
   elapsed_time = time.time() - start_time
   saved_metrics.save_metrics(datadir, str(cores), str(elapsed_time), metric_name)
 
