@@ -18,41 +18,16 @@ import math
 
 
 
-def plot_boxplots():
-  methods = ["raxml", "treerecs", "notung90", "phyldog", "ale-dtl"]
-  models = ["gtr+g"]
-  datasets = ["cyano_simulated"]
-  for model in models:
-    print("model " + model)
-    runs = []
-    for method in methods:
-      runs.append(fam.get_run_name(method, model))
-    bp = boxplot.BoxPlot(ylabel = "rf distances")
-    data = {}
-    for run in runs:
-      data[run] = []
-    for dataset in datasets:
-      cells = rf_cells.load_rf_cells(fam.get_datadir(dataset))
-      for family in cells:
-        family_cells = cells[family]
-        for run in runs:
-          cell = rf_cells.get_rf_to_true(family_cells, run)
-          data[run].append(cell[0] / cell[1])
-    for run in data:
-      bp.add_elem(run, data[run])
-    output = "plop." + model + ".svg"
-    bp.plot(output)
-    print("plot " + output)
-
 def plot_model_boxplots():
   methods = {}
   methods["generax-dtl-random"] = "GeneRax"
   methods["ale-dtl"] = "ALE"
   methods["treerecs"] = "Treerecs"
   methods["notung90"] = "Notung"
+  methods["eccetera"] = "EcceTERA"
   methods["phyldog"] = "Phyldog"
   methods["raxml-ng"] = "RAxML-NG"
-  order = ["GeneRax", "ALE", "Treerecs",  "Phyldog", "Notung", "RAxML-NG"]
+  order = ["GeneRax", "ALE", "Treerecs",  "EcceTERA", "Phyldog", "Notung", "RAxML-NG"]
   models = ["LG+G+I", "WAG"]
   models_to_display = {}
   models_to_display["LG+G+I"] = "True model"
