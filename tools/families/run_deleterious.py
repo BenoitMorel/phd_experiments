@@ -21,7 +21,7 @@ def add_species_bl(input_species_tree, output_species_tree):
     writer.write(tree.write(format_root_node = True))
 
 def generate_scheduler_commands_file(datadir, subst_model, cores, output_dir):
-  generations = 100000
+  generations = 1000000
   thinning = 100
   results_dir = os.path.join(output_dir, "results")
   deleterious_species_tree = os.path.join(output_dir, "speciesTree.newick")
@@ -42,6 +42,8 @@ def generate_scheduler_commands_file(datadir, subst_model, cores, output_dir):
         command.append(str(dim))
       else:
         command.append("1")
+      command.append("-Xms512m")
+      command.append("-Xmx1024m")
       command.append("-jar")
       command.append(exp.jprime_jar)
       command.append("Deleterious")
@@ -66,14 +68,21 @@ def generate_scheduler_commands_file(datadir, subst_model, cores, output_dir):
 def extract_tree_from_run(datadir, subst_model, family):
   output_dir = fam.get_run_dir(datadir, subst_model, "deleterious_run")
   tree_info = os.path.join(output_dir, "results", family, "deleterious.info")
-  with open(tree_info) as reader:
-    while (True):
-      line = reader.readline()
-      if (not line):
-        return 
-      if (line.endswith(";\n") and not "Host" in line):
-        with open(fam.get_deleterious_tree(datadir, subst_model, family), "w") as writer:
-          writer.write(line.split()[-1])
+  output_tree = fam.get_deleterious_tree(datadir, subst_model, family)
+  try:
+    with open(tree_info) as reader:
+      while (True):
+        line = reader.readline()
+        if (not line):
+          break
+        if (line.endswith(";\n") and not "Host" in line):
+          with open(output_tree, "w") as writer:
+            writer.write(line.split()[-1])
+            return
+  except:
+    pass
+  print("No deleterious tree for family " + family)
+  shutil.copyfile(fam.get_raxml_tree(datadir, subst_model, family), output_tree)
 
 def extract_deleterious_trees(datadir, subst_model):
   families_dir = os.path.join(datadir, "families")
@@ -105,6 +114,7 @@ if (__name__== "__main__"):
   subst_model = sys.argv[2]
   cores = int(sys.argv[3])
 
-  run_deleterious_on_families(datadir, subst_model,  cores)
+  #run_deleterious_on_families(datadir, subst_model,  cores)
+  extract_deleterious_trees(datadir, subst_model)
 
 

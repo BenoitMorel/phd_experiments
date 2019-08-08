@@ -79,9 +79,8 @@ if (run_empirical):
   datasets_prot = ["cyano_empirical"]
   cores = 512
   do_generate = 0
+  run_filter = RunFilter()
   run_filter.disable_all()
-  run_filter.eccetera = True
-  run_filter.analyze = True
   run_filter.EXA_runs = 2
   run_filter.EXA_chains = 4
   run_filter.EXA_generations = 1000000

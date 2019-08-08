@@ -45,7 +45,7 @@ def generate_scheduler_commands_file(datadir, subst_model, threshold, cores, out
       command.append("gene.file=" + input_tree)
       command.append("output.dir=" + eccetera_dir)
       command.append("output.prefix=" + eccetera_output)
-      command.append("resolve.trees=1")
+      command.append("resolve.trees=0")
       command.append("print.newick=1")
       command.append("collapse.mode=1")
       command.append("collapse.threshold=" + str(threshold))

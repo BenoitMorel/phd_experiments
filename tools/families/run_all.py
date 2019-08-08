@@ -5,6 +5,7 @@ import run_treerecs as treerecs
 import run_phyldog as phyldog
 import run_notung as notung
 import run_eccetera
+import run_deleterious
 import run_ALE
 import fam
 import run_generax
