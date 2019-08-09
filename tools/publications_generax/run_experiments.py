@@ -22,10 +22,11 @@ if (True):
   #datasets.append("jsim_s19_f100_sites100_dna4_bl0.5_d0.2_l0.2_t0.0_p0.0")
   
   
-  #common.generate_all_datasets(datasets)
+  common.generate_all_datasets(datasets)
   run_filter = RunFilter()
+  run_filter.disable_all()
+  run_filter.generax= True
   run_filter.ALE = False
-  run_filter.generaxrec = 5
   run_filter.analyze = True
   run_filter.eval_joint_ll = False
   common.run_all_reference_methods(datasets, subst_model, cores, run_filter)
