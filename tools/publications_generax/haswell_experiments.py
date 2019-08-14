@@ -9,20 +9,20 @@ from run_all import RunFilter
 sys.path.insert(0, 'scripts/generax')
 import scaling_generax
 
-run_cyano_simulated = False
-run_simulations = True
-run_empirical = True
+run_cyano_simulated = True
+run_simulations = False
+run_empirical = False
 run_scaling = False
 
 # CYANO SIMULATED PLOTS
 if (run_cyano_simulated):
   subst_models = ["LG+G+I", "WAG"] #["LG+G+I", "DAYHOFF"]
   datasets = ["cyano_simulated"]
-  cores = 256
+  cores = 512
   do_generate = 0
   run_filter = RunFilter()
   run_filter.disable_all()
-  run_filter.eccetera = True
+  run_filter.deleterious = True
   run_filter.analyze = True
   run_filter.EXA_runs = 2
   run_filter.EXA_chains = 4
@@ -79,9 +79,8 @@ if (run_empirical):
   datasets_prot = ["cyano_empirical"]
   cores = 512
   do_generate = 0
+  run_filter = RunFilter()
   run_filter.disable_all()
-  run_filter.eccetera = True
-  run_filter.analyze = True
   run_filter.EXA_runs = 2
   run_filter.EXA_chains = 4
   run_filter.EXA_generations = 1000000

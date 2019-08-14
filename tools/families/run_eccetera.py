@@ -40,7 +40,6 @@ def generate_scheduler_commands_file(datadir, subst_model, threshold, cores, out
         command.append(str(dim))
       else:
         command.append("1")
-      command.append(exp.eccetera_exec)
       command.append("species.file=" + speciesTree)
       command.append("gene.file=" + input_tree)
       command.append("output.dir=" + eccetera_dir)
@@ -50,6 +49,7 @@ def generate_scheduler_commands_file(datadir, subst_model, threshold, cores, out
       command.append("collapse.mode=1")
       command.append("collapse.threshold=" + str(threshold))
       command.append("compute.TD=false")
+      command.append("dated=1")
       if(os.path.isfile(mapping_file)):
         command.append("gene.mapping.file=" + mapping_file)
       writer.write(" ".join(command) + "\n")

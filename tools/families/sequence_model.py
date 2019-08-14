@@ -35,6 +35,14 @@ def get_mrbayes_preset_line(subst_model):
   else:
     return ""
 
+def get_deleterious_model(subst_model):
+  if (get_model(subst_model) == "LG"):
+    return "LG"
+  elif(get_model(subst_model) == "WAG"):
+    return "WAG"
+  else:
+    return "JC69"
+
 def get_mrbayes_lset_line(subst_model):
   model = get_model(subst_model)
   line = "\t"
