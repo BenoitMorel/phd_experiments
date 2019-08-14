@@ -79,6 +79,10 @@ def wget(link, file_name, prefix = exp.github_root, unzip = True, unzip_command 
     call(unzip_command)
   os.chdir(cwd)
 
+def install_simphy():
+  wget("https://github.com/adamallo/SimPhy/releases/download/v1.0.2/SimPhy_1.0.2.tar.gz", exp.github_root, True, ["tar", "-xzbf"])
+  call(["chmod", "777", "SimPhy_1.0.2/bin/simphy_lnx64")
+
 def install_with_cmake(repo_name, cmake_additional_commands = [], install = False):
   output = os.path.join(exp.github_root, repo_name)
   cwd = os.getcwd()
@@ -247,13 +251,13 @@ if (False):
   subprocess.check_call(["./installer/install_recent_bpp.sh"], shell = True)
   apply_diff(os.path.join(exp.github_root, "phd_experiments", "installer", "decostart_make_diff.txt"))#, reverse = True)
   git_update("https://github.com/davidemms/STAG.git", "STAG")
-
-
-if (True):
+  
   git_update("https://github.com/celinescornavacca/ecceTERA.git", "ecceTERA")
   install_with_cmake("ecceTERA")
+
+if (True):
   #git_update("https://github.com/Boussau/PHYLDOG", "PHYLDOG")
   #install_phyldog("PHYLDOG")
-
+  install_simphy()
 
 
