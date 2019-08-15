@@ -79,7 +79,7 @@ decostar_exec = os.path.join(github_root, "DeCoSTAR", "bin/DeCoSTAR")
 guenomu_exec = os.path.join(github_root, "guenomu", "src", "guenomu")
 eccetera_root = os.path.join(github_root, "ecceTERA")
 eccetera_exec = os.path.join(eccetera_root, "build", "bin", "ecceTERA")
-
+simphy_exec = os.path.join(github_root, "SimPhy_1.0.2", "bin", "simphy_lnx64")
 # constants
 mpi_scheduler_heuristic = "--split-scheduler"
 
