@@ -21,13 +21,14 @@ def add_species_bl(input_species_tree, output_species_tree):
     writer.write(tree.write(format_root_node = True))
 
 def generate_scheduler_commands_file(datadir, subst_model, cores, output_dir):
-  generations = 1000000
-  thinning = 100
+  generations = 10000
+  thinning = 10
   results_dir = os.path.join(output_dir, "results")
   deleterious_species_tree = os.path.join(output_dir, "speciesTree.newick")
   add_species_bl(fam.get_species_tree(datadir), deleterious_species_tree)
   scheduler_commands_file = os.path.join(output_dir, "commands.txt")
-  family_dimensions = run_pargenes.get_family_dimensions(os.path.abspath(datadir), subst_model)
+  family_dimensions = run_pargenes.get_family_dimensions(os.path.abspath(datadir), subst_model, default_if_fail = True)
+  print("end of getting family dimensions")
   with open(scheduler_commands_file, "w") as writer:
     for family in fam.get_families_list(datadir):
       family_dir = fam.get_family_path(datadir, family)
@@ -63,6 +64,7 @@ def generate_scheduler_commands_file(datadir, subst_model, cores, output_dir):
       command.append("-o")
       command.append(os.path.join(results, "deleterious"))
       writer.write(" ".join(command) + "\n")
+  print("wrote command file")
   return scheduler_commands_file
     
 def extract_tree_from_run(datadir, subst_model, family):
@@ -96,7 +98,9 @@ def run_deleterious_on_families(datadir, subst_model,  cores):
   scheduler_commands_file = generate_scheduler_commands_file(datadir, subst_model, cores, output_dir)
   
   start = time.time()
+  print("before run")
   exp.run_with_scheduler("java", scheduler_commands_file, "onecore", cores, output_dir, "logs.txt")   
+  print("after run")
   saved_metrics.save_metrics(datadir, fam.get_run_name("deleterious", subst_model), (time.time() - start), "runtimes") 
   lb = fam.get_lb_from_run(output_dir)
   saved_metrics.save_metrics(datadir, fam.get_run_name("deleterious", subst_model), (time.time() - start) * lb, "seqtimes") 

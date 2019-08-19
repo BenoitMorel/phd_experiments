@@ -32,6 +32,7 @@ class RunFilter():
     self.EXA_frequencies = -1
     self.EXA_generations = -1
     self.EXA_burnin = -1
+    self.debug = False
 
   def disable_all(self):
     self.raxml = False
@@ -87,7 +88,7 @@ def run_reference_methods(dataset_dir, subst_model, starting_trees, bs_trees, co
   if (run_filter.eccetera):
     print("Run eccetera...")
     sys.stdout.flush()
-    threshold = 70
+    threshold = 60
     try:
       run_eccetera.run_eccetera_on_families(dataset_dir, subst_model,  threshold, cores)
     except Exception as exc:

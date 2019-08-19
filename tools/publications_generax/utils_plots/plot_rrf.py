@@ -60,11 +60,17 @@ def plot(datasets_rf_dico, x_param, fixed_params_dico, methods, methods_dico, x_
         continue
       fake_df[method].append(float(rf_dico[method_pair]))
   for elem in fake_df:
-    df[elem] = fake_df[elem]
+    try:
+      df[elem] = fake_df[elem]
+    except:
+      print("error with " + elem)
  
   for method in methods:
     style = "solid"
-    plt.plot(x_param, method, data=df, marker='.', linestyle = style, linewidth=2, label = methods_dico[method], markersize=12)
+    try:
+      plt.plot(x_param, method, data=df, marker='.', linestyle = style, linewidth=2, label = methods_dico[method], markersize=12)
+    except:
+      pass
     #ax.set_ylim(bottom=0)
   plt.xlabel(x_label[x_param])
   plt.ylabel(y_label)

@@ -40,6 +40,8 @@ def get_deleterious_model(subst_model):
     return "LG"
   elif(get_model(subst_model) == "WAG"):
     return "WAG"
+  elif(get_model(subst_model) == "JTT"):
+    return "JTT"
   else:
     return "JC69"
 

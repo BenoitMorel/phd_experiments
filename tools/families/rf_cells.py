@@ -41,8 +41,12 @@ def read_trees_for_family(datadir, family, runs, rooted, invalid_runs):
 def read_all_trees(datadir, runs, rooted, invalid_runs):
   trees = {}
   families = fam.get_families_list(datadir)
+  i = 0
   for family in families:
     trees[family] = read_trees_for_family(datadir, family, runs, rooted, invalid_runs)
+    i += 1
+    if (i %100 == 0):
+      print("Read trees for " + str(i) + "/" + str(len(families)) + " trees")
   return trees
 
 def get_runs_to_compare(runs):

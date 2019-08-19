@@ -287,7 +287,10 @@ def submit_single_experiment_haswell(dataset, subst_model, do_generate, cores, r
   exp.write_results_info(results_dir, result_msg)
   pickle.dump(run_filter, open(run_filter_file, "wb"))
   submit_path = os.path.join(results_dir, "sub_generax.sh")
-  exp.submit(submit_path, " ".join(command), cores, "haswell") 
+  if (run_filter.debug):
+    exp.submit(submit_path, " ".join(command), cores, "haswelld") 
+  else:
+    exp.submit(submit_path, " ".join(command), cores, "haswell") 
 
 def submit_multiple_experiments_haswell(datasets, subst_models, do_generate, cores, run_filter = RunFilter()):
   for dataset in datasets:
