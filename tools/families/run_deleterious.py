@@ -118,7 +118,7 @@ if (__name__== "__main__"):
   subst_model = sys.argv[2]
   cores = int(sys.argv[3])
 
-  #run_deleterious_on_families(datadir, subst_model,  cores)
+  run_deleterious_on_families(datadir, subst_model,  cores)
   extract_deleterious_trees(datadir, subst_model)
 
 
