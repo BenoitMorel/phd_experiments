@@ -102,7 +102,7 @@ def extract_trees(datadir, results_family_dir, run_name, subst_model):
 
 
 def run(dataset, subst_model, strategy, starting_tree, cores, additional_arguments, resultsdir, do_analyze = True, do_extract = True):
-  run_name = exp.getAndDelete("--run", additional_arguments, "lastRun." +subst_model) 
+  run_name = exp.getAndDelete("--run", additional_arguments, "lastrun." +subst_model) 
   print("Run name " + run_name)
   sys.stdout.flush()
   mode = get_mode_from_additional_arguments(additional_arguments)

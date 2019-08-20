@@ -118,7 +118,7 @@ def run(dataset, subst_model, starting_species_tree, starting_gene_trees, cores,
     print("Error: " + dataset + " is not in " + str(datasets))
     exit(1)
   datadir = datasets[dataset]
-  speciesrax_families_file = os.path.join(resultsdir, "speciesrax_families.txt")
+  speciesrax_families_file = os.path.join(resultsdir, "families.txt")
   build_speciesrax_families_file(datadir, starting_gene_trees, subst_model, speciesrax_families_file)
   start = time.time()
   run_speciesrax(datadir, starting_species_tree, speciesrax_families_file, mode, cores, additional_arguments, resultsdir)
