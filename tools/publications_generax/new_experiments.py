@@ -23,16 +23,19 @@ if (True):
   #datasets.append("jsim_s41_f50_sites250_dna4_bl0.5_d0.2_l0.2_t0.0_p0.0")
   #datasets.append("jsimdtl_s41_f50_sites250_dna4_bl0.5_d0.1_l0.2_t0.1_p0.0")
   
-  datasets.append("jsim_s19_f150_sites75_dna4_bl0.5_d0.2_l0.2_t0.0_p0.0")
-  datasets.append("jsimdtl_s19_f150_sites75_dna4_bl0.5_d0.1_l0.2_t0.1_p0.0")
-  datasets.append("jsim_s12_f150_sites75_dna4_bl0.5_d0.2_l0.2_t0.0_p0.0")
-  datasets.append("jsimdtl_s12_f150_sites75_dna4_bl0.5_d0.1_l0.2_t0.1_p0.0")
-  datasets.append("jsim_s27_f150_sites75_dna4_bl0.5_d0.2_l0.2_t0.0_p0.0")
-  datasets.append("jsimdtl_s27_f150_sites75_dna4_bl0.5_d0.1_l0.2_t0.1_p0.0")
-  datasets.append("jsim_s41_f150_sites75_dna4_bl0.5_d0.2_l0.2_t0.0_p0.0")
-  datasets.append("jsimdtl_s41_f150_sites75_dna4_bl0.5_d0.1_l0.2_t0.1_p0.0")
+  #datasets.append("jsim_s19_f150_sites75_dna4_bl0.5_d0.2_l0.2_t0.0_p0.0")
+  #datasets.append("jsimdtl_s19_f150_sites75_dna4_bl0.5_d0.1_l0.2_t0.1_p0.0")
+  #datasets.append("jsim_s12_f150_sites75_dna4_bl0.5_d0.2_l0.2_t0.0_p0.0")
+  #datasets.append("jsimdtl_s12_f150_sites75_dna4_bl0.5_d0.1_l0.2_t0.1_p0.0")
+  #datasets.append("jsim_s27_f150_sites75_dna4_bl0.5_d0.2_l0.2_t0.0_p0.0")
+  #datasets.append("jsimdtl_s27_f150_sites75_dna4_bl0.5_d0.1_l0.2_t0.1_p0.0")
+  #datasets.append("jsim_s41_f150_sites75_dna4_bl0.5_d0.2_l0.2_t0.0_p0.0")
+  #datasets.append("jsimdtl_s41_f150_sites75_dna4_bl0.5_d0.1_l0.2_t0.1_p0.0")
 
-  common.generate_all_datasets(datasets)
+  datasets.append("cyano_simulated")
+
+
+  #common.generate_all_datasets(datasets)
   species_run_filter = SpeciesRunFilter()
   common.run_species_methods(datasets, subst_model, cores = cores, run_filter = species_run_filter)
 
