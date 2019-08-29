@@ -29,6 +29,8 @@ def run_generax_instance(dataset, starting_tree, with_transfers, method, subst_m
     command.append("--rec-radius")
     command.append(str(rec_radius))
     method = method + "-rec-radius" + str(rec_radius)
+  command.append("--analyze")
+  command.append("no")
   command.append("--run")
   command.append(fam.get_run_name(method, subst_model))
   print("-> Running " + " ".join(command))

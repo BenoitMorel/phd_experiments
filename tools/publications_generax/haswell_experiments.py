@@ -16,20 +16,19 @@ run_scaling = False
 
 # CYANO SIMULATED PLOTS
 if (run_cyano_simulated):
-  subst_models = ["JTT", "LG"] # ["LG+G+I", "WAG"] #["LG+G+I", "DAYHOFF"]
+  subst_models = ["POISSON"] #["LG+G+I", "WAG"]
   datasets = ["cyano_simulated"]
   cores = 512
   do_generate = 0
   run_filter = RunFilter()
-  run_filter.disable_all()
-  run_filter.deleterious = True
+  run_filter.deleterious = False
   run_filter.analyze = True
   run_filter.EXA_runs = 2
   run_filter.EXA_chains = 4
   run_filter.EXA_generations = 1000000
   run_filter.EXA_frequencies = 1000
   run_filter.EXA_burnin = 100
-  #run_filter.eval_joint_ll = True
+  run_filter.eval_joint_ll = False
   common.submit_multiple_experiments_haswell(datasets, subst_models, do_generate, cores, run_filter)
 
 
@@ -42,6 +41,7 @@ if (run_simulations):
   do_generate = 0
   run_filter = RunFilter()
   run_filter.disable_all()
+  run_filter.deleterious = True
   run_filter.generax = True
   run_filter.analyze = True
   run_filter.EXA_runs = 2
@@ -83,6 +83,7 @@ if (run_empirical):
   run_filter = RunFilter()
   run_filter.disable_all()
   run_filter.generax = True
+  run_filter.deleterious = True
   run_filter.EXA_runs = 2
   run_filter.EXA_chains = 4
   run_filter.EXA_generations = 1000000
