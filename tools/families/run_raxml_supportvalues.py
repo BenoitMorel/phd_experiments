@@ -10,11 +10,12 @@ import raxml_get_tca_score as tca
 import time
 import saved_metrics
 import run_raxml_supportvalues as raxml
+import sequence_model
 
 def run_pargenes(datadir, pargenes_dir, subst_model, starting_trees, bs_trees, cores):
   parsimony_trees = int(starting_trees) // 2
   random_trees = starting_trees - parsimony_trees
-  raxml_command = "--model " + subst_model + " --blopt nr_safe"
+  raxml_command = "--model " + sequence_model.get_raxml_model(subst_model) + " --blopt nr_safe"
   command = []
   command.append("python")
   command.append(exp.pargenes_script_debug)

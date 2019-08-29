@@ -8,6 +8,7 @@ import experiments as exp
 import shutil
 import time
 import fam
+import rf_cells
 from ete3 import Tree
 
 def get_speciesrax_datasets():
@@ -104,27 +105,41 @@ def analyze_results(datadir, resultsdir):
   print("  Unrooted RF: " + str(av_rf(inferred_unrooted_rf)))
 
 def extract_results(datadir, subst_model, resultsdir, run_name):
-  src = os.path.join(resultsdir, "speciesrax", "inferred_species_tree.newick")
+  resultsdir = os.path.join(resultsdir, "speciesrax")
+  src = os.path.join(resultsdir, "inferred_species_tree.newick")
   dest = fam.get_species_tree(datadir, None, run_name)
   print("extracting result in " + run_name)
   shutil.copyfile(src, dest)
+  family_results_dir = os.path.join(resultsdir, "results")
+  print(family_results_dir)
+  for family in os.listdir(family_results_dir):
+    source = os.path.join(family_results_dir, family, family + ".newick")
+    dest = fam.build_gene_tree_path_from_run(datadir, family, run_name)
+    shutil.copy(source, dest)
 
-def run(dataset, subst_model, starting_species_tree, starting_gene_trees, cores, additional_arguments, resultsdir):
+def run(dataset, subst_model, starting_species_tree, starting_gene_trees, cores, additional_arguments, resultsdir, do_analyze = True):
   print("Output in " + resultsdir)
-  default_run_name = "speciesRax_" + starting_species_tree + "_" + starting_gene_trees
+  default_run_name = "speciesRax_" + starting_species_tree + "_" + starting_gene_trees + "." + subst_model
   run_name = exp.getAndDelete("--run", additional_arguments, default_run_name) 
   mode = get_mode_from_additional_arguments(additional_arguments)
   if (not dataset in datasets):
     print("Error: " + dataset + " is not in " + str(datasets))
     exit(1)
   datadir = datasets[dataset]
-  speciesrax_families_file = os.path.join(resultsdir, "speciesrax_families.txt")
+  speciesrax_families_file = os.path.join(resultsdir, "families.txt")
   build_speciesrax_families_file(datadir, starting_gene_trees, subst_model, speciesrax_families_file)
   start = time.time()
   run_speciesrax(datadir, starting_species_tree, speciesrax_families_file, mode, cores, additional_arguments, resultsdir)
   saved_metrics.save_metrics(datadir, run_name, (time.time() - start), "runtimes") 
   analyze_results(datadir, resultsdir) 
   extract_results(datadir, subst_model, resultsdir, run_name)
+  try:
+    if (do_analyze):
+      rf_cells.analyze(datadir, run_name)
+  except:
+    print("Analyze failed!!!!")
+
+  
 
 def launch(dataset, subst_model, starting_species_tree, starting_gene_trees, cluster, cores, additional_arguments):
   command = ["python"]

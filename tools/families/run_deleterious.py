@@ -15,8 +15,6 @@ import sequence_model
 def add_species_bl(input_species_tree, output_species_tree):
   print(input_species_tree)
   tree = ete3.Tree(input_species_tree, format = 1)
-  if (tree.dist == 0.0):
-    tree.dist = 1.0
   with open(output_species_tree, "w") as writer:
     writer.write(tree.write(format_root_node = True))
 

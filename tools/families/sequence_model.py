@@ -23,7 +23,21 @@ def is_dna(subst_model):
 def get_phyldog_model(subst_model):
   return get_model(subst_model)
 
+def get_raxml_model(subst_model):
+  res = get_model(subst_model)
+  if (res == "POISSON"):
+    res = "PROTGTR{"
+    res += "/".join(["1"] * 190)
+    res += "}"
+    res += "+FE"
+    rest = subst_model.split("+")[1:]
+    for r in rest:
+      res += "+" + r
+  return res
+
 def get_mrbayes_preset_line(subst_model):
+  if (get_model(subst_model) == "POISSON"):
+    return "\tprset aamodelpr=fixed(poisson);\n"
   if (get_model(subst_model) == "LG"):
     return "\tprset aamodelpr=fixed(lg);\n"
   elif(get_model(subst_model) == "DAYHOFF"):
@@ -42,6 +56,8 @@ def get_deleterious_model(subst_model):
     return "WAG"
   elif(get_model(subst_model) == "JTT"):
     return "JTT"
+  elif(get_model(subst_model) == "POISSON"):
+    return "UNIFORMAA"
   else:
     return "JC69"
 
