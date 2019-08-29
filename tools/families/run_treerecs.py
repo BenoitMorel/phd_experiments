@@ -9,6 +9,8 @@ sys.path.insert(0, os.path.join("tools", "families"))
 import experiments as exp
 import fam
 import run_raxml_supportvalues as run_pargenes
+import sequence_model
+
 
 def generate_scheduler_commands_file(datadir, subst_model, cores, output_dir):
   results_dir = os.path.join(output_dir, "results")
@@ -22,7 +24,7 @@ def generate_scheduler_commands_file(datadir, subst_model, cores, output_dir):
       alignment_descriptor = os.path.join(treerecs_dir, "alignment_descriptor." + subst_model + ".txt")
       with open(alignment_descriptor, "w") as ali_writer:
         #cut_model = subst_model.split("+")[0]
-        ali_writer.write(subst_model + "\n" + os.path.abspath(os.path.join(family_dir, "alignment.msa")))
+        ali_writer.write(sequence_model.get_raxml_model(subst_model) + "\n" + os.path.abspath(os.path.join(family_dir, "alignment.msa")))
       treerecs_output = os.path.join(treerecs_dir, "treerecs_output." + subst_model)
       mapping_file = fam.get_treerecs_mappings(datadir, family)
       command = []

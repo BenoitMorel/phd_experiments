@@ -9,6 +9,7 @@ import experiments as exp
 import shutil
 import time
 import fam
+import sequence_model
 
 def get_possible_strategies():
   return ["SPR", "EVAL"]
@@ -50,7 +51,7 @@ def build_generax_families_file(datadir, starting_tree, subst_model, output):
       if (os.path.isfile(raxml_model)):
         writer.write("subst_model = " + raxml_model + "\n")
       else:
-        writer.write("subst_model = " + subst_model + "\n")
+        writer.write("subst_model = " + sequence_model.get_raxml_model(subst_model) + "\n")
 
 def get_generax_command(generax_families_file, species_tree, strategy, additional_arguments, output_dir, mode, cores):
     executable = exp.generax_exec
