@@ -21,6 +21,8 @@ if (run_cyano_simulated):
   cores = 512
   do_generate = 0
   run_filter = RunFilter()
+  run_filter.disable_all()
+  run_filter.generax = True
   run_filter.deleterious = False
   run_filter.analyze = True
   run_filter.EXA_runs = 2

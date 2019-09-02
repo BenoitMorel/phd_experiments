@@ -44,7 +44,7 @@ def generate_scheduler_commands_file(datadir, subst_model, cores, output_dir):
       command.append("-Xms512m")
       command.append("-Xmx1024m")
       command.append("-jar")
-      command.append(exp.jprime_jar)
+      command.append(exp.jprime_deleterious_jar)
       command.append("Deleterious")
       command.append(deleterious_species_tree)
       command.append(fam.get_alignment(datadir, family))

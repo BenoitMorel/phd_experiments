@@ -22,17 +22,18 @@ def plot_model_boxplots():
   methods = {}
   methods["generax-dtl-random"] = "GeneRax"
   methods["ale-dtl"] = "ALE"
-  methods["deleterious"] = "JPrIME-DLTRS"
-  methods["treerecs"] = "Treerecs"
+  #methods["deleterious"] = "JPrIME-DLTRS"
+  #methods["treerecs"] = "Treerecs"
   methods["notung90"] = "Notung"
   methods["eccetera"] = "EcceTERA"
-  methods["phyldog"] = "Phyldog"
+  #methods["phyldog"] = "Phyldog"
   methods["raxml-ng"] = "RAxML-NG"
-  order = ["GeneRax", "ALE", "JPrIME-DLTRS", "Treerecs",  "EcceTERA", "Phyldog", "Notung", "RAxML-NG"]
-  models = ["LG+G+I", "WAG"]
+  #order = ["GeneRax", "ALE", "JPrIME-DLTRS", "Treerecs",  "EcceTERA", "Phyldog", "Notung", "RAxML-NG"]
+  order = ["GeneRax", "ALE", "EcceTERA", "Notung", "RAxML-NG"]
+  models = ["LG+G+I", "POISSON"]
   models_to_display = {}
   models_to_display["LG+G+I"] = "True model"
-  models_to_display["WAG"] = "Wrong model"
+  models_to_display["POISSON"] = "Wrong model"
   
   dico = {}
   datasets = ["cyano_simulated"]
