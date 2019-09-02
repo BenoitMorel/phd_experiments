@@ -1,0 +1,71 @@
+<recPhylo
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.recg.org ./recGeneTreeXML.xsd"
+  xmlns="http://www.recg.org">
+  <spTree>
+    <phylogeny>
+      <clade>
+        <name>ABC</name>
+        <clade>
+          <name>AB</name>
+          <clade>
+            <name>A</name>
+          </clade>
+          <clade>
+            <name>B</name>
+          </clade>
+        </clade>
+        <clade>
+          <name>C</name>
+        </clade>
+      </clade>
+    </phylogeny>
+  </spTree>
+  <recGeneTree>
+    <phylogeny rooted="true">
+      <clade>
+        <name>root</name>
+        <eventsRec>
+          <speciation speciesLocation="ABC"></speciation>
+        </eventsRec>
+        <clade>
+          <name>event</name>
+          <eventsRec>
+          <branchingOut speciesLocation="C"></branchingOut>
+          </eventsRec>
+          <clade>
+            <name>c1</name>
+            <eventsRec>
+              <leaf speciesLocation="C"></leaf>
+            </eventsRec>
+          </clade>
+          <clade>
+            <name>a2</name>
+            <eventsRec>
+              <transferBack destinationSpecies="A"></transferBack>
+              <leaf speciesLocation="A"></leaf>
+            </eventsRec>
+          </clade>
+        </clade>
+        <clade>
+          <name>AB</name>
+          <eventsRec>
+            <speciation speciesLocation="AB"></speciation>
+          </eventsRec>
+          <clade>
+            <name>a1</name>
+            <eventsRec>
+              <leaf speciesLocation="A"></leaf>
+            </eventsRec>
+          </clade>
+          <clade>
+            <name>b1</name>
+            <eventsRec>
+              <leaf speciesLocation="B"></leaf>
+            </eventsRec>
+          </clade>
+        </clade>
+      </clade>
+    </phylogeny>
+  </recGeneTree>
+</recPhylo>
