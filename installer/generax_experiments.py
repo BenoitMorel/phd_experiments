@@ -80,8 +80,8 @@ def wget(link, file_name, prefix = exp.github_root, unzip = True, unzip_command 
   os.chdir(cwd)
 
 def install_simphy():
-  wget("https://github.com/adamallo/SimPhy/releases/download/v1.0.2/SimPhy_1.0.2.tar.gz", exp.github_root, True, ["tar", "-xzbf"])
-  call(["chmod", "777", "SimPhy_1.0.2/bin/simphy_lnx64")
+  wget("https://github.com/adamallo/SimPhy/releases/download/v1.0.2/SimPhy_1.0.2.tar.gz", "SimPhy.tar.gz", unzip = True, unzip_command =["tar", "-xzf"])
+  call(["chmod", "777", "../SimPhy_1.0.2/bin/simphy_lnx64"])
 
 def install_with_cmake(repo_name, cmake_additional_commands = [], install = False):
   output = os.path.join(exp.github_root, repo_name)
