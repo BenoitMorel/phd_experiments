@@ -6,9 +6,12 @@ import time
 import saved_metrics
 sys.path.insert(0, 'scripts')
 sys.path.insert(0, os.path.join("tools", "families"))
+sys.path.insert(0, os.path.join("tools", "trees"))
 import experiments as exp
 import fam
 import run_raxml_supportvalues as run_pargenes
+import run_mrbayes
+import cut_node_names
 
 def fix_null_support_values(input_tree, output_tree):
   command = []
@@ -19,7 +22,38 @@ def fix_null_support_values(input_tree, output_tree):
     subprocess.check_call(command, stdout=writer)
 
 
-def generate_scheduler_commands_file(datadir, subst_model, threshold, cores, output_dir):
+def generate_scheduler_commands_file_distribution(datadir, subst_model, threshold, cores, output_dir):
+  results_dir = os.path.join(output_dir, "results")
+  scheduler_commands_file = os.path.join(output_dir, "commands.txt")
+  speciesTree = fam.get_species_tree(datadir)
+  family_dimensions = run_pargenes.get_family_dimensions(os.path.abspath(datadir), subst_model)
+  with open(scheduler_commands_file, "w") as writer:
+    for family in fam.get_families_list(datadir):
+      family_dir = fam.get_family_path(datadir, family)
+      mapping_file = fam.get_treerecs_mappings(datadir, family)
+      eccetera_dir = fam.get_family_misc_dir(datadir, family)
+      eccetera_output = "eccetera." + subst_model + "."
+      input_tree = run_mrbayes.get_treelist(datadir, subst_model, family)
+      command = []
+      command.append(family)
+      command.append("1")
+      if (family in family_dimensions):
+        dim = family_dimensions[family][1] * family_dimensions[family][0]
+        command.append(str(dim))
+      else:
+        command.append("1")
+      command.append("species.file=" + speciesTree)
+      command.append("gene.file=" + input_tree)
+      command.append("output.dir=" + eccetera_dir)
+      command.append("output.prefix=" + eccetera_output)
+      command.append("print.newick=1")
+      command.append("compute.TD=false")
+      command.append("dated=2")
+      command.append("amalgamate=1")
+      writer.write(" ".join(command) + "\n")
+  return scheduler_commands_file
+
+def generate_scheduler_commands_file_bootstraps(datadir, subst_model, threshold, cores, output_dir):
   results_dir = os.path.join(output_dir, "results")
   scheduler_commands_file = os.path.join(output_dir, "commands.txt")
   speciesTree = fam.get_species_tree(datadir)
@@ -55,24 +89,32 @@ def generate_scheduler_commands_file(datadir, subst_model, threshold, cores, out
       writer.write(" ".join(command) + "\n")
   return scheduler_commands_file
      
-def extract_eccetera_trees(datadir, subst_model):
+def extract_eccetera_trees(datadir, subst_model, use_distributions):
   families_dir = os.path.join(datadir, "families")
   for family in os.listdir(families_dir):
     ecceteraTree = os.path.join(families_dir, family, "misc", "eccetera." + subst_model + ".geneTree")
-    shutil.copyfile(ecceteraTree, fam.get_eccetera_tree(datadir, subst_model, family)) 
+    dest = fam.get_eccetera_tree(datadir, subst_model, family)
+    if (use_distributions):
+      cut_node_names.remove_prefix_from_trees(ecceteraTree, dest) 
+    else:
+      shutil.copyfile(ecceteraTree, dest) 
 
 def run_eccetera_on_families(datadir, subst_model, threshold, cores):
+  use_distributions = True
   output_dir = fam.get_run_dir(datadir, subst_model, "eccetera_run")
   shutil.rmtree(output_dir, True)
   os.makedirs(output_dir)
-  scheduler_commands_file = generate_scheduler_commands_file(datadir, subst_model, threshold, cores, output_dir)
+  if (use_distributions):
+    scheduler_commands_file = generate_scheduler_commands_file_distribution(datadir, subst_model, threshold, cores, output_dir)
+  else:
+    scheduler_commands_file = generate_scheduler_commands_file_bootstraps(datadir, subst_model, threshold, cores, output_dir)
   
   start = time.time()
   exp.run_with_scheduler(exp.eccetera_exec, scheduler_commands_file, "onecore", cores, output_dir, "logs.txt")   
   saved_metrics.save_metrics(datadir, fam.get_run_name("eccetera", subst_model), (time.time() - start), "runtimes") 
   lb = fam.get_lb_from_run(output_dir)
   saved_metrics.save_metrics(datadir, fam.get_run_name("eccetera", subst_model), (time.time() - start) * lb, "seqtimes") 
-  extract_eccetera_trees(datadir, subst_model)
+  extract_eccetera_trees(datadir, subst_model, use_distributions)
   
 if (__name__== "__main__"):
   max_args_number = 5

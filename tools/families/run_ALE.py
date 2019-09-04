@@ -150,55 +150,19 @@ def run_ALE_on_families(datadir, subst_model, with_transfers, cores):
   finally:
     cwd = os.getcwd()
 
-def run_mrbayes_and_ALE(datadir, subst_model, cores, runs = NUM_RUNS, chains = NUM_CHAINS, generations = EXA_GEN, frequency = EXA_FREQ, burnin = PER_RUN_BURN_IN, redo_mrbayes = False):
-  if (runs < 0):
-    runs = NUM_RUNS
-  if (chains < 0):
-    chains = NUM_CHAINS
-  if (generations < 0):
-    generations = EXA_GEN
-  if (frequency < 0):
-    frequency = EXA_FREQ
-  if (burnin < 0):
-    burnin = PER_RUN_BURN_IN
-  
-  samples = generations / frequency
-  if (samples <= burnin):
-    print("Error: samples <= burnin")
-    exit(1)
-  
+def run_ALE(datadir, subst_model, cores):
   cwd = os.getcwd()
   try:
     run_dir = os.path.join(datadir, "runs")
     parameters = os.path.join(run_dir, "parameters.txt")
-    open(parameters, "w").write(datadir + " " + str(subst_model) + " " + str(cores) + " " + str(runs) + " " + str(chains) + " " + str(generations) + " " + str(frequency) + " " + str(burnin) + " " + str(int(redo_mrbayes)))
-        
     datadir = os.path.abspath(datadir)
     os.chdir(run_dir)
-    if (run_mrbayes):
-      run_mrbayes.run_mrbayes_on_families(datadir, generations, frequency, runs, chains, burnin, subst_model, cores)
     run_ALE_on_families(datadir, subst_model, True, cores)
     run_ALE_on_families(datadir, subst_model, False, cores)
-    run_mrbayes.remove_mrbayes_run(datadir, subst_model)
-    if (not redo_mrbayes):
-      clean_ALE(datadir, subst_model)
+    clean_ALE(datadir, subst_model)
   finally:
     os.chdir(cwd)
 
-def restart_mrbayes_and_ALE(datadir, cores):
-  run_dir = os.path.join(datadir, "runs")
-  parameters_file = os.path.join(run_dir, "parameters.txt")
-  p = open(parameters_file).readlines()[0].split()
-  print("Restarting mrbayes and ALE with the parameters: " + " ".join(p))
-  datadir = p[0]
-  subst_model = p[1]
-  runs = int(p[3])
-  chains =  int(p[4])
-  generations = int(p[5])
-  frequency = int(p[6])
-  burnin = int(p[7])
-  redo_mrbayes = True
-  run_mrbayes_and_ALE(datadir, subst_model, cores, runs, chains, generations, frequency, burnin, redo_mrbayes)
 
 if (__name__== "__main__"):
   max_args_number = 4
@@ -209,7 +173,7 @@ if (__name__== "__main__"):
   datadir = sys.argv[1]
   subst_model = sys.argv[2]
   cores = int(sys.argv[3])
-  redo_mrbayes_and_ALE(datadir, subst_model, cores)
+  run_ALE(datadir, subst_model, cores)
 
 #
 

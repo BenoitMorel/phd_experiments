@@ -22,13 +22,12 @@ if (run_cyano_simulated):
   do_generate = 0
   run_filter = RunFilter()
   run_filter.disable_all()
-  run_filter.deleterious = True
   run_filter.analyze = True
-  run_filter.EXA_runs = 2
-  run_filter.EXA_chains = 4
-  run_filter.EXA_generations = 1000000
-  run_filter.EXA_frequencies = 1000
-  run_filter.EXA_burnin = 100
+  run_filter.mb_runs = 2
+  run_filter.mb_chains = 4
+  run_filter.mb_generations = 1000000
+  run_filter.mb_frequencies = 1000
+  run_filter.mb_burnin = 100
   #run_filter.eval_joint_ll = True
   common.submit_multiple_experiments_haswell(datasets, subst_models, do_generate, cores, run_filter)
 
@@ -44,11 +43,11 @@ if (run_simulations):
   run_filter.disable_all()
   run_filter.generax = True
   run_filter.analyze = True
-  run_filter.EXA_runs = 2
-  run_filter.EXA_chains = 4
-  run_filter.EXA_generations = 1000000
-  run_filter.EXA_frequencies = 1000
-  run_filter.EXA_burnin = 100
+  run_filter.mb_runs = 2
+  run_filter.mb_chains = 4
+  run_filter.mb_generations = 1000000
+  run_filter.mb_frequencies = 1000
+  run_filter.mb_burnin = 100
   fixed_point_dl = "jsim_s19_f100_sites250_dna4_bl0.5_d0.25_l0.25_t0.0_p0.0"
   fixed_point_dtl = "jsimdtl_s19_f100_sites250_dna4_bl0.5_d0.1_l0.2_t0.1_p0.0"
   datasets.append(fixed_point_dl)
@@ -83,11 +82,11 @@ if (run_empirical):
   run_filter = RunFilter()
   run_filter.disable_all()
   run_filter.generax = True
-  run_filter.EXA_runs = 2
-  run_filter.EXA_chains = 4
-  run_filter.EXA_generations = 1000000
-  run_filter.EXA_frequencies = 1000
-  run_filter.EXA_burnin = 100
+  run_filter.mb_runs = 2
+  run_filter.mb_chains = 4
+  run_filter.mb_generations = 1000000
+  run_filter.mb_frequencies = 1000
+  run_filter.mb_burnin = 100
   run_filter.eval_joint_ll = True
  
   common.submit_multiple_experiments_haswell(datasets_prot, subst_models_prot, do_generate, cores, run_filter)
