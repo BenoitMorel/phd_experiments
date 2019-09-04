@@ -5,6 +5,10 @@ import subprocess
 sys.path.insert(0, 'scripts')
 import experiments as exp
 
+# sudo apt-get install libgsl0-dev
+# setenforce 0
+# sudo cpan 
+# force install Math::GSL
 
 
 def call(command):

@@ -38,6 +38,8 @@ def build_mapping(simphy_mapping, phyldog_mapping):
   lines = open(simphy_mapping).readlines()[1:]
   dico = {}
   for line in lines:
+    if (not line.startswith("'")):
+      continue
     split = line.replace("'", "").split("\t")
     gene = split[0]
     species = gene.split("_")[0]
