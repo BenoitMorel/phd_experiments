@@ -10,24 +10,18 @@ sys.path.insert(0, 'scripts/generax')
 import scaling_generax
 
 run_cyano_simulated = True 
-run_simulations = False
-run_empirical = False
-run_scaling = False
+run_simulations = True
+run_empirical = True
+run_scaling = True
 
 # CYANO SIMULATED PLOTS
 if (run_cyano_simulated):
-  subst_models = ["POISSON"] #["LG+G+I", "WAG"]
+  subst_models = ["POISSON", "LG+G+I", "WAG"]
   datasets = ["cyano_simulated"]
   cores = 512
   do_generate = 0
   run_filter = RunFilter()
-  run_filter.disable_all()
-  run_filter.analyze = True
-  run_filter.mb_runs = 2
-  run_filter.mb_chains = 4
-  run_filter.mb_generations = 1000000
-  run_filter.mb_frequencies = 1000
-  run_filter.mb_burnin = 100
+  run_filter.deleterious = False
   #run_filter.eval_joint_ll = True
   common.submit_multiple_experiments_haswell(datasets, subst_models, do_generate, cores, run_filter)
 
@@ -35,25 +29,16 @@ if (run_cyano_simulated):
 
 # PARAMETERS SIMULATED PLOTS
 if (run_simulations):
-  subst_models = ["GTR+G"]
+  subst_models = ["GTR+G", "JC"]
   datasets = []
   cores = 32
   do_generate = 0
   run_filter = RunFilter()
-  run_filter.disable_all()
-  run_filter.deleterious = True
-  run_filter.generax = True
-  run_filter.analyze = True
-  run_filter.mb_runs = 2
-  run_filter.mb_chains = 4
-  run_filter.mb_generations = 1000000
-  run_filter.mb_frequencies = 1000
-  run_filter.mb_burnin = 100
+  run_filter.deleterious = False
   fixed_point_dl = "jsim_s19_f100_sites250_dna4_bl0.5_d0.25_l0.25_t0.0_p0.0"
   fixed_point_dtl = "jsimdtl_s19_f100_sites250_dna4_bl0.5_d0.1_l0.2_t0.1_p0.0"
   datasets.append(fixed_point_dl)
   datasets.append(fixed_point_dtl)
-  
   if (True):
     common.add_dataset(datasets, fixed_point_dl, ["p0.1", "p0.2", "p0.3", "p0.5", "p0.75"])
     common.add_dataset(datasets, fixed_point_dl, ["d0.01_l0.01", "d0.05_l0.05", "d0.1_l0.1", "d0.4_l0.4"])
@@ -81,15 +66,7 @@ if (run_empirical):
   cores = 512
   do_generate = 0
   run_filter = RunFilter()
-  run_filter.disable_all()
-  run_filter.generax = True
-  run_filter.mb_runs = 2
-  run_filter.mb_chains = 4
-  run_filter.mb_generations = 1000000
-  run_filter.mb_frequencies = 1000
-  run_filter.mb_burnin = 100
-  run_filter.eval_joint_ll = True
- 
+  run_filter.deleterious = False
   common.submit_multiple_experiments_haswell(datasets_prot, subst_models_prot, do_generate, cores, run_filter)
   common.submit_multiple_experiments_haswell(datasets_dna, subst_models_dna, do_generate, cores, run_filter)
 
