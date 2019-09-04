@@ -89,14 +89,6 @@ def run_reference_methods(datadir, subst_model, starting_trees, bs_trees, cores,
     except Exception as exc:
       print("Failed running Notung")
       print(exc)
-  if (run_filter.deleterious):
-    print("Run deleterious...")
-    sys.stdout.flush()
-    try:
-      run_deleterious.run_deleterious_on_families(datadir, subst_model, cores)
-    except Exception as exc:
-      print("Failed running Deleterious")
-      print(exc)
 
   if (run_filter.generax):
     print("Run Generax")
@@ -116,6 +108,14 @@ def run_reference_methods(datadir, subst_model, starting_trees, bs_trees, cores,
       print("Failed running GeneRax")
       print(exc)
     sys.stdout.flush()
+  if (run_filter.deleterious):
+    print("Run deleterious...")
+    sys.stdout.flush()
+    try:
+      run_deleterious.run_deleterious_on_families(datadir, subst_model, cores)
+    except Exception as exc:
+      print("Failed running Deleterious")
+      print(exc)
   if (run_filter.mrbayes):
     print("Run mrbayes...")
     sys.stdout.flush()
