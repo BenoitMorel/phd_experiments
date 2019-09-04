@@ -19,8 +19,8 @@ def add_species_bl(input_species_tree, output_species_tree):
     writer.write(tree.write(format_root_node = True))
 
 def generate_scheduler_commands_file(datadir, subst_model, cores, output_dir):
-  generations = 10000
-  thinning = 10
+  generations = 100000
+  thinning = 100
   results_dir = os.path.join(output_dir, "results")
   deleterious_species_tree = os.path.join(output_dir, "speciesTree.newick")
   add_species_bl(fam.get_species_tree(datadir), deleterious_species_tree)
@@ -44,7 +44,7 @@ def generate_scheduler_commands_file(datadir, subst_model, cores, output_dir):
       command.append("-Xms512m")
       command.append("-Xmx1024m")
       command.append("-jar")
-      command.append(exp.jprime_jar)
+      command.append(exp.jprime_deleterious_jar)
       command.append("Deleterious")
       command.append(deleterious_species_tree)
       command.append(fam.get_alignment(datadir, family))

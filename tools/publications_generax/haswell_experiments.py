@@ -16,7 +16,7 @@ run_scaling = False
 
 # CYANO SIMULATED PLOTS
 if (run_cyano_simulated):
-  subst_models = ["JTT", "LG"] # ["LG+G+I", "WAG"] #["LG+G+I", "DAYHOFF"]
+  subst_models = ["POISSON"] #["LG+G+I", "WAG"]
   datasets = ["cyano_simulated"]
   cores = 512
   do_generate = 0
@@ -41,6 +41,7 @@ if (run_simulations):
   do_generate = 0
   run_filter = RunFilter()
   run_filter.disable_all()
+  run_filter.deleterious = True
   run_filter.generax = True
   run_filter.analyze = True
   run_filter.mb_runs = 2

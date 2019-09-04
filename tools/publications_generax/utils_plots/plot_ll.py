@@ -21,7 +21,8 @@ def aux(dataset, model, recModel):
   methods_to_plot.append("notung90")
   methods_to_plot.append("treerecs")
   methods_to_plot.append("phyldog")
-  methods_to_plot.append("eccetera")
+  #methods_to_plot.append("eccetera")
+  methods_to_plot.append("deleterious")
   methods_to_plot.append("ale-" + recModel.lower())
   methods_to_plot.append("generax-" + recModel.lower() + "-random")
 
@@ -29,6 +30,7 @@ def aux(dataset, model, recModel):
   methods_display_name["raxml-ng"] = "RAxML-NG"
   methods_display_name["ale-" + recModel.lower()] = "ALE-" + recModel
   methods_display_name["generax-" + recModel.lower() + "-random"] = "GeneRax-" + recModel
+  methods_display_name["deleterious"] = "JPrIME-DLTRS"
   methods_display_name["treerecs"] = "Treerecs"
   methods_display_name["notung90"] = "Notung"
   methods_display_name["phyldog"] = "Phyldog"
@@ -37,32 +39,34 @@ def aux(dataset, model, recModel):
   categories = {}
   categories["JointLL_DL"] = "DL"
   categories["JointLL_DTL"] = "DTL"
+  cat = ""
+  if (recModel == "DL"):
+    cat = "JointLL_DL"
+  else:
+    cat = "JointLL_DTL"
+  
 
   datadir = fam.get_datadir(dataset)
   dico = {} # dico[cat][run] = runtime
-  for cat in categories:
-    dico[cat] = {}
+  dico[cat] = {}
   runs = saved_metrics.get_metrics_methods(datadir, "JointLL_DL")
   saved_metrics_dict = {}
-  for cat in categories:
-    saved_metrics_dict[cat] = saved_metrics.get_metrics(datadir, cat)
-   
-  for cat in categories:
-    for run in runs:
-      if (model.lower() in run.lower()):
-        method = fam.get_method_from_run(run)
-        dico[cat][method] = float(saved_metrics_dict[cat][run])
+  saved_metrics_dict[cat] = saved_metrics.get_metrics(datadir, cat)
+  print(saved_metrics_dict)
+  for run in runs:
+    if (model.lower() in run.lower()):
+      method = fam.get_method_from_run(run)
+      ll = float(saved_metrics_dict[cat][run])
+      dico[cat][method] = ll
   
   x_order = []
   yvalues = {}
   for method in methods_to_plot:
     x_order.append(methods_display_name[method])
-  for cat in categories:
-    yvalues[categories[cat]] = {}
-  for cat in categories:
-    for method in methods_to_plot:
-      x = methods_display_name[method]
-      yvalues[categories[cat]][x] = dico[cat][method]
+  yvalues[categories[cat]] = {}
+  for method in methods_to_plot:
+    x = methods_display_name[method]
+    yvalues[categories[cat]][x] = dico[cat][method]
   
   output = "joint_likelihood__" + dataset
   # GROUPED HISTOGRAM

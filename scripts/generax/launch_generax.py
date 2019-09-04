@@ -104,6 +104,8 @@ def extract_trees(datadir, results_family_dir, run_name, subst_model):
 
 def run(dataset, subst_model, strategy, starting_tree, cores, additional_arguments, resultsdir, do_analyze = True, do_extract = True):
   run_name = exp.getAndDelete("--run", additional_arguments, "generax-last." +subst_model) 
+  arg_analyze = exp.getAndDelete("--analyze", additional_arguments, "yes")
+  do_analyze = do_analyze and (arg_analyze == "yes")
   print("Run name " + run_name)
   sys.stdout.flush()
   mode = get_mode_from_additional_arguments(additional_arguments)
