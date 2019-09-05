@@ -31,7 +31,6 @@ if (__name__ == "__main__"):
     run_filter_file = sys.argv[5]
     print("run_filter pickle file: " + run_filter_file)
     run_filter = pickle.load(open(run_filter_file, "rb"))
-    print("EXA_chains: " + str(run_filter.EXA_chains))
 
   run_single_experiment(dataset, subst_model, do_generate, cores, run_filter)
 

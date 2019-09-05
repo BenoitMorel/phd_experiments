@@ -31,8 +31,8 @@ def get_raxml_model(subst_model):
     res += "}"
     res += "+FE"
     rest = subst_model.split("+")[1:]
-    for r in rest:
-      res += "+" + r
+  for r in rest:
+    res += "+" + r
   return res
 
 def get_mrbayes_preset_line(subst_model):

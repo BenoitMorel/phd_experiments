@@ -21,9 +21,9 @@ if (run_cyano_simulated):
   cores = 512
   do_generate = 0
   run_filter = RunFilter()
-  run_filter.deleterious = False
-  #run_filter.eval_joint_ll = True
+  run_filter.eval_joint_ll = False
   common.submit_multiple_experiments_haswell(datasets, subst_models, do_generate, cores, run_filter)
+
 
 
 
@@ -34,7 +34,7 @@ if (run_simulations):
   cores = 32
   do_generate = 0
   run_filter = RunFilter()
-  run_filter.deleterious = False
+  run_filter.eval_joint_ll = False
   fixed_point_dl = "jsim_s19_f100_sites250_dna4_bl0.5_d0.25_l0.25_t0.0_p0.0"
   fixed_point_dtl = "jsimdtl_s19_f100_sites250_dna4_bl0.5_d0.1_l0.2_t0.1_p0.0"
   datasets.append(fixed_point_dl)
@@ -66,7 +66,6 @@ if (run_empirical):
   cores = 512
   do_generate = 0
   run_filter = RunFilter()
-  run_filter.deleterious = False
   common.submit_multiple_experiments_haswell(datasets_prot, subst_models_prot, do_generate, cores, run_filter)
   common.submit_multiple_experiments_haswell(datasets_dna, subst_models_dna, do_generate, cores, run_filter)
 

@@ -108,14 +108,6 @@ def run_reference_methods(datadir, subst_model, starting_trees, bs_trees, cores,
       print("Failed running GeneRax")
       print(exc)
     sys.stdout.flush()
-  if (run_filter.deleterious):
-    print("Run deleterious...")
-    sys.stdout.flush()
-    try:
-      run_deleterious.run_deleterious_on_families(datadir, subst_model, cores)
-    except Exception as exc:
-      print("Failed running Deleterious")
-      print(exc)
   if (run_filter.mrbayes):
     print("Run mrbayes...")
     sys.stdout.flush()
@@ -141,6 +133,14 @@ def run_reference_methods(datadir, subst_model, starting_trees, bs_trees, cores,
       run_eccetera.run_eccetera_on_families(datadir, subst_model,  threshold, cores)
     except Exception as exc:
       print("Failed running Eccetera")
+      print(exc)
+  if (run_filter.deleterious):
+    print("Run deleterious...")
+    sys.stdout.flush()
+    try:
+      run_deleterious.run_deleterious_on_families(datadir, subst_model, cores)
+    except Exception as exc:
+      print("Failed running Deleterious")
       print(exc)
   if (run_filter.eval_joint_ll):
     print("Evaluating joint likelihoods...")
