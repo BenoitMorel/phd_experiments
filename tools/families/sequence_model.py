@@ -30,7 +30,7 @@ def get_raxml_model(subst_model):
     res += "/".join(["1"] * 190)
     res += "}"
     res += "+FE"
-    rest = subst_model.split("+")[1:]
+  rest = subst_model.split("+")[1:]
   for r in rest:
     res += "+" + r
   return res
