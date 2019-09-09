@@ -12,7 +12,8 @@ PHYVIEW_VERSION=0.4.0
 
 PATH_GET=/usr/bin/wget
 PATH_TAR=/usr/bin/tar
-PATH_CMK=/hits/sw/shared/apps/CMake/3.5.2/bin/cmake
+#PATH_CMK=/hits/sw/shared/apps/CMake/3.5.2/bin/cmake
+PATH_CMK=/usr/local/bin/cmake
 PATH_MAK=/usr/bin/make
 PATH_INSTALL=${HOME}/install/bio++
 BPP_DOWNLOAD_URL=http://biopp.univ-montp2.fr/repos/sources

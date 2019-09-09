@@ -220,11 +220,15 @@ if (False):
   git_update("https://github.com/amkozlov/raxml-ng.git", "raxml-ng", "dev")
   git_update("https://gitlab.inria.fr/Phylophile/Treerecs.git", "Treerecs", "treesearch")
   git_update("https://github.com/stamatak/standard-RAxML.git", "standard-RAxML")  
-  install_bpp_for_ale()
+  
+if (True):
+  #install_bpp_for_ale()
+  git_update("https://github.com/ssolo/ALE.git", "ALE")
   apply_git_diff("ALE", "ale_diff.txt")
   home = os.path.expanduser("~")
   install_with_cmake("ALE", ["-DCMAKE_LIBRARY_PATH=" + home + "/install/bio++/lib", "-DCMAKE_INCLUDE_PATH=" + home + "/install/bio++/include/"])
   
+if (False):
   wget("https://cme.h-its.org/exelixis/resource/download/software/exabayes-1.5.zip", "exabayes-1.5.zip")
   apply_diff(os.path.join(exp.github_root, "phd_experiments", "installer", "exabayes_diff.txt"))
   install_with_cmake("GeneRax")
