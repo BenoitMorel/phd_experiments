@@ -9,10 +9,10 @@ from run_all import RunFilter
 sys.path.insert(0, 'scripts/generax')
 import scaling_generax
 
-run_cyano_simulated = True 
-run_simulations = True
-run_empirical = True
-run_scaling = True
+run_cyano_simulated = False
+run_simulations = False
+run_empirical = True 
+run_scaling = False
 
 # CYANO SIMULATED PLOTS
 if (run_cyano_simulated):
@@ -61,7 +61,7 @@ if (run_simulations):
 if (run_empirical):
   subst_models_dna = ["GTR+G"]
   datasets_dna = ["ensembl_96_ncrna_primates"]
-  subst_models_prot = ["LG+G"]
+  subst_models_prot = ["LG+G+I"]
   datasets_prot = ["cyano_empirical"]
   cores = 512
   do_generate = 0
