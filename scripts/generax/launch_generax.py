@@ -102,8 +102,10 @@ def extract_trees(datadir, results_family_dir, run_name, subst_model):
   for family in os.listdir(results_dir):
     source = os.path.join(results_dir, family, "geneTree.newick")
     dest = fam.build_gene_tree_path_from_run(datadir, family, run_name)
-    shutil.copy(source, dest)
-
+    try:
+      shutil.copy(source, dest)
+    except:
+      pass
 
 def run(dataset, subst_model, strategy, starting_tree, cores, additional_arguments, resultsdir, do_analyze = True, do_extract = True):
   run_name = exp.getAndDelete("--run", additional_arguments, "generax-last." +subst_model) 

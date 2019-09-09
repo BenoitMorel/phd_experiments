@@ -152,7 +152,7 @@ def run_mrbayes_on_families(datadir, generations, frequency, runs, chains, burni
 
 if (__name__== "__main__"):
   if len(sys.argv) != 9:
-    print("Syntax error: python run_mrbayes.py datadir generations frequency runs chains cores burnin subst_model")
+    print("Syntax error: python run_mrbayes.py datadir generations frequency runs chains burnin subst_model cores")
     print(len(sys.argv))
     sys.exit(0)
 
