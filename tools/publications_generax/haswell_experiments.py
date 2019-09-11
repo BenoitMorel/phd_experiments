@@ -9,9 +9,9 @@ from run_all import RunFilter
 sys.path.insert(0, 'scripts/generax')
 import scaling_generax
 
-run_cyano_simulated = True
+run_cyano_simulated = False
 run_simulations = False
-run_empirical = False
+run_empirical = True
 run_scaling = False
 
 # CYANO SIMULATED PLOTS
