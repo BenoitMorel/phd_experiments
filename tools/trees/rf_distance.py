@@ -11,7 +11,7 @@ def str_4(ll):
   return "{0:.4f}".format(ll)
 
 def ete3_rf(tree1, tree2):
-  return tree1.robinson_foulds(tree2, unrooted_trees=False, skip_large_polytomies = True)
+  return tree1.robinson_foulds(tree2, unrooted_trees=True, skip_large_polytomies = True)
 
 def ete3_average_rf_from_list(tree_list_1, tree_list_2, rooted):
   average_cell = [0.0, 0.0]
@@ -43,7 +43,7 @@ def get_relative_rf(tree1, tree2):
 def get_rf_distance_tuple(tree1_file, tree2_file):
   tree1 = Tree(tree1_file, format=1)
   tree2 = Tree(tree2_file, format=1)
-  rf = ete3_rf(tree1, tree2)[0]
+  rf = ete3_rf(tree1, tree2)
   return (float(rf[0]) / float(rf[1]), rf[0])
 
 if (__name__ == "__main__"):

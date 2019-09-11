@@ -16,7 +16,7 @@ import re
 import  run_mrbayes
 
 # ALE
-ALE_SAMPLES = 1
+ALE_SAMPLES = 100
 
 # EXABAYES
 EXA_TREES = 1000000

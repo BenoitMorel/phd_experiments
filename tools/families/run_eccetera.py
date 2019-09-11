@@ -12,6 +12,8 @@ import fam
 import run_raxml_supportvalues as run_pargenes
 import run_mrbayes
 import cut_node_names
+import analyze_tree
+
 
 def fix_null_support_values(input_tree, output_tree):
   command = []
@@ -27,6 +29,7 @@ def generate_scheduler_commands_file_distribution(datadir, subst_model, threshol
   scheduler_commands_file = os.path.join(output_dir, "commands.txt")
   speciesTree = fam.get_species_tree(datadir)
   family_dimensions = run_pargenes.get_family_dimensions(os.path.abspath(datadir), subst_model)
+  ultrametric = analyze_tree.is_ultrametric(speciesTree)
   with open(scheduler_commands_file, "w") as writer:
     for family in fam.get_families_list(datadir):
       family_dir = fam.get_family_path(datadir, family)
@@ -48,7 +51,10 @@ def generate_scheduler_commands_file_distribution(datadir, subst_model, threshol
       command.append("output.prefix=" + eccetera_output)
       command.append("print.newick=1")
       command.append("compute.TD=false")
-      command.append("dated=2")
+      if (ultrametric):
+        command.append("dated=2")
+      else:
+        command.append("dated=0")
       command.append("amalgamate=1")
       writer.write(" ".join(command) + "\n")
   return scheduler_commands_file

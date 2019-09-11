@@ -99,7 +99,7 @@ def get_mode_from_additional_arguments(additional_arguments):
 
 def extract_trees(datadir, results_family_dir, run_name, subst_model):
   results_dir = os.path.join(results_family_dir, "results")
-  for family in os.listdir(results_dir):
+  for family in fam.get_families_list(datadir):
     source = os.path.join(results_dir, family, "geneTree.newick")
     dest = fam.build_gene_tree_path_from_run(datadir, family, run_name)
     try:
