@@ -1,8 +1,11 @@
 import os
 import sys
 sys.path.insert(0, 'scripts')
+sys.path.insert(0, 'tools/families')
 import experiments as exp
 import subprocess
+import fam
+
 
 
 datas = {}
@@ -24,6 +27,7 @@ def print_help():
   print("  possible datas: ")
   for data in datas:
     print("    " + data)
+    print("    or any family dataset in BenoitDatasets/families")
   print("  possible cluster_modes: ")
   print("    " + "normal")
   print("    " + "haswell")
@@ -32,7 +36,7 @@ def print_help():
 
 
 max_args_number = 6
-if ((len(sys.argv) < max_args_number) or (sys.argv[1] not in datas)):
+if ((len(sys.argv) < max_args_number)):
   print("Error! Syntax should be " )
   print_help()
   sys.exit(0)
@@ -48,7 +52,7 @@ bootstraps_number = int(sys.argv[5])
 is_aa = (data in datatypes) and (datatypes[data] == "aa")
 isHaswell = (cluster_mode == "haswell")
 isMagny = (cluster_mode == "magny")
-runner = os.path.join(exp.pargenes_root, "pargenes", "pargenes-mpi.py")
+runner = os.path.join(exp.pargenes_root, "pargenes", "pargenes.py")
 if (is_aa):
   options = os.path.join(exp.datasets_root, "pargenes", "option_files",  "raxml_global_options_aa.txt")
 else:
@@ -61,7 +65,11 @@ additional_options = ""
 if (data == "all_filtered"):
   additional_options += "--modeltest-global-parameters " + os.path.join(exp.bigdatasets_root, "all_1kite", "modeltest_options.txt")
 
-fastafiles = datas[data]
+fastafiles = ""
+if (data in datas):
+  fastafiles = datas[data]
+else:
+  fastafiles = fam.get_alignments_dir(fam.get_datadir(data))
 datakey = data
 resultsdir = os.path.join(exp.results_root, "pargenes", data)
 
@@ -86,7 +94,7 @@ result_msg += "modeltest git: \n" + exp.get_git_info(os.path.join(exp.pargenes_r
 exp.write_results_info(resultsdir, result_msg) 
 
 command = []
-command.append("python3.6")
+command.append("python3")
 command.append(runner)
 command.append("-a")
 command.append(fastafiles)
@@ -94,8 +102,9 @@ command.append("-o")
 command.append(os.path.join(resultsdir, "pargenes_run"))
 command.append("-r")
 command.append(options)
-command.append("-b")
-command.append(str(bootstraps_number))
+if (bootstraps_number > 0):
+  command.append("-b")
+  command.append(str(bootstraps_number))
 command.append("-c")
 command.append(ranks)
 if (use_modeltest):

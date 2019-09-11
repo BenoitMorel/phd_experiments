@@ -1,1 +1,1 @@
---model GTR+G4
+--model GTR+G4 --bs-cutoff 0.9
