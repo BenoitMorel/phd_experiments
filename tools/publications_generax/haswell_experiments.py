@@ -9,18 +9,22 @@ from run_all import RunFilter
 sys.path.insert(0, 'scripts/generax')
 import scaling_generax
 
-run_cyano_simulated = False
+run_cyano_simulated = True
 run_simulations = False
-run_empirical = True 
+run_empirical = False
 run_scaling = False
 
 # CYANO SIMULATED PLOTS
 if (run_cyano_simulated):
-  subst_models = ["POISSON", "LG+G+I", "WAG"]
+  subst_models = ["LG+G+I"]
   datasets = ["cyano_simulated"]
   cores = 512
   do_generate = 0
   run_filter = RunFilter()
+  run_filter.disable_all()
+  run_filter.mrbayes = True
+  run_filter.rm_mrbayes = False
+  run_filter.ale = True
   run_filter.eval_joint_ll = False
   common.submit_multiple_experiments_haswell(datasets, subst_models, do_generate, cores, run_filter)
 
@@ -29,25 +33,29 @@ if (run_cyano_simulated):
 
 # PARAMETERS SIMULATED PLOTS
 if (run_simulations):
-  subst_models = ["GTR+G", "JC"]
+  subst_models = ["GTR+G"]
   datasets = []
   cores = 32
   do_generate = 0
   run_filter = RunFilter()
+  run_filter.disable_all()
+  run_filter.eccetera = True
+  run_filter.mrbayes = True
   run_filter.eval_joint_ll = False
   fixed_point_dl = "jsim_s19_f100_sites250_dna4_bl0.5_d0.25_l0.25_t0.0_p0.0"
   fixed_point_dtl = "jsimdtl_s19_f100_sites250_dna4_bl0.5_d0.1_l0.2_t0.1_p0.0"
-  datasets.append(fixed_point_dl)
-  datasets.append(fixed_point_dtl)
   if (True):
     common.add_dataset(datasets, fixed_point_dl, ["p0.1", "p0.2", "p0.3", "p0.5", "p0.75"])
+    common.add_dataset(datasets, fixed_point_dtl, ["p0.1", "p0.2", "p0.3", "p0.5"])
+  if (False):
+    datasets.append(fixed_point_dl)
+    datasets.append(fixed_point_dtl)
     common.add_dataset(datasets, fixed_point_dl, ["d0.01_l0.01", "d0.05_l0.05", "d0.1_l0.1", "d0.4_l0.4"])
     common.add_dataset(datasets, fixed_point_dl, ["d0.1", "d0.2", "d0.3", "d0.4"])
     common.add_dataset(datasets, fixed_point_dl, ["sites100", "sites500", "sites750"])
     common.add_dataset(datasets, fixed_point_dl, ["bl0.01", "bl0.05", "bl0.1", "bl0.2", "bl1.0", "bl2.0"])
     common.add_dataset(datasets, fixed_point_dl, ["s5", "s10", "s27", "s41"])
 
-    common.add_dataset(datasets, fixed_point_dtl, ["p0.1", "p0.2", "p0.3", "p0.5"])
     common.add_dataset(datasets, fixed_point_dtl, ["s5", "s10", "s12", "s16", "s27", "s41"])
     common.add_dataset(datasets, fixed_point_dtl, ["sites100", "sites500", "sites750"])
     common.add_dataset(datasets, fixed_point_dtl, ["bl0.01", "bl0.05", "bl0.1", "bl0.2", "bl1.0", "bl2.0"])
