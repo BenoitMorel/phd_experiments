@@ -22,9 +22,9 @@ if (run_cyano_simulated):
   do_generate = 0
   run_filter = RunFilter()
   run_filter.disable_all()
-  run_filter.mrbayes = True
+  #run_filter.mrbayes = True
   run_filter.rm_mrbayes = False
-  run_filter.ale = True
+  run_filter.ALE = True
   run_filter.eval_joint_ll = False
   common.submit_multiple_experiments_haswell(datasets, subst_models, do_generate, cores, run_filter)
 
