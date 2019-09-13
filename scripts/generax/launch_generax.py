@@ -128,7 +128,11 @@ def run(dataset, subst_model, strategy, starting_tree, cores, additional_argumen
     extract_trees(datadir, os.path.join(resultsdir, "generax"), run_name, subst_model)
   try:
     if (do_analyze):
-      rf_cells.analyze(datadir, run_name)
+      #rf_cells.analyze(datadir, run_name)
+      fast_rf_cells.analyze(datadir, "all", cores, run_name)
+    else:
+      fast_rf_cells.analyze(datadir, run_name, cores, run_name)
+
   except:
     print("Analyze failed!!!!")
 

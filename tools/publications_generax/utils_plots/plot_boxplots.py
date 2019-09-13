@@ -30,10 +30,10 @@ def plot_model_boxplots():
   methods["raxml-ng"] = "RAxML-NG"
   #order = ["GeneRax", "ALE", "JPrIME-DLTRS", "Treerecs",  "EcceTERA", "Phyldog", "Notung", "RAxML-NG"]
   order = ["GeneRax", "ALE", "EcceTERA", "Notung", "RAxML-NG"]
-  models = ["LG+G+I", "POISSON"]
+  models = ["LG+G+I", "WAG"]
   models_to_display = {}
   models_to_display["LG+G+I"] = "True model"
-  models_to_display["POISSON"] = "Wrong model"
+  models_to_display["WAG"] = "Wrong model"
   
   dico = {}
   datasets = ["cyano_simulated"]
