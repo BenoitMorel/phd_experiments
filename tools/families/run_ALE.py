@@ -112,18 +112,24 @@ def extract_trees_from_ale_output(ale_output, output_trees):
 
 def extract_ALE_results(datadir, subst_model, ALE_run_dir, with_transfers, families_dir, dated):
   method_name = get_method_name(with_transfers, dated)
+  mlstring = "uml"
+  if (dated):
+    mlstring = "ml"
   for family in fam.get_families_list(datadir):
     family_misc_dir = fam.get_family_misc_dir(datadir, family)
     family_trees_dir = fam.get_gene_tree_dir(datadir, family)
     prefix =  "phyldogSpeciesTree.newick_" + family + ".treelist.ale"
     prefixed_output_trees = os.path.join(family_misc_dir, method_name + "_samples_prefixed.newick")
     output_trees = fam.get_ale_tree(datadir, subst_model, family, method_name)
-    extract_trees_from_ale_output(prefix + ".uml_rec", prefixed_output_trees) 
+    extract_trees_from_ale_output(prefix +"." + mlstring + "_rec", prefixed_output_trees) 
     cut_node_names.remove_prefix_from_trees(prefixed_output_trees, output_trees) 
 # clean files
-    force_move(prefix + ".uTs", family_misc_dir)
+    if (dated):
+      force_move(prefix + ".Ts", family_misc_dir)
+    else:
+      force_move(prefix + ".uTs", family_misc_dir)
     #force_move(prefix + ".ucons_tree", family_misc_dir)
-    force_move(prefix + ".uml_rec", family_misc_dir)
+    force_move(prefix + "." + mlstring + "_rec", family_misc_dir)
 
 def run_ALE_on_families(datadir, subst_model, with_transfers, cores, dated = False):
   try:
@@ -166,6 +172,8 @@ def run_ALE(datadir, subst_model, cores, dated = False):
     os.chdir(run_dir)
     run_ALE_on_families(datadir, subst_model, True, cores, dated)
     run_ALE_on_families(datadir, subst_model, False, cores, dated)
+    #ml_output_dir = get_ml_run_dir(datadir, subst_model, True, dated)
+    #extract_ALE_results(datadir, subst_model, ml_output_dir, True,  os.path.join(datadir, "families"), dated)
     clean_ALE(datadir, subst_model, dated)
   finally:
     os.chdir(cwd)
