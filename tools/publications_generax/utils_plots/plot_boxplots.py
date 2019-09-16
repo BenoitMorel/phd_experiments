@@ -16,33 +16,14 @@ import rf_cells
 import saved_metrics
 import math
 
-
-
-def plot_model_boxplots():
-  methods = {}
-  methods["generax-dtl-random"] = "GeneRax"
-  methods["ale-dtl"] = "ALE"
-  #methods["deleterious"] = "JPrIME-DLTRS"
-  #methods["treerecs"] = "Treerecs"
-  methods["notung90"] = "Notung"
-  methods["eccetera"] = "EcceTERA"
-  #methods["phyldog"] = "Phyldog"
-  methods["raxml-ng"] = "RAxML-NG"
-  #order = ["GeneRax", "ALE", "JPrIME-DLTRS", "Treerecs",  "EcceTERA", "Phyldog", "Notung", "RAxML-NG"]
-  order = ["GeneRax", "ALE", "EcceTERA", "Notung", "RAxML-NG"]
-  models = ["LG+G+I", "POISSON"]
-  models_to_display = {}
-  models_to_display["LG+G+I"] = "True model"
-  models_to_display["POISSON"] = "Wrong model"
-  
+def aux(methods, order, models, models_to_display, datasets, title, output):
   dico = {}
-  datasets = ["cyano_simulated"]
-  title = "Simulated cyanobacteria (1099 families)"
         
   for model in models:
     model_dico = {}
     for method in methods:
-      model_dico[methods[method]] = []
+      if (methods[method] in order):
+        model_dico[methods[method]] = []
     dico[models_to_display[model]] = model_dico
 
   for dataset in datasets:
@@ -51,10 +32,40 @@ def plot_model_boxplots():
       family_cells = cells[family]
       for model in models:
         for method in methods:
-          cell = rf_cells.get_rf_to_true(family_cells, fam.get_run_name(method, model))
-          dico[models_to_display[model]][methods[method]].append(cell[0] / cell[1])
+          if (methods[method] in order):
+            cell = rf_cells.get_rf_to_true(family_cells, fam.get_run_name(method, model))
+            dico[models_to_display[model]][methods[method]].append(cell[0] / cell[1])
   gbp = boxplot.GroupBoxPlot(data = dico, title = title, ylabel = "Relative RF distance", hue_label = "Substitution model", order = order)
-  output = os.path.abspath("cyano_simulated_boxplot.svg")
   gbp.plot(output)
   print("Output in " + output)
 
+
+
+def plot_model_boxplots():
+  methods = {}
+  #methods["generax_spr10-dtl-random"] = "GeneRax-spr10"
+  methods["generax-dtl-random"] = "GeneRax"
+  methods["ale-dtl"] = "ALE"
+  #methods["deleterious"] = "JPrIME-DLTRS"
+  methods["treerecs"] = "Treerecs"
+  methods["notung90"] = "Notung"
+  methods["eccetera"] = "EcceTERA"
+  methods["phyldog"] = "Phyldog"
+  methods["raxml-ng"] = "RAxML-NG"
+  order = ["GeneRax", "ALE", "EcceTERA", "Treerecs", "Phyldog", "RAxML-NG", "Notung"]
+  models = ["LG+G+I", "WAG"]
+  models_to_display = {}
+  models_to_display["LG+G+I"] = "True model"
+  models_to_display["WAG"] = "Wrong model"
+  datasets = ["cyano_simulated"]
+  title = "Simulated cyanobacteria (1099 families)"
+  output = os.path.abspath("cyano_simulated_boxplot.svg")
+  aux(methods, order, models, models_to_display, datasets, title, output)
+  
+  
+
+
+
+
+
+  

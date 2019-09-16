@@ -24,6 +24,7 @@ def get_phyldog_model(subst_model):
   return get_model(subst_model)
 
 def get_raxml_model(subst_model):
+  subst_model = subst_model.replace("+I", "+IC") # empirical invariant sites
   res = get_model(subst_model)
   if (res == "POISSON"):
     res = "PROTGTR{"

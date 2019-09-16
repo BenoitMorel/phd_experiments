@@ -161,9 +161,9 @@ if (__name__ == "__main__"):
     
   min_args_number = 7
   if (len(sys.argv) < min_args_number):
-    print("Syntax error: python " + os.path.basename(__file__) + "  dataset subst_model starting_species_tree starting_gene_tree cluster cores [additional paremeters].\n Suggestions of datasets: ")
     for dataset in datasets:
       print("\t" + dataset)
+    print("Syntax error: python " + os.path.basename(__file__) + "  dataset subst_model starting_species_tree starting_gene_tree cluster cores [additional paremeters].\n Suggestions of datasets: ")
     sys.exit(1)
 
   dataset = sys.argv[1]

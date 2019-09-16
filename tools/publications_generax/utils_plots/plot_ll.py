@@ -21,8 +21,8 @@ def aux(dataset, model, recModel):
   methods_to_plot.append("notung90")
   methods_to_plot.append("treerecs")
   methods_to_plot.append("phyldog")
-  #methods_to_plot.append("eccetera")
-  methods_to_plot.append("deleterious")
+  methods_to_plot.append("eccetera")
+  #methods_to_plot.append("deleterious")
   methods_to_plot.append("ale-" + recModel.lower())
   methods_to_plot.append("generax-" + recModel.lower() + "-random")
 
@@ -30,7 +30,7 @@ def aux(dataset, model, recModel):
   methods_display_name["raxml-ng"] = "RAxML-NG"
   methods_display_name["ale-" + recModel.lower()] = "ALE-" + recModel
   methods_display_name["generax-" + recModel.lower() + "-random"] = "GeneRax-" + recModel
-  methods_display_name["deleterious"] = "JPrIME-DLTRS"
+  #methods_display_name["deleterious"] = "JPrIME-DLTRS"
   methods_display_name["treerecs"] = "Treerecs"
   methods_display_name["notung90"] = "Notung"
   methods_display_name["phyldog"] = "Phyldog"
