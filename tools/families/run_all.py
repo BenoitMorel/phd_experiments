@@ -15,7 +15,7 @@ import run_mrbayes
 
 class RunFilter():
   
-  def __init__(self, raxml = True, pargenes = True, treerecs = True, phyldog = True, notung = True, eccetera = True, deleterious = True, generax = True, mrbayes = True, ALE = True, eval_joint_ll = True, analyze = True):
+  def __init__(self, raxml = True, pargenes = True, treerecs = True, phyldog = True, notung = True, eccetera = True, deleterious = False, generax = True, mrbayes = True, ALE = True, eval_joint_ll = True, analyze = True):
     self.raxml = raxml
     self.pargenes = pargenes
     self.treerecs = treerecs
@@ -36,6 +36,7 @@ class RunFilter():
     self.mb_burnin = 100
     self.debug = False
     self.rm_mrbayes = True
+    self.dated_ALE = False
 
   def disable_all(self):
     self.raxml = False
@@ -51,6 +52,7 @@ class RunFilter():
     self.eval_joint_ll = False
     self.analyze = False
     self.mrbayes = False
+    self.dated_ALE = False
 
 def run_reference_methods(datadir, subst_model, starting_trees, bs_trees, cores, run_filter = RunFilter()):
   if (run_filter.raxml):
@@ -123,6 +125,15 @@ def run_reference_methods(datadir, subst_model, starting_trees, bs_trees, cores,
       run_ALE.run_ALE(datadir, subst_model, cores)
     except Exception as exc:
       print("Failed running ALE")
+      print(exc)
+    sys.stdout.flush()
+  if (run_filter.dated_ALE):
+    print("Run dated ALE...")
+    sys.stdout.flush()
+    try:
+      run_ALE.run_ALE(datadir, subst_model, cores, True)
+    except Exception as exc:
+      print("Failed running dated ALE")
       print(exc)
     sys.stdout.flush()
   if (run_filter.eccetera):

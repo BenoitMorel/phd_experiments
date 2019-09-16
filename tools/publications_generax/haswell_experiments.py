@@ -11,8 +11,8 @@ import scaling_generax
 
 run_cyano_simulated = False
 run_simulations = False
-run_empirical = True
-run_scaling = False
+run_empirical = False
+run_scaling = True
 run_test = False
 
 # CYANO SIMULATED PLOTS
@@ -22,10 +22,12 @@ if (run_cyano_simulated):
   cores = 512
   do_generate = 0
   run_filter = RunFilter()
-  #run_filter.disable_all()
-  run_filter.mrbayes = False
-  run_filter.deleterious = False
+  run_filter.disable_all()
+  #run_filter.mrbayes = False
+  #run_filter.deleterious = False
+  run_filter.dated_ALE = True
   run_filter.rm_mrbayes = False
+  run_filter.analyze = True
   run_filter.eval_joint_ll = False
   common.submit_multiple_experiments_haswell(datasets, subst_models, do_generate, cores, run_filter)
 

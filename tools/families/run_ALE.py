@@ -123,13 +123,15 @@ def extract_ALE_results(datadir, subst_model, ALE_run_dir, with_transfers, famil
     output_trees = fam.get_ale_tree(datadir, subst_model, family, method_name)
     extract_trees_from_ale_output(prefix +"." + mlstring + "_rec", prefixed_output_trees) 
     cut_node_names.remove_prefix_from_trees(prefixed_output_trees, output_trees) 
-# clean files
     if (dated):
-      force_move(prefix + ".Ts", family_misc_dir)
-    else:
-      force_move(prefix + ".uTs", family_misc_dir)
+      cut_node_names.cut_keep_first_elems(output_trees, output_trees, "@", 1) 
+# clean files
+    #if (dated):
+    #  force_move(prefix + ".Ts", family_misc_dir)
+    #else:
+    #  force_move(prefix + ".uTs", family_misc_dir)
     #force_move(prefix + ".ucons_tree", family_misc_dir)
-    force_move(prefix + "." + mlstring + "_rec", family_misc_dir)
+    #force_move(prefix + "." + mlstring + "_rec", family_misc_dir)
 
 def run_ALE_on_families(datadir, subst_model, with_transfers, cores, dated = False):
   try:
@@ -170,11 +172,13 @@ def run_ALE(datadir, subst_model, cores, dated = False):
     parameters = os.path.join(run_dir, "parameters.txt")
     datadir = os.path.abspath(datadir)
     os.chdir(run_dir)
-    run_ALE_on_families(datadir, subst_model, True, cores, dated)
-    run_ALE_on_families(datadir, subst_model, False, cores, dated)
-    #ml_output_dir = get_ml_run_dir(datadir, subst_model, True, dated)
-    #extract_ALE_results(datadir, subst_model, ml_output_dir, True,  os.path.join(datadir, "families"), dated)
-    clean_ALE(datadir, subst_model, dated)
+    print(run_dir)
+    #run_ALE_on_families(datadir, subst_model, True, cores, dated)
+    #run_ALE_on_families(datadir, subst_model, False, cores, dated)
+    ml_output_dir = get_ml_run_dir(datadir, subst_model, True, dated)
+    os.chdir(ml_output_dir)
+    extract_ALE_results(datadir, subst_model, ml_output_dir, True,  os.path.join(datadir, "families"), dated)
+    #clean_ALE(datadir, subst_model, dated)
   finally:
     os.chdir(cwd)
 
