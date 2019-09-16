@@ -10,7 +10,7 @@ import run_ALE
 import fam
 import run_generax
 import eval_generax_likelihood
-import rf_cells
+import fast_rf_cells
 import run_mrbayes
 
 class RunFilter():
@@ -155,7 +155,7 @@ def run_reference_methods(datadir, subst_model, starting_trees, bs_trees, cores,
     print("Run analyze...")
     sys.stdout.flush()
     try:
-      rf_cells.analyze(datadir)
+      fast_rf_cells.analyze(datadir, "all", cores)
     except Exception as exc:
       print("Failed running analyze")
       print(exc)

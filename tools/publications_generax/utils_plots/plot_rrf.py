@@ -123,7 +123,7 @@ def compute_best_method_percentage(datasets_rf_dico_dl, datasets_rf_dico_dtl, su
       if (sorted_methods[0] in methods_set):
         best_it += 1
       else:
-        print(sorted_methods[0] + " is best")
+        print(sorted_methods[0] + " is best for dataset " + str(run))
       total_it += 1
   percentage = 100.0 * float(best_it) / float(total_it) 
   print("Methods " + str(best_methods_to_quantify) + " are best in " + str(percentage) + "% of the cases")

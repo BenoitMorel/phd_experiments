@@ -20,7 +20,7 @@ def get_runs(datadir, run_tag):
   if (run_tag == "all"):
     successful_runs = fam.get_successful_runs(datadir)
     for run in successful_runs:
-      if (not "ultiple" in run and not "true" in run):
+      if (not "ultiple" in run and not "true.true" in run):
         runs.append(run)
   else:
     runs.append(run_tag)
@@ -32,7 +32,7 @@ def get_trees(runs):
     trees.append(run + ".geneTree.newick")
   return trees
 
-def write_rfdistance_input_files(families, trees, families_file, trees_file):
+def write_rfdistance_input_files(datadir, families, trees, families_file, trees_file):
   with open(trees_file, "w") as writer:
     writer.write("\n".join(trees))
   with open(families_file, "w") as writer:
@@ -109,8 +109,8 @@ def export_metrics(datadir, benched_run, rf_cells, runs):
   print_metrics(datadir, average_rrf, "average_rrf", benched_run)
 
 
-def analyze(datadir, run_tag, cores, benched_run):
-  temp_dir = tempfile.mkdtemp()#tempfile.TemporaryDirectory()
+def analyze(datadir, run_tag, cores, benched_run = ""):
+  temp_dir = tempfile.mkdtemp(dir = datadir)#tempfile.TemporaryDirectory()
   analyze_dir_name = temp_dir#.name
   print("analyze directory " + analyze_dir_name)
   trees_file = os.path.join(analyze_dir_name, "trees.txt")
@@ -122,7 +122,7 @@ def analyze(datadir, run_tag, cores, benched_run):
   runs = get_runs(datadir, run_tag)
   print("Runs: " + str(runs))
   trees = get_trees(runs)
-  write_rfdistance_input_files(families, trees, families_file, trees_file)
+  write_rfdistance_input_files(datadir, families, trees, families_file, trees_file)
   run_rfdistance(families_file, trees_file, rf_output_dir, cores)
   rf_cells = extract_rfdistance(rf_output_dir, families, runs)
   if ("all" == run_tag):
@@ -130,7 +130,7 @@ def analyze(datadir, run_tag, cores, benched_run):
   export_metrics(datadir, benched_run, rf_cells, runs) 
 
 if __name__ == '__main__':
-  if (len(sys.argv) < 2):
+  if (len(sys.argv) < 4):
     print("Syntax: families_dir run=all cores [benched_run]")
     exit(1)
   print(" ".join(sys.argv))

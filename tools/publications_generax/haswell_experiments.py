@@ -13,6 +13,7 @@ run_cyano_simulated = False
 run_simulations = False
 run_empirical = True
 run_scaling = False
+run_test = False
 
 # CYANO SIMULATED PLOTS
 if (run_cyano_simulated):
@@ -21,14 +22,22 @@ if (run_cyano_simulated):
   cores = 512
   do_generate = 0
   run_filter = RunFilter()
-  run_filter.disable_all()
-  #run_filter.mrbayes = True
+  #run_filter.disable_all()
+  run_filter.mrbayes = False
+  run_filter.deleterious = False
   run_filter.rm_mrbayes = False
-  run_filter.ALE = True
   run_filter.eval_joint_ll = False
   common.submit_multiple_experiments_haswell(datasets, subst_models, do_generate, cores, run_filter)
 
-
+if (run_test):
+  subst_models = ["GTR+G"]
+  datasets = []
+  cores = 512
+  do_generate = 1
+  run_filter = RunFilter()
+  fixed_point_dtl = "jsimdtl_s27_f1000_sites100_dna4_bl0.5_d0.1_l0.2_t0.1_p0.0"
+  datasets.append(fixed_point_dtl)
+  common.submit_multiple_experiments_haswell(datasets, subst_models, do_generate, cores, run_filter)
 
 
 # PARAMETERS SIMULATED PLOTS
@@ -41,21 +50,22 @@ if (run_simulations):
   run_filter.disable_all()
   run_filter.eccetera = True
   run_filter.mrbayes = True
+  run_filter.generax = True
+  run_filter.ALE = True
   run_filter.eval_joint_ll = False
-  fixed_point_dl = "jsim_s19_f100_sites250_dna4_bl0.5_d0.25_l0.25_t0.0_p0.0"
-  fixed_point_dtl = "jsimdtl_s19_f100_sites250_dna4_bl0.5_d0.1_l0.2_t0.1_p0.0"
   if (True):
-    common.add_dataset(datasets, fixed_point_dl, ["p0.1", "p0.2", "p0.3", "p0.5", "p0.75"])
-    common.add_dataset(datasets, fixed_point_dtl, ["p0.1", "p0.2", "p0.3", "p0.5"])
-  if (False):
+    fixed_point_dl = "jsim_s19_f100_sites250_dna4_bl0.5_d0.25_l0.25_t0.0_p0.0"
+    fixed_point_dtl = "jsimdtl_s19_f100_sites250_dna4_bl0.5_d0.1_l0.2_t0.1_p0.0"
     datasets.append(fixed_point_dl)
     datasets.append(fixed_point_dtl)
+    common.add_dataset(datasets, fixed_point_dl, ["p0.1", "p0.2", "p0.3", "p0.5", "p0.75"])
     common.add_dataset(datasets, fixed_point_dl, ["d0.01_l0.01", "d0.05_l0.05", "d0.1_l0.1", "d0.4_l0.4"])
     common.add_dataset(datasets, fixed_point_dl, ["d0.1", "d0.2", "d0.3", "d0.4"])
     common.add_dataset(datasets, fixed_point_dl, ["sites100", "sites500", "sites750"])
     common.add_dataset(datasets, fixed_point_dl, ["bl0.01", "bl0.05", "bl0.1", "bl0.2", "bl1.0", "bl2.0"])
     common.add_dataset(datasets, fixed_point_dl, ["s5", "s10", "s27", "s41"])
 
+    common.add_dataset(datasets, fixed_point_dtl, ["p0.1", "p0.2", "p0.3", "p0.5"])
     common.add_dataset(datasets, fixed_point_dtl, ["s5", "s10", "s12", "s16", "s27", "s41"])
     common.add_dataset(datasets, fixed_point_dtl, ["sites100", "sites500", "sites750"])
     common.add_dataset(datasets, fixed_point_dtl, ["bl0.01", "bl0.05", "bl0.1", "bl0.2", "bl1.0", "bl2.0"])
@@ -74,8 +84,13 @@ if (run_empirical):
   cores = 512
   do_generate = 0
   run_filter = RunFilter()
-  common.submit_multiple_experiments_haswell(datasets_prot, subst_models_prot, do_generate, cores, run_filter)
+  run_filter.rm_mrbayes = False
+  run_filter.deleterious = False
   common.submit_multiple_experiments_haswell(datasets_dna, subst_models_dna, do_generate, cores, run_filter)
+  run_filter.disable_all()
+  run_filter.eval_joint_ll = True
+  common.submit_multiple_experiments_haswell(datasets_prot, subst_models_prot, do_generate, cores, run_filter)
+  
 
 
 

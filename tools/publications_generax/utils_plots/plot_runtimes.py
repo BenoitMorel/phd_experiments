@@ -55,8 +55,8 @@ def plot_all_stacked_plots(dico, categories, dataset, cores):
   methods_to_plot.append(["raxml-light"])
   methods_to_plot.append(["notung90", "raxml-ng"])
   methods_to_plot.append(["treerecs", "raxml-ng"])
-  methods_to_plot.append(["eccetera", "raxml-ng"])
-  methods_to_plot.append(["deleterious"])
+  methods_to_plot.append(["eccetera", "mrbayes"])
+  #methods_to_plot.append(["deleterious"])
   methods_to_plot.append(["ale-dtl", "mrbayes"])
   methods_to_plot.append(["generax-dtl-raxml", "raxml-light"])
   methods_to_plot.append(["generax-dtl-random"])
@@ -67,7 +67,7 @@ def plot_all_stacked_plots(dico, categories, dataset, cores):
   methods_display_name["generax-dtl-raxml"] = "GeneRax-Raxml"
   methods_display_name["generax-dtl-random"] = "GeneRax-Random"
   methods_display_name["generax-dl-random"] = "GeneRax-DL-Random"
-  methods_display_name["deleterious"] = "JPrIME-DLTRS"
+  #methods_display_name["deleterious"] = "JPrIME-DLTRS"
   methods_display_name["treerecs"] = "Treerecs"
   methods_display_name["eccetera"] = "EcceTERA"
   methods_display_name["notung90"] = "Notung"
@@ -110,9 +110,9 @@ def plot_scalings(dico, categories, dataset):
   methods_to_plot = []
   methods_to_plot.append(["raxml-light"])
   methods_to_plot.append(["notung90", "raxml-ng"])
-  methods_to_plot.append(["eccetera", "raxml-ng"])
+  methods_to_plot.append(["eccetera", "mrbayes"])
   methods_to_plot.append(["treerecs", "raxml-ng"])
-  methods_to_plot.append(["deleterious"])
+  #methods_to_plot.append(["deleterious"])
   methods_to_plot.append(["ale-dtl", "mrbayes"])
   methods_to_plot.append(["generax-dtl-raxml", "raxml-light"])
   methods_to_plot.append(["generax-dtl-random"])
@@ -123,7 +123,7 @@ def plot_scalings(dico, categories, dataset):
   methods_display_name["generax-dtl-raxml"] = "GeneRax-Raxml"
   methods_display_name["generax-dtl-random"] = "GeneRax-Random"
   methods_display_name["eccetera"] = "EcceTERA"
-  methods_display_name["deleterious"] = "JPrIME-DLTRS"
+  #methods_display_name["deleterious"] = "JPrIME-DLTRS"
   methods_display_name["treerecs"] = "Treerecs"
   methods_display_name["notung90"] = "Notung"
   xlabels = []
