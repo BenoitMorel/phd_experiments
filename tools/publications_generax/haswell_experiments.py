@@ -11,8 +11,8 @@ import scaling_generax
 
 run_cyano_simulated = False
 run_simulations = False
-run_empirical = False
-run_scaling = True
+run_empirical = True
+run_scaling = False
 run_test = False
 
 # CYANO SIMULATED PLOTS
@@ -87,8 +87,7 @@ if (run_empirical):
   do_generate = 0
   run_filter = RunFilter()
   run_filter.rm_mrbayes = False
-  run_filter.deleterious = False
-  common.submit_multiple_experiments_haswell(datasets_dna, subst_models_dna, do_generate, cores, run_filter)
+  #common.submit_multiple_experiments_haswell(datasets_dna, subst_models_dna, do_generate, cores, run_filter)
   run_filter.disable_all()
   run_filter.eval_joint_ll = True
   common.submit_multiple_experiments_haswell(datasets_prot, subst_models_prot, do_generate, cores, run_filter)
@@ -102,7 +101,7 @@ if (run_scaling):
   starting_trees = ["raxml-ng", "random"]
   models = [1] # with or without transfers
   cores_set = [4, 8, 16, 32, 64, 128, 256, 512]
-  subst_model = "LG+G"
+  subst_model = "LG+G+I"
   for cores in cores_set:
     for tree in starting_trees:
       for model in models:

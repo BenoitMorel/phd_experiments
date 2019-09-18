@@ -82,4 +82,4 @@ def aux(dataset, model, recModel):
 def plot_ll():
   datasets = ["cyano_empirical", "ensembl_96_ncrna_primates"]
   aux("cyano_empirical", "LG+G", "DTL")
-  aux("ensembl_96_ncrna_primates", "GTR+G", "DL")
+  #aux("ensembl_96_ncrna_primates", "GTR+G", "DL")

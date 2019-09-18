@@ -161,6 +161,9 @@ def get_raw_rf_cells_file(datadir, rooted = False):
   else:
     return os.path.join(datadir, "misc", "rf_cells.pickle")
 
+def get_raw_kf_cells_file(datadir, rooted = False):
+  return os.path.join(datadir, "misc", "kf_cells.pickle")
+
 
 def get_gene_tree(datadir, subst_model, family, tree):
   gene_trees_dir = get_gene_tree_dir(datadir, family)

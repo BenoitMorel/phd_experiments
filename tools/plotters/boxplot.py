@@ -10,17 +10,22 @@ import pandas as pd
 
 
 class BoxPlot:
-  def __init__(self, title = None, ylabel = None):
+  def __init__(self, title = None, ylabel = None, order = None, max_y = -1.0):
     self._dict = {}
     self._title = title
     self._ylabel = ylabel
+    self._order = order
+    self._max_y = max_y
 
   def add_elem(self, xlabel, values):
     self._dict[xlabel] = values
 
   def plot(self, output):
+    plt.clf()
     df = pd.DataFrame(data = self._dict)
-    ax = sns.boxplot(data = df)
+    ax = sns.boxplot(data = df, order = self._order)
+    if (self._max_y > 0.0):
+      ax.set_ylim(0, self._max_y)
     plt.xticks(rotation = 45) 
     if (self._title != None):
       ax.set_title(self._title)
@@ -61,7 +66,10 @@ class GroupBoxPlot:
     self._df = pd.DataFrame(data = dataFrameDico)
 
   def plot(self, output):
+    plt.clf()
     ax = sns.boxplot(data = self._df, hue = self._hue_label, x = self._xlabel, y = "values", order = self._order)
+    if (self._xlabel == "x"):
+      ax.set_xlabel('')    
     if (self._x_number > 4):
       print(self._x_number)
       plt.xticks(rotation = 45)

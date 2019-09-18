@@ -46,7 +46,10 @@ def eval_and_save_likelihood(dataset_dir, run_name, with_transfers, subst_model,
   print("Evaluating likelihood for " + run_name + " and " + dataset_dir + " transfers=" + str(with_transfers))
   if (run_name == "all"):
     for run in fam.get_successful_runs(dataset_dir):
-      eval_and_save_likelihood(dataset_dir, run, with_transfers, subst_model, cores)
+      try:
+        eval_and_save_likelihood(dataset_dir, run, with_transfers, subst_model, cores)
+      except:
+        print("Failed to evaluate likelihood for " + run)
     return
 
   stats = eval_likelihood(dataset_dir, run_name, with_transfers, subst_model, cores)
