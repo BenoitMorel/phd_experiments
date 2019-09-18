@@ -89,6 +89,7 @@ if (run_empirical):
   run_filter.rm_mrbayes = False
   #common.submit_multiple_experiments_haswell(datasets_dna, subst_models_dna, do_generate, cores, run_filter)
   run_filter.disable_all()
+  cores = 64
   run_filter.eval_joint_ll = True
   common.submit_multiple_experiments_haswell(datasets_prot, subst_models_prot, do_generate, cores, run_filter)
   

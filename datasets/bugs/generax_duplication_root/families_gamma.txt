@@ -1,5 +1,5 @@
 [FAMILIES] # this is a comment
 - family_1
 starting_gene_tree = __random__
-alignment = /home/benoit/github/phd_experiments/datasets/bugs/generax_duplication_root/FAM000010.aln
+alignment = /hits/basement/cme/morel/github/phd_experiments/datasets/bugs/generax_duplication_root/FAM000010.aln
 subst_model = LG+G

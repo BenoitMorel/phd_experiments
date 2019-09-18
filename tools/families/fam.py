@@ -17,6 +17,9 @@ def mkdir(directory):
 # global directories
 ######################
 
+def get_datasets_family_path():
+  return os.path.join(exp.benoit_datasets_root, "families")
+
 def get_datadir(dataset):
   return os.path.join(exp.benoit_datasets_root, "families", dataset)
 
