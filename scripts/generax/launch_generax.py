@@ -30,7 +30,27 @@ def get_generax_datasets():
 
 datasets = get_generax_datasets()
 
+
+def has_multiple_sample(starting_tree):
+  return "ale" in starting_tree.lower() or "multiple" in starting_tree.lower()
+
+def get_starting_tree_path(datadir, subst_model, family, starting_tree):
+  if (has_multiple_sample(starting_tree)):
+    return os.path.join(fam.get_family_misc_dir(datadir, family), starting_tree + "." + subst_model + "_onesample.geneTree")
+  else:
+    return fam.build_gene_tree_path(datadir, subst_model, family, starting_tree)
+
+# GeneRax does not accept tree files with multiple trees
+def sample_one_starting_tree(datadir, subst_model, starting_tree):
+  for family in fam.get_families_list(datadir):
+    input_tree = fam.build_gene_tree_path(datadir, subst_model, family, starting_tree)
+    output_tree = get_starting_tree_path(datadir, subst_model, family, starting_tree)
+    tree = open(input_tree, "r").readline()
+    open(output_tree, "w").write(tree)
+
 def build_generax_families_file(datadir, starting_tree, subst_model, output):
+  if (has_multiple_sample(starting_tree)):
+    sample_one_starting_tree(datadir, subst_model, starting_tree)
   families_dir = os.path.join(datadir, "families")
   with open(output, "w") as writer:
     writer.write("[FAMILIES]\n")
@@ -40,7 +60,7 @@ def build_generax_families_file(datadir, starting_tree, subst_model, output):
       
       family_path = os.path.join(families_dir, family)
       writer.write("- " + family + "\n")
-      gene_tree = fam.build_gene_tree_path(datadir, subst_model, family, starting_tree)
+      gene_tree = get_starting_tree_path(datadir, subst_model, family, starting_tree)
       if (starting_tree == "random"):
         gene_tree = "__random__"
       writer.write("starting_gene_tree = " + gene_tree + "\n")
@@ -127,15 +147,11 @@ def run(dataset, subst_model, strategy, starting_tree, cores, additional_argumen
   saved_metrics.save_metrics(datadir, run_name, (time.time() - start), "seqtimes") 
   if (do_extract):
     extract_trees(datadir, os.path.join(resultsdir, "generax"), run_name, subst_model)
-  #try:
-  if (do_analyze):
-    #rf_cells.analyze(datadir, run_name)
-    fast_rf_cells.analyze(datadir, "all", cores, run_name)
-  else:
-    fast_rf_cells.analyze(datadir, run_name, cores, run_name)
-
-  #except:
-  #  print("Analyze failed!!!!")
+  try:
+    if (do_analyze):
+      fast_rf_cells.analyze(datadir, "all", cores, run_name)
+  except:
+    print("Analyze failed!!!!")
 
   print("Output in " + resultsdir)
 
