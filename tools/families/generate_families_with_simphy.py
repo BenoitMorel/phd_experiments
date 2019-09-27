@@ -34,6 +34,25 @@ def build_config_file(output_dir):
 
   return config_file
 
+def build_indelible_config_file(output_dir):
+  config_file = os.path.join(output_dir, "indelible_config.txt")
+  with open(config_file, "w") as writer:
+    sites_mean = 200
+    sites_sigma = 50
+    writer.write("[TYPE] NUCLEOTIDE 1\n") # DNA using algorithm 1 
+    writer.write("[SETTINGS] [fastaextension] fasta\n")
+    writer.write("[SIMPHY-UNLINKED-MODEL] modelA \n")
+    writer.write("  [submodel] HKY $(e:1) // HKY with kappa sampled for every gene family with parameter=1.\n")
+    writer.write("  [statefreq] $(d:1,1,1,1)  // frequencies for T C A G sampled from a Dirichlet (1,1,1,1)\n")
+    
+    writer.write("[SIMPHY-PARTITIONS] simple [1.0 modelA $(n:" + str(sites_mean) + "," + str(sites_sigma) + ")]\n")
+
+    writer.write("[SIMPHY-EVOLVE] 1 dataset \n")
+
+  return config_file
+  
+
+
 def build_mapping(simphy_mapping, phyldog_mapping):
   lines = open(simphy_mapping).readlines()[1:]
   dico = {}
@@ -57,7 +76,19 @@ def run_simphy(config_file):
   commands.append(config_file)
   subprocess.check_call(commands)
 
+def run_indelible(output_dir, config_file, cores):
+  commands = []
+  seed = "42"
+  commands.append("perl")
+  commands.append(exp.simphy_indelible_wrapper)
+  commands.append(output_dir)
+  commands.append(config_file)
+  commands.append(seed)
+  commands.append(str(cores))
+  subprocess.check_call(commands)
+
 def export_to_family(output_dir):
+  print("Start exporting to families format...")
   fam.init_top_directories(output_dir)
   simphy_output_dir = os.path.join(output_dir, "1")
   families = []
@@ -78,17 +109,22 @@ def export_to_family(output_dir):
     phyldog_mapping = fam.get_mappings(output_dir, family)
     build_mapping(simphy_mapping,  phyldog_mapping)
     # alignment
-    #alignment = os.path.join(, family_number + ".fasta")
+    alignment = os.path.join(output_dir, "1", "dataset_" + family_number + ".fasta")
     # true trees
     # alignment
+    shutil.copy(alignment, fam.get_alignment(output_dir, family))
     #copy_and_rename_alignment(alignment, fam.get_alignment(out, family), family)
-  
+  fam.postprocess_datadir(output_dir)
 
+cores = 1
 output_dir = "../BenoitDatasets/families/simphy_test"
 exp.reset_dir(output_dir)
 config_file = build_config_file(output_dir)
 run_simphy(config_file)
+indelible_config_file = build_indelible_config_file(output_dir)
+run_indelible(output_dir, indelible_config_file, cores)
 export_to_family(output_dir)
+print("Done! output in " + output_dir) 
 
 
 
