@@ -6,18 +6,20 @@ import fam
 sys.path.insert(0, 'scripts')
 sys.path.insert(0, os.path.join("tools", "phyldog"))
 sys.path.insert(0, os.path.join("tools", "trees"))
+import rescale_bl
+import analyze_tree
 import experiments as exp
 
 def build_config_file(output_dir):
   species_taxa = 10
-  families_number = 5
+  families_number = 100
   config_file = os.path.join(output_dir, "simphy_config.txt")
   with open(config_file, "w") as writer:
     writer.write("// SPECIES TREE\n")
     writer.write("-RS 1 // number of replicates\n")
     writer.write("-sb f:0.00001 // speciations per year\n")
     writer.write("-sl f:" + str(species_taxa) + " // species taxa\n")
-
+    writer.write("-su f:0.000001\n") #subsitution rate
     writer.write("-lb f:0.000005\n") # duplications
 
     writer.write("// POPULATION\n")
@@ -37,12 +39,14 @@ def build_config_file(output_dir):
 def build_indelible_config_file(output_dir):
   config_file = os.path.join(output_dir, "indelible_config.txt")
   with open(config_file, "w") as writer:
-    sites_mean = 200
+    sites_mean = 300
     sites_sigma = 50
     writer.write("[TYPE] NUCLEOTIDE 1\n") # DNA using algorithm 1 
     writer.write("[SETTINGS] [fastaextension] fasta\n")
     writer.write("[SIMPHY-UNLINKED-MODEL] modelA \n")
-    writer.write("  [submodel] HKY $(e:1) // HKY with kappa sampled for every gene family with parameter=1.\n")
+    writer.write("  [submodel] GTR $(rd:2,2,2,2,2,2) // GTR with rates from a Dirichlet (6,16,2,8,20,4) \n")
+    #writer.write("  [submodel] GTR $(rd:6,16,2,8,20,4) // GTR with rates from a Dirichlet (6,16,2,8,20,4) \n")
+    #writer.write("  [statefreq] 0.25 0.25 0.25 0.25  // frequencies for T C A G sampled from a Dirichlet (1,1,1,1)\n")
     writer.write("  [statefreq] $(d:1,1,1,1)  // frequencies for T C A G sampled from a Dirichlet (1,1,1,1)\n")
     
     writer.write("[SIMPHY-PARTITIONS] simple [1.0 modelA $(n:" + str(sites_mean) + "," + str(sites_sigma) + ")]\n")
@@ -69,13 +73,32 @@ def build_mapping(simphy_mapping, phyldog_mapping):
     for species, genes in dico.items():
       phyldog_writer.write(species + ":" + ";".join(genes) + "\n")
 
-def run_simphy(config_file):
+
+
+
+
+def run_simphy(output_dir, config_file):
   commands = []
   commands.append(exp.simphy_exec)
   commands.append("-I")
   commands.append(config_file)
   subprocess.check_call(commands)
 
+  simphy_output_dir = os.path.join(output_dir, "1")
+  species_tree = os.path.join(simphy_output_dir, "s_tree.trees")
+  generations = analyze_tree.check_ultrametric_and_get_length(species_tree)
+  if (False):
+    rescale_bl.rescale_bl(species_tree, species_tree, 1.0 / float(generations))
+    families = []
+    for f in os.listdir(simphy_output_dir):
+      if (f.startswith("g_trees")):
+        families.append("family_" + f.split("g_trees")[1].split(".")[0])
+    for family in families:
+      family_number = family.split("_")[1] 
+      # true trees
+      gene_tree = os.path.join(simphy_output_dir, "g_trees" + family_number + ".trees")
+      rescale_bl.rescale_bl(gene_tree, gene_tree, 100.0 / float(generations))
+    
 def run_indelible(output_dir, config_file, cores):
   commands = []
   seed = "42"
@@ -86,6 +109,10 @@ def run_indelible(output_dir, config_file, cores):
   commands.append(seed)
   commands.append(str(cores))
   subprocess.check_call(commands)
+
+def copy_trim(input_file, output_file):
+  s = open(input_file).read()
+  open(output_file, "w").write(s.replace(" ", ""))
 
 def export_to_family(output_dir):
   print("Start exporting to families format...")
@@ -112,7 +139,7 @@ def export_to_family(output_dir):
     alignment = os.path.join(output_dir, "1", "dataset_" + family_number + ".fasta")
     # true trees
     # alignment
-    shutil.copy(alignment, fam.get_alignment(output_dir, family))
+    copy_trim(alignment, fam.get_alignment(output_dir, family))
     #copy_and_rename_alignment(alignment, fam.get_alignment(out, family), family)
   fam.postprocess_datadir(output_dir)
 
@@ -120,7 +147,7 @@ cores = 1
 output_dir = "../BenoitDatasets/families/simphy_test"
 exp.reset_dir(output_dir)
 config_file = build_config_file(output_dir)
-run_simphy(config_file)
+run_simphy(output_dir, config_file)
 indelible_config_file = build_indelible_config_file(output_dir)
 run_indelible(output_dir, indelible_config_file, cores)
 export_to_family(output_dir)

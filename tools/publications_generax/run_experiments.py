@@ -28,6 +28,8 @@ if (True):
   run_filter.mrbayes = False
   run_filter.rm_mrbayes = False
   run_filter.ALE = False
+  run_filter.pargenes = True
+  run_filter.phyldog = False
   run_filter.eval_joint_ll = False
   run_filter.analyze = True
   common.run_all_reference_methods(datasets, subst_model, cores, run_filter)
