@@ -11,6 +11,7 @@ import time
 import fam
 import sequence_model
 import fast_rf_cells
+from ete3 import Tree
 
 def get_possible_strategies():
   return ["SPR", "EVAL"]
@@ -115,6 +116,10 @@ def get_mode_from_additional_arguments(additional_arguments):
 
 
 def extract_trees(datadir, results_family_dir, run_name, subst_model):
+  src = os.path.join(results_family_dir, "inferred_species_tree.newick")
+  dest = fam.get_species_tree(datadir, None, run_name)
+  shutil.copyfile(src, dest)
+  #
   results_dir = os.path.join(results_family_dir, "results")
   for family in fam.get_families_list(datadir):
     source = os.path.join(results_dir, family, "geneTree.newick")
@@ -123,6 +128,26 @@ def extract_trees(datadir, results_family_dir, run_name, subst_model):
       shutil.copy(source, dest)
     except:
       pass
+
+def av_rf(rf_cell):
+  return float(rf_cell[0]) / float(rf_cell[1])
+
+
+def analyze_species_results(datadir, resultsdir):
+  true_species_tree = Tree(fam.get_species_tree(datadir), format = 1)
+  print(resultsdir)
+  starting_species_tree = Tree(os.path.join(resultsdir, "generax", "starting_species_tree.newick"), format = 1)
+  inferred_species_tree = Tree(os.path.join(resultsdir, "generax", "inferred_species_tree.newick"), format = 1)
+  starting_rooted_rf = true_species_tree.robinson_foulds(starting_species_tree, unrooted_trees = False)
+  starting_unrooted_rf = true_species_tree.robinson_foulds(starting_species_tree, unrooted_trees = True)
+  inferred_rooted_rf = true_species_tree.robinson_foulds(inferred_species_tree, unrooted_trees = False)
+  inferred_unrooted_rf = true_species_tree.robinson_foulds(inferred_species_tree, unrooted_trees = True)
+  print("Starting species tree:")
+  print("  Rooted RF: " + str(av_rf(starting_rooted_rf)))
+  print("  Unrooted RF: " + str(av_rf(starting_unrooted_rf)))
+  print("Inferred species tree:")
+  print("  Rooted RF: " + str(av_rf(inferred_rooted_rf)))
+  print("  Unrooted RF: " + str(av_rf(inferred_unrooted_rf)))
 
 def run(dataset, subst_model, starting_species_tree, starting_gene_tree, cores, additional_arguments, resultsdir, do_analyze = True, do_extract = True):
   run_name = exp.getAndDelete("--run", additional_arguments, "generax-last." +subst_model) 
@@ -144,6 +169,7 @@ def run(dataset, subst_model, starting_species_tree, starting_gene_tree, cores, 
   saved_metrics.save_metrics(datadir, run_name, (time.time() - start), "seqtimes") 
   if (do_extract):
     extract_trees(datadir, os.path.join(resultsdir, "generax"), run_name, subst_model)
+  analyze_species_results(datadir, resultsdir)
   try:
     if (do_analyze):
       fast_rf_cells.analyze(datadir, "all", cores, run_name)
