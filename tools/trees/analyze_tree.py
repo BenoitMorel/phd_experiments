@@ -46,6 +46,17 @@ def is_ultrametric(tree_file, epsilon = 0.001):
           return False
   return True
 
+def check_ultrametric_and_get_length(tree_file, epsilon = 0.001):
+  tree = read_tree(tree_file)
+  ref = -1.0
+  for node in tree.traverse("postorder"):
+    if (node.is_leaf()):
+      if (ref == -1.0):
+        ref = node.get_distance(tree)
+      else:
+        assert(abs(ref - node.get_distance(tree)) < epsilon)
+  return ref
+
 if (__name__ == "__main__"):
   if (len(sys.argv) != 2): 
     print("Syntax: python " + os.path.basename(__file__) + " tree_file") 

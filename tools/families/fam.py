@@ -51,6 +51,8 @@ def get_run_dir(datadir, subst_model = None, run_name = None):
 #####################
 
 def get_species_tree(datadir, subst_model= None, method = "true"):
+  if (method == "random"):
+    return "random"
   if (method == "true"):
     return os.path.join(get_species_dir(datadir), "speciesTree.newick")
   if (subst_model != None):

@@ -15,7 +15,7 @@ def generate_zombi_species(species, output):
   species_parameters_file = os.path.join(output, "SpeciesTreeParameters.tsv")
   with open(species_parameters_file, "w") as writer:
     writer.write("SPECIATION f:0.1\n")
-    writer.write("EXTINCTION f:0.02\n")
+    writer.write("EXTINCTION f:0.0\n")
     writer.write("STOPPING_RULE 1\n")
     writer.write("TOTAL_LINEAGES " + str(species) + "\n")
     writer.write("TOTAL_TIME 1\n")
@@ -41,12 +41,14 @@ def generate_zombi_species(species, output):
 def generate_zombi_genome(families, dup_rate, loss_rate, transfer_rate, output):
   parameters_dir = os.path.join(output, "parameters")
   genome_parameters_file = os.path.join(output, "GenomeTreeParameters.tsv")
+  seed = 1
   with open(genome_parameters_file, "w") as writer:
     writer.write("DUPLICATION f:" + str(float(dup_rate) * float(families)) + "\n")
     writer.write("TRANSFER f:" + str(float(transfer_rate) * float(families)) + "\n")
     writer.write("LOSS f:" + str(float(loss_rate) * float(families)) + "\n")
     writer.write("INVERSION f:0\n")
     writer.write("TRANSLOCATION f:0\n")
+    writer.write("TRANSPOSITION f:0\n")
     writer.write("ORIGINATION f:0\n")
     writer.write("DUPLICATION_EXTENSION f:1\n")
     writer.write("TRANSFER_EXTENSION f:1\n")
@@ -55,23 +57,27 @@ def generate_zombi_genome(families, dup_rate, loss_rate, transfer_rate, output):
     writer.write("TRANSLOCATION_EXTENSION f:0.3\n")
     writer.write("REPLACEMENT_TRANSFER 1\n")
     writer.write("INITIAL_GENOME_SIZE " + str(families) + "\n")
-    writer.write("MIN_GENOME_SIZE 0\n")
+    writer.write("MIN_GENOME_SIZE 5\n")
     writer.write("GENE_LENGTH f:100\n")
     writer.write("INTERGENE_LENGTH 100\n")
     writer.write("PSEUDOGENIZATION 0.5\n")
+    writer.write("SEED " + str(seed) + "\n")
     writer.write("####OUTPUT\n")
     writer.write("EVENTS_PER_BRANCH 1\n")
     writer.write("PROFILES 1\n")
     writer.write("GENE_TREES 1\n")
     writer.write("RECONCILED_TREES 0\n")
     writer.write("VERBOSE 1\n")
-
+    writer.write("RATE_FILE False\n")
+    writer.write("ASSORTATIVE_TRANSFER False\n")
+    seed += 1
   command = []
   command.append("python3")
   command.append(exp.zombi_script)
   command.append("G")
   command.append(genome_parameters_file)
   command.append(output)
+  print(" ".join(command))
   subprocess.check_call(command)
   
 def generate_zombi_sequence(sites, output):
@@ -94,7 +100,7 @@ def generate_zombi_sequence(sites, output):
     writer.write("BETA 0.5\n")
     writer.write("KAPPA 1.0\n")
     writer.write("VERBOSE 1\n")
-  
+    writer.write("SEED 42\n") 
   command = []
   command.append("python3")
   command.append(exp.zombi_script)
@@ -141,11 +147,14 @@ def get_valid_families(zombi):
     if (not "pruned" in genetree_base):
       continue
     genetree = os.path.join(genetrees_dir, genetree_base)
+    print ("is valid " + genetree_base + "?")
     if (os.path.getsize(genetree) < 2):
+      print("Not enough genes")
       continue
     family = genetree_base.split("_")[0] + "_pruned"
     alignment = os.path.join(zombi, "S", family + ".fasta")
     if (not os.path.isfile(alignment)):
+      print("Invalid alignment")
       continue
     families.append(family)
   return families
@@ -167,6 +176,7 @@ def zombi_to_families(zombi, datadir):
   # species tree
   fam.convert_to_phyldog_species_tree(species, fam.get_phyldog_species_tree(datadir)) 
   for family in families:
+    print("Export " + family)
     genetree = os.path.join(genetrees_dir, family + "tree.nwk")
     alignment = os.path.join(zombi, "S", family + ".fasta")
     new_family_dir = fam.get_family_path(datadir, family)
@@ -220,7 +230,7 @@ def generate_datadir(species, families, sites, model, bl_factor, dup_rate, loss_
   dirname += "_sites" + str(sites)
   dirname += "_" + model
   dirname += "_bl" + str(bl_factor)
-  dirname += "_d" + str(dup_rate) + "_l" + str(loss_rate) + "_t" + str(transfer_rate)
+  dirname += "_d" + str(dup_rate) + "_l" + str(loss_rate) + "_t" + str(transfer_rate) + "_p0.0"
   datadir = os.path.join(output, dirname)
   os.makedirs(datadir)
   with open(os.path.join(datadir, "zombi_script_params.txt"), "w") as writer:
@@ -246,7 +256,7 @@ def generate_zombi(species, families, sites, model, bl_factor, dup_rate, loss_ra
 
 if (__name__ == "__main__"): 
   if (len(sys.argv) != 10):
-    print("Syntax: python generate_zombi.py species families sites model bl_factor dup_rate loss_rate transfer_rate output")
+    print("Syntax: python3 generate_zombi.py species families sites model bl_factor dup_rate loss_rate transfer_rate output")
     sys.exit(1)
   species = int(sys.argv[1])
   families = int(sys.argv[2])
