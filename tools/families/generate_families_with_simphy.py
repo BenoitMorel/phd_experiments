@@ -11,7 +11,7 @@ import analyze_tree
 import experiments as exp
 
 def build_config_file(output_dir):
-  species_taxa = 10
+  species_taxa = 20
   families_number = 100 
   config_file = os.path.join(output_dir, "simphy_config.txt")
   with open(config_file, "w") as writer:
@@ -19,8 +19,10 @@ def build_config_file(output_dir):
     writer.write("-RS 1 // number of replicates\n")
     writer.write("-sb f:0.00001 // speciations per year\n")
     writer.write("-sl f:" + str(species_taxa) + " // species taxa\n")
-    writer.write("-su f:0.000002\n") #subsitution rate
+    writer.write("-su f:0.000001\n") #subsitution rate
+    writer.write("-ld f:0.000002\n") # loss
     writer.write("-lb f:0.000005\n") # duplications
+    writer.write("-lt f:0.000003\n") # transfers
 
     writer.write("// POPULATION\n")
     writer.write("-SP f:1000 // population size\n")
@@ -39,7 +41,7 @@ def build_config_file(output_dir):
 def build_indelible_config_file(output_dir):
   config_file = os.path.join(output_dir, "indelible_config.txt")
   with open(config_file, "w") as writer:
-    sites_mean = 100
+    sites_mean = 75
     sites_sigma = 20
     writer.write("[TYPE] NUCLEOTIDE 1\n") # DNA using algorithm 1 
     writer.write("[SETTINGS] [fastaextension] fasta\n")
@@ -137,6 +139,7 @@ def export_to_family(output_dir):
         ok = False
     if (not ok):
       shutil.rmtree(fam.get_family_path(output_dir, family))
+      print("rm " + fam.get_family_path(output_dir, family))
       continue
 
     gene_tree = os.path.join(simphy_output_dir, "g_trees" + family_number + ".trees")
