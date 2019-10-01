@@ -121,12 +121,6 @@ def run_reference_methods(datadir, subst_model, cores, run_filter = RunFilter())
     except Exception as exc:
       printFlush("Failed running STAG\n" + str(exc))
   
-  if (run_filter.phyldog_species):
-    printFlush("Run Phyldog species")
-    try:
-      phyldog.run_phyldog_on_families(datadir, subst_model, cores, True)
-    except Exception as exc:
-      printFlush("Failed running Phyldog species\n" + str(exc))
   
   if (run_filter.speciesrax):
     printFlush("Run SpeciesRax")
@@ -134,6 +128,13 @@ def run_reference_methods(datadir, subst_model, cores, run_filter = RunFilter())
       run_generax.run_generax_on_families(datadir, subst_model, cores, raxml = False, random = True, optimize_species = True)
     except Exception as exc:
       printFlush("Failed running speciesrax\n" + str(exc))
+  
+  if (run_filter.phyldog_species):
+    printFlush("Run Phyldog species")
+    try:
+      phyldog.run_phyldog_on_families(datadir, subst_model, cores, True)
+    except Exception as exc:
+      printFlush("Failed running Phyldog species\n" + str(exc))
 
 
   if (run_filter.mrbayes):
