@@ -36,31 +36,6 @@ jsim_species_to_params[16] = (3, 6)
 
 protein_datasets = ["swiss", "cyano_simulated", "cyano_empirical", "sub_t0.05_s0.5_cyano_empirical", "sub_t0.01_s0.2_ensembl_8880_15"]
 
-def run_all_decostar(datasets):
-  for dataset in datasets:
-    datadir = os.path.join("../BenoitDatasets/families", dataset)
-    run_decostar.run_on_analized_methods(datadir)
-
-def run_generax(dataset, starting_tree, with_transfers, run_name, is_dna, cores = 40, additional_arguments = []):
-  command = []
-  command.append("python")
-  command.append(os.path.join(exp.scripts_root, "generax/launch_generax.py"))
-  command.append(dataset)
-  command.append("SPR")
-  command.append(starting_tree)
-  command.append("normal")
-  command.append(str(cores))
-  if (with_transfers):
-    command.append("--rec-model")
-    command.append("UndatedDTL")
-  command.append("--run")
-  command.append(run_name)
-  command.extend(additional_arguments)
-  if (not is_dna):
-    command.append("--protein")
-  print("-> Running " + " ".join(command))
-  subprocess.check_call(command)
-
 
 def generate_dataset(dataset):
   species = fam.get_param_from_dataset_name("species", dataset)
@@ -83,83 +58,26 @@ def generate_dataset(dataset):
     sys.exit(1)
 
 
-def run_species_methods(datasets, subst_model, cores, run_filter):
-  for dataset in datasets:
-    print("Run reference species methods for " + dataset)
-    dataset_dir = os.path.join("../BenoitDatasets/families", dataset)
-    save_sdtout = sys.stdout
-    redirected_file = os.path.join(dataset_dir, "species_logs_run_all." + subst_model + ".txt")
-    print("Redirected logs to " + redirected_file)
-    sys.stdout.flush()
-    sys.stdout = open(redirected_file, "w")
-    run_all_species.run_reference_methods(dataset_dir, subst_model, cores, run_filter)
-    sys.stdout = save_sdtout
-    print("End of run_all")
-    sys.stdout.flush()
+
 
 def run_reference_methods(dataset, subst_model, cores = 40, run_filter = RunFilter()):
   print("*************************************")
   print("Run reference methods for " + dataset)
   print("*************************************")
   dataset_dir = os.path.join("../BenoitDatasets/families", dataset)
-  starting_trees = 20
-  bs_trees = 100
   save_sdtout = sys.stdout
   redirected_file = os.path.join(dataset_dir, "logs_run_all." + subst_model + ".txt")
   print("Redirected logs to " + redirected_file)
   sys.stdout.flush()
   sys.stdout = open(redirected_file, "w")
-  run_all.run_reference_methods(dataset_dir, subst_model, starting_trees, bs_trees, cores, run_filter)
+  run_all.run_reference_methods(dataset_dir, subst_model, cores, run_filter)
   sys.stdout = save_sdtout
   print("End of run_all")
   sys.stdout.flush()
 
-def run_all_phyldog(datasets, is_dna, cores):
-  print (" run phyldog " + str(is_dna))
-  for dataset in datasets:
-    dataset_dir = os.path.join("../BenoitDatasets/families", dataset)
-    is_dna = (not dataset in protein_datasets)
-    run_phyldog.run_phyldog_on_families(dataset_dir, is_dna, cores)
-
-def run_all_raxml_light(datasets, cores = 40):
-  for dataset in datasets:
-    dataset_dir = os.path.join("../BenoitDatasets/families", dataset)
-    is_dna = (not dataset in protein_datasets)
-    starting_trees = 1
-    bs_trees = 0
-    raxml.run_pargenes_and_extract_trees(dataset_dir, is_dna, starting_trees, bs_trees, cores, "RAxML-light", False)
-
-def run_all_ALE(datasets, is_dna, cores = 40):
-  for dataset in datasets:
-    dataset_dir = os.path.join("../BenoitDatasets/families", dataset)
-    run_ALE.run_exabayes_and_ALE(dataset_dir, is_dna, cores)
-
 def run_all_reference_methods(datasets, subst_model, cores = 40, run_filter = RunFilter()):
   for dataset in datasets:
     run_reference_methods(dataset, subst_model, cores, run_filter)
-
-def run_all_generax_weighted(datasets, cores, weight):
-  for dataset in datasets:
-    is_dna =  (not dataset in protein_datasets)
-    additional_arguments = ["--rec-weight", str(weight)]
-    run_generax(dataset, "RAxML-NG", False, "generax-weighted" + str(weight), is_dna, cores, additional_arguments) 
-
-def run_all_generax(datasets, raxml = True, random = True, DL = True, DTL = True, cores = 40):
-  for dataset in datasets:
-    print("*************************************")
-    print("Run generate dataset for " + dataset)
-    print("*************************************")
-    is_dna = (not dataset in protein_datasets)
-    if (raxml):
-      if (DL):
-        run_generax(dataset, "raxml-ng", False, "generax-dl-raxml", is_dna, cores)
-      if (DTL):
-        run_generax(dataset, "raxml-ng", True, "generax-dtl-raxml", is_dna, cores)
-    if (random):
-      if (DL):
-        run_generax(dataset, "random", False, "generax-dl-random", is_dna, cores)
-      if (DTL):
-        run_generax(dataset, "random", True, "generax-dtl-random", is_dna, cores)
 
 def generate_all_datasets(datasets):
   for dataset in datasets:
@@ -211,23 +129,6 @@ def get_results(dataset):
     print(" ".join(cmd))
     logs = subprocess.check_output(cmd).decode("utf-8")
     return get_rf_from_logs(logs) 
-
-def run_all_analyzes(datasets):
-  for dataset in datasets:
-    print("analyze " + dataset)
-    get_results(dataset)
-
-def compute_likelihoods(datasets, cores = 40):
-  for dataset in datasets:
-    dataset_dir = os.path.join(exp.benoit_datasets_root, "families", dataset)
-    is_protein = dataset in protein_datasets
-    starting_trees = fam.get_ran_methods(dataset_dir)
-    for tree in starting_trees:
-      try:
-        eval_generax_likelihood.eval_and_save_likelihood(dataset_dir, tree, 0, is_protein, cores)  
-        eval_generax_likelihood.eval_and_save_likelihood(dataset_dir, tree, 1, is_protein, cores)  
-      except:
-        print("Failed to eval joint likelihood on " + dataset + " for method " + tree)
 
 def get_metrics_for_datasets(datasets_prefix, metric_name):
   datasets = get_available_datasets(datasets_prefix)

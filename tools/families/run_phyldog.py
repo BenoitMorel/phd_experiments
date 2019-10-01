@@ -18,8 +18,11 @@ def get_phyldog_run_name(opt_species_tree, subst_model):
     res += "Species"
   return fam.get_run_name(res, subst_model)
 
-def get_phyldog_run_dir(datadir, subst_model):
-  return fam.get_run_dir(datadir, subst_model, "phyldog_run")
+def get_phyldog_run_dir(opt_species_tree, datadir, subst_model):
+  if (opt_species_tree):
+    return fam.get_run_dir(datadir, subst_model, "phyldog_species_run")
+  else:
+    return fam.get_run_dir(datadir, subst_model, "phyldog_run")
 
 def clean_phyldog(datadir, subst_model):
   phyldog_run_dir = get_phyldog_run_dir(datadir, subst_model)
@@ -30,12 +33,12 @@ def clean_phyldog(datadir, subst_model):
       os.remove(os.path.join(phyldog_run_dir, f))
 
 def run_phyldog_on_families(datadir, subst_model, cores, opt_species_tree = False):
-  output_dir = get_phyldog_run_dir(datadir, subst_model)
+  output_dir = get_phyldog_run_dir(opt_species_tree, datadir, subst_model)
   shutil.rmtree(output_dir, True)
   os.makedirs(output_dir)
   generate_options(datadir, subst_model, opt_species_tree)
   start = time.time()
-  run_phyldog(datadir, subst_model, cores)
+  run_phyldog(datadir, subst_model, opt_species_tree, cores)
   saved_metrics.save_metrics(datadir, get_phyldog_run_name(opt_species_tree, subst_model), (time.time() - start), "runtimes") 
   saved_metrics.save_metrics(datadir, get_phyldog_run_name(opt_species_tree, subst_model), (time.time() - start), "seqtimes") 
   extract_phyldog(datadir, subst_model, opt_species_tree)
@@ -57,7 +60,7 @@ def add_starting_tree(option_file, tree_path):
     writer.write("use.quality.filters=0\n")
 
 def generate_options(datadir, subst_model, opt_species_tree):
-  phyldog_run_dir = get_phyldog_run_dir(datadir, subst_model)
+  phyldog_run_dir = get_phyldog_run_dir(opt_species_tree, datadir, subst_model)
   prepare_input = os.path.join(phyldog_run_dir, "prepare_input.txt")
   datadir = os.path.abspath(datadir)
   phyldog_run_dir = os.path.abspath(phyldog_run_dir)
@@ -111,12 +114,12 @@ def generate_options(datadir, subst_model, opt_species_tree):
 
 
    
-def run_phyldog(datadir, subst_model, cores):
+def run_phyldog(datadir, subst_model, opt_species_tree, cores):
   cwd = os.getcwd()
   try:
     families_number = len(os.listdir(os.path.join(datadir, "families")))
     cores = str(min(families_number, int(cores)))
-    phyldog_run_dir = get_phyldog_run_dir(datadir, subst_model)
+    phyldog_run_dir = get_phyldog_run_dir(opt_species_tree, datadir, subst_model)
     command = []
     command.append("mpirun")
     command.append("-n")
@@ -136,7 +139,7 @@ def run_phyldog(datadir, subst_model, cores):
 
 
 def extract_phyldog(datadir, subst_model, opt_species_tree):
-  results_dir = os.path.join(get_phyldog_run_dir(datadir, subst_model), "results")
+  results_dir = os.path.join(get_phyldog_run_dir(opt_species_tree, datadir, subst_model), "results")
   families_dir = os.path.join(datadir, "families")
   for family in os.listdir(families_dir):
     phyldog_tree = os.path.join(results_dir, family + ".ReconciledTree")

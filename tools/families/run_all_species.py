@@ -31,45 +31,42 @@ def with_transfers(dataset_dir):
 
 def run_reference_methods(dataset_dir, subst_model, cores, run_filter = SpeciesRunFilter()):
   if (run_filter.pargenes):
-    print("Run pargenes...")
+    printFlush("Run pargenes...")
     sys.stdout.flush()
     raxml.run_pargenes_and_extract_trees(dataset_dir, subst_model, 20, 10, cores, "pargenes", True)
     sys.stdout.flush()
   if (run_filter.stag):
-    print("Run Stag")
+    printFlush("Run Stag")
     try:
       run_stag.run_stag(dataset_dir, subst_model)
     except Exception as exc:
-      print("Failed running STAG")
-      print(exc)
+      printFlush("Failed running STAG\n" + str(exc))
+  
   if (run_filter.phyldog):
-    print("Run Phyldgo")
+    printFlush("Run Phyldgo")
     try:
       run_phyldog.run_phyldog_on_families(dataset_dir, subst_model, cores, True)
     except Exception as exc:
-      print("Failed running Phyldog")
-      print(exc)
+      printFlush("Failed running Phyldog\n" + str(exc))
   if (run_filter.speciesrax):
-    print("Run SpeciesRax")
+    printFlush("Run SpeciesRax")
     try:
       #dtl = with_transfers(dataset_dir)
       run_speciesrax.run_speciesrax_on_families(dataset_dir, subst_model, cores, dl = True, dtl = True)
     except Exception as exc:
-      print("Failed running speciesrax")
-      print(exc)
+      printFlush("Failed running speciesrax\n" + str(exc))
 
   if (run_filter.analyze):
-    print("Run analyze...")
+    printFlush("Run analyze...")
     sys.stdout.flush()
     try:
       species_analyze.analyze(dataset_dir)
     except Exception as exc:
-      print("Failed running analyze")
-      print(exc)
+      printFlush("Failed running analyze\n" + str(exc))
 
 if __name__ == "__main__":
   if (len(sys.argv) != 6):
-    print("syntax: python run_raxml_all.py dataset_dir subst_model starting_trees bs_trees cores")
+    printFlush("syntax: python run_raxml_all.py dataset_dir subst_model starting_trees bs_trees cores")
     sys.exit(1)
   dataset_dir = sys.argv[1]
   subst_model = sys.argv[2]

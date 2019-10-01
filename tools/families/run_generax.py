@@ -5,13 +5,19 @@ sys.path.insert(0, 'scripts')
 import experiments as exp
 import fam
 
-def run_generax_instance(dataset, starting_tree, with_transfers, method, subst_model, per_sp_rates, rec_radius = 0, cores = 40):
+def run_generax_instance(dataset, starting_tree, with_transfers, method, subst_model, per_sp_rates, optimize_species, cores = 40):
   command = []
   command.append("python")
-  command.append(os.path.join(exp.scripts_root, "generax/launch_generax.py"))
+  if (optimize_species):
+    command.append(os.path.join(exp.scripts_root, "generax/launch_speciesrax.py"))
+  else:
+    command.append(os.path.join(exp.scripts_root, "generax/launch_generax.py"))
   command.append(dataset)
   command.append(subst_model)
-  command.append("SPR")
+  if (optimize_species):
+    command.append("random")
+  else:
+    command.append("SPR")
   command.append(starting_tree)
   command.append("normal")
   command.append(str(cores))
@@ -21,14 +27,11 @@ def run_generax_instance(dataset, starting_tree, with_transfers, method, subst_m
   else:
     command.append("--rec-model")
     command.append("UndatedDL")
-
+  if (optimize_species):
+    command.append("--optimize-species-tree")
   if (per_sp_rates):
     command.append("--per-species-rates")
     method = method + "-psr"
-  if (rec_radius > 0):
-    command.append("--rec-radius")
-    command.append(str(rec_radius))
-    method = method + "-rec-radius" + str(rec_radius)
   command.append("--analyze")
   command.append("no")
   command.append("--run")
@@ -37,20 +40,21 @@ def run_generax_instance(dataset, starting_tree, with_transfers, method, subst_m
   subprocess.check_call(command)
     
   
-def run_generax_on_families(dataset_dir, subst_model, cores, raxml = True, random = True, dl = True, dtl = True, rec_radius = 0):
+def run_generax_on_families(dataset_dir, subst_model, cores, raxml = True, random = True, dl = True, dtl = True, optimize_species = False):
   dataset = os.path.basename(dataset_dir)
+  key = "generax"
+  if (optimize_species):
+    key = "speciesrax"
   if (raxml):
     if (dl):
-      run_generax_instance(dataset, "raxml-ng", False, "generax-dl-raxml", subst_model, False, rec_radius, cores)
+      run_generax_instance(dataset, "raxml-ng", False, key + "-dl-raxml", subst_model, False, optimize_species, cores)
     if (dtl):
-      run_generax_instance(dataset, "raxml-ng", True, "generax-dtl-raxml", subst_model, False, rec_radius, cores)
+      run_generax_instance(dataset, "raxml-ng", True, key + "-dtl-raxml", subst_model, False, optimize_species, cores)
   if (random):
     if (dl):
-      run_generax_instance(dataset, "random", False, "generax-dl-random", subst_model, False, rec_radius, cores)
+      run_generax_instance(dataset, "random", False, key + "-dl-random", subst_model, False, optimize_species, cores)
     if (dtl):
-      run_generax_instance(dataset, "random", True, "generax-dtl-random", subst_model, False, rec_radius, cores)
-  #run_generax_instance(dataset, "raxml-ng", False, "generax-dl-raxml", subst_model, True, cores)
-  #run_generax_instance(dataset, "raxml-ng", True, "generax-dtl-raxml", subst_model, True, cores)
+      run_generax_instance(dataset, "random", True, key + "-dtl-random", subst_model, False, optimize_species, cores)
   
 
 if (__name__== "__main__"):

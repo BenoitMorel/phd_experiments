@@ -22,16 +22,18 @@ if (True):
   #datasets.append("jsim_s41_f50_sites75_dna4_bl0.5_d0.3_l0.3_t0.0_p0.0")
   
   #datasets.append("zsim_s19_f150_sites150_dna4_bl0.5_d0.09_l0.1_t0.09_p0.0")
-  datasets.append("simphy_test")
+  datasets.append("100_simphy")
   #common.generate_all_datasets(datasets)
-  run_filter = RunFilter()
+  run_filter = RunFilter(False, True)
   run_filter.mrbayes = False
   run_filter.rm_mrbayes = False
   run_filter.ALE = False
   run_filter.pargenes = True
-  run_filter.phyldog = False
+  run_filter.phyldog = True
   run_filter.eval_joint_ll = False
   run_filter.analyze = True
+  #run_filter.pargenes_starting_trees = 1
+  #run_filter.pargenes_bootstrap_trees = 10
   common.run_all_reference_methods(datasets, subst_model, cores, run_filter)
  
 

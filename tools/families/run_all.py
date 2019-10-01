@@ -12,30 +12,44 @@ import run_generax
 import eval_generax_likelihood
 import fast_rf_cells
 import run_mrbayes
+import run_stag
+import species_analyze
+import run_speciesrax
 
 class RunFilter():
   
-  def __init__(self, raxml = True, pargenes = True, treerecs = True, phyldog = True, notung = True, eccetera = True, deleterious = False, generax = True, mrbayes = True, ALE = True, eval_joint_ll = True, analyze = True):
-    self.raxml = raxml
-    self.pargenes = pargenes
-    self.treerecs = treerecs
-    self.phyldog = phyldog
-    self.notung = notung
-    self.eccetera = eccetera
-    self.deleterious = deleterious
-    self.generax = generax
-    self.generaxrec = 0
-    self.mrbayes = mrbayes
-    self.ALE = ALE
-    self.eval_joint_ll = eval_joint_ll
-    self.analyze = analyze
+  def __init__(self, gene_inference = True, species_inference = False):
+    self.disable_all()
+    if (gene_inference):
+      self.raxml = True
+      self.pargenes = True
+      self.treerecs = True
+      self.phyldog = True
+      self.notung = True
+      self.eccetera = True
+      self.generax = True
+      self.mrbayes = True
+      self.ALE = True
+      self.eval_joint_ll = True
+      self.analyze = True
+      self.rm_mrbayes = True
+    if (species_inference):
+      self.raxml = True 
+      self.pargenes = True
+      self.stag = True
+      self.phyldog_species = True
+      self.speciesrax = True
+      self.analyze_species = True
+
+    self.pargenes_starting_trees = 20
+    self.pargenes_bootstrap_trees = 100
     self.mb_runs = 2  
     self.mb_chains = 4 
     self.mb_frequencies = 1000
     self.mb_generations = 1000000
     self.mb_burnin = 100
+    self.deleterious = False
     self.debug = False
-    self.rm_mrbayes = True
     self.dated_ALE = False
 
   def disable_all(self):
@@ -47,139 +61,147 @@ class RunFilter():
     self.eccetera = False
     self.deleterious = False
     self.generax = False
-    self.generaxrec = 0
     self.ALE = False  
     self.eval_joint_ll = False
     self.analyze = False
     self.mrbayes = False
     self.dated_ALE = False
+    self.stag = False
+    self.phyldog_species = False
+    self.speciesrax = False
+    self.analyze_species = False
 
-def run_reference_methods(datadir, subst_model, starting_trees, bs_trees, cores, run_filter = RunFilter()):
+
+def printFlush(msg):
+  print(msg)
+  sys.stdout.flush()
+
+def run_reference_methods(datadir, subst_model, cores, run_filter = RunFilter()):
   if (run_filter.raxml):
-    print("Run pargenes light...")
-    sys.stdout.flush()
+    printFlush("Run pargenes light...")
     raxml.run_pargenes_and_extract_trees(datadir, subst_model, 1, 0, cores, "RAxML-light", False)
-    sys.stdout.flush()
+  
   if (run_filter.pargenes):
-    print("Run pargenes and extract trees...")
-    sys.stdout.flush()
-    raxml.run_pargenes_and_extract_trees(datadir, subst_model, starting_trees, bs_trees, cores)
-    sys.stdout.flush()
+    printFlush("Run pargenes and extract trees...")
+    raxml.run_pargenes_and_extract_trees(datadir, subst_model, run_filter.pargenes_starting_trees, run_filter.pargenes_bootstrap_trees, cores)
+  
   if (run_filter.treerecs):
-    print("Run treerecs...")
-    sys.stdout.flush()
+    printFlush("Run treerecs...")
     try:
       treerecs.run_treerecs_on_families(datadir, subst_model, cores)
     except Exception as exc:
-      print("Failed running Treerecs")
-      print(exc)
-    sys.stdout.flush()
+      printFlush("Failed running Treerecs\n" + str(exc))
+  
   if (run_filter.phyldog):
-    print("Run phyldog...")
-    sys.stdout.flush()
+    printFlush("Run phyldog...")
     try:
       phyldog.run_phyldog_on_families(datadir, subst_model, cores)
     except Exception as exc:
-      print("Failed running Phyldog")
-      print(exc)
+      printFlush("Failed running Phyldog\n" + str(exc))
+  
   if (run_filter.notung):
-    print("Run notung...")
-    sys.stdout.flush()
+    printFlush("Run notung...")
     threshold = 90
     try:
       notung.run_notung_on_families(datadir, subst_model,  threshold, cores)
     except Exception as exc:
-      print("Failed running Notung")
-      print(exc)
+      printFlush("Failed running Notung\n" + str(exc))
 
   if (run_filter.generax):
-    print("Run Generax")
-    sys.stdout.flush()
+    printFlush("Run Generax")
     try:
       run_generax.run_generax_on_families(datadir, subst_model, cores)
     except Exception as exc:
-      print("Failed running GeneRax")
-      print(exc)
-    sys.stdout.flush()
-  if (run_filter.generaxrec > 0):
-    print("Run Generax Rec")
-    sys.stdout.flush()
+      printFlush("Failed running GeneRax\n" + str(exc))
+  
+  if (run_filter.stag):
+    printFlush("Run Stag")
     try:
-      run_generax.run_generax_on_families(datadir, subst_model, cores, True, True, True, True, run_filter.generaxrec)
+      run_stag.run_stag(datadir, subst_model)
     except Exception as exc:
-      print("Failed running GeneRax")
-      print(exc)
-    sys.stdout.flush()
+      printFlush("Failed running STAG\n" + str(exc))
+  
+  if (run_filter.phyldog_species):
+    printFlush("Run Phyldog species")
+    try:
+      phyldog.run_phyldog_on_families(datadir, subst_model, cores, True)
+    except Exception as exc:
+      printFlush("Failed running Phyldog species\n" + str(exc))
+  
+  if (run_filter.speciesrax):
+    printFlush("Run SpeciesRax")
+    try:
+      run_generax.run_generax_on_families(datadir, subst_model, cores, raxml = False, random = True, optimize_species = True)
+    except Exception as exc:
+      printFlush("Failed running speciesrax\n" + str(exc))
+
+
   if (run_filter.mrbayes):
-    print("Run mrbayes...")
-    sys.stdout.flush()
+    printFlush("Run mrbayes...")
     try:
       run_mrbayes.run_mrbayes_on_families(datadir, run_filter.mb_generations, run_filter.mb_frequencies, run_filter.mb_runs, run_filter.mb_chains, run_filter.mb_burnin, subst_model, cores)
     except Exception as exc:
-      print("Failed running mrbayes")
-      print(exc)
+      printFlush("Failed running mrbayes\n" + str(exc))
+  
   if (run_filter.ALE):
-    print("Run ALE...")
-    sys.stdout.flush()
+    printFlush("Run ALE...")
     try:
       run_ALE.run_ALE(datadir, subst_model, cores)
     except Exception as exc:
-      print("Failed running ALE")
-      print(exc)
-    sys.stdout.flush()
+      printFlush("Failed running ALE\n" + str(exc))
   if (run_filter.dated_ALE):
-    print("Run dated ALE...")
-    sys.stdout.flush()
+    printFlush("Run dated ALE...")
     try:
       run_ALE.run_ALE(datadir, subst_model, cores, True)
     except Exception as exc:
-      print("Failed running dated ALE")
-      print(exc)
-    sys.stdout.flush()
+      printFlush("Failed running dated ALE\n" + str(exc))
   if (run_filter.eccetera):
-    print("Run eccetera...")
-    sys.stdout.flush()
+    printFlush("Run eccetera...")
     threshold = 70
     try:
       run_eccetera.run_eccetera_on_families(datadir, subst_model,  threshold, cores)
     except Exception as exc:
-      print("Failed running Eccetera")
-      print(exc)
+      printFlush("Failed running Eccetera\n" + str(exc))
+  
   if (run_filter.deleterious):
-    print("Run deleterious...")
-    sys.stdout.flush()
+    printFlush("Run deleterious...")
     try:
       run_deleterious.run_deleterious_on_families(datadir, subst_model, cores)
     except Exception as exc:
-      print("Failed running Deleterious")
-      print(exc)
+      printFlush("Failed running Deleterious\n" + str(exc))
+  
   if (run_filter.eval_joint_ll):
-    print("Evaluating joint likelihoods...")
+    printFlush("Evaluating joint likelihoods...")
     try:
       eval_generax_likelihood.eval_and_save_likelihood(datadir, "all", False, subst_model, cores)  
       eval_generax_likelihood.eval_and_save_likelihood(datadir, "all", True, subst_model, cores)  
     except Exception as exc:
-      print("Failed evaluating joint likelihoods")
-      print(exc)
-    sys.stdout.flush()
+      printFlush("Failed evaluating joint likelihoods\n" + str(exc))
+  
   if (run_filter.analyze):
-    print("Run analyze...")
-    sys.stdout.flush()
+    printFlush("Run analyze...")
     try:
       fast_rf_cells.analyze(datadir, "all", cores)
     except Exception as exc:
-      print("Failed running analyze")
-      print(exc)
+      printFlush("Failed running analyze\n" + str(exc))
+  
+  if (run_filter.analyze_species):
+    printFlush("Run analyze species...")
+    try:
+      species_analyze.analyze(datadir)
+    except Exception as exc:
+      printFlush("Failed running analyze\n" + str(exc))
+  
   if (run_filter.rm_mrbayes):
     try:
-      print("Removing mrbayes files...")
+      printFlush("Removing mrbayes files...")
       run_mrbayes.remove_mrbayes_run(datadir, subst_model)
     except:
-      pass
+      printFlush("Failed removing mrbayes files\n", str(exc))
 
 if __name__ == "__main__":
   if (len(sys.argv) != 6):
-    print("syntax: python run_raxml_all.py datadir subst_model starting_trees bs_trees cores")
+    printFlush("syntax: python run_raxml_all.py datadir subst_model starting_trees bs_trees cores")
     sys.exit(1)
   datadir = sys.argv[1]
   subst_model = sys.argv[2]
