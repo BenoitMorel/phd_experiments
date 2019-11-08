@@ -8,7 +8,7 @@ import fam
 def run_speciesrax_instance(dataset, starting_tree, with_transfers, method, subst_model, cores = 40):
   command = []
   command.append("python")
-  command.append(os.path.join(exp.scripts_root, "speciesrax/launch_speciesrax.py"))
+  command.append(os.path.join(exp.scripts_root, "generax/launch_speciesrax.py"))
   command.append(dataset)
   command.append(subst_model)
   command.append("random")

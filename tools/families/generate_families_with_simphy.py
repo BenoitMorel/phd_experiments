@@ -14,14 +14,16 @@ class SimphyParameters():
   def __init__(self):
     self.population = 10000
     self.speciations_per_year = 0.00001
-    self.species_taxa = 40
+    self.species_taxa = 30
     self.families_number = 100
     self.substitution_rate = 0.1
-    
-    self.loss_rate = 0.2
-    self.dup_rate = 0.4
-    self.transfers_rate = 0.2
-    self.sites =  100
+    self.bl = 1.0    
+    self.loss_rate = 0.1
+    self.dup_rate = 0.1
+    self.transfer_rate = 0.0
+    self.sites = 50
+    self.model = "GTR"
+    self.seed = 42
 
 def build_config_file(parameters, output_dir):
   config_file = os.path.join(output_dir, "simphy_config.txt")
@@ -30,10 +32,10 @@ def build_config_file(parameters, output_dir):
     writer.write("-RS 1 // number of replicates\n")
     writer.write("-sb f:" + str(parameters.speciations_per_year) + "\n")
     writer.write("-sl f:" + str(parameters.species_taxa) + " // species taxa\n")
-    writer.write("-su f:" + str(parameters.substitution_rate * parameters.speciations_per_year) + "\n") #subsitution rate
+    writer.write("-su f:" + str(parameters.substitution_rate * parameters.bl * parameters.speciations_per_year) + "\n") #subsitution rate
     writer.write("-ld f:" + str(parameters.loss_rate * parameters.speciations_per_year) + "\n") # loss
     writer.write("-lb f:" + str(parameters.dup_rate * parameters.speciations_per_year) + "\n") # duplications
-    writer.write("-lt f:" + str(parameters.transfers_rate * parameters.speciations_per_year) + "\n") # transfers
+    writer.write("-lt f:" + str(parameters.transfer_rate * parameters.speciations_per_year) + "\n") # transfers
 
     writer.write("// POPULATION\n")
     writer.write("-SP f:" + str(parameters.population) + "\n")
@@ -42,7 +44,7 @@ def build_config_file(parameters, output_dir):
     writer.write("-rl f:" + str(parameters.families_number) + " // locus (gene family) per replicate\n")
 
     writer.write("// GENERAL\n")
-    writer.write("-cs 42 // random seed\n")
+    writer.write("-cs " + str(parameters.seed) + "\n") 
     writer.write("-O " + str(output_dir) + " // output directory\n")
     writer.write("-OM 1 // output the mappings\n")
     writer.write("-OC 1 // log the configuration file\n")
@@ -57,9 +59,12 @@ def build_indelible_config_file(parameters, output_dir):
     writer.write("[TYPE] NUCLEOTIDE 1\n") # DNA using algorithm 1 
     writer.write("[SETTINGS] [fastaextension] fasta\n")
     writer.write("[SIMPHY-UNLINKED-MODEL] modelA \n")
-    writer.write("  [submodel] GTR $(rd:2,2,2,2,2,2) // GTR with rates from a Dirichlet  \n")
-    writer.write("  [statefreq] $(d:1,1,1,1)  // frequencies for T C A G sampled from a Dirichlet (1,1,1,1)\n")
-    
+    if ("GTR" == parameters.model):
+      writer.write("  [submodel] GTR $(rd:2,2,2,2,2,2) // GTR with rates from a Dirichlet  \n")
+      writer.write("  [statefreq] $(d:1,1,1,1)  // frequencies for T C A G sampled from a Dirichlet (1,1,1,1)\n")
+    else:
+      assert(False)
+
     writer.write("[SIMPHY-PARTITIONS] simple [1.0 modelA $(n:" + str(sites_mean) + "," + str(sites_sigma) + ")]\n")
 
     writer.write("[SIMPHY-EVOLVE] 1 dataset \n")
@@ -166,32 +171,50 @@ def export_to_family(output_dir):
     #copy_and_rename_alignment(alignment, fam.get_alignment(out, family), family)
   fam.postprocess_datadir(output_dir)
 
-def get_output_dir(parameters):
-  res = "../BenoitDatasets/families/"
-  res += "ssim"
+def get_output_dir(parameters, root_output):
+  res = "ssim"
   res += "_s" + str(parameters.species_taxa)
   res += "_f" + str(parameters.families_number)
   res += "_sites" + str(parameters.sites)
-  res += "_dna"
+  res += "_" + str(parameters.model).replace("+", "")
+  res += "_bl" + str(parameters.bl)
   res += "_d" + str(parameters.dup_rate)
   res += "_l" + str(parameters.loss_rate)
-  res += "_t" + str(parameters.transfers_rate)
+  res += "_t" + str(parameters.transfer_rate)
   res += "_p0.0"
-  return res
+  res += "_pop" + str(parameters.population)
+  return os.path.join(root_output, res)
+
+def generate_from_parameters(parameters, root_output):
+  cores = 1
+  output_dir = get_output_dir(parameters, root_output)
+  exp.reset_dir(output_dir)
+  config_file = build_config_file(parameters, output_dir)
+  run_simphy(output_dir, config_file)
+  indelible_config_file = build_indelible_config_file(parameters, output_dir)
+  run_indelible(output_dir, indelible_config_file, cores)
+  export_to_family(output_dir)
+  print("Done! output in " + output_dir) 
+
+def generate_simphy(species, families, sites, model, bl_factor, dup_rate, loss_rate, transfer_rate, perturbation, root_output, seed):
+  p = SimphyParameters()
+  p.species_taxa = int(species)
+  p.families_number = int(families)
+  p.sites = int(sites)
+  p.model = model
+  p.bl = float(bl_factor)
+  p.dup_rate = float(dup_rate)
+  p.loss_rate = float(loss_rate)
+  p.transfer_rate = float(transfer_rate)
+  p.seed = int(seed)
+  print(perturbation)
+  assert(float(perturbation) == 0.0)
+  generate_from_parameters(p, root_output)
 
 
-parameters = SimphyParameters()
-cores = 1
-output_dir = get_output_dir(parameters)
-exp.reset_dir(output_dir)
-config_file = build_config_file(parameters, output_dir)
-run_simphy(output_dir, config_file)
-indelible_config_file = build_indelible_config_file(parameters, output_dir)
-run_indelible(output_dir, indelible_config_file, cores)
-export_to_family(output_dir)
-print("Done! output in " + output_dir) 
-
-
+if (__name__ == "__main__"): 
+  parameters = SimphyParameters()
+  generate_from_parameters(parameters, exp.families_datasets_root)
 
 
 

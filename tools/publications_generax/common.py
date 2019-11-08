@@ -10,6 +10,7 @@ sys.path.insert(0, os.path.join("tools", "families"))
 import fam
 import generate_families_with_jprime as jprime
 import generate_families_with_zombi as zombi
+import generate_families_with_simphy as simphy
 import run_raxml_supportvalues as raxml
 import run_ALE
 from run_all import RunFilter
@@ -53,6 +54,10 @@ def generate_dataset(dataset):
     jprime.generate_jprime(species_internal, families, sites, model, bl_factor, d, l, t, p, output, seed) 
   elif (dataset.startswith("zsim")):
     zombi.generate_zombi(species, families, sites, model, bl_factor, d, l, t, output) 
+  elif (dataset.startswith("ssim")):
+    seed = 42
+    model = "GTR"
+    simphy.generate_simphy(species, families, sites, model, bl_factor, d, l, t, p, output, seed) 
   else:
     print("Unknown simulator for dataset " + dataset)
     sys.exit(1)

@@ -8,6 +8,10 @@ import species_analyze
 import run_speciesrax
 import run_phyldog
 
+def printFlush(msg):
+  print(msg)
+  sys.stdout.flush()
+
 class SpeciesRunFilter():
   
   def __init__(self, pargenes = True, stag = True, phyldog = True, speciesrax = True, analyze = True):
@@ -24,7 +28,7 @@ class SpeciesRunFilter():
     self.stag = False
     self.phyldog = False
     self.speciesrax = False
-    self.analyze = False
+    #self.analyze = False
 
 def with_transfers(dataset_dir):
   return float(dataset_dir.split("_")[-2][1:]) != 0.0
@@ -33,7 +37,7 @@ def run_reference_methods(dataset_dir, subst_model, cores, run_filter = SpeciesR
   if (run_filter.pargenes):
     printFlush("Run pargenes...")
     sys.stdout.flush()
-    raxml.run_pargenes_and_extract_trees(dataset_dir, subst_model, 20, 10, cores, "pargenes", True)
+    raxml.run_pargenes_and_extract_trees(dataset_dir, subst_model, 2, 2, cores, "pargenes", True)
     sys.stdout.flush()
   if (run_filter.stag):
     printFlush("Run Stag")

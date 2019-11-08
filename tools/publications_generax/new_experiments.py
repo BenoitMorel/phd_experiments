@@ -28,31 +28,22 @@ def run_species_methods(datasets, subst_model, cores, run_filter):
 
 if (True):
   datasets = []
-  subst_model = "GTR+G"
-  #datasets.append("jsim_s12_f50_sites250_dna4_bl0.5_d0.2_l0.2_t0.0_p0.0")
-  #datasets.append("jsimdtl_s12_f50_sites250_dna4_bl0.5_d0.1_l0.2_t0.1_p0.0")
-  #datasets.append("jsim_s19_f50_sites250_dna4_bl0.5_d0.2_l0.2_t0.0_p0.0")
-  #datasets.append("jsimdtl_s19_f50_sites250_dna4_bl0.5_d0.1_l0.2_t0.1_p0.0")
-  #datasets.append("jsim_s27_f50_sites250_dna4_bl0.5_d0.2_l0.2_t0.0_p0.0")
-  #datasets.append("jsimdtl_s27_f50_sites250_dna4_bl0.5_d0.1_l0.2_t0.1_p0.0")
-  #datasets.append("jsim_s41_f50_sites250_dna4_bl0.5_d0.2_l0.2_t0.0_p0.0")
-  #datasets.append("jsimdtl_s41_f50_sites250_dna4_bl0.5_d0.1_l0.2_t0.1_p0.0")
-  
-  #datasets.append("jsim_s19_f150_sites75_dna4_bl0.5_d0.2_l0.2_t0.0_p0.0")
-  #datasets.append("jsimdtl_s19_f150_sites75_dna4_bl0.5_d0.1_l0.2_t0.1_p0.0")
-  #datasets.append("jsim_s12_f150_sites75_dna4_bl0.5_d0.2_l0.2_t0.0_p0.0")
-  #datasets.append("jsimdtl_s12_f150_sites75_dna4_bl0.5_d0.1_l0.2_t0.1_p0.0")
-  #datasets.append("jsim_s27_f150_sites75_dna4_bl0.5_d0.2_l0.2_t0.0_p0.0")
-  #datasets.append("jsimdtl_s27_f150_sites75_dna4_bl0.5_d0.1_l0.2_t0.1_p0.0")
-  #datasets.append("jsim_s41_f150_sites75_dna4_bl0.5_d0.2_l0.2_t0.0_p0.0")
-  #datasets.append("jsimdtl_s41_f150_sites75_dna4_bl0.5_d0.1_l0.2_t0.1_p0.0")
+  subst_model = "GTR"
+  for s in range(5, 55, 5):
+    datasets.append("ssim_s" + str(s) + "_f100_sites100_GTR_bl1.0_d0.1_l0.1_t0.1_p0.0_pop10000")
 
-  #datasets.append("cyano_simulated")
+  #for sites in range(50, 175, 25):
+  #  if (sites != 100):
+  #    datasets.append("ssim_s20_f100_sites" + str(sites) + "_GTR_bl1.0_d0.1_l0.1_t0.1_p0.0_pop10000")
+
 
 
   #common.generate_all_datasets(datasets)
   species_run_filter = SpeciesRunFilter()
-  common.run_species_methods(datasets, subst_model, cores = cores, run_filter = species_run_filter)
+  species_run_filter.disable_all()
+  species_run_filter.phyldog = True
+  #species_run_filter.pargenes = False
+  run_species_methods(datasets, subst_model, cores = cores, run_filter = species_run_filter)
 
 
 
