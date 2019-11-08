@@ -279,6 +279,10 @@ def get_param_from_dataset_name(parameter, dataset):
     return dataset.split("_")[8][1:]
   elif (parameter == "perturbation"):
     return dataset.split("_")[9][1:]
+  elif (parameter == "population"):
+    return dataset.split("_")[10][3:]
+  elif (parameter == "seed"):
+    return dataset.split("_")[11][4:]
   elif (parameter == "tl_ratio"):
     t = get_param_from_dataset_name("transfer_rate", dataset)
     l = get_param_from_dataset_name("loss_rate", dataset)

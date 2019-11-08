@@ -55,7 +55,7 @@ def generate_dataset(dataset):
   elif (dataset.startswith("zsim")):
     zombi.generate_zombi(species, families, sites, model, bl_factor, d, l, t, output) 
   elif (dataset.startswith("ssim")):
-    seed = 42
+    seed = fam.get_param_from_dataset_name("seed", dataset)
     model = "GTR"
     simphy.generate_simphy(species, families, sites, model, bl_factor, d, l, t, p, output, seed) 
   else:

@@ -56,7 +56,8 @@ def run_reference_methods(dataset_dir, subst_model, cores, run_filter = SpeciesR
     printFlush("Run SpeciesRax")
     try:
       #dtl = with_transfers(dataset_dir)
-      run_speciesrax.run_speciesrax_on_families(dataset_dir, subst_model, cores, dl = True, dtl = True)
+      run_speciesrax.run_speciesrax_on_families(dataset_dir, subst_model, cores, dl = True, dtl = True, slow = False)
+      run_speciesrax.run_speciesrax_on_families(dataset_dir, subst_model, cores, dl = True, dtl = True, slow = True)
     except Exception as exc:
       printFlush("Failed running speciesrax\n" + str(exc))
 

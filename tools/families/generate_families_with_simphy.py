@@ -183,6 +183,7 @@ def get_output_dir(parameters, root_output):
   res += "_t" + str(parameters.transfer_rate)
   res += "_p0.0"
   res += "_pop" + str(parameters.population)
+  res += "_seed" + str(parameters.seed)
   return os.path.join(root_output, res)
 
 def generate_from_parameters(parameters, root_output):

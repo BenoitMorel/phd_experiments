@@ -35,6 +35,7 @@ def get_default_value(metric_name):
 
 def plot(datasets, x_param, methods, subst_model, metric_name, output):
   df = {}
+  datasets.sort(key = lambda t: float(fam.get_param_from_dataset_name(x_param, t)))
   f, ax = plt.subplots(1)
   df[x_param] = []
   for method in methods:
@@ -114,7 +115,7 @@ def main_plot_metrics():
   fixed_params_values_dtl["families"] = "100"
   fixed_params_values_dtl["sites"] = "100"
   
-  methods = ["phyldogspecies", "stag", "speciesrax-dl-raxml", "speciesrax-dtl-raxml"]
+  methods = ["phyldogspecies", "stag", "speciesrax-dl-raxml", "speciesrax-dtl-raxml", "speciesrax-dl-raxml-slow", "speciesrax-dtl-raxml-slow"]
   subst_model = "GTR"
   metric_names = ["species_unrooted_rf", "runtimes"]
 
