@@ -132,8 +132,8 @@ def main_plot_metrics():
   fixed_params_values_dtl["families"] = "100"
   fixed_params_values_dtl["sites"] = "100"
   
-  #methods = ["phyldogspecies", "stag", "speciesrax-dtl-raxml-NJ", "speciesrax-dtl-raxml-slow"]
-  methods = ["speciesrax-dtl-raxml-slow", "speciesrax-dtl-raxml-slow-NJ"]
+  methods = ["phyldogspecies", "duptree", "stag", "astral", "speciesrax-dtl-raxml-NJ", "speciesrax-dtl-raxml-NJ-slow"]
+  #methods = ["speciesrax-dtl-raxml-slow", "speciesrax-dtl-raxml-slow-NJ"]
   subst_model = "GTR"
   metric_names = ["species_unrooted_rf", "runtimes"]
 

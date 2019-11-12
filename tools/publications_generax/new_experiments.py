@@ -47,7 +47,7 @@ if (True):
   #common.generate_all_datasets(datasets)
   species_run_filter = SpeciesRunFilter()
   species_run_filter.disable_all()
-  species_run_filter.stag = True
+  species_run_filter.astral = True
   #species_run_filter.speciesraxslow = True
   #species_run_filter.pargenes = False
   run_species_methods(datasets, subst_model, cores = cores, run_filter = species_run_filter)

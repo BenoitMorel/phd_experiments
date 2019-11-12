@@ -8,6 +8,8 @@ import species_analyze
 import run_speciesrax
 import run_phyldog
 import run_duptree
+import run_guenomu
+import run_astral_multi
 
 def printFlush(msg):
   print(msg)
@@ -19,19 +21,23 @@ class SpeciesRunFilter():
     self.pargenes = True
     self.stag = True
     self.duptree = True
+    self.astral = True
     self.speciesraxfast = True
     self.speciesraxslow = True
     self.phyldog = True
+    self.guenomu = False
     self.analyze = True
-
+    
 
   def disable_all(self):
     self.pargenes = False
     self.stag = False
     self.phyldog = False
     self.duptree = False
+    self.astral = False
     self.speciesraxfast = False
     self.speciesraxslow = False
+    self.guenomu = False
     #self.analyze = False
 
 def with_transfers(dataset_dir):
@@ -55,6 +61,12 @@ def run_reference_methods(dataset_dir, subst_model, cores, run_filter = SpeciesR
       run_duptree.run_duptree(dataset_dir, subst_model)
     except Exception as exc:
       printFlush("Failed running DupTree\n" + str(exc))
+  if (run_filter.astral):
+    printFlush("Run Astral")
+    try:
+      run_astral_multi.run_astral(dataset_dir, subst_model)
+    except Exception as exc:
+      printFlush("Failed running Astral\n" + str(exc))
   if (run_filter.speciesraxfast):
     printFlush("Run SpeciesRaxFast")
     try:
@@ -73,6 +85,12 @@ def run_reference_methods(dataset_dir, subst_model, cores, run_filter = SpeciesR
       run_phyldog.run_phyldog_on_families(dataset_dir, subst_model, cores, True)
     except Exception as exc:
       printFlush("Failed running Phyldog\n" + str(exc))
+  if (run_filter.guenomu):
+    printFlush("Run Guenomu")
+    try:
+      run_guenomu.run_guenomu(dataset_dir, subst_model, cores)
+    except Exception as exc:
+      printFlush("Failed running Guenomu\n" + str(exc))
 
   if (run_filter.analyze):
     printFlush("Run analyze...")
