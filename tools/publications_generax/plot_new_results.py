@@ -33,22 +33,29 @@ def get_default_value(metric_name):
     return 1.0
   return -1.0
 
-def plot(datasets, x_param, methods, subst_model, metric_name, output):
+def plot(grouped_datasets, x_param, methods, subst_model, metric_name, output):
   df = {}
-  datasets.sort(key = lambda t: float(fam.get_param_from_dataset_name(x_param, t)))
+  datasets_keys = []
+  for key in grouped_datasets:
+    datasets_keys.append(key)
+  datasets_keys.sort(key = lambda t: float(fam.get_param_from_dataset_name(x_param, t)))
   f, ax = plt.subplots(1)
   df[x_param] = []
   for method in methods:
     df[method] = []
-  for dataset in datasets:
+  for dataset_key in datasets_keys:
+    average = 0.0
+    for dataset in grouped_datasets[dataset_key]:
+      average += float(fam.get_param_from_dataset_name(x_param, dataset))
+    average /= float(len(grouped_datasets[dataset_key]))
     # value for the varying parameter
-    df[x_param].append(float(fam.get_param_from_dataset_name(x_param, dataset)))
+    df[x_param].append(average)
     dataset_dir = os.path.join(exp.families_datasets_root, dataset)
     metrics = saved_metrics.get_metrics(dataset_dir, metric_name)
     print(metrics)
     for method in methods:
       key = (method + "." + subst_model).lower()
-      if (key in metrics):
+      if (metrics != None and key in metrics):
         df[method].append(float(metrics[key])) 
       else:
         df[method].append(float(get_default_value(metric_name)))
@@ -61,7 +68,7 @@ def plot(datasets, x_param, methods, subst_model, metric_name, output):
     #plt.plot(x_param, method, data=df, marker='.', linestyle = "solid", linewidth=2, label = method, markersize=12)
     plt.plot(x_param, method, data=df, marker='.', linewidth=2, label = method, markersize=12)
   plt.xlabel(x_param)
-  plt.ylabel("plop")
+  plt.ylabel(metric_name)
   plt.legend()
   plt.savefig(output)
   print("Saving result in " + output)
@@ -84,14 +91,24 @@ def get_relevant_datasets(datasets, param, fixed_params_values):
       res.append(dataset)
   return res
 
+def merge_datasets_per_seed(datasets):
+  grouped_datasets = {}
+  for dataset in datasets:
+    key = dataset.split("seed")[0]
+    if (not key in grouped_datasets):
+      grouped_datasets[key] = []
+    grouped_datasets[key].append(dataset)
+  return grouped_datasets
+
 def get_plot_name(param, subst_model, metric_name):
   return "plot_" + metric_name.replace("_", "-") + "_" + param + "_" + subst_model
 
 def plot_metric(param, fixed_params_values, methods, subst_model, metric_name, datasets):
   relevant_datasets = get_relevant_datasets(datasets, param, fixed_params_values)
+  grouped_datasets = merge_datasets_per_seed(relevant_datasets)
   plot_name = get_plot_name(param, subst_model, metric_name)
   print(plot_name)
-  plot(relevant_datasets, param, methods, subst_model, metric_name, plot_name + ".png")
+  plot(grouped_datasets, param, methods, subst_model, metric_name, plot_name + ".png")
   
 
 
@@ -115,7 +132,8 @@ def main_plot_metrics():
   fixed_params_values_dtl["families"] = "100"
   fixed_params_values_dtl["sites"] = "100"
   
-  methods = ["phyldogspecies", "stag", "speciesrax-dl-raxml", "speciesrax-dtl-raxml", "speciesrax-dl-raxml-slow", "speciesrax-dtl-raxml-slow"]
+  #methods = ["phyldogspecies", "stag", "speciesrax-dtl-raxml-NJ", "speciesrax-dtl-raxml-slow"]
+  methods = ["speciesrax-dtl-raxml-slow", "speciesrax-dtl-raxml-slow-NJ"]
   subst_model = "GTR"
   metric_names = ["species_unrooted_rf", "runtimes"]
 

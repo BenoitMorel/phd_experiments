@@ -65,7 +65,8 @@ def build_indelible_config_file(parameters, output_dir):
     else:
       assert(False)
 
-    writer.write("[SIMPHY-PARTITIONS] simple [1.0 modelA $(n:" + str(sites_mean) + "," + str(sites_sigma) + ")]\n")
+    #writer.write("[SIMPHY-PARTITIONS] simple [1.0 modelA $(n:" + str(sites_mean) + "," + str(sites_sigma) + ")]\n")
+    writer.write("[SIMPHY-PARTITIONS] simple [1.0 modelA $(U:10," + str(int(parameters.sites) * 2) + ")]\n")
 
     writer.write("[SIMPHY-EVOLVE] 1 dataset \n")
 

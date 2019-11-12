@@ -11,7 +11,8 @@ def run_speciesrax_instance(dataset, starting_tree, with_transfers, method, subs
   command.append(os.path.join(exp.scripts_root, "generax/launch_speciesrax.py"))
   command.append(dataset)
   command.append(subst_model)
-  command.append("random")
+  command.append("NJ")
+  method += "-NJ"
   command.append(starting_tree)
   command.append("normal")
   command.append(str(cores))

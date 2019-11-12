@@ -2,11 +2,13 @@ import os
 import sys
 import subprocess
 import shutil
+import time
 sys.path.insert(0, 'scripts')
 sys.path.insert(0, 'tools/stag')
 sys.path.insert(0, 'tools/trees')
 import experiments as exp
 import stag
+import saved_metrics
 import fam
 
 
@@ -45,7 +47,10 @@ def run_stag(datadir, subst_model):
   init_gene_trees_file(datadir, subst_model, stag_gene_trees_dir)
   mapping_file = os.path.join(output_dir, "stag_mapping.txt")
   init_mappings(datadir, mapping_file)
+  start = time.time()
   stag.run_stag(mapping_file, stag_gene_trees_dir, output_species_tree)
+  time1 = (time.time() - start)
+  saved_metrics.save_metrics(datadir, fam.get_run_name("stag", subst_model), time1, "runtimes") 
   true_species_tree = fam.get_species_tree(datadir)
   print("Stag output: " + output_species_tree)
 
