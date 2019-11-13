@@ -39,6 +39,14 @@ class SpeciesRunFilter():
     self.speciesraxslow = False
     self.guenomu = False
     #self.analyze = False
+  
+  def enable_fast_methods(self):
+    self.disable_all()
+    self.pargenes = True
+    self.stag = True
+    self.duptree = True
+    self.astral = True
+    self.speciesraxfast = True
 
 def with_transfers(dataset_dir):
   return float(dataset_dir.split("_")[-2][1:]) != 0.0

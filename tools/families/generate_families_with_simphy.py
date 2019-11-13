@@ -190,6 +190,7 @@ def get_output_dir(parameters, root_output):
 def generate_from_parameters(parameters, root_output):
   cores = 1
   output_dir = get_output_dir(parameters, root_output)
+  os.mkdir(output_dir)
   exp.reset_dir(output_dir)
   config_file = build_config_file(parameters, output_dir)
   run_simphy(output_dir, config_file)
@@ -198,7 +199,7 @@ def generate_from_parameters(parameters, root_output):
   export_to_family(output_dir)
   print("Done! output in " + output_dir) 
 
-def generate_simphy(species, families, sites, model, bl_factor, dup_rate, loss_rate, transfer_rate, perturbation, root_output, seed):
+def generate_simphy(species, families, sites, model, bl_factor, dup_rate, loss_rate, transfer_rate, perturbation, population, root_output, seed):
   p = SimphyParameters()
   p.species_taxa = int(species)
   p.families_number = int(families)
@@ -209,6 +210,7 @@ def generate_simphy(species, families, sites, model, bl_factor, dup_rate, loss_r
   p.loss_rate = float(loss_rate)
   p.transfer_rate = float(transfer_rate)
   p.seed = int(seed)
+  p.population = population
   print(perturbation)
   assert(float(perturbation) == 0.0)
   generate_from_parameters(p, root_output)

@@ -44,22 +44,21 @@ def plot(grouped_datasets, x_param, methods, subst_model, metric_name, output):
   for method in methods:
     df[method] = []
   for dataset_key in datasets_keys:
-    average = 0.0
-    for dataset in grouped_datasets[dataset_key]:
-      average += float(fam.get_param_from_dataset_name(x_param, dataset))
-    average /= float(len(grouped_datasets[dataset_key]))
     # value for the varying parameter
-    df[x_param].append(average)
-    dataset_dir = os.path.join(exp.families_datasets_root, dataset)
-    metrics = saved_metrics.get_metrics(dataset_dir, metric_name)
-    print(metrics)
+    df[x_param].append(fam.get_param_from_dataset_name(x_param, grouped_datasets[dataset_key][0]))
     for method in methods:
       key = (method + "." + subst_model).lower()
-      if (metrics != None and key in metrics):
-        df[method].append(float(metrics[key])) 
-      else:
-        df[method].append(float(get_default_value(metric_name)))
-        print("WARNING: missing value for run " + key + " and dataset " + dataset)
+      average = 0.0
+      for dataset in grouped_datasets[dataset_key]:
+        dataset_dir = os.path.join(exp.families_datasets_root, dataset)
+        metrics = saved_metrics.get_metrics(dataset_dir, metric_name)
+        if (metrics != None and key in metrics):
+          average += float(metrics[key])
+        else:
+          average += float(get_default_value(metric_name))
+          print("WARNING: missing value for run " + key + " and dataset " + dataset)
+      average /= float(len(grouped_datasets[dataset_key]))
+      df[method].append(average)
   df = get_df(df)
   for method in methods:
     print(x_param)
@@ -122,17 +121,19 @@ def get_datasets(prefix):
 
 def main_plot_metrics():
   datasets = get_datasets("ssim") 
-  params_to_plot = ["species", "sites"]
+  params_to_plot = ["species"]
   fixed_params_values_dtl = {}
   fixed_params_values_dtl["species"] = "20"
-  fixed_params_values_dtl["dup_rate"] = "0.1"
-  fixed_params_values_dtl["loss_rate"] = "0.1"
-  fixed_params_values_dtl["transfer_rate"] = "0.1"
+  fixed_params_values_dtl["dup_rate"] = "0.2"
+  fixed_params_values_dtl["loss_rate"] = "0.2"
+  fixed_params_values_dtl["transfer_rate"] = "0.2"
   fixed_params_values_dtl["bl"] = "1.0"
   fixed_params_values_dtl["families"] = "100"
   fixed_params_values_dtl["sites"] = "100"
+  fixed_params_values_dtl["population"] = "10"
   
-  methods = ["phyldogspecies", "duptree", "stag", "astral", "speciesrax-dtl-raxml-NJ", "speciesrax-dtl-raxml-NJ-slow"]
+  methods = ["astral", "duptree", "stag", "speciesrax-dtl-raxml-NJ"]
+  #methods = ["phyldogspecies", "duptree", "stag", "astral", "speciesrax-dtl-raxml-NJ", "speciesrax-dtl-raxml-slow-NJ"]
   #methods = ["speciesrax-dtl-raxml-slow", "speciesrax-dtl-raxml-slow-NJ"]
   subst_model = "GTR"
   metric_names = ["species_unrooted_rf", "runtimes"]
