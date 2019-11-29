@@ -16,13 +16,9 @@ if (True):
   datasets = []
   subst_model = "GTR+G"
   
-  #datasets.append("jsimdtl_s19_f50_sites100_dna4_bl0.5_d0.1_l0.2_t0.1_p0.0")
-  #datasets.append("jsimdtl_s27_f50_sites100_dna4_bl0.5_d0.1_l0.2_t0.1_p0.0")
-  #datasets.append("jsim_s19_f50_sites75_dna4_bl0.5_d0.3_l0.3_t0.0_p0.0")
-  #datasets.append("jsim_s41_f50_sites75_dna4_bl0.5_d0.3_l0.3_t0.0_p0.0")
-  
-  #datasets.append("zsim_s19_f150_sites150_dna4_bl0.5_d0.09_l0.1_t0.09_p0.0")
-  datasets.append("100_simphy")
+  #datasets.append("ssim_s40_f100_sites100_dna_d0.2_l0.2_t0.1_p0.0")
+  #datasets.append("ssim_s40_f100_sites100_dna_d0.2_l0.2_t0.0_p0.0")
+  datasets.append("ssim_s15_f100_sites80_dna_d0.1_l0.1_t0.0_p0.0")
   #common.generate_all_datasets(datasets)
   run_filter = RunFilter(False, True)
   run_filter.mrbayes = False
@@ -32,7 +28,7 @@ if (True):
   run_filter.eval_joint_ll = False
   run_filter.analyze = True
   run_filter.pargenes_starting_trees = 1
-  run_filter.pargenes_bootstrap_trees = 10
+  run_filter.pargenes_bootstrap_trees = 5
   common.run_all_reference_methods(datasets, subst_model, cores, run_filter)
  
 

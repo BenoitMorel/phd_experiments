@@ -21,7 +21,7 @@ def get_datasets_family_path():
   return os.path.join(exp.benoit_datasets_root, "families")
 
 def get_datadir(dataset):
-  return os.path.join(exp.benoit_datasets_root, "families", dataset)
+  return os.path.abspath(os.path.join(exp.benoit_datasets_root, "families", dataset))
 
 def get_species_dir(datadir):
   return os.path.join(datadir, "species_trees")
@@ -53,6 +53,8 @@ def get_run_dir(datadir, subst_model = None, run_name = None):
 def get_species_tree(datadir, subst_model= None, method = "true"):
   if (method == "random"):
     return "random"
+  elif (method == "NJ"):
+    return "NJ"
   if (method == "true"):
     return os.path.join(get_species_dir(datadir), "speciesTree.newick")
   if (subst_model != None):
@@ -282,6 +284,10 @@ def get_param_from_dataset_name(parameter, dataset):
     return dataset.split("_")[8][1:]
   elif (parameter == "perturbation"):
     return dataset.split("_")[9][1:]
+  elif (parameter == "population"):
+    return dataset.split("_")[10][3:]
+  elif (parameter == "seed"):
+    return dataset.split("_")[11][4:]
   elif (parameter == "tl_ratio"):
     t = get_param_from_dataset_name("transfer_rate", dataset)
     l = get_param_from_dataset_name("loss_rate", dataset)

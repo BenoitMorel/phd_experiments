@@ -7,24 +7,38 @@ import run_stag
 import species_analyze
 import run_speciesrax
 import run_phyldog
+import run_duptree
+import run_guenomu
+import run_astral_multi
+
+def printFlush(msg):
+  print(msg)
+  sys.stdout.flush()
 
 class SpeciesRunFilter():
   
-  def __init__(self, pargenes = True, stag = True, phyldog = True, speciesrax = True, analyze = True):
-    self.pargenes = pargenes
-    self.stag = stag
-    self.phyldog = phyldog
-    self.speciesrax = speciesrax
+  def __init__(self):
+    self.pargenes = True
+    self.stag = True
+    self.duptree = True
+    self.astral = True
+    self.speciesraxfast = True
+    self.speciesraxslow = True
+    self.phyldog = True
+    self.guenomu = False
+    self.analyze = True
     
-    self.analyze = analyze
-
 
   def disable_all(self):
     self.pargenes = False
     self.stag = False
     self.phyldog = False
-    self.speciesrax = False
-    self.analyze = False
+    self.duptree = False
+    self.astral = False
+    self.speciesraxfast = False
+    self.speciesraxslow = False
+    self.guenomu = False
+    #self.analyze = False
 
 def with_transfers(dataset_dir):
   return float(dataset_dir.split("_")[-2][1:]) != 0.0
@@ -33,7 +47,7 @@ def run_reference_methods(dataset_dir, subst_model, cores, run_filter = SpeciesR
   if (run_filter.pargenes):
     printFlush("Run pargenes...")
     sys.stdout.flush()
-    raxml.run_pargenes_and_extract_trees(dataset_dir, subst_model, 20, 10, cores, "pargenes", True)
+    raxml.run_pargenes_and_extract_trees(dataset_dir, subst_model, 2, 2, cores, "pargenes", True)
     sys.stdout.flush()
   if (run_filter.stag):
     printFlush("Run Stag")
@@ -41,20 +55,42 @@ def run_reference_methods(dataset_dir, subst_model, cores, run_filter = SpeciesR
       run_stag.run_stag(dataset_dir, subst_model)
     except Exception as exc:
       printFlush("Failed running STAG\n" + str(exc))
-  
+  if (run_filter.duptree):
+    printFlush("Run Duptree")
+    try:
+      run_duptree.run_duptree(dataset_dir, subst_model)
+    except Exception as exc:
+      printFlush("Failed running DupTree\n" + str(exc))
+  if (run_filter.astral):
+    printFlush("Run Astral")
+    try:
+      run_astral_multi.run_astral(dataset_dir, subst_model)
+    except Exception as exc:
+      printFlush("Failed running Astral\n" + str(exc))
+  if (run_filter.speciesraxfast):
+    printFlush("Run SpeciesRaxFast")
+    try:
+      run_speciesrax.run_speciesrax_on_families(dataset_dir, subst_model, cores, dl = True, dtl = True, slow = False)
+    except Exception as exc:
+      printFlush("Failed running speciesrax\n" + str(exc))
+  if (run_filter.speciesraxslow):
+    printFlush("Run SpeciesRaxSlow")
+    try:
+      run_speciesrax.run_speciesrax_on_families(dataset_dir, subst_model, cores, dl = True, dtl = True, slow = True)
+    except Exception as exc:
+      printFlush("Failed running speciesrax\n" + str(exc))
   if (run_filter.phyldog):
     printFlush("Run Phyldgo")
     try:
       run_phyldog.run_phyldog_on_families(dataset_dir, subst_model, cores, True)
     except Exception as exc:
       printFlush("Failed running Phyldog\n" + str(exc))
-  if (run_filter.speciesrax):
-    printFlush("Run SpeciesRax")
+  if (run_filter.guenomu):
+    printFlush("Run Guenomu")
     try:
-      #dtl = with_transfers(dataset_dir)
-      run_speciesrax.run_speciesrax_on_families(dataset_dir, subst_model, cores, dl = True, dtl = True)
+      run_guenomu.run_guenomu(dataset_dir, subst_model, cores)
     except Exception as exc:
-      printFlush("Failed running speciesrax\n" + str(exc))
+      printFlush("Failed running Guenomu\n" + str(exc))
 
   if (run_filter.analyze):
     printFlush("Run analyze...")

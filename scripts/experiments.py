@@ -88,6 +88,9 @@ eccetera_root = os.path.join(github_root, "ecceTERA")
 eccetera_exec = os.path.join(eccetera_root, "build", "bin", "ecceTERA")
 simphy_exec = os.path.join(github_root, "SimPhy_1.0.2", "bin", "simphy_lnx64")
 simphy_indelible_wrapper = os.path.join(github_root, "SimPhy_1.0.2", "scripts", "INDELIble_wrapper.pl")
+duptree_exec = os.path.join(github_root, "duptree", "duptree")
+fastrfs_exec = os.path.join(github_root, "FastRFS", "build", "FastRFS")
+astral_jar = os.path.join(github_root, "ASTRAL", "Astral", "astral.jar")
 # constants
 mpi_scheduler_heuristic = "--split-scheduler"
 

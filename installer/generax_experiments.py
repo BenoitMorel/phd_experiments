@@ -190,7 +190,14 @@ def install_phyldog(repo_name):
   
   os.chdir(cwd)
   
-  
+def install_fast_fastrf():
+  """
+    Add this in bashrc: export CXXFLAGS=-isystem\ /home/morelbt/install/usr/local/include/\ -L/home/morelbt/install/usr/local/lib/
+    for the dependencies: make install DESTDIR=/home/morelbt/install/
+    remove the calls to Timer in /data/morelbt/github/phylonaut/src/wASTRAL.cpp
+    in build: mkdir static
+  """
+  pass
 
 def run_make(repo):
   os.chdir(repo)
@@ -264,8 +271,6 @@ if (False):
   install_with_cmake("ecceTERA")
 
 if (True):
-  #git_update("https://github.com/Boussau/PHYLDOG", "PHYLDOG")
-  install_phyldog("PHYLDOG")
-  #install_simphy()
+  pass
 
 

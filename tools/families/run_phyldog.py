@@ -24,8 +24,8 @@ def get_phyldog_run_dir(opt_species_tree, datadir, subst_model):
   else:
     return fam.get_run_dir(datadir, subst_model, "phyldog_run")
 
-def clean_phyldog(datadir, subst_model):
-  phyldog_run_dir = get_phyldog_run_dir(datadir, subst_model)
+def clean_phyldog(opt_species_tree, datadir, subst_model):
+  phyldog_run_dir = get_phyldog_run_dir(opt_species_tree, datadir, subst_model)
   dataset_name = os.path.basename(datadir)
   print("CLEANING " + dataset_name)
   for f in os.listdir(phyldog_run_dir):
@@ -42,7 +42,7 @@ def run_phyldog_on_families(datadir, subst_model, cores, opt_species_tree = Fals
   saved_metrics.save_metrics(datadir, get_phyldog_run_name(opt_species_tree, subst_model), (time.time() - start), "runtimes") 
   saved_metrics.save_metrics(datadir, get_phyldog_run_name(opt_species_tree, subst_model), (time.time() - start), "seqtimes") 
   extract_phyldog(datadir, subst_model, opt_species_tree)
-  clean_phyldog(datadir, subst_model)
+  clean_phyldog(opt_species_tree, datadir, subst_model)
 
 
 def add_starting_tree(option_file, tree_path):

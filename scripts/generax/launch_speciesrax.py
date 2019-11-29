@@ -88,6 +88,7 @@ def get_generax_command(generax_families_file, starting_species_tree, additional
     command.append("-s")
     command.append(starting_species_tree)
     command.append("--optimize-species-tree")
+    command.append("--do-not-optimize-gene-trees")
     command.append("--strategy")
     command.append("SPR")
     command.append("-p")
@@ -152,7 +153,7 @@ def analyze_species_results(datadir, resultsdir):
 def run(dataset, subst_model, starting_species_tree, starting_gene_tree, cores, additional_arguments, resultsdir, do_analyze = True, do_extract = True):
   run_name = exp.getAndDelete("--run", additional_arguments, "generax-last." +subst_model) 
   arg_analyze = exp.getAndDelete("--analyze", additional_arguments, "yes")
-  do_analyze = do_analyze and (arg_analyze == "yes")
+  do_analyze = do_analyze and (arg_analyze == "no")
   print("Run name " + run_name)
   sys.stdout.flush()
   mode = get_mode_from_additional_arguments(additional_arguments)
