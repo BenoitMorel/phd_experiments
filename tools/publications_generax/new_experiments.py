@@ -26,31 +26,26 @@ def run_species_methods(datasets, subst_model, cores, run_filter):
     print("End of run_all")
     sys.stdout.flush()
 
+datasets = []
+subst_model = "GTR"
+species = range(10, 101, 10)
 if (True):
-  datasets = []
-  subst_model = "GTR"
-  if (True):
-    seeds = range(10, 20)
-    for seed in seeds:
-      datasets.append("ssim_s20_f100_sites110_GTR_bl1.0_d0.2_l0.2_t0.2_p0.0_pop10000_seed" + str(seed))
-  if (True):
-    seeds = range(10, 15)
-    for sites in range(50, 175, 25):
-      if (sites != 100):
-        for seed in seeds:
-          datasets.append("ssim_s20_f100_sites" + str(sites) + "_GTR_bl1.0_d0.1_l0.1_t0.1_p0.0_pop10000_seed" + str(seed))
-    for s in range(5, 55, 5):
-        for seed in seeds:
-          datasets.append("ssim_s" + str(s) + "_f100_sites100_GTR_bl1.0_d0.1_l0.1_t0.1_p0.0_pop10000_seed" + str(seed))
+  seeds = range(10, 15)
+  for s in species:
+      for seed in seeds:
+        # only dtl
+        datasets.append("ssim_s" + str(s) + "_f100_sites100_GTR_bl1.0_d0.2_l0.2_t0.2_p0.0_pop10_seed" + str(seed))
+        # only dl
+        #datasets.append("ssim_s" + str(s) + "_f100_sites100_GTR_bl1.0_d0.2_l0.2_t0.0_p0.0_pop10_seed" + str(seed))
 
-
-  #common.generate_all_datasets(datasets)
-  species_run_filter = SpeciesRunFilter()
-  species_run_filter.disable_all()
-  species_run_filter.astral = True
-  #species_run_filter.speciesraxslow = True
-  #species_run_filter.pargenes = False
-  run_species_methods(datasets, subst_model, cores = cores, run_filter = species_run_filter)
+#datasets.append("ssim_s15_f10_sites75_GTR_bl1.0_d0.2_l0.2_t0.2_p0.0_pop10_seed10")
+#common.generate_all_datasets(datasets)
+species_run_filter = SpeciesRunFilter()
+species_run_filter.disable_all()
+#species_run_filter.enable_fast_methods()
+species_run_filter.speciesraxfastdtl = True
+#species_run_filter.astral = True
+run_species_methods(datasets, subst_model, cores = cores, run_filter = species_run_filter)
 
 
 

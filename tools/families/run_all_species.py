@@ -22,8 +22,10 @@ class SpeciesRunFilter():
     self.stag = True
     self.duptree = True
     self.astral = True
-    self.speciesraxfast = True
-    self.speciesraxslow = True
+    self.speciesraxfastdl = True
+    self.speciesraxfastdtl = True
+    self.speciesraxslowdl = True
+    self.speciesraxslowdtl = True
     self.phyldog = True
     self.guenomu = False
     self.analyze = True
@@ -35,10 +37,22 @@ class SpeciesRunFilter():
     self.phyldog = False
     self.duptree = False
     self.astral = False
-    self.speciesraxfast = False
-    self.speciesraxslow = False
+    self.speciesraxfastdl = False
+    self.speciesraxfastdtl = False
+    self.speciesraxslowdl = False
+    self.speciesraxslowdtl = False
     self.guenomu = False
     #self.analyze = False
+  
+  def enable_fast_methods(self):
+    self.disable_all()
+    self.pargenes = True
+    self.stag = True
+    self.duptree = True
+    self.astral = True
+    self.speciesraxfastdl = True
+    self.speciesraxfastdtl = True
+
 
 def with_transfers(dataset_dir):
   return float(dataset_dir.split("_")[-2][1:]) != 0.0
@@ -67,16 +81,17 @@ def run_reference_methods(dataset_dir, subst_model, cores, run_filter = SpeciesR
       run_astral_multi.run_astral(dataset_dir, subst_model)
     except Exception as exc:
       printFlush("Failed running Astral\n" + str(exc))
-  if (run_filter.speciesraxfast):
+  if (run_filter.speciesraxfastdl or run_filter.speciesraxfastdtl):
     printFlush("Run SpeciesRaxFast")
     try:
-      run_speciesrax.run_speciesrax_on_families(dataset_dir, subst_model, cores, dl = True, dtl = True, slow = False)
+      run_speciesrax.run_speciesrax_on_families(dataset_dir, subst_model, cores, dl = run_filter.speciesraxfastdl, dtl = run_filter.speciesraxfastdtl, slow = False, strategy = "TRANSFERS")
+      run_speciesrax.run_speciesrax_on_families(dataset_dir, subst_model, cores, dl = run_filter.speciesraxfastdl, dtl = run_filter.speciesraxfastdtl, slow = False, strategy = "HYBRID")
     except Exception as exc:
       printFlush("Failed running speciesrax\n" + str(exc))
-  if (run_filter.speciesraxslow):
+  if (run_filter.speciesraxslowdl or run_filter.speciesraxslowdtl):
     printFlush("Run SpeciesRaxSlow")
     try:
-      run_speciesrax.run_speciesrax_on_families(dataset_dir, subst_model, cores, dl = True, dtl = True, slow = True)
+      run_speciesrax.run_speciesrax_on_families(dataset_dir, subst_model, cores, dl = run_filter.speciesraxslowdl, dtl = run_filter.speciesraxslowdtl, slow = True)
     except Exception as exc:
       printFlush("Failed running speciesrax\n" + str(exc))
   if (run_filter.phyldog):

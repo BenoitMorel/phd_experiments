@@ -48,6 +48,7 @@ def generate_dataset(dataset):
   l = fam.get_param_from_dataset_name("loss_rate", dataset)
   t = fam.get_param_from_dataset_name("transfer_rate", dataset)
   p = fam.get_param_from_dataset_name("perturbation", dataset)
+   
   output = "../BenoitDatasets/families"
   if (dataset.startswith("jsim")):
     species_internal, seed = jsim_species_to_params[int(species)]
@@ -56,8 +57,9 @@ def generate_dataset(dataset):
     zombi.generate_zombi(species, families, sites, model, bl_factor, d, l, t, output) 
   elif (dataset.startswith("ssim")):
     seed = fam.get_param_from_dataset_name("seed", dataset)
+    population = fam.get_param_from_dataset_name("population", dataset)
     model = "GTR"
-    simphy.generate_simphy(species, families, sites, model, bl_factor, d, l, t, p, output, seed) 
+    simphy.generate_simphy(species, families, sites, model, bl_factor, d, l, t, p, population, output, seed) 
   else:
     print("Unknown simulator for dataset " + dataset)
     sys.exit(1)
