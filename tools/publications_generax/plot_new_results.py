@@ -124,17 +124,18 @@ def main_plot_metrics():
   params_to_plot = ["species"]
   fixed_params_values_dtl = {}
   fixed_params_values_dtl["species"] = "20"
-  fixed_params_values_dtl["dup_rate"] = "0.2"
-  fixed_params_values_dtl["loss_rate"] = "0.2"
-  fixed_params_values_dtl["transfer_rate"] = "0.2"
   fixed_params_values_dtl["bl"] = "1.0"
   fixed_params_values_dtl["families"] = "100"
   fixed_params_values_dtl["sites"] = "100"
+  fixed_params_values_dtl["dup_rate"] = "0.2"
+  fixed_params_values_dtl["loss_rate"] = "0.2"
+  fixed_params_values_dtl["transfer_rate"] = "0.2"
   fixed_params_values_dtl["population"] = "10"
   
-  methods = ["astral", "duptree", "stag", "speciesrax-dtl-raxml-NJ"]
+  #methods = ["duptree", "astral", "speciesrax-dl-raxml-NJ-partial", "speciesrax-dtl-raxml-NJ-partial", "speciesrax-dtl-raxml-HYBRID", "speciesrax-dtl-raxml-TRANSFERS"]
+  methods = ["speciesrax-dtl-raxml-NJ-partial", "speciesrax-dtl-raxml-HYBRID", "speciesrax-dtl-raxml-TRANSFERS"]
   #methods = ["phyldogspecies", "duptree", "stag", "astral", "speciesrax-dtl-raxml-NJ", "speciesrax-dtl-raxml-slow-NJ"]
-  #methods = ["speciesrax-dtl-raxml-slow", "speciesrax-dtl-raxml-slow-NJ"]
+  #methods = ["speciesrax-dtl-raxml-NJ", "speciesrax-dtl-raxml-NJ-partial"]
   subst_model = "GTR"
   metric_names = ["species_unrooted_rf", "runtimes"]
 
