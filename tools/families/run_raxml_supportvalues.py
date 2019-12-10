@@ -43,7 +43,7 @@ def run_pargenes(datadir, pargenes_dir, subst_model, starting_trees, bs_trees, c
     subprocess.check_call(command, stdout = sys.stdout)
 
 
-def export_pargenes_trees(pargenes_dir, subst_model, datadir):
+def export_pargenes_trees(pargenes_dir, subst_model, light, datadir):
   families_dir = os.path.join(datadir, "families")
   # tca scores
   concatenated_dir = os.path.join(pargenes_dir, "concatenated_bootstraps")
@@ -80,6 +80,9 @@ def export_pargenes_trees(pargenes_dir, subst_model, datadir):
       trees_file = os.path.join(ml_trees_dir, family, family + ".raxml.bestTree")
     family = "_".join(family.split("_")[:-1]) # remove everything after the last _
     new_raxml_tree = fam.get_raxml_multiple_trees(datadir, subst_model, family)
+    if (light):
+      new_raxml_tree = fam.get_raxml_light_tree(datadir, subst_model, family)
+    
     try:
       shutil.copyfile(trees_file, new_raxml_tree)
     except:
@@ -94,7 +97,7 @@ def export_pargenes_trees(pargenes_dir, subst_model, datadir):
   except:
     pass
   for family in os.listdir(families_dir):
-    if (not os.path.isfile(fam.get_raxml_tree(datadir, subst_model, family))): 
+    if (not os.path.isfile(fam.get_raxml_tree(datadir, subst_model, family)) and not os.path.isfile(fam.get_raxml_light_tree(datadir, subst_model, family))): 
       print("Cleaning family " + family)
       shutil.move(os.path.join(families_dir, family), garbage_dir)
 
@@ -138,8 +141,9 @@ def run_pargenes_and_extract_trees(datadir, subst_model, starting_trees, bs_tree
   saved_metrics.save_metrics(datadir, fam.get_run_name(saved_metrics_key, subst_model), (time.time() - start), "runtimes") 
   lb = fam.get_lb_from_run(os.path.join(pargenes_dir, "mlsearch_run"))
   saved_metrics.save_metrics(datadir, fam.get_run_name(saved_metrics_key, subst_model), (time.time() - start) * lb, "seqtimes") 
+  light = (starting_trees == 1)
   if (extract_trees):
-    export_pargenes_trees(pargenes_dir, subst_model, datadir)
+    export_pargenes_trees(pargenes_dir, subst_model, light, datadir)
 
 if __name__ == "__main__":
   for dataset in os.listdir(sys.argv[1]):
