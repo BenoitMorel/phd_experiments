@@ -14,7 +14,6 @@ import get_dico
 
 def init_gene_trees_file(datadir, subst_model, output_dir):
   filepath = os.path.join(output_dir, "gene_trees.txt")
- 
   with open(filepath, "w") as writer:
     for family in fam.get_families_list(datadir):
       raxml_tree_path = fam.get_raxml_tree(datadir, subst_model, family)

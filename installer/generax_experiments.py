@@ -4,12 +4,12 @@ import shutil
 import subprocess
 sys.path.insert(0, 'scripts')
 import experiments as exp
+from os.path import expanduser
 
 # sudo apt-get install libgsl0-dev
 # setenforce 0
 # sudo cpan 
 # force install Math::GSL
-
 
 def call(command):
   print(" ".join(command))
@@ -189,6 +189,30 @@ def install_phyldog(repo_name):
   install_with_cmake(phyldog_root, ["-DCMAKE_LIBRARY_PATH=" + all_libs, "-DCMAKE_INCLUDE_PATH=" + all_includes]) #, "-DBUILD_STATIC=ON"])
   
   os.chdir(cwd)
+
+def add_to_bashrc(line):
+  with open(os.path.join(expanduser("~"), ".bashrc"), "a") as writer:
+    writer.write("\n" + line + "\n")
+
+def install_treefix():
+  
+  cwd = os.getcwd()
+  os.chdir(exp.github_root)
+  treefix_dir = os.path.join(exp.github_root, "TreeFixDTL")
+  treefix_install_dir = os.path.join(treefix_dir, "sw")
+  treefix_bin = os.path.join(treefix_install_dir, "bin")
+  treefix_python = os.path.join(treefix_install_dir, "lib64/python2.7/site-packages/")
+  if (False):
+    wget("https://www.cs.hmc.edu/~yjw/software/treefix-dtl/pub/sw/treefixDTL-1.0.2.tar.gz", "treefixDTL-1.0.2.tar.gz", unzip_command = ["tar",  "-xvf"]) 
+    shutil.move("treefixDTL-1.0.2", "TreeFixDTL")
+    os.chdir(treefix_dir)
+    call(["python", "setup.py", "build"])
+    call(["python", "setup.py", "install", "--prefix=" + treefix_install_dir])
+    add_to_bashrc("export PATH=$PATH:" + treefix_bin)
+    add_to_bashrc("export PYTHONPATH=$PYTHONPATH:" + treefix_python)
+  if (True):
+    pass
+  os.chdir(cwd)
   
 def install_fast_fastrf():
   """
@@ -227,15 +251,16 @@ if (False):
   git_update("https://github.com/amkozlov/raxml-ng.git", "raxml-ng", "dev")
   git_update("https://gitlab.inria.fr/Phylophile/Treerecs.git", "Treerecs", "treesearch")
   git_update("https://github.com/stamatak/standard-RAxML.git", "standard-RAxML")  
-  
-if (True):
+
+
+
+if (False):
   #install_bpp_for_ale()
   git_update("https://github.com/ssolo/ALE.git", "ALE")
   apply_git_diff("ALE", "ale_diff.txt")
   home = os.path.expanduser("~")
   install_with_cmake("ALE", ["-DCMAKE_LIBRARY_PATH=" + home + "/install/bio++/lib", "-DCMAKE_INCLUDE_PATH=" + home + "/install/bio++/include/"])
   
-if (False):
   wget("https://cme.h-its.org/exelixis/resource/download/software/exabayes-1.5.zip", "exabayes-1.5.zip")
   apply_diff(os.path.join(exp.github_root, "phd_experiments", "installer", "exabayes_diff.txt"))
   install_with_cmake("GeneRax")
@@ -271,6 +296,6 @@ if (False):
   install_with_cmake("ecceTERA")
 
 if (True):
-  pass
+  install_treefix()
 
 

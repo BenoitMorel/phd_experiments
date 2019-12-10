@@ -135,6 +135,9 @@ def get_phyldog_tree(datadir, subst_model, family):
 def get_treerecs_tree(datadir, subst_model, family):
   return build_gene_tree_path(datadir, subst_model, family, "treerecs")
 
+def get_treefix_tree(datadir, subst_model, family):
+  return build_gene_tree_path(datadir, subst_model, family, "treefix")
+
 def get_eccetera_tree(datadir, subst_model, family):
   return build_gene_tree_path(datadir, subst_model, family, "eccetera")
 

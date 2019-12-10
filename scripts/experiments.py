@@ -40,6 +40,7 @@ treerecs_root = os.path.join(github_root, "Treerecs")
 treerecs_exec = os.path.join(treerecs_root, "build", "bin", "Treerecs")
 joint_likelihood_evaluator_exec = os.path.join(treerecs_root, "build", "bin", "misc", "JointLikelihoodEvaluator")
 treerecs_joint_search_exec = os.path.join(treerecs_root, "build", "bin", "misc", "jointTreeSearch")
+treefix_exec = "treefixDTL"
 joint_search_root = os.path.join(github_root, "GeneRax")
 generax_exec = os.path.join(joint_search_root, "build", "bin", "generax")
 speciesrax_exec = os.path.join(joint_search_root, "build", "bin", "speciesrax")
@@ -91,6 +92,7 @@ simphy_indelible_wrapper = os.path.join(github_root, "SimPhy_1.0.2", "scripts", 
 duptree_exec = os.path.join(github_root, "duptree", "duptree")
 fastrfs_exec = os.path.join(github_root, "FastRFS", "build", "FastRFS")
 astral_jar = os.path.join(github_root, "ASTRAL", "Astral", "astral.jar")
+prepare_fastrfs_script = os.path.join(tools_root, "rfs", "prepareTrees.py")
 # constants
 mpi_scheduler_heuristic = "--split-scheduler"
 

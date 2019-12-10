@@ -129,11 +129,12 @@ def main_plot_metrics():
   fixed_params_values_dtl["sites"] = "100"
   fixed_params_values_dtl["dup_rate"] = "0.2"
   fixed_params_values_dtl["loss_rate"] = "0.2"
-  fixed_params_values_dtl["transfer_rate"] = "0.2"
+  fixed_params_values_dtl["transfer_rate"] = "0.0"
   fixed_params_values_dtl["population"] = "10"
   
   #methods = ["duptree", "astral", "speciesrax-dl-raxml-NJ-partial", "speciesrax-dtl-raxml-NJ-partial", "speciesrax-dtl-raxml-HYBRID", "speciesrax-dtl-raxml-TRANSFERS"]
-  methods = ["speciesrax-dtl-raxml-NJ-partial", "speciesrax-dtl-raxml-HYBRID", "speciesrax-dtl-raxml-TRANSFERS"]
+  methods = ["duptree", "astral", "fastrfs_majority", "speciesrax-dl-raxml-SPR", "speciesrax-dtl-raxml-SPR", "speciesrax-dtl-raxml-HYBRID", "speciesrax-dtl-raxml-TRANSFERS"]
+  #methods = ["fastrfs_greedy", "fastrfs_majority", "fastrfs_single", "fastrfs_strict"]
   #methods = ["phyldogspecies", "duptree", "stag", "astral", "speciesrax-dtl-raxml-NJ", "speciesrax-dtl-raxml-slow-NJ"]
   #methods = ["speciesrax-dtl-raxml-NJ", "speciesrax-dtl-raxml-NJ-partial"]
   subst_model = "GTR"

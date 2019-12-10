@@ -2,6 +2,7 @@ import os
 import sys
 import run_raxml_supportvalues as raxml
 import run_treerecs as treerecs
+import run_treefixdtl as treefix
 import run_phyldog as phyldog
 import run_notung as notung
 import run_eccetera
@@ -24,6 +25,7 @@ class RunFilter():
       self.raxml = True
       self.pargenes = True
       self.treerecs = True
+      self.treefix = True
       self.phyldog = True
       self.notung = True
       self.eccetera = True
@@ -56,6 +58,7 @@ class RunFilter():
     self.raxml = False
     self.pargenes = False
     self.treerecs = False
+    self.treefix = False
     self.phyldog = False
     self.notung = False
     self.eccetera = False
@@ -91,6 +94,12 @@ def run_reference_methods(datadir, subst_model, cores, run_filter = RunFilter())
       treerecs.run_treerecs_on_families(datadir, subst_model, cores)
     except Exception as exc:
       printFlush("Failed running Treerecs\n" + str(exc))
+  if (run_filter.treefix):
+    printFlush("Run treefix...")
+    try:
+      treefix.run_treefix_on_families(datadir, subst_model, cores)
+    except Exception as exc:
+      printFlush("Failed running TreeFixs\n" + str(exc))
   
   if (run_filter.phyldog):
     printFlush("Run phyldog...")
