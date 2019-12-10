@@ -62,7 +62,9 @@ def build_generax_families_file(datadir, starting_gene_tree, subst_model, output
         gene_tree = "__random__"
       writer.write("starting_gene_tree = " + gene_tree + "\n")
       writer.write("alignment = " + fam.get_alignment_file(family_path) + "\n")
-      writer.write("mapping = " + fam.get_mappings(datadir, family) + "\n")
+      mapping_file = fam.get_mappings(datadir, family)
+      if (os.path.isfile(mapping_file)):
+        writer.write("mapping = " + fam.get_mappings(datadir, family) + "\n")
       raxml_model = ""
       if (starting_gene_tree != "random" and starting_gene_tree != "true"):
         raxml_model = fam.get_raxml_best_model(datadir, subst_model, family)
