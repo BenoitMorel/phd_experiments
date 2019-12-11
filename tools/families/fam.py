@@ -379,12 +379,12 @@ def init_families_directories(datadir, families):
 
 def postprocess_datadir(datadir):
   # phyldog species trees
-  #convert_to_phyldog_species_tree(get_species_tree(datadir), get_phyldog_species_tree(datadir)) 
+  convert_to_phyldog_species_tree(get_species_tree(datadir), get_phyldog_species_tree(datadir)) 
   # alignments
   for family in get_families_list(datadir):
     family_dir = get_family_path(datadir, family)
     exp.relative_symlink(get_alignment(datadir, family), os.path.join(datadir, "alignments", family + ".fasta"))
-    #convert_phyldog_to_treerecs_mapping(get_mappings(datadir, family), get_treerecs_mappings(datadir, family)) 
+    convert_phyldog_to_treerecs_mapping(get_mappings(datadir, family), get_treerecs_mappings(datadir, family)) 
 
 def perturbate_species_tree(datadir, perturbation):
   shutil.copyfile(get_species_tree(datadir), get_true_species_tree(datadir))

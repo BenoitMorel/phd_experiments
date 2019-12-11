@@ -4,7 +4,7 @@ import ete3
 
 
 def remove_leaves(input_tree, output_tree, leaves):
-  tree = ete3.Tree(input_tree)
+  tree = ete3.Tree(input_tree, format=1)
   all_leaves = tree.get_leaf_names()
   leaves_to_keep = list(set(all_leaves) - set(leaves))
   tree.prune(leaves_to_keep)
