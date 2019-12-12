@@ -97,8 +97,8 @@ def get_generax_command(generax_families_file, species_tree, strategy, additiona
     command.extend(additional_arguments)
     return " ".join(command)
 
-def run_generax(datadir, strategy, generax_families_file, mode, cores, additional_arguments, resultsdir):
-  species_tree = fam.get_species_tree(datadir)
+def run_generax(datadir,  subst_model,  strategy, species_tree, generax_families_file, mode, cores, additional_arguments, resultsdir):
+  species_tree = fam.get_species_tree(datadir, subst_model, species_tree)
   command = ["mpirun", "-np", str(cores), "sleep", "5"]
   subprocess.check_call(command, stdout = sys.stdout)
   
@@ -128,7 +128,7 @@ def extract_trees(datadir, results_family_dir, run_name, subst_model):
     except:
       pass
 
-def run(dataset, subst_model, strategy, starting_tree, cores, additional_arguments, resultsdir, do_analyze = True, do_extract = True):
+def run(dataset, subst_model, strategy, species_tree, starting_tree, cores, additional_arguments, resultsdir, do_analyze = True, do_extract = True):
   run_name = exp.getAndDelete("--run", additional_arguments, "generax-last." +subst_model) 
   arg_analyze = exp.getAndDelete("--analyze", additional_arguments, "yes")
   do_analyze = do_analyze and (arg_analyze == "yes") and (strategy != "EVAL")
@@ -142,7 +142,7 @@ def run(dataset, subst_model, strategy, starting_tree, cores, additional_argumen
   generax_families_file = os.path.join(resultsdir, "families.txt")
   build_generax_families_file(datadir, starting_tree, subst_model, generax_families_file)
   start = time.time()
-  run_generax(datadir, strategy, generax_families_file, mode, cores, additional_arguments, resultsdir)
+  run_generax(datadir, subst_model, strategy, species_tree, generax_families_file, mode, cores, additional_arguments, resultsdir)
   saved_metrics.save_metrics(datadir, run_name, (time.time() - start), "runtimes") 
   saved_metrics.save_metrics(datadir, run_name, (time.time() - start), "seqtimes") 
   if (do_extract):
@@ -155,11 +155,11 @@ def run(dataset, subst_model, strategy, starting_tree, cores, additional_argumen
 
   print("Output in " + resultsdir)
 
-def launch(dataset, subst_model, strategy, starting_tree, cluster, cores, additional_arguments):
+def launch(dataset, subst_model, strategy, species_tree, starting_tree, cluster, cores, additional_arguments):
   command = ["python"]
   command.extend(sys.argv)
   command.append("--exprun")
-  resultsdir = os.path.join("GeneRax", dataset, strategy + "_start_" + starting_tree, "run")
+  resultsdir = os.path.join("GeneRax", dataset, strategy + "_" + species_tree +  "_start_" + starting_tree, "run")
   resultsdir = exp.create_result_dir(resultsdir, additional_arguments)
   submit_path = os.path.join(resultsdir, "submit.sh")
   command.append(resultsdir)
@@ -174,20 +174,21 @@ if (__name__ == "__main__"):
     resultsdir = sys.argv[-1]
     sys.argv = sys.argv[:-2]
     
-  min_args_number = 7
+  min_args_number = 8
   if (len(sys.argv) < min_args_number):
     for dataset in datasets:
       print("\t" + dataset)
     print("strategy: " + ",".join(get_possible_strategies()))
-    print("Syntax error: python " + os.path.basename(__file__) + "  dataset subst_model strategy starting_tree cluster cores [additional paremeters].\n Suggestions of datasets: ")
+    print("Syntax error: python " + os.path.basename(__file__) + "  dataset subst_model strategy species_tree starting_tree cluster cores [additional paremeters].\n Suggestions of datasets: ")
     sys.exit(1)
 
   dataset = sys.argv[1]
   subst_model = sys.argv[2]
   strategy = sys.argv[3]
-  starting_tree = sys.argv[4]
-  cluster = sys.argv[5]
-  cores = int(sys.argv[6])
+  species_tree = sys.argv[4]
+  starting_tree = sys.argv[5]
+  cluster = sys.argv[6]
+  cores = int(sys.argv[7])
   additional_arguments = sys.argv[min_args_number:]
   check_inputs(strategy)
 
@@ -196,9 +197,9 @@ if (__name__ == "__main__"):
     exit(1)
 
   if (is_run):
-    run(dataset, subst_model, strategy, starting_tree, cores, additional_arguments, resultsdir)
+    run(dataset, subst_model, strategy, species_tree, starting_tree, cores, additional_arguments, resultsdir)
   else:
-    launch(dataset, subst_model, strategy, starting_tree, cluster, cores, additional_arguments)
+    launch(dataset, subst_model, strategy, species_tree, starting_tree, cluster, cores, additional_arguments)
 
 
 

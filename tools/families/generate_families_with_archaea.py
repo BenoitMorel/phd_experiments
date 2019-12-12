@@ -17,11 +17,12 @@ def treat_alignment(input_file, output_file, output_mapping_file, authorized_spe
   species_to_genes = {}
   for entry in seq.iter_entries():
     species = entry[0].split("_")[0]
+    if (not species in authorized_species):
+      continue
     if (not species in species_to_genes):
       species_to_genes[species] = []
     species_to_genes[species].append(entry[0])
-    if (species in authorized_species):
-      filtered_seq.set_seq(entry[0], entry[1])
+    filtered_seq.set_seq(entry[0], entry[1])
   filtered_seq.write("fasta", output_file)
   with open(output_mapping_file, "w") as writer:
     for species, genes in species_to_genes.items():

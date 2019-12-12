@@ -31,6 +31,8 @@ results_root = os.path.join(root, "results")
 installer_root = os.path.join(root, "installer")
 
 
+historic = os.path.join(root, "historic.txt")
+
 # externals
 github_root = os.path.join(root, "..")
 benoit_datasets_root = os.path.join(github_root, "BenoitDatasets")
@@ -143,6 +145,7 @@ def create_result_dir(suffix, additional_args = []):
     result_dir = base + str(i)
     if (not os.path.isdir(result_dir)):
       os.makedirs(result_dir)
+      open(historic, "a+").write("Results directory: " + result_dir + "\n")
       print("Results directory: " + result_dir)
       return os.path.abspath(result_dir)
 
@@ -167,10 +170,8 @@ def submit_haswell(submit_file_path, command, threads, debug):
     f.write("#SBATCH --cpus-per-task=1\n")
     f.write("#SBATCH --hint=compute_bound\n")
     if (debug):
-      print("debug on")
       f.write("#SBATCH -t 2:00:00\n")
     else:
-      print("debug of")
       f.write("#SBATCH -t 24:00:00\n")
 
     f.write("\n")
@@ -181,7 +182,10 @@ def submit_haswell(submit_file_path, command, threads, debug):
     command.append("--qos=debug")
   command.append("-s")
   command.append(submit_file_path)
-  subprocess.check_call(command)
+  out = open(historic, "a+")
+  subprocess.check_call(command, stdout = out)
+  print(open(historic).readlines()[-1][:-1])
+  out.write("\n")
 
 def submit_magny(submit_file_path, command, threads):
   #nodes = str((int(threads) - 1) // 16 + 1)
@@ -219,12 +223,10 @@ def submit(submit_file_path, command, threads, cluster):
   elif (cluster == "normald"):
     submit_normal(submit_file_path, command, True)
   elif (cluster == "haswell"):
-    print("no debug mode")
     submit_haswell(submit_file_path, command, threads, False)
   elif (cluster == "haswelld"):
-    print("debug mode")
     submit_haswell(submit_file_path, command, threads, True)
-  elif (cluster == magny):
+  elif (cluster == "magny"):
     submit_magny(submit_file_path, command, threads)
   else:
     print("unknown cluster " + cluster)
