@@ -100,8 +100,6 @@ def get_generax_command(generax_families_file, starting_species_tree, additional
 
 def run_generax(datadir, starting_species_tree, generax_families_file, mode, cores, additional_arguments, resultsdir):
   species_tree = fam.get_species_tree(datadir)
-  command = ["mpirun", "-np", str(cores), "sleep", "5"]
-  subprocess.check_call(command, stdout = sys.stdout)
   command = get_generax_command(generax_families_file, starting_species_tree, additional_arguments, resultsdir, mode, cores)
   print(command)
   subprocess.check_call(command.split(" "), stdout = sys.stdout)

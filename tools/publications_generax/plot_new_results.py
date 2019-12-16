@@ -99,15 +99,13 @@ def merge_datasets_per_seed(datasets):
     grouped_datasets[key].append(dataset)
   return grouped_datasets
 
-def get_plot_name(param, subst_model, metric_name):
-  return "plot_" + metric_name.replace("_", "-") + "_" + param + "_" + subst_model
+def get_plot_name(simulation_name, param, subst_model, metric_name):
+  return "plot_" + simulation_name + "_" + metric_name.replace("_", "-") + "_" + param + "_" + subst_model
 
-def plot_metric(param, fixed_params_values, methods, subst_model, metric_name, datasets):
+def plot_metric(param, fixed_params_values, methods, subst_model, metric_name, datasets, plot_name):
   relevant_datasets = get_relevant_datasets(datasets, param, fixed_params_values)
   grouped_datasets = merge_datasets_per_seed(relevant_datasets)
-  plot_name = get_plot_name(param, subst_model, metric_name)
-  print(plot_name)
-  plot(grouped_datasets, param, methods, subst_model, metric_name, plot_name + ".png")
+  plot(grouped_datasets, param, methods, subst_model, metric_name, plot_name + ".svg")
   
 
 
@@ -120,6 +118,25 @@ def get_datasets(prefix):
   return res
 
 def main_plot_metrics():
+ 
+  #only one can be True:
+  dtl_mode = False
+  dl_mode = False
+  idtl_mode = False
+  i_mode = False
+
+  dtl_mode = True
+
+  simulation_name = ""
+  if (dtl_mode):
+    simulation_name += "dtl"
+  elif (dl_mode):
+    simulation_name += "dl"
+  elif (idtl_mode):
+    simulation_name += "idtl"
+  elif (i_mode):
+    simulation_name += "ils"
+
   datasets = get_datasets("ssim") 
   params_to_plot = ["species"]
   fixed_params_values_dtl = {}
@@ -127,22 +144,34 @@ def main_plot_metrics():
   fixed_params_values_dtl["bl"] = "1.0"
   fixed_params_values_dtl["families"] = "100"
   fixed_params_values_dtl["sites"] = "100"
-  fixed_params_values_dtl["dup_rate"] = "0.2"
-  fixed_params_values_dtl["loss_rate"] = "0.2"
-  fixed_params_values_dtl["transfer_rate"] = "0.0"
-  fixed_params_values_dtl["population"] = "10"
+  if (dtl_mode or dl_mode):
+    fixed_params_values_dtl["dup_rate"] = "0.2"
+    fixed_params_values_dtl["loss_rate"] = "0.2"
+  elif (idtl_mode):
+    fixed_params_values_dtl["dup_rate"] = "0.1"
+    fixed_params_values_dtl["loss_rate"] = "0.1"
+  else:
+    fixed_params_values_dtl["dup_rate"] = "0.0"
+    fixed_params_values_dtl["loss_rate"] = "0.0"
+  if (dtl_mode):
+    fixed_params_values_dtl["transfer_rate"] = "0.2"
+  elif (idtl_mode):
+    fixed_params_values_dtl["transfer_rate"] = "0.1"
+  else:
+    fixed_params_values_dtl["transfer_rate"] = "0.0"
+  if (i_mode or idtl_mode):
+    fixed_params_values_dtl["population"] = "100000"
+  else:
+    fixed_params_values_dtl["population"] = "10"
   
-  #methods = ["duptree", "astral", "speciesrax-dl-raxml-NJ-partial", "speciesrax-dtl-raxml-NJ-partial", "speciesrax-dtl-raxml-HYBRID", "speciesrax-dtl-raxml-TRANSFERS"]
   methods = ["duptree", "astral", "fastrfs_majority", "speciesrax-dl-raxml-SPR", "speciesrax-dtl-raxml-SPR", "speciesrax-dtl-raxml-HYBRID", "speciesrax-dtl-raxml-TRANSFERS"]
-  #methods = ["fastrfs_greedy", "fastrfs_majority", "fastrfs_single", "fastrfs_strict"]
-  #methods = ["phyldogspecies", "duptree", "stag", "astral", "speciesrax-dtl-raxml-NJ", "speciesrax-dtl-raxml-slow-NJ"]
-  #methods = ["speciesrax-dtl-raxml-NJ", "speciesrax-dtl-raxml-NJ-partial"]
   subst_model = "GTR"
   metric_names = ["species_unrooted_rf", "runtimes"]
 
   for param in params_to_plot:
     for metric_name in metric_names:
-      plot_metric(param, fixed_params_values_dtl, methods, subst_model, metric_name, datasets)
+      plot_name = get_plot_name(simulation_name, param, subst_model, metric_name)
+      plot_metric(param, fixed_params_values_dtl, methods, subst_model, metric_name, datasets, plot_name)
 
 
 if (__name__ == "__main__"):
