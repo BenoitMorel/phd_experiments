@@ -61,7 +61,7 @@ def build_generax_families_file(datadir, starting_gene_tree, subst_model, output
       if (starting_gene_tree == "random"):
         gene_tree = "__random__"
       writer.write("starting_gene_tree = " + gene_tree + "\n")
-      writer.write("alignment = " + fam.get_alignment_file(family_path) + "\n")
+      #writer.write("alignment = " + fam.get_alignment_file(family_path) + "\n")
       mapping_file = fam.get_mappings(datadir, family)
       if (os.path.isfile(mapping_file)):
         writer.write("mapping = " + fam.get_mappings(datadir, family) + "\n")

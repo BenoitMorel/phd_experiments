@@ -57,6 +57,24 @@ def check_ultrametric_and_get_length(tree_file, epsilon = 0.001):
         assert(abs(ref - node.get_distance(tree)) < epsilon)
   return ref
 
+
+
+def count_monophylies(tree_file):
+  tree = read_tree(tree_file)
+  leaves = list(set(tree.get_leaf_names()))
+  leaves.sort()
+  missmatches = 0
+  for leaf in leaves:
+    value = [leaf]
+    monophilies = tree.get_monophyletic(value, "name")
+    res = 0
+    for m in monophilies:
+      res += 1
+    if (res > 1):
+      missmatches += (res - 1)
+      print("Number of monophilies for " + leaf +": " + str(res))
+  print("Missmatch score: " + str(missmatches))
+
 if (__name__ == "__main__"):
   if (len(sys.argv) != 2): 
     print("Syntax: python " + os.path.basename(__file__) + " tree_file") 
@@ -68,4 +86,4 @@ if (__name__ == "__main__"):
     print("Ultrametric")
   else:
     print("Not ultrametric")
-
+  count_monophylies(tree_file)
