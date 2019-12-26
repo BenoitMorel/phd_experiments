@@ -40,7 +40,10 @@ def create_mapping_from_gene_tree(input_tree, output_mapping):
   leaves = ete3.Tree(input_tree, format=1).get_leaf_names()
   with open(output_mapping, "w") as writer:
     for leaf in leaves:
-      writer.write(leaf + ":" + leaf + "\n")
+      species = leaf.split("_")[1]
+      writer.write(leaf + ":" + species + "\n")
+
+
     
 
 def get_families_from_trees(per_family_trees):

@@ -19,10 +19,16 @@ def get_leaves(tree_file):
 
 def create_mapping_from_gene_tree(input_tree, output_mapping):
   leaves = ete3.Tree(input_tree, format=1).get_leaf_names()
+  species_to_gene = {}
+  for leaf in leaves:
+    species = "_".join(leaf.split("_")[1:])
+    if (not species in species_to_gene):
+      species_to_gene[species] = []
+    species_to_gene[species].append(leaf)
   with open(output_mapping, "w") as writer:
-    for leaf in leaves:
-      species = leaf.split("_")[1]
-      writer.write(leaf + ":" + species + "\n")
+    for species in species_to_gene:
+      genes = species_to_gene[species]
+      writer.write(species + ":" + ";".join(genes) + "\n")
 
 def export(input_trees_dir, species_tree, datadir):
   
