@@ -82,19 +82,19 @@ if (run_simulations):
 if (run_empirical):
   subst_models_dna = ["GTR+G"]
   #datasets_dna = ["ensembl_98_ncrna_primates", "ensembl_98_ncrna_mammals", "ensembl_98_ncrna_fishes", "ensembl_98_ncrna_murinae", "ensembl_98_ncrna_sauropsids", "ensembl_98_ncrna_vertebrates"]
-  #datasets_dna = ["ensembl_98_ncrna_vertebrates"]
-  subst_models_prot = ["LG+G"]
+  datasets_dna = ["ensembl_98_ncrna_mammals"]
+  #subst_models_prot = ["LG+G"]
   #datasets_prot = ["cyano_empirical"]
-  datasets_prot = ["archaea"]
-  cores = 512
+  #datasets_prot = ["archaea"]
+  cores = 112
   do_generate = 0
   run_filter = RunFilter()
   run_filter.disable_all()
   run_filter.pargenes = True
-  run_filter.pargenes_starting_trees = 20
-  run_filter.pargenes_bootstrap_trees = 100
-  #common.submit_multiple_experiments_haswell(datasets_dna, subst_models_dna, do_generate, cores, run_filter)
-  common.submit_multiple_experiments_haswell(datasets_prot, subst_models_prot, do_generate, cores, run_filter)
+  run_filter.pargenes_starting_trees = 5
+  run_filter.pargenes_bootstrap_trees = 10
+  common.submit_multiple_experiments_haswell(datasets_dna, subst_models_dna, do_generate, cores, run_filter)
+  #common.submit_multiple_experiments_haswell(datasets_prot, subst_models_prot, do_generate, cores, run_filter)
   
 
 
