@@ -125,7 +125,7 @@ def main_plot_metrics():
   idtl_mode = False
   i_mode = False
 
-  dtl_mode = True
+  i_mode = True
 
   simulation_name = ""
   if (dtl_mode):
