@@ -80,6 +80,20 @@ def get_deco_mappings(datadir):
   return os.path.join(get_adjacencies_dir(datadir), "deco_mappings.txt")
 
 
+def get_discordance_file(datadir):
+  return os.path.join(datadir, "discordance_rate.txt")
+
+def get_discordance_rate(datadir):
+  df = get_discordance_file(datadir)
+  if (os.path.isfile(df)):
+    return float(open(df).read())
+  else:
+    return 0.0
+
+def write_discordance_rate(datadir, rate):
+  df = get_discordance_file(datadir)
+  open(df, "w").write(str(rate))
+
 #####################
 # families
 #####################

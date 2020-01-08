@@ -25,7 +25,7 @@ class RunFilter():
       self.raxml = True
       self.pargenes = True
       self.treerecs = True
-      self.treefix = True
+      self.treefix = False
       self.phyldog = True
       self.notung = True
       self.eccetera = True
