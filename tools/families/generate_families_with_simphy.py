@@ -3,12 +3,14 @@ import sys
 import subprocess
 import shutil
 import fam
+import copy
 sys.path.insert(0, 'scripts')
 sys.path.insert(0, os.path.join("tools", "phyldog"))
 sys.path.insert(0, os.path.join("tools", "trees"))
 import rescale_bl
 import analyze_tree
 import experiments as exp
+import discordance_rate
 
 class SimphyParameters():
   def __init__(self):
@@ -187,6 +189,21 @@ def get_output_dir(parameters, root_output):
   res += "_seed" + str(parameters.seed)
   return os.path.join(root_output, res)
 
+def compute_and_write_discordance_rate(parameters, output_dir):
+  d = 0.0
+  if (parameters.dup_rate == 0.0 and parameters.transfer_rate == 0.0):
+    d = discordance_rate.get_discordance_rate(output_dir)
+  else:
+    no_dtl_parameters = copy.deepcopy(parameters) 
+    no_dtl_parameters.dup_rate = 0.0
+    no_dtl_parameters.loss_rate = 0.0
+    no_dtl_parameters.transfer_rate = 0.0
+    temp_output_dir = generate_from_parameters(no_dtl_parameters, output_dir)
+    d = fam.get_discordance_rate(temp_output_dir)
+  print("Discordance rate: " + str(d))
+  fam.write_discordance_rate(output_dir, d)
+
+
 def generate_from_parameters(parameters, root_output):
   cores = 1
   output_dir = get_output_dir(parameters, root_output)
@@ -197,7 +214,9 @@ def generate_from_parameters(parameters, root_output):
   indelible_config_file = build_indelible_config_file(parameters, output_dir)
   run_indelible(output_dir, indelible_config_file, cores)
   export_to_family(output_dir)
+  compute_and_write_discordance_rate(parameters, output_dir)
   print("Done! output in " + output_dir) 
+  return output_dir
 
 def generate_simphy(species, families, sites, model, bl_factor, dup_rate, loss_rate, transfer_rate, perturbation, population, root_output, seed):
   p = SimphyParameters()
@@ -214,7 +233,7 @@ def generate_simphy(species, families, sites, model, bl_factor, dup_rate, loss_r
   print(perturbation)
   assert(float(perturbation) == 0.0)
   generate_from_parameters(p, root_output)
-
+   
 
 if (__name__ == "__main__"): 
   parameters = SimphyParameters()

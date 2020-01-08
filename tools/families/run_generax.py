@@ -14,11 +14,11 @@ def run_generax_instance(dataset, starting_tree, with_transfers, method, subst_m
     command.append(os.path.join(exp.scripts_root, "generax/launch_generax.py"))
   command.append(dataset)
   command.append(subst_model)
+  command.append("SPR")
   if (optimize_species):
     command.append("random")
   else:
     command.append("true")
-    command.append("SPR")
   command.append(starting_tree)
   command.append("normal")
   command.append(str(cores))
