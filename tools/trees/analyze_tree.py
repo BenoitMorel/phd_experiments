@@ -61,9 +61,13 @@ def check_ultrametric_and_get_length(tree_file, epsilon = 0.001):
 
 def count_monophylies(tree_file):
   tree = read_tree(tree_file)
+  leaf_number =len(tree.get_leaf_names())
   leaves = list(set(tree.get_leaf_names()))
   leaves.sort()
   missmatches = 0
+  print("Number of leaves: " + str(len(leaves)))
+  print("Number of different leaves: " + str(leaf_number))
+  print("Monophilies: ")
   for leaf in leaves:
     value = [leaf]
     monophilies = tree.get_monophyletic(value, "name")
