@@ -293,6 +293,7 @@ if (False):
   git_update("https://github.com/davidemms/STAG.git", "STAG")
   
   git_update("https://github.com/celinescornavacca/ecceTERA.git", "ecceTERA")
+  git_update("https://github.com/pranjalv123/TRACTION-RF.git", "TRACTION-RF")
   install_with_cmake("ecceTERA")
 
 if (True):

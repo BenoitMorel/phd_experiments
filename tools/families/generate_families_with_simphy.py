@@ -200,6 +200,8 @@ def compute_and_write_discordance_rate(parameters, output_dir):
     no_dtl_parameters.transfer_rate = 0.0
     temp_output_dir = generate_from_parameters(no_dtl_parameters, output_dir)
     d = fam.get_discordance_rate(temp_output_dir)
+    shutil.rmtree(temp_output_dir)
+    
   print("Discordance rate: " + str(d))
   fam.write_discordance_rate(output_dir, d)
 

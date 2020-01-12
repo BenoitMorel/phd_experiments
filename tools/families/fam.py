@@ -117,6 +117,9 @@ def get_family_misc_dir(datadir, family):
 def get_mappings_dir(datadir, family):
   return os.path.join(get_family_path(datadir, family), "mappings")
 
+def get_reconciliations_dir(datadir, family):
+  return os.path.join(get_family_path(datadir, family), "reconciliations")
+
 #####################
 # per-family files
 #####################
@@ -327,6 +330,8 @@ def get_param_from_dataset_name(parameter, dataset):
     l = float(get_param_from_dataset_name("loss_rate", dataset))
     t = float(get_param_from_dataset_name("transfer_rate", dataset))
     return str((d + t + l) / 2.0)
+  elif (parameter == "discordance"):
+    return float(get_discordance_rate(get_datadir(dataset)))
   else:
     return "invalid"
 
@@ -387,6 +392,7 @@ def init_family_directories(datadir, family):
   mkdir(get_gene_tree_dir(datadir, family))
   mkdir(get_family_misc_dir(datadir, family))
   mkdir(get_mappings_dir(datadir, family))
+  mkdir(get_reconciliations_dir(datadir, family))
 
 def init_families_directories(datadir, families):
   for family in families:

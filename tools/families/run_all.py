@@ -208,6 +208,7 @@ def run_reference_methods(datadir, subst_model, cores, run_filter = RunFilter())
       run_mrbayes.remove_mrbayes_run(datadir, subst_model)
     except:
       printFlush("Failed removing mrbayes files\n", str(exc))
+  print("Done")
 
 if __name__ == "__main__":
   if (len(sys.argv) != 6):

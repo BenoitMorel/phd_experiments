@@ -6,6 +6,15 @@ sys.path.insert(0, 'scripts')
 sys.path.insert(0, 'scripts/generax')
 sys.path.insert(0, 'tools/families')
 sys.path.insert(0, 'tools/plotters')
+
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt; plt.rcdefaults()
+import numpy as np
+import matplotlib.pyplot as plt
+import pandas as pd
+import seaborn as sns
+sns.set_style("darkgrid")
 import experiments as exp
 import plot_histogram
 import common
@@ -14,13 +23,6 @@ import fam
 import boxplot
 import rf_cells
 import saved_metrics
-
-import matplotlib.pyplot as plt; plt.rcdefaults()
-import numpy as np
-import matplotlib.pyplot as plt
-import pandas as pd
-import seaborn as sns
-sns.set_style("darkgrid")
 
 def get_datasets_to_plot(datasets_rf_dico, fixed_params_dico, x_param):
   datasets_to_plot = []
@@ -168,9 +170,8 @@ def plot_simulated_metrics_dtl(subst_model, params_description, methods_dict):
   methods_dtl = get_runs(["raxml-ng", "notung90", "eccetera", "phyldog", "treerecs", "ale-dtl", "generax-dtl-random"], subst_model)
   plot_rrf(params_description, True, "jsimdtl_", params_to_plot_dtl, fixed_params_dtl, methods_dtl, methods_dict, subst_model)
 
-def plot_simulated_metrics():
-  subst_model = "gtr+g"
-  
+
+def get_methods_dict(subst_model):
   methods_dict = {}
   methods_dict["raxml-ng." + subst_model] = "RAxML-NG"
   methods_dict["notung90." + subst_model] = "Notung"
@@ -182,7 +183,9 @@ def plot_simulated_metrics():
   methods_dict["ale-dtl." + subst_model] = "ALE-DTL"
   methods_dict["generax-dl-random." + subst_model] = "GeneRax-DL"
   methods_dict["generax-dtl-random." + subst_model] = "GeneRax-DTL"
-    
+  return methods_dict
+
+def get_params_description():
   params_description = {}
   params_description["species"] = "Number of taxa in the species tree"
   params_description["loss_rate"] = "Average D(T)L rates"
@@ -191,7 +194,30 @@ def plot_simulated_metrics():
   params_description["sites"] = "Number of sites"
   params_description["dt_ratio"] = "Rates ratio D/T (D+T is fixed)"
   params_description["perturbation"] = "Species tree relative RF distance to the true species tree"
+  params_description["discordance"] = "ILS discordance"
+  return params_description
 
-  plot_simulated_metrics_dl(subst_model, params_description, methods_dict)
-  plot_simulated_metrics_dtl(subst_model, params_description, methods_dict)
+def plot_simulated_metrics():
+  subst_model = "gtr+g"
+  plot_simulated_metrics_dl(subst_model, get_params_description(), get_methods_dict(subst_model))
+  plot_simulated_metrics_dtl(subst_model, get_params_description(), get_methods_dict(subst_model))
+
+def plot_simulated_metrics_ils():
+  subst_model = "gtr"
+  methods_dict = get_methods_dict(subst_model)
+  params_description = get_params_description()
+  fixed_params = {}
+  #methods = get_runs(["raxml-ng", "generax-dtl-random"], subst_model)
+  methods = get_runs(["raxml-ng", "notung90", "eccetera", "phyldog", "treerecs", "ale-dtl", "generax-dtl-random"], subst_model)
+  params_to_plot = ["discordance"]
+  fixed_params["sites"] = "100"
+  fixed_params["species"] = "30"
+  fixed_params["loss_rate"] = "0.1"
+  fixed_params["dt_ratio"] = "1.0"
+  fixed_params["bl"] = "1.0"
+  fixed_params["families"] = "100"
+  fixed_params["perturbation"] = "0.0"
+  plot_rrf(params_description, True, "ssim_", params_to_plot, fixed_params, methods, methods_dict, subst_model)
+
+
 

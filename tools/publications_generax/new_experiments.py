@@ -43,13 +43,14 @@ if (True):
         # idtl
         #datasets.append("ssim_s" + str(s) + "_f100_sites100_GTR_bl1.0_d0.1_l0.1_t0.1_p0.0_pop100000_seed" + str(seed))
         # idtl publication
-        datasets.append("ssim_s" + str(s) + "_f100_sites100_GTR_bl1.0_d0.1_l0.1_t0.1_p0.0_pop10_seed" + str(seed))
-        datasets.append("ssim_s" + str(s) + "_f100_sites100_GTR_bl1.0_d0.1_l0.1_t0.1_p0.0_pop10000_seed" + str(seed))
-        datasets.append("ssim_s" + str(s) + "_f100_sites100_GTR_bl1.0_d0.1_l0.1_t0.1_p0.0_pop20000_seed" + str(seed))
-        datasets.append("ssim_s" + str(s) + "_f100_sites100_GTR_bl1.0_d0.1_l0.1_t0.1_p0.0_pop30000_seed" + str(seed))
-        datasets.append("ssim_s" + str(s) + "_f100_sites100_GTR_bl1.0_d0.1_l0.1_t0.1_p0.0_pop50000_seed" + str(seed))
-        datasets.append("ssim_s" + str(s) + "_f100_sites100_GTR_bl1.0_d0.1_l0.1_t0.1_p0.0_pop100000_seed" + str(seed))
+        #datasets.append("ssim_s" + str(s) + "_f100_sites100_GTR_bl1.0_d0.1_l0.1_t0.1_p0.0_pop10_seed" + str(seed))
+        #datasets.append("ssim_s" + str(s) + "_f100_sites100_GTR_bl1.0_d0.1_l0.1_t0.1_p0.0_pop10000_seed" + str(seed))
+        #datasets.append("ssim_s" + str(s) + "_f100_sites100_GTR_bl1.0_d0.1_l0.1_t0.1_p0.0_pop20000_seed" + str(seed))
+        #datasets.append("ssim_s" + str(s) + "_f100_sites100_GTR_bl1.0_d0.1_l0.1_t0.1_p0.0_pop30000_seed" + str(seed))
+        #datasets.append("ssim_s" + str(s) + "_f100_sites100_GTR_bl1.0_d0.1_l0.1_t0.1_p0.0_pop50000_seed" + str(seed))
+        #datasets.append("ssim_s" + str(s) + "_f100_sites100_GTR_bl1.0_d0.1_l0.1_t0.1_p0.0_pop100000_seed" + str(seed))
         
+        datasets.append("ssim_s" + str(15) + "_f100_sites100_GTR_bl10.0_d0.0_l0.0_t0.0_p0.0_pop10000_seed" + str(seed))
 
 common.generate_all_datasets(datasets)
 
@@ -61,12 +62,15 @@ if (False): # Species tree inference
     
 if (True): # Gene tree inference
   run_filter = RunFilter(True, False)
-  run_filter.disable_all()
-  run_filter.raxml = True
-  run_filter.pargenes = True
+  #run_filter.disable_all()
+  #run_filter.mrbayes = True
+  run_filter.rm_mrbayes = False
+  #run_filter.ALE = True
+  #run_filter.raxml = True
+  #run_filter.pargenes = True
   #run_filter.pargenes_starting_trees = 5
   #run_filter.pargenes_bootstrap_trees = 5
-  run_filter.generax = True
+  #run_filter.generax = True
   run_filter.analyze = True
   
   #run_filter.eval_joint_ll = False

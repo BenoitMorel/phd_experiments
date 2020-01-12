@@ -126,6 +126,8 @@ def extract_trees(datadir, results_family_dir, run_name, subst_model):
     except:
       pass
 
+
+
 def run(dataset, subst_model, strategy, species_tree, starting_tree, cores, additional_arguments, resultsdir, do_analyze = True, do_extract = True):
   run_name = exp.getAndDelete("--run", additional_arguments, "generax-last." +subst_model) 
   arg_analyze = exp.getAndDelete("--analyze", additional_arguments, "yes")
