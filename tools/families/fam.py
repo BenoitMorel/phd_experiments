@@ -23,6 +23,16 @@ def get_datasets_family_path():
 def get_datadir(dataset):
   return os.path.abspath(os.path.join(exp.benoit_datasets_root, "families", dataset))
 
+def get_first_dataset_starting_with(dataset):
+  datadir = get_datadir(dataset)
+  parent_dir = os.path.abspath(os.path.join(datadir, os.pardir))
+  candidates = []
+  for d in os.listdir(parent_dir):
+    if (d.startswith(dataset)):
+      candidates.append(d)
+  print(sorted(candidates))
+  return os.path.basename(sorted(candidates)[0])
+
 def get_species_dir(datadir):
   return os.path.join(datadir, "species_trees")
 
@@ -316,19 +326,27 @@ def get_param_from_dataset_name(parameter, dataset):
   elif (parameter == "tl_ratio"):
     t = get_param_from_dataset_name("transfer_rate", dataset)
     l = get_param_from_dataset_name("loss_rate", dataset)
+    if (float(l) == 0.0):
+      return "-1.0"
     return  str(float(t)/float(l))
   elif (parameter == "dl_ratio"):
     d = get_param_from_dataset_name("dup_rate", dataset)
     l = get_param_from_dataset_name("loss_rate", dataset)
+    if (float(l) == 0.0):
+      return "-1.0"
     return str(float(d)/float(l))
   elif (parameter == "dt_ratio"):
     d = get_param_from_dataset_name("dup_rate", dataset)
     t = get_param_from_dataset_name("transfer_rate", dataset)
+    if (float(l) == 0.0):
+      return "-1.0"
     return str(float(d)/float(t))
   elif (parameter == "av_rate"):
     d = float(get_param_from_dataset_name("dup_rate", dataset))
     l = float(get_param_from_dataset_name("loss_rate", dataset))
     t = float(get_param_from_dataset_name("transfer_rate", dataset))
+    if (float(t) == 0.0):
+      return "-1.0"
     return str((d + t + l) / 2.0)
   elif (parameter == "discordance"):
     return float(get_discordance_rate(get_datadir(dataset)))

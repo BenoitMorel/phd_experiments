@@ -11,6 +11,8 @@ import run_duptree
 import run_guenomu
 import run_astral_multi
 import run_fastrfs
+import run_njst  
+import run_njrax
 
 def printFlush(msg):
   print(msg)
@@ -23,6 +25,8 @@ class SpeciesRunFilter():
     self.stag = True
     self.duptree = True
     self.fastrfs = True
+    self.njrax = True    
+    self.njst = True    
     self.astral = True
     self.speciesraxfastdl = True
     self.speciesraxfastdtl = True
@@ -31,7 +35,6 @@ class SpeciesRunFilter():
     self.phyldog = True
     self.guenomu = False
     self.analyze = True
-    
 
   def disable_all(self):
     self.pargenes = False
@@ -39,6 +42,8 @@ class SpeciesRunFilter():
     self.fastrfs = False
     self.phyldog = False
     self.duptree = False
+    self.njrax = False    
+    self.njst = False    
     self.astral = False
     self.speciesraxfastdl = False
     self.speciesraxfastdtl = False
@@ -53,6 +58,8 @@ class SpeciesRunFilter():
     self.stag = True
     self.duptree = True
     self.fastrfs = True
+    self.njrax = True   
+    self.njst = True   
     self.astral = True
     self.speciesraxfastdl = True
     self.speciesraxfastdtl = True
@@ -85,17 +92,31 @@ def run_reference_methods(dataset_dir, subst_model, cores, run_filter = SpeciesR
       run_fastrfs.run_fastrfs(dataset_dir, subst_model)
     except Exception as exc:
       printFlush("Failed running FastRFS\n" + str(exc))
+  if (run_filter.njrax):
+    printFlush("Run NJrax")
+    try:
+      run_njrax.run_njrax(dataset_dir, "NJ", subst_model, cores)
+      run_njrax.run_njrax(dataset_dir, "NJst", subst_model,cores)
+    except Exception as exc:
+      printFlush("Failed running NJrax\n" + str(exc))
+  if (run_filter.njst):
+    printFlush("Run NJst")
+    try:
+      run_njst.run_njst(dataset_dir, "raxml-ng", subst_model, "original")
+      run_njst.run_njst(dataset_dir, "raxml-ng", subst_model, "reweighted")
+    except Exception as exc:
+      printFlush("Failed running NJst\n" + str(exc))
   if (run_filter.astral):
     printFlush("Run Astral")
     try:
-      run_astral_multi.run_astral(dataset_dir, subst_model)
+      run_astral_multi.run_astral(dataset_dir, "raxml-ng", subst_model)
     except Exception as exc:
       printFlush("Failed running Astral\n" + str(exc))
   if (run_filter.speciesraxfastdl or run_filter.speciesraxfastdtl):
     printFlush("Run SpeciesRaxFast")
     try:
-      run_speciesrax.run_speciesrax_on_families(dataset_dir, subst_model, cores, dl = run_filter.speciesraxfastdl, dtl = run_filter.speciesraxfastdtl, slow = False, strategy = "SPR")
-      run_speciesrax.run_speciesrax_on_families(dataset_dir, subst_model, cores, dl = False, dtl = run_filter.speciesraxfastdtl, slow = False, strategy = "TRANSFERS")
+      #run_speciesrax.run_speciesrax_on_families(dataset_dir, subst_model, cores, dl = run_filter.speciesraxfastdl, dtl = run_filter.speciesraxfastdtl, slow = False, strategy = "SPR")
+      #run_speciesrax.run_speciesrax_on_families(dataset_dir, subst_model, cores, dl = False, dtl = run_filter.speciesraxfastdtl, slow = False, strategy = "TRANSFERS")
       run_speciesrax.run_speciesrax_on_families(dataset_dir, subst_model, cores, dl = False, dtl = run_filter.speciesraxfastdtl, slow = False, strategy = "HYBRID")
     except Exception as exc:
       printFlush("Failed running speciesrax\n" + str(exc))

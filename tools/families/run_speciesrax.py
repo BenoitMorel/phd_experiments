@@ -5,13 +5,13 @@ sys.path.insert(0, 'scripts')
 import experiments as exp
 import fam
 
-def run_speciesrax_instance(dataset, starting_tree, with_transfers, method, subst_model, slow, strategy, cores = 40):
+def run_speciesrax_instance(dataset, starting_tree, with_transfers, run_name, subst_model, slow, strategy, cores = 40):
   command = []
   command.append("python")
   command.append(os.path.join(exp.scripts_root, "generax/launch_speciesrax.py"))
   command.append(dataset)
   command.append(subst_model)
-  command.append("NJ")
+  command.append("NJst")
   command.append(starting_tree)
   command.append("normal")
   command.append(str(cores))
@@ -26,9 +26,9 @@ def run_speciesrax_instance(dataset, starting_tree, with_transfers, method, subs
     command.append("1")
   command.append("--species-strategy")
   command.append(strategy)
-  method += "-" + strategy
+  run_name += "-" + strategy
   command.append("--run")
-  command.append(fam.get_run_name(method, subst_model))
+  command.append(fam.get_run_name(run_name, subst_model))
   print("-> Running " + " ".join(command))
   subprocess.check_call(command)
     

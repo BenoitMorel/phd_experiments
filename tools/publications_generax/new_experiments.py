@@ -29,9 +29,9 @@ def run_species_methods(datasets, subst_model, cores, run_filter):
 
 datasets = []
 subst_model = "GTR"
-species = range(30, 31, 10)
+species = range(50, 51, 10)
+seeds = range(10, 15)
 if (True):
-  seeds = range(10, 11)
   for s in species:
       for seed in seeds:
         # only dtl
@@ -41,26 +41,54 @@ if (True):
         # only dl
         #datasets.append("ssim_s" + str(s) + "_f100_sites100_GTR_bl1.0_d0.2_l0.2_t0.0_p0.0_pop10_seed" + str(seed))
         # idtl
-        #datasets.append("ssim_s" + str(s) + "_f100_sites100_GTR_bl1.0_d0.1_l0.1_t0.1_p0.0_pop100000_seed" + str(seed))
-        # idtl publication
-        #datasets.append("ssim_s" + str(s) + "_f100_sites100_GTR_bl1.0_d0.1_l0.1_t0.1_p0.0_pop10_seed" + str(seed))
-        #datasets.append("ssim_s" + str(s) + "_f100_sites100_GTR_bl1.0_d0.1_l0.1_t0.1_p0.0_pop10000_seed" + str(seed))
         #datasets.append("ssim_s" + str(s) + "_f100_sites100_GTR_bl1.0_d0.1_l0.1_t0.1_p0.0_pop20000_seed" + str(seed))
-        #datasets.append("ssim_s" + str(s) + "_f100_sites100_GTR_bl1.0_d0.1_l0.1_t0.1_p0.0_pop30000_seed" + str(seed))
-        #datasets.append("ssim_s" + str(s) + "_f100_sites100_GTR_bl1.0_d0.1_l0.1_t0.1_p0.0_pop50000_seed" + str(seed))
-        #datasets.append("ssim_s" + str(s) + "_f100_sites100_GTR_bl1.0_d0.1_l0.1_t0.1_p0.0_pop100000_seed" + str(seed))
-        
-        datasets.append("ssim_s" + str(15) + "_f100_sites100_GTR_bl10.0_d0.0_l0.0_t0.0_p0.0_pop10000_seed" + str(seed))
+        pass
 
-common.generate_all_datasets(datasets)
+seeds = range(20, 25)
+dlrange = (0.05, 0.1, 0.25, 0.4)
+dtl_range = (0.05, 0.1, 0.25, 0.4)
+pop_range = (10000, 20000, 30000, 50000)
+fam_range = (10, 25, 50, 200, 500)
+bl_range = (0.01, 0.1, 2.0, 5.0, 10.0, 100.0)
+if (False):
+  for dl in dlrange:
+    for seed in seeds:
+      datasets.append("ssim_s40_f100_sites100_GTR_bl1.0_d" + str(dl) + "_l" + str(dl) + "_t0.0_p0.0_pop10_seed" + str(seed))
+  for dtl in dtl_range: 
+    for seed in seeds:
+        datasets.append("ssim_s40_f100_sites100_GTR_bl1.0_d" + str(dtl) + "_l" + str(dtl) + "_t" + str(dtl) +"_p0.0_pop10_seed" + str(seed))
 
-if (False): # Species tree inference
+  for pop in pop_range:
+    for seed in seeds:
+      datasets.append("ssim_s40_f100_sites100_GTR_bl1.0_d0.0_l0.0_t0.0_p0.0_pop" + str(pop) + "_seed" + str(seed))
+
+if (True):
+  for bl in bl_range:
+    for seed in seeds:
+      datasets.append("ssim_s40_f100_sites100_GTR_bl" + str(bl) + "_d0.1_l0.1_t0.1_p0.0_pop10000_seed" + str(seed))
+
+  for families in fam_range:
+    for seed in seeds:
+      datasets.append("ssim_s40_f" + str(families) + "_sites100_GTR_bl1.0_d0.1_l0.1_t0.1_p0.0_pop10000_seed" + str(seed))
+  
+
+#common.generate_all_datasets(datasets)
+if (True): # Species tree inference
   species_run_filter = SpeciesRunFilter()
   species_run_filter.disable_all()
-  species_run_filter.enable_fast_methods()
+  species_run_filter.analyze = True
+  species_run_filter.pargenes = True
+  species_run_filter.speciesraxfastdtl = True
+  species_run_filter.njrax = True
+  species_run_filter.njst = True
+  species_run_filter.astral = True
+  species_run_filter.duptree = True
+  species_run_filter.fastrfs = True
+
+  #species_run_filter.enable_fast_methods()
   run_species_methods(datasets, subst_model, cores = cores, run_filter = species_run_filter)
     
-if (True): # Gene tree inference
+if (False): # Gene tree inference
   run_filter = RunFilter(True, False)
   #run_filter.disable_all()
   #run_filter.mrbayes = True
@@ -81,7 +109,7 @@ if (True): # Gene tree inference
 
 #species_run_filter.speciesraxfastdl = True
 #species_run_filter.pargenes = False
-#species_run_filter.speciesraxfastdtl = True
+#suecies_run_filter.speciesraxfastdtl = True
 
 
 

@@ -14,7 +14,7 @@ import get_dico
 import run_astral_multi as astral
 
 def init_gene_trees_file(datadir, subst_model, output_dir):
-  astral_gene_trees = astral.init_gene_trees_file(datadir, subst_model, output_dir)
+  astral_gene_trees = astral.init_gene_trees_file(datadir, "raxml-ng", subst_model, output_dir)
   print("astral_gene_trees: " + astral_gene_trees)
   astral_mappings = astral.init_mapping_file(datadir, output_dir)
   command = []

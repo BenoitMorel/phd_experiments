@@ -29,35 +29,41 @@ def init_mapping_file(datadir, output_dir):
         writer.write(gene + " " + species + "\n")
   return res
 
-def exec_njst(gene_trees_file, mapping_file, output_species_tree_file):
+def exec_njst(gene_trees_file, mapping_file, output_species_tree_file, algo_type):
   command = []
   command.append("Rscript")
   command.append(exp.njstm_script)
   command.append(gene_trees_file)
   command.append(mapping_file)
-  command.append("Original")
+  command.append(algo_type)
   command.append(output_species_tree_file)
   FNULL = open(os.devnull, 'w')
   res = subprocess.check_output(command, stderr=FNULL)
   print(res)
 
-def run_njst(datadir, method, subst_model):
-  output_dir = fam.get_run_dir(datadir, subst_model, "njst_run")
+def run_njst_all(datadir, method, subst_model):
+  run_njst(datadir, method, subst_model, "original")
+  run_njst(datadir, method, subst_model, "liu")
+  run_njst(datadir, method, subst_model, "reweighted")
+
+def run_njst(datadir, method, subst_model, algo_type):
+  algo_name = "njst-" + algo_type
+  output_dir = fam.get_run_dir(datadir, subst_model, algo_name + "_run")
   shutil.rmtree(output_dir, True)
   os.makedirs(output_dir)
   gene_trees_file = init_gene_trees_file(datadir, method, subst_model, output_dir)
   mapping_file = init_mapping_file(datadir, output_dir)
-  print("Start executing njst")
+  print("Start executing " + algo_name)
   start = time.time()
-  exec_njst(gene_trees_file, mapping_file, fam.get_species_tree(datadir, subst_model, "njst"))
+  exec_njst(gene_trees_file, mapping_file, fam.get_species_tree(datadir, subst_model, algo_name), algo_type)
   time1 = (time.time() - start)
-  saved_metrics.save_metrics(datadir, fam.get_run_name("njst", subst_model), time1, "runtimes") 
+  saved_metrics.save_metrics(datadir, fam.get_run_name(algo_name, subst_model), time1, "runtimes") 
 
 if (__name__ == "__main__"):
   if (len(sys.argv) != 4):
     print("Syntax python run_njst.py datadir gene_trees subst_model")
     sys.exit(1)
-  run_njst(sys.argv[1], sys.argv[2], sys.argv[3])
+  run_njst_all(sys.argv[1], sys.argv[2], sys.argv[3])
   
 
 
