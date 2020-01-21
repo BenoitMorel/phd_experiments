@@ -9,7 +9,9 @@ import run_speciesrax
 import run_phyldog
 import run_duptree
 import run_guenomu
+import run_astrid
 import run_astral_multi
+import run_astral_pro
 import run_fastrfs
 import run_njst  
 import run_njrax
@@ -27,7 +29,9 @@ class SpeciesRunFilter():
     self.fastrfs = True
     self.njrax = True    
     self.njst = True    
+    self.astrid = True    
     self.astral = True
+    self.astralpro = True
     self.speciesraxfastdl = True
     self.speciesraxfastdtl = True
     self.speciesraxslowdl = True
@@ -35,6 +39,8 @@ class SpeciesRunFilter():
     self.phyldog = True
     self.guenomu = False
     self.analyze = True
+    self.pargenes_starting_trees = 2
+    self.pargenes_bootstrap_trees = 2
 
   def disable_all(self):
     self.pargenes = False
@@ -44,7 +50,9 @@ class SpeciesRunFilter():
     self.duptree = False
     self.njrax = False    
     self.njst = False    
+    self.astrid = False
     self.astral = False
+    self.astralpro = False
     self.speciesraxfastdl = False
     self.speciesraxfastdtl = False
     self.speciesraxslowdl = False
@@ -60,7 +68,8 @@ class SpeciesRunFilter():
     self.fastrfs = True
     self.njrax = True   
     self.njst = True   
-    self.astral = True
+    self.astrid = True
+    self.astralpro = True
     self.speciesraxfastdl = True
     self.speciesraxfastdtl = True
 
@@ -72,7 +81,7 @@ def run_reference_methods(dataset_dir, subst_model, cores, run_filter = SpeciesR
   if (run_filter.pargenes):
     printFlush("Run pargenes...")
     sys.stdout.flush()
-    raxml.run_pargenes_and_extract_trees(dataset_dir, subst_model, 2, 2, cores, "pargenes", True)
+    raxml.run_pargenes_and_extract_trees(dataset_dir, subst_model, run_filter.pargenes_starting_trees, run_filter.pargenes_bootstrap_trees, cores, "pargenes", True)
     sys.stdout.flush()
   if (run_filter.stag):
     printFlush("Run Stag")
@@ -106,12 +115,24 @@ def run_reference_methods(dataset_dir, subst_model, cores, run_filter = SpeciesR
       run_njst.run_njst(dataset_dir, "raxml-ng", subst_model, "reweighted")
     except Exception as exc:
       printFlush("Failed running NJst\n" + str(exc))
+  if (run_filter.astrid):
+    printFlush("Run Astral")
+    try:
+      run_astrid.run_astrid(dataset_dir, "raxml-ng", subst_model)
+    except Exception as exc:
+      printFlush("Failed running Astrid\n" + str(exc))
   if (run_filter.astral):
     printFlush("Run Astral")
     try:
       run_astral_multi.run_astral(dataset_dir, "raxml-ng", subst_model)
     except Exception as exc:
       printFlush("Failed running Astral\n" + str(exc))
+  if (run_filter.astralpro):
+    printFlush("Run Astral-pro")
+    try:
+      run_astral_pro.run_astralpro(dataset_dir, "raxml-ng", subst_model)
+    except Exception as exc:
+      printFlush("Failed running Astral-pro\n" + str(exc))
   if (run_filter.speciesraxfastdl or run_filter.speciesraxfastdtl):
     printFlush("Run SpeciesRaxFast")
     try:

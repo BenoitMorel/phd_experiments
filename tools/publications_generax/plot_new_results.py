@@ -161,7 +161,8 @@ def plot_species(methods, metric_names):
   dl_mode = False
   idtl_mode = False
   i_mode = False
-  dl_mode = True
+  
+  dtl_mode = True
   simulation_name = ""
   if (dtl_mode):
     simulation_name += "dtl"
@@ -202,7 +203,7 @@ def plot_species(methods, metric_names):
   generate_plot(datasets, params_to_plot, metric_names, methods, simulation_name, fixed_params_values_dtl, subst_model)
 
 def main_plot_metrics():
-  methods = ["duptree", "astral", "njst-original", "njst-reweighted", "njrax-NJst", "speciesrax-dtl-raxml-HYBRID"]
+  methods = ["astralpro", "njrax-NJst", "speciesrax-dtl-raxml-HYBRID"]
   metric_names = ["species_unrooted_rf", "runtimes"]
   #plot_species(methods, metric_names)
   plot_parameters(methods, metric_names, "dup_rate")

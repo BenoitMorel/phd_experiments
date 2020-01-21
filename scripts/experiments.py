@@ -95,6 +95,9 @@ njstm_script = os.path.join(github_root, "NJstM", "njstm.r")
 duptree_exec = os.path.join(github_root, "duptree", "duptree")
 fastrfs_exec = os.path.join(github_root, "FastRFS", "build", "FastRFS")
 astral_jar = os.path.join(github_root, "ASTRAL", "Astral", "astral.jar")
+astralpro_root = os.path.join(github_root, "A-pro")
+astralpro_jar = os.path.join(github_root, "A-pro", "ASTRAL-MP", "astral.1.1.2.jar")
+astrid_exec = os.path.join(github_root, "ASTRID", "src", "build", "ASTRID")
 prepare_fastrfs_script = os.path.join(tools_root, "rfs", "prepareTrees.py")
 # constants
 mpi_scheduler_heuristic = "--split-scheduler"

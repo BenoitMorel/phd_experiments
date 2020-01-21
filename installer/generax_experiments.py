@@ -240,6 +240,15 @@ def install_deco(targz):
   apply_diff(os.path.join(exp.github_root, "phd_experiments", "installer", "deco_make_diff.txt"), reverse = True)
   run_make(repo)
 
+
+
+
+
+
+
+###################
+###   MAIN      ###
+###################
 if (False):
   git_update("https://github.com/ssolo/ALE.git", "ALE")
   git_update("https://github.com/BenoitMorel/BenoitDatasets.git", "BenoitDatasets")
@@ -252,9 +261,6 @@ if (False):
   git_update("https://gitlab.inria.fr/Phylophile/Treerecs.git", "Treerecs", "treesearch")
   git_update("https://github.com/stamatak/standard-RAxML.git", "standard-RAxML")  
 
-
-
-if (False):
   #install_bpp_for_ale()
   git_update("https://github.com/ssolo/ALE.git", "ALE")
   apply_git_diff("ALE", "ale_diff.txt")

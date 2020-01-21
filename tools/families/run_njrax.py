@@ -4,6 +4,7 @@ import subprocess
 sys.path.insert(0, 'scripts')
 import experiments as exp
 import fam
+import species_analyze
 
 def run_njrax(dataset, nj_strategy, subst_model, cores = 40):
   command = []
@@ -31,8 +32,7 @@ def run_njrax(dataset, nj_strategy, subst_model, cores = 40):
 if (__name__== "__main__"):
   max_args_number = 5
   if len(sys.argv) < max_args_number:
-    print("Syntax error: python run_speciesrax.py dataset_dir subst_model cores.")
-    print("Cluster can be either normal, haswell or magny")
+    print("Syntax error: python run_speciesrax.py dataset_dir nj_strategy subst_model cores.")
     sys.exit(0)
 
 
@@ -41,7 +41,7 @@ if (__name__== "__main__"):
   subst_model = sys.argv[3] 
   cores = int(sys.argv[4])
   run_njrax(dataset, nj_strategy, subst_model, cores)
-
+  species_analyze.analyze(dataset) 
 
 
 
