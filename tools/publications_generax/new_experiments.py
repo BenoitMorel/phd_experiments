@@ -31,7 +31,7 @@ datasets = []
 subst_model = "GTR"
 species = range(10, 101, 10)
 seeds = range(10, 15)
-if (False):
+if (True):
   for s in species:
       for seed in seeds:
         # only dtl
@@ -39,9 +39,9 @@ if (False):
         # only ILS
         #datasets.append("ssim_s" + str(s) + "_f100_sites100_GTR_bl1.0_d0.0_l0.0_t0.0_p0.0_pop100000_seed" + str(seed))
         # only dl
-        #datasets.append("ssim_s" + str(s) + "_f100_sites100_GTR_bl1.0_d0.2_l0.2_t0.0_p0.0_pop10_seed" + str(seed))
+        datasets.append("ssim_s" + str(s) + "_f100_sites100_GTR_bl1.0_d0.2_l0.2_t0.0_p0.0_pop10_seed" + str(seed))
         # idtl
-        datasets.append("ssim_s" + str(s) + "_f100_sites100_GTR_bl1.0_d0.1_l0.1_t0.1_p0.0_pop20000_seed" + str(seed))
+        #datasets.append("ssim_s" + str(s) + "_f100_sites100_GTR_bl1.0_d0.1_l0.1_t0.1_p0.0_pop20000_seed" + str(seed))
         pass
 
 seeds = range(20, 25)
@@ -50,7 +50,7 @@ dtl_range = (0.05, 0.1, 0.25, 0.4)
 pop_range = (10000, 20000, 30000, 50000)
 fam_range = (10, 25, 50, 200, 500)
 bl_range = (0.01, 0.1, 2.0, 5.0, 10.0, 100.0)
-if (True):
+if (False):
   for dl in dlrange:
     for seed in seeds:
       datasets.append("ssim_s40_f100_sites100_GTR_bl1.0_d" + str(dl) + "_l" + str(dl) + "_t0.0_p0.0_pop10_seed" + str(seed))
@@ -88,9 +88,9 @@ if (True): # Species tree inference
   #species_run_filter.pargenes_starting_trees = 1
   #species_run_filter.pargenes_bootstrap_trees = 100
   #species_run_filter.speciesraxfastdtl = True
-  #species_run_filter.njrax = True
+  species_run_filter.njrax = True
   #species_run_filter.njst = True
-  species_run_filter.astralpro = True
+  #species_run_filter.astralpro = True
   #species_run_filter.astral = True
   #species_run_filter.duptree = True
   #species_run_filter.fastrfs = True

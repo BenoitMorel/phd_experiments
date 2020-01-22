@@ -162,7 +162,7 @@ def plot_species(methods, metric_names):
   idtl_mode = False
   i_mode = False
   
-  dtl_mode = True
+  dl_mode = True
   simulation_name = ""
   if (dtl_mode):
     simulation_name += "dtl"
@@ -204,13 +204,13 @@ def plot_species(methods, metric_names):
 
 def main_plot_metrics():
   methods = ["astralpro", "njrax-NJst", "speciesrax-dtl-raxml-HYBRID"]
-  metric_names = ["species_unrooted_rf", "runtimes"]
-  #plot_species(methods, metric_names)
-  plot_parameters(methods, metric_names, "dup_rate")
-  plot_parameters(methods, metric_names, "transfer_rate")
-  plot_parameters(methods, metric_names, "bl")
-  plot_parameters(methods, metric_names, "families")
-  plot_parameters(methods, metric_names, "discordance")
+  metric_names = ["species_unrooted_rf", "species_rooted_rf", "runtimes"]
+  plot_species(methods, metric_names)
+  #plot_parameters(methods, metric_names, "dup_rate")
+  #plot_parameters(methods, metric_names, "transfer_rate")
+  #plot_parameters(methods, metric_names, "bl")
+  #plot_parameters(methods, metric_names, "families")
+  #plot_parameters(methods, metric_names, "discordance")
 
 if (__name__ == "__main__"):
   main_plot_metrics()

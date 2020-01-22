@@ -133,10 +133,10 @@ def copy_trim(input_file, output_file):
   s = open(input_file).read()
   open(output_file, "w").write(s.replace(" ", ""))
 
-def export_to_family(output_dir):
+def export_to_family(output_dir, replicate = 1):
   print("Start exporting to families format...")
   fam.init_top_directories(output_dir)
-  simphy_output_dir = os.path.join(output_dir, "1")
+  simphy_output_dir = os.path.join(output_dir, str(replicate))
   families = []
   for f in os.listdir(simphy_output_dir):
     if (f.startswith("g_trees")):
