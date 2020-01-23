@@ -89,7 +89,6 @@ def get_prefixed_adjacencies(datadir):
 def get_deco_mappings(datadir):
   return os.path.join(get_adjacencies_dir(datadir), "deco_mappings.txt")
 
-
 def get_discordance_file(datadir):
   return os.path.join(datadir, "discordance_rate.txt")
 
@@ -99,6 +98,9 @@ def get_discordance_rate(datadir):
     return float(open(df).read())
   else:
     return 0.0
+
+def get_missing_data_file(datadir):
+  return os.path.join(datadir, "missing_data.txt")
 
 def write_discordance_rate(datadir, rate):
   df = get_discordance_file(datadir)

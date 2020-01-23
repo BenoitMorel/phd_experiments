@@ -20,10 +20,11 @@ def get_gene_list(input_datadir, family):
     res.append(mapping)
   return res
 
-def get_sampled_gene_set(input_gene_list, random_sampling_ratio):
+def get_sampled_gene_set(input_gene_list, gene_to_species, species_missing_ratio):
   res = []
   for gene in input_gene_list:
-    if (random_sampling_ratio > random.uniform(0.0, 1.0)):
+    missing_ratio = species_missing_ratio[gene_to_species[gene]]
+    if (missing_ratio > random.uniform(0.0, 1.0)):
       res.append(gene)
   return set(res)
 
@@ -56,28 +57,46 @@ def copy_sampled_genes(input_datadir, output_datadir, family, output_gene_set):
   copy_alignment(input_datadir, output_datadir, family, output_gene_set)
 
 
-def sample_family(input_datadir, output_datadir, family, random_sampling_ratio):
+def sample_family(input_datadir, output_datadir, family, species_missing_ratio):
   input_gene_list = get_gene_list(input_datadir, family)
-  output_gene_set = get_sampled_gene_set(input_gene_list, random_sampling_ratio)
-  print(str(len(input_gene_list)) + " " + str(len(output_gene_set)))
+  gene_to_species = get_dico.get_gene_to_species(input_datadir, family)
+  output_gene_set = get_sampled_gene_set(input_gene_list, gene_to_species, species_missing_ratio)
   if (len(output_gene_set) > 3):
     copy_sampled_genes(input_datadir, output_datadir, family, output_gene_set)
 
-def sample_missing_data(input_datadir, output_datadir, random_sampling_ratio):
+def get_species_missing_ratio(input_datadir, mu, theta):
+  species_tree = ete3.Tree(fam.get_species_tree(input_datadir))
+  species_missing_ratio = {}
+  for species in species_tree.get_leaf_names():
+    v = random.normalvariate(mu, theta)
+    species_missing_ratio[species] = max(0, min(1.0, v))
+  return species_missing_ratio
+  
+def export_missing_ratios(output_datadir, species_missing_ratio):
+  print("Missing data ratios:")
+  with open(fam.get_missing_data_file(output_datadir), "w") as writer:
+    for k,v in sorted(species_missing_ratio.items(), key=lambda x: x[1]):
+      writer.write(k + " " + str(v) + "\n")
+      print(k + " " + str(v))
+      
+def sample_missing_data(input_datadir, output_datadir, mu, theta):
   random.seed = 41
   fam.init_top_directories(output_datadir)
   families = fam.get_families_list(input_datadir)
   cp(fam.get_species_tree(input_datadir), fam.get_species_tree(output_datadir))
+  species_missing_ratio = get_species_missing_ratio(input_datadir, mu, theta)
   for family in families:
-    sample_family(input_datadir, output_datadir, family, random_sampling_ratio)
+    sample_family(input_datadir, output_datadir, family, species_missing_ratio)
+  export_missing_ratios(output_datadir, species_missing_ratio)
   fam.postprocess_datadir(output_datadir)
 
 if (__name__ == "__main__"): 
-  if (len(sys.argv) < 4): 
-    print("Syntax: python " + os.path.basename(__file__) + " input_datadir output_datadir random_sampling_ratio")
+  if (len(sys.argv) < 5): 
+    print("Syntax: python " + os.path.basename(__file__) + " input_datadir output_datadir mu theta")
   input_datadir = sys.argv[1]
   output_datadir = sys.argv[2]
-  random_sampling_ratio = float(sys.argv[3])
-  sample_missing_data(input_datadir, output_datadir, random_sampling_ratio)
+  mu = float(sys.argv[3])
+  theta = float(sys.argv[4])
+  sample_missing_data(input_datadir, output_datadir, mu, theta)
 
 

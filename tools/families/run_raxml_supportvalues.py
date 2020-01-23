@@ -146,23 +146,13 @@ def run_pargenes_and_extract_trees(datadir, subst_model, starting_trees, bs_tree
     export_pargenes_trees(pargenes_dir, subst_model, light, datadir)
 
 if __name__ == "__main__":
-  for dataset in os.listdir(sys.argv[1]):
-    dataset = os.path.join(sys.argv[1], dataset)
-    print(dataset)
-    try:
-      run_pargenes_and_extract_trees(dataset, "1", "10", "100", 40)
-      print("ok")
-    except:
-      print("ko")
-  exit(0) 
-  
   if (len(sys.argv) != 6):
     print("syntax: python run_raxml_supportvalues.py datadir subst_model starting_trees bs_trees cores")
     sys.exit(1)
   dataset = sys.argv[1]
   subst_model = sys.argv[2]
-  starting_trees = sys.argv[3]
-  bs_trees = sys.argv[4]
+  starting_trees = int(sys.argv[3])
+  bs_trees = int(sys.argv[4])
   cores = int(sys.argv[5])
   
   run_pargenes_and_extract_trees(dataset, subst_model, starting_trees, bs_trees, cores)
