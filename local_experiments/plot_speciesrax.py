@@ -5,7 +5,7 @@ sys.path.insert(0, 'scripts')
 sys.path.insert(0, 'tools/families')
 import experiments as exp
 import fam
-import datasets
+import fam_data
 import saved_metrics
 
 import matplotlib
@@ -43,7 +43,7 @@ def plot(grouped_datasets, x_param, methods, subst_model, metric_name, output):
   for key in grouped_datasets:
     datasets_keys.append(key)
   print("Sorting by " + x_param)
-  datasets_keys.sort(key = lambda t: float(datasets.get_param_from_dataset_name(x_param, t)))
+  datasets_keys.sort(key = lambda t: float(fam_data.get_param_from_dataset_name(x_param, t)))
   print(datasets_keys)
   f, ax = plt.subplots(1)
   df[x_param] = []
@@ -51,7 +51,7 @@ def plot(grouped_datasets, x_param, methods, subst_model, metric_name, output):
     df[method] = []
   for dataset_key in datasets_keys:
     # value for the varying parameter
-    df[x_param].append(datasets.get_param_from_dataset_name(x_param, grouped_datasets[dataset_key][0]))
+    df[x_param].append(fam_data.get_param_from_dataset_name(x_param, grouped_datasets[dataset_key][0]))
     for method in methods:
       key = (method + "." + subst_model).lower()
       average = 0.0
@@ -88,7 +88,7 @@ def get_relevant_datasets(datasets, param, fixed_params_values):
     for fixed_param in fixed_params_values:
       if (fixed_param == param):
         continue
-      value = datasets.get_param_from_dataset_name(fixed_param, dataset)
+      value = fam_data.get_param_from_dataset_name(fixed_param, dataset)
       if (value != fixed_params_values[fixed_param]):
         print (str(fixed_param) + " " + str(value) + " " + str(fixed_params_values[fixed_param]))
         ok = False
