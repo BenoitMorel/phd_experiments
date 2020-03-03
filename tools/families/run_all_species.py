@@ -1,6 +1,9 @@
 import os
 import sys
 import pickle
+import uuid
+import tempfile
+import time
 import run_raxml_supportvalues as raxml
 import fam
 import run_generax
@@ -17,6 +20,9 @@ import run_fastrfs
 import run_njst  
 import run_njrax
 import run_concatenation
+sys.path.insert(0, os.path.join("scripts"))
+import experiments as exp
+
 
 def printFlush(msg):
   print(msg)
@@ -83,23 +89,25 @@ class SpeciesRunFilter():
     self.speciesraxfastdtl = True
 
   def launch_reference_methods(self, datadir, subst_model, cores, launch_mode):
-    run_filter_file = tempfile.NamedTemporaryFile() 
-    pickle.dump(run_filter, run_filter_file)
+    run_filter_file_path = os.path.join(datadir, str(uuid.uuid4()))
+    pickle.dump(self, open(run_filter_file_path, "wb"))
     command = []
     command.append("python")
     command.append(os.path.realpath(__file__))
     command.append(datadir)
     command.append(subst_model)
-    command.append(cores)
-    command.append(run_filter_file.name)
+    command.append(str(cores))
+    command.append(run_filter_file_path)
     submit_path = os.path.join(datadir, "submit_species.sh")
+    print("Submit path : " + submit_path)
+    print("Saving pickle in " + run_filter_file_path)
     exp.submit(submit_path, " ".join(command), cores, launch_mode) 
     
 
 
   def run_reference_methods(self, datadir, subst_model, cores, launch_mode = "normal"):
     if (launch_mode != "normal"):
-      launch_reference_methods(datadir, subst_model, cores, launch_mode)
+      self.launch_reference_methods(datadir, subst_model, cores, launch_mode)
       return
     print("*************************************")
     print("Run tested species inference tools for dataset " + datadir)
@@ -232,7 +240,7 @@ class SpeciesRunFilter():
 
 
 if __name__ == "__main__":
-  if (len(sys.argv) != 6):
+  if (len(sys.argv) != 5):
     print("syntax: python run_all_species.py datadir subst_model cores run_filter_pickle")
     sys.exit(1)
   
