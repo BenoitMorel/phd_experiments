@@ -1,5 +1,6 @@
 import os
 import sys
+import pickle
 import run_raxml_supportvalues as raxml
 import fam
 import run_generax
@@ -81,8 +82,25 @@ class SpeciesRunFilter():
     self.speciesraxfastdl = True
     self.speciesraxfastdtl = True
 
+  def launch_reference_methods(self, datadir, subst_model, cores, launch_mode):
+    run_filter_file = tempfile.NamedTemporaryFile() 
+    pickle.dump(run_filter, run_filter_file)
+    command = []
+    command.append("python")
+    command.append(os.path.realpath(__file__))
+    command.append(datadir)
+    command.append(subst_model)
+    command.append(cores)
+    command.append(run_filter_file.name)
+    submit_path = os.path.join(datadir, "submit_species.sh")
+    exp.submit(submit_path, " ".join(command), cores, launch_mode) 
+    
 
-  def run_reference_methods(self, datadir, subst_model, cores):
+
+  def run_reference_methods(self, datadir, subst_model, cores, launch_mode = "normal"):
+    if (launch_mode != "normal"):
+      launch_reference_methods(datadir, subst_model, cores, launch_mode)
+      return
     print("*************************************")
     print("Run tested species inference tools for dataset " + datadir)
     print("*************************************")
@@ -212,17 +230,17 @@ class SpeciesRunFilter():
     for dataset in datasets:
        self.run_reference_methods(dataset, subst_model, cores)
 
-def with_transfers(datadir):
-   return float(datadir.split("_")[-2][1:]) != 0.0
 
 if __name__ == "__main__":
   if (len(sys.argv) != 6):
-    printFlush("syntax: python run_raxml_all.py datadir subst_model starting_trees bs_trees cores")
+    print("syntax: python run_all_species.py datadir subst_model cores run_filter_pickle")
     sys.exit(1)
+  
+
   datadir = sys.argv[1]
   subst_model = sys.argv[2]
-  starting_trees = sys.argv[3]
-  bs_trees = sys.argv[4]
-  cores = int(sys.argv[5])
-  run_reference_methods(datadir, subst_model, starting_trees, bs_trees, cores)
+  cores = int(sys.argv[3])
+  run_filter_pickle = sys.argv[4]
+  run_filter = pickle.load(open(run_filter_pickle, "rb"))
+  run_filter.run_reference_methods(datadir, subst_model, cores)
 

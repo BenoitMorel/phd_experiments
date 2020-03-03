@@ -113,16 +113,6 @@ if (True): # Species tree inference
   #species_run_filter.speciesraxprune = True
   #species_run_filter.speciesraxperfamily = True
   species_run_filter.analyze = True
-  #species_run_filter.pargenes = True
-  #species_run_filter.pargenes_starting_trees = 1
-  #species_run_filter.pargenes_bootstrap_trees = 100
-  #species_run_filter.speciesraxfastdtl = True
-  #species_run_filter.njrax = True
-  #species_run_filter.njst = True
-  #species_run_filter.astralpro = True
-  #species_run_filter.astral = True
-  #species_run_filter.duptree = True
-  #species_run_filter.fastrfs = True
 
   #species_run_filter.enable_fast_methods()
   run_species_methods(datasets, subst_model, cores = cores, run_filter = species_run_filter)
