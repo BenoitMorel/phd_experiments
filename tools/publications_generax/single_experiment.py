@@ -1,7 +1,7 @@
 import time
 import sys
 import os
-import common
+import fam_data
 import pickle
 sys.path.insert(0, os.path.join("tools", "families"))
 from run_all import RunFilter
@@ -10,8 +10,8 @@ def run_single_experiment(dataset, subst_model, do_generate, cores, run_filter =
   start = time.time()
   try:
     if (do_generate):
-      common.generate_dataset(dataset)
-    common.run_reference_methods(dataset, subst_model, cores, run_filter)
+      fam_data.generate_dataset(dataset)
+    run_filter.run_reference_methods(dataset, subst_model, cores)
   finally:
     elapsed = time.time() - start
     print("End of single experiment. Elapsed time: " + str(elapsed) + "s")
@@ -32,5 +32,5 @@ if (__name__ == "__main__"):
     print("run_filter pickle file: " + run_filter_file)
     run_filter = pickle.load(open(run_filter_file, "rb"))
 
-  run_single_experiment(dataset, subst_model, do_generate, cores, run_filter)
+  run_filter.run_single_experiment(dataset, subst_model, do_generate, cores)
 

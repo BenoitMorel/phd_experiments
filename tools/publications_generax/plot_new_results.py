@@ -5,8 +5,8 @@ sys.path.insert(0, 'scripts')
 sys.path.insert(0, 'tools/families')
 import experiments as exp
 import fam
+import datasets
 import saved_metrics
-import common
 
 import matplotlib
 matplotlib.use('Agg')
@@ -36,10 +36,14 @@ def get_default_value(metric_name):
 def plot(grouped_datasets, x_param, methods, subst_model, metric_name, output):
   df = {}
   datasets_keys = []
+  method_dict = {}
+  for method in methods:
+    method_dict[method] = method
+  method_dict["speciesrax-dtl-raxml-HYBRID"] = "generax"
   for key in grouped_datasets:
     datasets_keys.append(key)
   print("Sorting by " + x_param)
-  datasets_keys.sort(key = lambda t: float(fam.get_param_from_dataset_name(x_param, t)))
+  datasets_keys.sort(key = lambda t: float(datasets.get_param_from_dataset_name(x_param, t)))
   print(datasets_keys)
   f, ax = plt.subplots(1)
   df[x_param] = []
@@ -47,7 +51,7 @@ def plot(grouped_datasets, x_param, methods, subst_model, metric_name, output):
     df[method] = []
   for dataset_key in datasets_keys:
     # value for the varying parameter
-    df[x_param].append(fam.get_param_from_dataset_name(x_param, grouped_datasets[dataset_key][0]))
+    df[x_param].append(datasets.get_param_from_dataset_name(x_param, grouped_datasets[dataset_key][0]))
     for method in methods:
       key = (method + "." + subst_model).lower()
       average = 0.0
@@ -67,7 +71,7 @@ def plot(grouped_datasets, x_param, methods, subst_model, metric_name, output):
     print(method)
     print(df)
     #plt.plot(x_param, method, data=df, marker='.', linestyle = "solid", linewidth=2, label = method, markersize=12)
-    plt.plot(x_param, method, data=df, marker='.', linewidth=2, label = method, markersize=12)
+    plt.plot(x_param, method, data=df, marker='.', linewidth=2, label = method_dict[method], markersize=12)
   plt.xlabel(x_param)
   plt.ylabel(metric_name)
   plt.legend()
@@ -84,8 +88,9 @@ def get_relevant_datasets(datasets, param, fixed_params_values):
     for fixed_param in fixed_params_values:
       if (fixed_param == param):
         continue
-      value = fam.get_param_from_dataset_name(fixed_param, dataset)
+      value = datasets.get_param_from_dataset_name(fixed_param, dataset)
       if (value != fixed_params_values[fixed_param]):
+        print (str(fixed_param) + " " + str(value) + " " + str(fixed_params_values[fixed_param]))
         ok = False
         break
     if (ok):
@@ -152,6 +157,30 @@ def plot_parameters(methods, metric_names, param):
     fixed_params_values["population"] = "10000"
   generate_plot(datasets, [param], metric_names, methods, simulation_name, fixed_params_values, subst_model)
   
+def plot_missing(methods, metric_names):
+  simulation_name = "missing"
+  subst_model = "GTR"
+  datasets = get_datasets("ssim")
+  fixed_params_values = {}
+  fixed_params_values["species"] = "20"
+  fixed_params_values["bl"] = "1.0"
+  fixed_params_values["families"] = "100"
+  fixed_params_values["sites"] = "100"
+  fixed_params_values["transfer_rate"] = "0.1"
+  fixed_params_values["dup_rate"] = "0.1"
+  fixed_params_values["population"] = "10000"
+  fixed_params_values["sample_mu"] = "0.7"
+  fixed_params_values["sample_theta"] = "0.0"
+  generate_plot(datasets, ["sample_mu"], metric_names, methods, simulation_name, fixed_params_values, subst_model)
+  generate_plot(datasets, ["sample_theta"], metric_names, methods, simulation_name, fixed_params_values, subst_model)
+  fixed_params_values["sample_mu"] = "0.35"
+  simulation_name = "missingFamMu"
+  generate_plot(datasets, ["families"], metric_names, methods, simulation_name, fixed_params_values, subst_model)
+  simulation_name = "missingFamTheta"
+  fixed_params_values["sample_mu"] = "0.75"
+  fixed_params_values["sample_theta"] = "0.15"
+  generate_plot(datasets, ["families"], metric_names, methods, simulation_name, fixed_params_values, subst_model)
+  
 
 def plot_species(methods, metric_names):
  
@@ -162,7 +191,7 @@ def plot_species(methods, metric_names):
   idtl_mode = False
   i_mode = False
   
-  dl_mode = True
+  dtl_mode = True
   simulation_name = ""
   if (dtl_mode):
     simulation_name += "dtl"
@@ -198,19 +227,21 @@ def plot_species(methods, metric_names):
     fixed_params_values_dtl["population"] = "20000"
   else:
     fixed_params_values_dtl["population"] = "10"
-  
-
   generate_plot(datasets, params_to_plot, metric_names, methods, simulation_name, fixed_params_values_dtl, subst_model)
 
 def main_plot_metrics():
-  methods = ["astralpro", "njrax-NJst", "speciesrax-dtl-raxml-HYBRID"]
-  metric_names = ["species_unrooted_rf", "species_rooted_rf", "runtimes"]
+  #methods = ["duptree", "astral", "astralpro", "njrax-NJst", "speciesrax-dtl-raxml-HYBRID", "concatenation-naive"]
+  methods = ["astral", "astralpro", "speciesrax-dtl-raxml-HYBRID"]
+  #methods = ["duptree", "njst-original", "njst-reweighted", "astralpro", "njrax-NJst", "speciesrax-dtl-raxml-HYBRID", "speciesrax-dtl-raxml-SPR", "speciesrax-prune-SPR", "speciesrax-per-family-SPR"]
+  metric_names = ["species_unrooted_rf",  "runtimes"]
   plot_species(methods, metric_names)
   #plot_parameters(methods, metric_names, "dup_rate")
   #plot_parameters(methods, metric_names, "transfer_rate")
   #plot_parameters(methods, metric_names, "bl")
   #plot_parameters(methods, metric_names, "families")
   #plot_parameters(methods, metric_names, "discordance")
+  #metric_names = ["species_unrooted_rf"]
+  #plot_missing(methods, metric_names)
 
 if (__name__ == "__main__"):
   main_plot_metrics()

@@ -5,7 +5,7 @@ sys.path.insert(0, 'scripts')
 import experiments as exp
 import fam
 
-def run_speciesrax_instance(dataset, starting_tree, with_transfers, run_name, subst_model, slow, strategy, cores = 40):
+def run_speciesrax_instance(dataset, starting_tree, with_transfers, run_name, subst_model, slow, strategy, cores = 40, additional_args = []):
   command = []
   command.append("python")
   command.append(os.path.join(exp.scripts_root, "generax/launch_speciesrax.py"))
@@ -26,6 +26,8 @@ def run_speciesrax_instance(dataset, starting_tree, with_transfers, run_name, su
     command.append("1")
   command.append("--species-strategy")
   command.append(strategy)
+  for arg in additional_args:
+    command.append(arg)
   run_name += "-" + strategy
   command.append("--run")
   command.append(fam.get_run_name(run_name, subst_model))

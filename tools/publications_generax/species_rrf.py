@@ -9,9 +9,9 @@ sys.path.insert(0, 'tools/families')
 sys.path.insert(0, 'tools/plotters')
 import experiments as exp
 import plot_histogram
-import common
 import scaling_generax
 import fam
+import datasets
 import boxplot
 import rf_cells
 import saved_metrics
@@ -29,7 +29,7 @@ def get_datasets_to_plot(datasets_rf_dico, fixed_params_dico, x_param):
     for fixed_param in fixed_params_dico:
       if (fixed_param == x_param):
         continue
-      dataset_param_value = fam.get_param_from_dataset_name(fixed_param, dataset)
+      dataset_param_value = datasets.get_param_from_dataset_name(fixed_param, dataset)
       if (dataset_param_value != fixed_params_dico[fixed_param]):
         ok = False
         continue
@@ -40,7 +40,7 @@ def get_datasets_to_plot(datasets_rf_dico, fixed_params_dico, x_param):
 
 def plot(datasets_rf_dico, x_param, fixed_params_dico, methods, methods_dico, title, x_label, y_label, output):
   datasets_to_plot = get_datasets_to_plot(datasets_rf_dico, fixed_params_dico, x_param)
-  datasets_to_plot.sort(key = lambda t: float(fam.get_param_from_dataset_name(x_param, t)))
+  datasets_to_plot.sort(key = lambda t: float(datasets.get_param_from_dataset_name(x_param, t)))
   df = pd.DataFrame()
   f, ax = plt.subplots(1)
   fake_df = {}
@@ -48,7 +48,7 @@ def plot(datasets_rf_dico, x_param, fixed_params_dico, methods, methods_dico, ti
   for method in methods:
     fake_df[method] = []
   for dataset in datasets_to_plot:
-    fake_df[x_param].append(float(fam.get_param_from_dataset_name(x_param, dataset)))
+    fake_df[x_param].append(float(datasets.get_param_from_dataset_name(x_param, dataset)))
     rf_dico = datasets_rf_dico[dataset]
     for method in methods:
       if (not method in rf_dico):
@@ -114,8 +114,8 @@ def plot_rrf(x_labels, params_to_plot_dl, params_to_plot_dtl, fixed_params_dl, f
     suffix += "_unrooted"
   title_dl = "Simulation with DL (no transfers)"
   title_dtl = "Simulation with DTL"
-  datasets_rf_dico_dl = common.get_metrics_for_datasets("jsim_", metric_name)
-  datasets_rf_dico_dtl = common.get_metrics_for_datasets("jsimdtl_", metric_name)
+  datasets_rf_dico_dl = fam_data.get_metrics_for_datasets("jsim_", metric_name)
+  datasets_rf_dico_dtl = fam_data.get_metrics_for_datasets("jsimdtl_", metric_name)
 
   plotter_rf_dl = Plotter(datasets_rf_dico_dl, fixed_params_dl, methods_dl, methods_dico, title_dl, x_labels, rf_y_label, "dl_rf", suffix)
   plotter_rf_dtl = Plotter(datasets_rf_dico_dtl, fixed_params_dtl, methods_dtl, methods_dico, title_dtl, x_labels, rf_y_label, "dtl_rf", suffix)

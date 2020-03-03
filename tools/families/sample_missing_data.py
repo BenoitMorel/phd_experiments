@@ -81,9 +81,13 @@ def export_missing_ratios(output_datadir, species_missing_ratio):
       
 def sample_missing_data(input_datadir, output_datadir, mu, theta):
   random.seed = 41
+  if (os.path.exists(output_datadir)):
+    print("PATH " + output_datadir + " already exists!!!")
+    sys.exit(1)
   fam.init_top_directories(output_datadir)
   families = fam.get_families_list(input_datadir)
   cp(fam.get_species_tree(input_datadir), fam.get_species_tree(output_datadir))
+  cp(fam.get_discordance_file(input_datadir), fam.get_discordance_file(output_datadir))
   species_missing_ratio = get_species_missing_ratio(input_datadir, mu, theta)
   for family in families:
     sample_family(input_datadir, output_datadir, family, species_missing_ratio)

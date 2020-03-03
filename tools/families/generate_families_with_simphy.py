@@ -11,9 +11,11 @@ import rescale_bl
 import analyze_tree
 import experiments as exp
 import discordance_rate
+import sample_missing_data
 
 class SimphyParameters():
   def __init__(self):
+    self.prefix = "ssim"
     self.population = 10000
     self.speciations_per_year = 0.00001
     self.species_taxa = 30
@@ -175,7 +177,7 @@ def export_to_family(output_dir, replicate = 1):
   fam.postprocess_datadir(output_dir)
 
 def get_output_dir(parameters, root_output):
-  res = "ssim"
+  res = parameters.prefix
   res += "_s" + str(parameters.species_taxa)
   res += "_f" + str(parameters.families_number)
   res += "_sites" + str(parameters.sites)
@@ -186,6 +188,8 @@ def get_output_dir(parameters, root_output):
   res += "_t" + str(parameters.transfer_rate)
   res += "_p0.0"
   res += "_pop" + str(parameters.population)
+  res += "_mu" + str(parameters.mu)
+  res += "_theta" + str(parameters.theta)
   res += "_seed" + str(parameters.seed)
   return os.path.join(root_output, res)
 
@@ -220,7 +224,7 @@ def generate_from_parameters(parameters, root_output):
   print("Done! output in " + output_dir) 
   return output_dir
 
-def generate_simphy(species, families, sites, model, bl_factor, dup_rate, loss_rate, transfer_rate, perturbation, population, root_output, seed):
+def generate_simphy(species, families, sites, model, bl_factor, dup_rate, loss_rate, transfer_rate, perturbation, population, mu, theta, root_output, seed):
   p = SimphyParameters()
   p.species_taxa = int(species)
   p.families_number = int(families)
@@ -232,9 +236,20 @@ def generate_simphy(species, families, sites, model, bl_factor, dup_rate, loss_r
   p.transfer_rate = float(transfer_rate)
   p.seed = int(seed)
   p.population = population
+  p.mu = float(mu)
+  p.theta = float(theta)
   print(perturbation)
   assert(float(perturbation) == 0.0)
-  generate_from_parameters(p, root_output)
+  if (p.mu != 1.0 or p.theta != 0.0):
+    p.prefix = p.prefix + "temp"
+    temp_output_dir = generate_from_parameters(p, root_output)
+    p.prefix = p.prefix[:-4]
+    output_dir = get_output_dir(p, root_output) 
+    print("Now move " + temp_output_dir + " to " + output_dir)
+    sample_missing_data.sample_missing_data(temp_output_dir, output_dir, p.mu, p.theta)
+    shutil.rmtree(temp_output_dir)
+  else:
+    generate_from_parameters(p, root_output)
    
 
 if (__name__ == "__main__"): 

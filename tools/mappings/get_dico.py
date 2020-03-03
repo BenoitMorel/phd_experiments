@@ -48,9 +48,9 @@ def get_species_to_genes_family(datadir, family):
     species = split[0]
     genes = split[1].split(";")
     if (not species in res):
-      res[species] = {}
+      res[species] = []
     for gene in genes:
-      res[species][gene] = True
+      res[species].append(gene)
   return res
 
 
