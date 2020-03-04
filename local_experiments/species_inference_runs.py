@@ -41,7 +41,7 @@ datasets = []
 subst_model = "GTR"
 species = range(10, 11, 10)
 seeds = range(10, 11)
-if (True):
+if (False):
   for s in species:
       for seed in seeds:
         # only dtl
@@ -101,13 +101,15 @@ if (False):
   datasets.append("jsimdtl_s41_f50_sites100_dna4_bl1.0_d0.1_l0.1_t0.1_p0.0")
 
   
+datasets.append("ssim_s11_f100_sites100_GTR_bl1.0_d0.2_l0.2_t0.2_p0.0_pop10_mu1.0_theta0.0_seed999")
 
 #fam_data.generate_all_datasets(datasets)
 if (True): # Species tree inference
   species_run_filter = SpeciesRunFilter()
   species_run_filter.disable_all()
+  species_run_filter.generate = True
   #species_run_filter.enable_fast_methods()
-  #species_run_filter.pargenes = True
+  species_run_filter.pargenes = True
   #species_run_filter.concatenation_naive = True
   species_run_filter.speciesraxfastdtl = True
   #species_run_filter.speciesraxprune = True

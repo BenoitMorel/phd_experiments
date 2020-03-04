@@ -21,7 +21,9 @@ import run_njst
 import run_njrax
 import run_concatenation
 sys.path.insert(0, os.path.join("scripts"))
+sys.path.insert(0, os.path.join("tools", "families"))
 import experiments as exp
+import fam_data
 
 
 def printFlush(msg):
@@ -31,6 +33,7 @@ def printFlush(msg):
 class SpeciesRunFilter():
   
   def __init__(self):
+    self.generate = False
     self.pargenes = True
     self.concatenation_naive = True
     self.stag = True
@@ -99,7 +102,7 @@ class SpeciesRunFilter():
     command.append(subst_model)
     command.append(str(cores))
     command.append(run_filter_file_path)
-    submit_path = os.path.join(misc_dir, "submit_" + str(uuid.uuid4() + ".sh")
+    submit_path = os.path.join(misc_dir, "submit_" + str(uuid.uuid4()) + ".sh")
     print("Submit path : " + submit_path)
     print("Saving pickle in " + run_filter_file_path)
     exp.submit(submit_path, " ".join(command), cores, launch_mode) 
@@ -113,6 +116,11 @@ class SpeciesRunFilter():
     print("*************************************")
     print("Run tested species inference tools for dataset " + datadir)
     print("*************************************")
+    if (self.generate):
+      dataset = os.path.basename(datadir)
+      print(datadir)
+      fam_data.generate_dataset(dataset)
+
     if (len(datadir.split("/")) == 1):
       datadir = fam.get_datadir(datadir) 
     save_sdtout = sys.stdout
