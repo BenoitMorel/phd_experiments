@@ -165,10 +165,11 @@ def rescale_trees(jprime_output, families, bl_factor):
     rescale_bl.rescale_bl(tree, tree, bl_factor)
     subprocess.check_call(["sed", "-i", "s/)1:/):/g", tree])
 
-def get_output(species, families, sites, model, bl_factor, dup_rate, loss_rate, transfer_rate, perturbation):
+def get_output(tag, species, families, sites, model, bl_factor, dup_rate, loss_rate, transfer_rate, perturbation):
   dirname = "jsim"
   if (float(transfer_rate) != 0.0):
     dirname += "dtl"
+  dirname += "_" + tag
   dirname += "_s" + str(species) + "_f" + str(families)
   dirname += "_sites" + str(sites)
   dirname += "_" + model
@@ -179,8 +180,8 @@ def get_output(species, families, sites, model, bl_factor, dup_rate, loss_rate, 
   
   return dirname
 
-def generate_jprime(species, families, sites, model, bl_factor, dup_rate, loss_rate, transfer_rate, perturbation, root_output, seed):
-  to_hash = str(species) + str(families) + str(sites) + model + str(bl_factor) + str(dup_rate) + str(loss_rate) + str(transfer_rate) + str(seed) + str(perturbation)
+def generate_jprime(tag, species, families, sites, model, bl_factor, dup_rate, loss_rate, transfer_rate, perturbation, root_output, seed):
+  to_hash = str(tag) + str(species) + str(families) + str(sites) + model + str(bl_factor) + str(dup_rate) + str(loss_rate) + str(transfer_rate) + str(seed) + str(perturbation)
   md5 = hashlib.md5(to_hash.encode())
   output = os.path.join(root_output, "jprime_temp_" + str(md5.hexdigest()))
   shutil.rmtree(output, True)
@@ -189,6 +190,7 @@ def generate_jprime(species, families, sites, model, bl_factor, dup_rate, loss_r
   jprime_output = os.path.join(output, "jprime")
   os.makedirs(jprime_output)
   with open(os.path.join(jprime_output, "jprime_script_params.txt"), "w") as writer:
+    writer.write(tag + " ")
     writer.write(str(species) + " " + str(families) + " ")
     writer.write(str(sites) + " " + str(model) + " ")
     writer.write(str(bl_factor)+ " " + str(dup_rate) + " ")
@@ -202,7 +204,7 @@ def generate_jprime(species, families, sites, model, bl_factor, dup_rate, loss_r
   jprime_to_families(jprime_output, output)
   
   species_nodes = analyze_tree.get_tree_taxa_number(os.path.join(jprime_output, "species.pruned.tree"))
-  new_output = os.path.join(root_output, get_output(species_nodes, families, sites, model, bl_factor, dup_rate, loss_rate, transfer_rate, perturbation))
+  new_output = os.path.join(root_output, get_output(tag, species_nodes, families, sites, model, bl_factor, dup_rate, loss_rate, transfer_rate, perturbation))
   shutil.move(output, new_output)
   fam.perturbate_species_tree(new_output, perturbation)
   fam.postprocess_datadir(new_output)
@@ -212,23 +214,24 @@ def generate_jprime(species, families, sites, model, bl_factor, dup_rate, loss_r
 
 if (__name__ == "__main__"): 
 
-  if (len(sys.argv) != 12 or not (sys.argv[4] in sequence_model.get_model_sample_names())):
-    if (len(sys.argv) != 12):
+  if (len(sys.argv) != 13 or not (sys.argv[4] in sequence_model.get_model_sample_names())):
+    if (len(sys.argv) != 13):
       print("Invalid number of parameters")
-    print("Syntax: python generate_jprime.py species_time_interval families sites model bl_scaler dup_rate loss_rate transfer_rate species_perturbation output seed")
+    print("Syntax: python generate_jprime.py tag species_time_interval families sites model bl_scaler dup_rate loss_rate transfer_rate species_perturbation output seed")
     print("model should be one of " + str(sequence_model.get_model_sample_names()))
     exit(1)
 
-  species = int(sys.argv[1])
-  families = int(sys.argv[2])
-  sites = int(sys.argv[3])
-  model = sys.argv[4]
-  bl_factor = float(sys.argv[5])
-  dup_rate = float(sys.argv[6])
-  loss_rate = float(sys.argv[7])
-  transfer_rate = float(sys.argv[8])
-  perturbation = float(sys.argv[9])
-  output = sys.argv[10]
-  seed = int(sys.argv[11])
+  tag = sys.argv[1]
+  species = int(sys.argv[2])
+  families = int(sys.argv[3])
+  sites = int(sys.argv[4])
+  model = sys.argv[5]
+  bl_factor = float(sys.argv[6])
+  dup_rate = float(sys.argv[7])
+  loss_rate = float(sys.argv[8])
+  transfer_rate = float(sys.argv[9])
+  perturbation = float(sys.argv[10])
+  output = sys.argv[11]
+  seed = int(sys.argv[12])
 
-  generate_jprime(species, families, sites, model, bl_factor, dup_rate, loss_rate, transfer_rate, perturbation, output, seed)
+  generate_jprime(tag, species, families, sites, model, bl_factor, dup_rate, loss_rate, transfer_rate, perturbation, output, seed)

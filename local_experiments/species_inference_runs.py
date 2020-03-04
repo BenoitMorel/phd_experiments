@@ -3,7 +3,6 @@ import os
 import sys
 import re
 sys.path.insert(0, os.path.join("tools", "families"))
-import fam_data
 import fam
 import saved_metrics
 from run_all import RunFilter
@@ -13,22 +12,6 @@ import discordance_rate
 
 datasets = []
 cores = 40
-
-def get_metrics_for_datasets(datasets_prefix, metric_name):
-  datasets = fam_data.get_available_datasets(datasets_prefix)
-  datasets_rf_dico = {}
-  datasets_runtimes_dico = {}
-  total = len(datasets)
-  for dataset in datasets:
-    dataset_dir = os.path.join(exp.families_datasets_root, dataset)
-    res = saved_metrics.get_metrics(dataset_dir, metric_name)
-    if (res != None):
-      if (metric_name == "runtimes"):
-        for key in res: 
-          if ("ALE" in key):
-            res[key] = str(float(res[key]) + float(res["ExaBayes"]))
-      datasets_rf_dico[dataset] = res
-  return datasets_rf_dico
 
 
 
@@ -101,9 +84,7 @@ if (False):
   datasets.append("jsimdtl_s41_f50_sites100_dna4_bl1.0_d0.1_l0.1_t0.1_p0.0")
 
   
-datasets.append("ssim_hey_s11_f100_sites100_GTR_bl1.0_d0.2_l0.2_t0.2_p0.0_pop10_mu1.0_theta0.0_seed999")
 
-#fam_data.generate_all_datasets(datasets)
 if (True): # Species tree inference
   species_run_filter = SpeciesRunFilter()
   species_run_filter.disable_all()

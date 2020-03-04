@@ -225,12 +225,13 @@ def export_adjacencies(zombi_dir, datadir):
         writer.write(species + "_" + genes[i] + " " + species + "_" + genes[(i+1)%len(genes)] + "\n")
   export_decostar_mappings(datadir)
 
-def generate_datadir(species, families, sites, model, bl_factor, dup_rate, loss_rate, transfer_rate, output):
-  dirname = "zsim_s" + str(species) + "_f" + str(families)
+def generate_datadir(tag, species, families, sites, model, bl_factor, dup_rate, loss_rate, transfer_rate, output):
+  dirname = "zsim_" + tag  
+  dirname += "_s" + str(species) + "_f" + str(families)
   dirname += "_sites" + str(sites)
   dirname += "_" + model
   dirname += "_bl" + str(bl_factor)
-  dirname += "_d" + str(dup_rate) + "_l" + str(loss_rate) + "_t" + str(transfer_rate) + "_p0.0"
+  dirname += "_d" + str(dup_rate) + "_l" + str(loss_rate) + "_t" + str(transfer_rate) + "_p0.0_pop1_mu1.0_theta0.0_seed0"
   datadir = os.path.join(output, dirname)
   os.makedirs(datadir)
   with open(os.path.join(datadir, "zombi_script_params.txt"), "w") as writer:
@@ -240,8 +241,8 @@ def generate_datadir(species, families, sites, model, bl_factor, dup_rate, loss_
     writer.write(str(loss_rate) + " " + str(transfer_rate) + " " + output)
   return datadir
 
-def generate_zombi(species, families, sites, model, bl_factor, dup_rate, loss_rate, transfer_rate, output):
-  datadir = generate_datadir(species, families, sites, model, bl_factor, dup_rate, loss_rate, transfer_rate, output)
+def generate_zombi(tag, species, families, sites, model, bl_factor, dup_rate, loss_rate, transfer_rate, output):
+  datadir = generate_datadir(tag, species, families, sites, model, bl_factor, dup_rate, loss_rate, transfer_rate, output)
   zombi_output = os.path.join(datadir, "zombi")
   parameters_dir = os.path.join(zombi_output, "parameters")
   os.makedirs(parameters_dir)
@@ -255,16 +256,17 @@ def generate_zombi(species, families, sites, model, bl_factor, dup_rate, loss_ra
 
 
 if (__name__ == "__main__"): 
-  if (len(sys.argv) != 10):
-    print("Syntax: python3 generate_zombi.py species families sites model bl_factor dup_rate loss_rate transfer_rate output")
+  if (len(sys.argv) != 11):
+    print("Syntax: python3 generate_zombi.py tag species families sites model bl_factor dup_rate loss_rate transfer_rate output")
     sys.exit(1)
-  species = int(sys.argv[1])
-  families = int(sys.argv[2])
-  sites = int(sys.argv[3])
-  model = sys.argv[4]
-  bl_factor = float(sys.argv[5])
-  dup_rate = float(sys.argv[6])
-  loss_rate = float(sys.argv[7])
-  transfer_rate = float(sys.argv[8])
-  output = sys.argv[9]
-  generate_zombi(species, families, sites, model, bl_factor, dup_rate, loss_rate, transfer_rate, output)
+  tag = sys.argv[1]
+  species = int(sys.argv[2])
+  families = int(sys.argv[3])
+  sites = int(sys.argv[4])
+  model = sys.argv[5]
+  bl_factor = float(sys.argv[6])
+  dup_rate = float(sys.argv[7])
+  loss_rate = float(sys.argv[8])
+  transfer_rate = float(sys.argv[9])
+  output = sys.argv[10]
+  generate_zombi(tag, species, families, sites, model, bl_factor, dup_rate, loss_rate, transfer_rate, output)

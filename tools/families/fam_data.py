@@ -90,9 +90,9 @@ def generate_dataset(dataset):
   output = "../BenoitDatasets/families"
   if (dataset.startswith("jsim")):
     species_internal, seed = jsim_species_to_params[int(species)]
-    jprime.generate_jprime(species_internal, families, sites, model, bl_factor, d, l, t, p, output, seed) 
+    jprime.generate_jprime(tag, species_internal, families, sites, model, bl_factor, d, l, t, p, output, seed) 
   elif (dataset.startswith("zsim")):
-    zombi.generate_zombi(species, families, sites, model, bl_factor, d, l, t, output) 
+    zombi.generate_zombi(tag, species, families, sites, model, bl_factor, d, l, t, output) 
   elif (dataset.startswith("ssim")):
     seed = get_param_from_dataset_name("seed", dataset)
     population = get_param_from_dataset_name("population", dataset)
