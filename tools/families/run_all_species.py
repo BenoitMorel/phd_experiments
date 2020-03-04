@@ -89,7 +89,8 @@ class SpeciesRunFilter():
     self.speciesraxfastdtl = True
 
   def launch_reference_methods(self, datadir, subst_model, cores, launch_mode):
-    run_filter_file_path = os.path.join(datadir, str(uuid.uuid4()))
+    misc_dir = fam.get_misc_dir(datadir)
+    run_filter_file_path = os.path.join(misc_dir, str(uuid.uuid4()))
     pickle.dump(self, open(run_filter_file_path, "wb"))
     command = []
     command.append("python")
@@ -98,7 +99,7 @@ class SpeciesRunFilter():
     command.append(subst_model)
     command.append(str(cores))
     command.append(run_filter_file_path)
-    submit_path = os.path.join(datadir, "submit_species.sh")
+    submit_path = os.path.join(misc_dir, "submit_" + str(uuid.uuid4() + ".sh")
     print("Submit path : " + submit_path)
     print("Saving pickle in " + run_filter_file_path)
     exp.submit(submit_path, " ".join(command), cores, launch_mode) 

@@ -50,6 +50,7 @@ def analyze(datadir):
   unrooted_printer = AlignedPrinter()
   for run in trees:
     tree = trees[run]
+    print(run)
     unrooted_rf_cell = true_tree.robinson_foulds(tree, unrooted_trees=True)
     unrooted_arf = float(unrooted_rf_cell[0]) / float(unrooted_rf_cell[1])
     saved_metrics.save_metrics(datadir, run, str(unrooted_arf), "species_unrooted_rf") 

@@ -39,7 +39,7 @@ def run_species_methods(datasets, subst_model, cores, run_filter):
 
 datasets = []
 subst_model = "GTR"
-species = range(10, 21, 10)
+species = range(10, 11, 10)
 seeds = range(10, 11)
 if (True):
   for s in species:
@@ -102,14 +102,14 @@ if (False):
 
   
 
-fam_data.generate_all_datasets(datasets)
+#fam_data.generate_all_datasets(datasets)
 if (True): # Species tree inference
   species_run_filter = SpeciesRunFilter()
   species_run_filter.disable_all()
   #species_run_filter.enable_fast_methods()
-  species_run_filter.pargenes = True
-  species_run_filter.concatenation_naive = True
-  #species_run_filter.speciesraxfastdtl = True
+  #species_run_filter.pargenes = True
+  #species_run_filter.concatenation_naive = True
+  species_run_filter.speciesraxfastdtl = True
   #species_run_filter.speciesraxprune = True
   #species_run_filter.speciesraxperfamily = True
   species_run_filter.analyze = True
