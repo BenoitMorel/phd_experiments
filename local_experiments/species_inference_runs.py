@@ -45,13 +45,13 @@ if (False):
   for s in species:
       for seed in seeds:
         # only dtl
-        datasets.append("ssim_s" + str(s) + "_f100_sites100_GTR_bl1.0_d0.2_l0.2_t0.2_p0.0_pop10_mu1.0_theta0.0_seed" + str(seed))
+        datasets.append("ssim_dtl_s" + str(s) + "_f100_sites100_GTR_bl1.0_d0.2_l0.2_t0.2_p0.0_pop10_mu1.0_theta0.0_seed" + str(seed))
         # only ILS
-        #datasets.append("ssim_s" + str(s) + "_f100_sites100_GTR_bl1.0_d0.0_l0.0_t0.0_p0.0_pop100000_mu1.0_theta0.0_seed" + str(seed))
+        #datasets.append("ssim_ils_s" + str(s) + "_f100_sites100_GTR_bl1.0_d0.0_l0.0_t0.0_p0.0_pop100000_mu1.0_theta0.0_seed" + str(seed))
         # only dl
-        #datasets.append("ssim_s" + str(s) + "_f100_sites100_GTR_bl1.0_d0.2_l0.2_t0.0_p0.0_pop10_mu1.0_theta0.0_seed" + str(seed))
+        #datasets.append("ssim_dl_s" + str(s) + "_f100_sites100_GTR_bl1.0_d0.2_l0.2_t0.0_p0.0_pop10_mu1.0_theta0.0_seed" + str(seed))
         # idtl
-        #datasets.append("ssim_s" + str(s) + "_f100_sites100_GTR_bl1.0_d0.1_l0.1_t0.1_p0.0_pop20000_mu1.0_theta0.0_seed" + str(seed))
+        #datasets.append("ssim_idtl_s" + str(s) + "_f100_sites100_GTR_bl1.0_d0.1_l0.1_t0.1_p0.0_pop20000_mu1.0_theta0.0_seed" + str(seed))
         pass
 
 seeds = range(20, 25)
@@ -101,7 +101,7 @@ if (False):
   datasets.append("jsimdtl_s41_f50_sites100_dna4_bl1.0_d0.1_l0.1_t0.1_p0.0")
 
   
-datasets.append("ssim_s11_f100_sites100_GTR_bl1.0_d0.2_l0.2_t0.2_p0.0_pop10_mu1.0_theta0.0_seed999")
+datasets.append("ssim_hey_s11_f100_sites100_GTR_bl1.0_d0.2_l0.2_t0.2_p0.0_pop10_mu1.0_theta0.0_seed999")
 
 #fam_data.generate_all_datasets(datasets)
 if (True): # Species tree inference

@@ -15,6 +15,7 @@ import sample_missing_data
 
 class SimphyParameters():
   def __init__(self):
+    self.tag = "tag"
     self.prefix = "ssim"
     self.population = 10000
     self.speciations_per_year = 0.00001
@@ -178,6 +179,7 @@ def export_to_family(output_dir, replicate = 1):
 
 def get_output_dir(parameters, root_output):
   res = parameters.prefix
+  res += "_" + parameters.tag
   res += "_s" + str(parameters.species_taxa)
   res += "_f" + str(parameters.families_number)
   res += "_sites" + str(parameters.sites)
@@ -224,8 +226,9 @@ def generate_from_parameters(parameters, root_output):
   print("Done! output in " + output_dir) 
   return output_dir
 
-def generate_simphy(species, families, sites, model, bl_factor, dup_rate, loss_rate, transfer_rate, perturbation, population, mu, theta, root_output, seed):
+def generate_simphy(tag, species, families, sites, model, bl_factor, dup_rate, loss_rate, transfer_rate, perturbation, population, mu, theta, root_output, seed):
   p = SimphyParameters()
+  p.tag = tag
   p.species_taxa = int(species)
   p.families_number = int(families)
   p.sites = int(sites)

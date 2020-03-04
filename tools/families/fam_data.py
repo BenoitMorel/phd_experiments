@@ -17,32 +17,34 @@ jsim_species_to_params[16] = (3, 6)
 #protein_datasets = ["swiss", "cyano_simulated", "cyano_empirical", "sub_t0.05_s0.5_cyano_empirical", "sub_t0.01_s0.2_ensembl_8880_15"]
 
 def get_param_from_dataset_name(parameter, dataset):
-  if (parameter == "species"):
-    return dataset.split("_")[1][1:]
-  elif (parameter == "families"):
+  if (parameter == "tag"):
+    return dataset.split("_")[1]
+  elif (parameter == "species"):
     return dataset.split("_")[2][1:]
+  elif (parameter == "families"):
+    return dataset.split("_")[3][1:]
   elif (parameter == "sites"):
-    return dataset.split("_")[3][5:]
+    return dataset.split("_")[4][5:]
   elif (parameter == "model"):
-    return dataset.split("_")[4]
+    return dataset.split("_")[5]
   elif (parameter == "bl"):
-    return dataset.split("_")[5][2:]
+    return dataset.split("_")[6][2:]
   elif (parameter == "dup_rate"):
-    return dataset.split("_")[6][1:]
-  elif (parameter == "loss_rate"):
     return dataset.split("_")[7][1:]
-  elif (parameter == "transfer_rate"):
+  elif (parameter == "loss_rate"):
     return dataset.split("_")[8][1:]
-  elif (parameter == "perturbation"):
+  elif (parameter == "transfer_rate"):
     return dataset.split("_")[9][1:]
+  elif (parameter == "perturbation"):
+    return dataset.split("_")[10][1:]
   elif (parameter == "population"):
-    return dataset.split("_")[10][3:]
+    return dataset.split("_")[11][3:]
   elif (parameter == "sample_mu"):
-    return dataset.split("_")[11][2:]
+    return dataset.split("_")[12][2:]
   elif (parameter == "sample_theta"):
-    return dataset.split("_")[12][5:]
+    return dataset.split("_")[13][5:]
   elif (parameter == "seed"):
-    return dataset.split("_")[13][4:]
+    return dataset.split("_")[14][4:]
   elif (parameter == "tl_ratio"):
     t = get_param_from_dataset_name("transfer_rate", dataset)
     l = get_param_from_dataset_name("loss_rate", dataset)
@@ -74,6 +76,7 @@ def get_param_from_dataset_name(parameter, dataset):
     return "invalid"
 
 def generate_dataset(dataset):
+  tag = get_param_from_dataset_name("tag", dataset)
   species = get_param_from_dataset_name("species", dataset)
   families = int(get_param_from_dataset_name("families", dataset))
   sites = get_param_from_dataset_name("sites", dataset)
@@ -96,7 +99,7 @@ def generate_dataset(dataset):
     mu = get_param_from_dataset_name("sample_mu", dataset)
     theta = get_param_from_dataset_name("sample_theta", dataset)
     model = "GTR"
-    simphy.generate_simphy(species, families, sites, model, bl_factor, d, l, t, p, population, mu, theta, output,  seed) 
+    simphy.generate_simphy(tag, species, families, sites, model, bl_factor, d, l, t, p, population, mu, theta, output,  seed) 
   else:
     print("Unknown simulator for dataset " + dataset)
     sys.exit(1)
@@ -118,6 +121,8 @@ def get_available_datasets(prefix):
 
 def get_param_position(fixed_point, param_name):
   split = fixed_point.split("_")
+  if (param_name == "tag"):
+    return 1
   for i in range(0, len(split)):
     if (param_name ==  re.sub("[0-9]*[\.]*[0-9]*", "", split[i])):
       return i

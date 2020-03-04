@@ -209,6 +209,7 @@ def plot_species(methods, metric_names):
   fixed_params_values_dtl["bl"] = "1.0"
   fixed_params_values_dtl["families"] = "100"
   fixed_params_values_dtl["sites"] = "100"
+  fixed_params_values_dtl["tag"] = simulation_name
   if (dtl_mode or dl_mode):
     fixed_params_values_dtl["dup_rate"] = "0.2"
   elif (idtl_mode):
