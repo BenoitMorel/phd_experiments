@@ -22,21 +22,30 @@ def run_generax(datadir, subst_model, species_method, cores):
   resultsdir = exp.create_result_dir(resultsdir, additional_arguments)
   return launch_generax.run(dataset, subst_model, strategy, species_tree, starting_tree, cores, additional_arguments, resultsdir)
 
-def run_raxml_ng(datadir, subst_model, generax_output_dir, prefix, cores):
-  supermatrix_path = os.path.join(generax_output_dir,"generax",  "superMatrix.fasta")
+def run_raxml_ng(datadir, subst_model, generax_output_dir, prefix, largest_only, cores):
+  supermatrix_path = ""
+  if (largest_only):
+    supermatrix_path = os.path.join(generax_output_dir,"generax",  "superMatrix.fasta")
+  else:
+    supermatrix_path = os.path.join(generax_output_dir,"generax",  "superMatrixAll.fasta")
   partition_path = supermatrix_path + ".part"
   run_concatenation.run_raxml(subst_model, cores, prefix, supermatrix_path, partition_path)
   
 
 
-def run_orthogenerax(datadir, subst_model, species_method, cores):
-  method_name = "orthogenerax-" + species_method
+def run_orthogenerax(datadir, subst_model, species_method, largest_only, cores):
+  method_name = "orthogenerax-"
+  if (largest_only):
+    method_name += "largest-"
+  else:
+    method_name += "all-"
+  method_name += species_method
   run_dir = fam.get_run_dir(datadir, subst_model, method_name)
   shutil.rmtree(run_dir, True)
   os.makedirs(run_dir)
   start = time.time()
   generax_output_dir = run_generax(datadir, subst_model, species_method, cores)
-  run_raxml_ng(datadir, subst_model, generax_output_dir, run_dir, cores)
+  run_raxml_ng(datadir, subst_model, generax_output_dir, run_dir, largest_only, cores)
   time1 = (time.time() - start)
   saved_metrics.save_metrics(datadir, fam.get_run_name(method_name, subst_model), time1, "runtimes") 
   src = os.path.join(run_dir, "concatenation.raxml.bestTree")
@@ -51,5 +60,6 @@ if (__name__ == "__main__"):
   subst_model = sys.argv[2]
   species_method = sys.argv[3]
   cores = int(sys.argv[4])
-  run_orthogenerax(datadir, subst_model, species_method, cores)
+  run_orthogenerax(datadir, subst_model, species_method, True, cores)
+  run_orthogenerax(datadir, subst_model, species_method, False, cores)
 

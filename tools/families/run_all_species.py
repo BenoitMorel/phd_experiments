@@ -237,9 +237,8 @@ class SpeciesRunFilter():
     if (self.orthogenerax):
       printFlush("Run OrthoGeneRax")
       try:
-        run_orthogenerax.run_orthogenerax(datadir, subst_model, "true", cores)
-        #run_orthogenerax.run_orthogenerax(datadir, subst_model, "njrax-NJst", cores)
-        run_orthogenerax.run_orthogenerax(datadir, subst_model, "speciesrax-dtl-raxml-HYBRID", cores)
+        run_orthogenerax.run_orthogenerax(datadir, subst_model, "true", False, cores)
+        run_orthogenerax.run_orthogenerax(datadir, subst_model, "speciesrax-dtl-raxml-HYBRID", False, cores)
       except Exception as exc:
         printFlush("Failed running orthogenerax\n" + str(exc))
 

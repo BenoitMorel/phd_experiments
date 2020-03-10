@@ -27,13 +27,14 @@ test_subst_model = "GTR"
 test_datasets = []
 for i in range(20, 30):
   #test_datasets.append("ssim_test_s20_f50_sites75_GTR_bl1.0_d0.2_l0.2_t0.1_p0.0_pop10_mu1.0_theta0.0_seed" + str(i))
-  #test_datasets.append("ssim_test_s15_f50_sites50_GTR_bl1.0_d0.1_l0.1_t0.2_p0.0_pop10_mu1.0_theta0.0_seed" + str(i))
+  #test_datasets.append("ssim_test_s15_f50_sites75_GTR_bl1.0_d0.2_l0.2_t0.1_p0.0_pop10_mu1.0_theta0.0_seed" + str(i))
+  test_datasets.append("ssim_test_s15_f50_sites50_GTR_bl1.0_d0.1_l0.1_t0.2_p0.0_pop10_mu1.0_theta0.0_seed" + str(i))
   #test_datasets.append("ssim_test_s15_f40_sites100_GTR_bl1.0_d0.1_l0.1_t0.2_p0.0_pop10_mu1.0_theta0.0_seed" + str(i))
   #test_datasets.append("ssim_test_s15_f100_sites50_GTR_bl1.0_d0.3_l0.3_t0.3_p0.0_pop10_mu1.0_theta0.0_seed" + str(i))
   #test_datasets.append("ssim_test_s15_f50_sites75_GTR_bl1.0_d0.1_l0.1_t0.1_p0.0_pop10000_mu1.0_theta0.0_seed" + str(i))
   #test_datasets.append("ssim_test_s15_f100_sites75_GTR_bl1.0_d0.2_l0.2_t0.1_p0.0_pop10_mu0.5_theta0.0_seed" + str(i))
   #test_datasets.append("ssim_test_s17_f100_sites75_GTR_bl1.0_d0.2_l0.2_t0.1_p0.0_pop10_mu0.5_theta0.15_seed" + str(i))
-  test_datasets.append("ssim_test_s17_f100_sites75_GTR_bl1.0_d0.1_l0.1_t0.1_p0.0_pop20000_mu1.0_theta0.0_seed" + str(i))
+  #test_datasets.append("ssim_test_s17_f100_sites75_GTR_bl1.0_d0.1_l0.1_t0.1_p0.0_pop20000_mu1.0_theta0.0_seed" + str(i))
 
 def run_species_methods(datasets, subst_model, cores, run_filter, launch_mode):
   for dataset in datasets:
@@ -59,8 +60,9 @@ def run_test_experiment():
   run_filter.njrax = True
   run_filter.astralpro = True
   run_filter.speciesraxfastdtl = True
-  run_filter.orthogenerax = True
   run_filter.concatenation_naive = True
+  run_filter.disable_all()
+  run_filter.orthogenerax = True
   run_species_methods(test_datasets, test_subst_model, cores, run_filter, launch_mode)
 
 
