@@ -8,6 +8,8 @@ import experiments as exp
 import run_concatenation
 import fam
 import shutil
+import time
+import saved_metrics
 
 def run_generax(datadir, subst_model, species_method, cores):
   dataset = os.path.basename(os.path.normpath(datadir))
@@ -28,16 +30,17 @@ def run_raxml_ng(datadir, subst_model, generax_output_dir, prefix, cores):
 
 
 def run_orthogenerax(datadir, subst_model, species_method, cores):
-  run_dir = fam.get_run_dir(datadir, subst_model, "orthogenerax")
+  method_name = "orthogenerax-" + species_method
+  run_dir = fam.get_run_dir(datadir, subst_model, method_name)
   shutil.rmtree(run_dir, True)
   os.makedirs(run_dir)
   start = time.time()
   generax_output_dir = run_generax(datadir, subst_model, species_method, cores)
   run_raxml_ng(datadir, subst_model, generax_output_dir, run_dir, cores)
   time1 = (time.time() - start)
-  saved_metrics.save_metrics(datadir, fam.get_run_name("orthogenerax", subst_model), time1, "runtimes") 
+  saved_metrics.save_metrics(datadir, fam.get_run_name(method_name, subst_model), time1, "runtimes") 
   src = os.path.join(run_dir, "concatenation.raxml.bestTree")
-  dest = fam.get_species_tree(datadir, subst_model, "orthogenerax")
+  dest = fam.get_species_tree(datadir, subst_model, method_name)
   shutil.copy(src, dest)
 
 if (__name__ == "__main__"): 

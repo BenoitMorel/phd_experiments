@@ -22,13 +22,14 @@ def check_inputs(strategy):
 
 
 def get_generax_datasets():
+  
   root_datadir = os.path.join(exp.benoit_datasets_root, "families")
   datasets = {}
+  print(os.listdir(root_datadir))
   for dataset in os.listdir(root_datadir):
     datasets[dataset] = os.path.join(root_datadir, dataset)
   return datasets
 
-datasets = get_generax_datasets()
 
 
 def has_multiple_sample(starting_tree):
@@ -135,6 +136,7 @@ def run(dataset, subst_model, strategy, species_tree, starting_tree, cores, addi
   print("Run name " + run_name)
   sys.stdout.flush()
   mode = get_mode_from_additional_arguments(additional_arguments)
+  datasets = get_generax_datasets()
   if (not dataset in datasets):
     print("Error: " + dataset + " is not in " + str(datasets))
     exit(1)
@@ -177,6 +179,7 @@ if (__name__ == "__main__"):
     
   min_args_number = 8
   if (len(sys.argv) < min_args_number):
+    datasets = get_generax_datasets()
     for dataset in datasets:
       print("\t" + dataset)
     print("strategy: " + ",".join(get_possible_strategies()))

@@ -61,7 +61,7 @@ def run_astralpro(datadir, method, subst_model):
 
 if (__name__ == "__main__"):
   if (len(sys.argv) != 4):
-    print("Syntax python run_astral_pro.py datadir gene_trees subst_model")
+    print("Syntax python " + os.path.basename(__file__) + " datadir gene_trees subst_model")
     sys.exit(1)
   run_astralpro(sys.argv[1], sys.argv[2], sys.argv[3])
   

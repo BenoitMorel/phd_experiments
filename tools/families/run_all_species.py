@@ -20,6 +20,7 @@ import run_fastrfs
 import run_njst  
 import run_njrax
 import run_concatenation
+import run_orthogenerax
 sys.path.insert(0, os.path.join("scripts"))
 sys.path.insert(0, os.path.join("tools", "families"))
 import experiments as exp
@@ -35,6 +36,7 @@ class SpeciesRunFilter():
   def __init__(self):
     self.generate = False
     self.pargenes = True
+    self.orthogenerax = True
     self.concatenation_naive = True
     self.stag = True
     self.duptree = True
@@ -58,6 +60,7 @@ class SpeciesRunFilter():
 
   def disable_all(self):
     self.pargenes = False
+    self.orthogenerax = True
     self.concatenation_naive = False
     self.stag = False
     self.duptree = False
@@ -81,6 +84,7 @@ class SpeciesRunFilter():
   def enable_fast_methods(self):
     self.disable_all()
     self.pargenes = True
+    self.orthogenerax = True
     self.concatenation_naive = True
     self.stag = True
     self.duptree = True
@@ -155,7 +159,6 @@ class SpeciesRunFilter():
     if (self.njrax):
       printFlush("Run NJrax")
       try:
-        run_njrax.run_njrax(datadir, "NJ", subst_model, cores)
         run_njrax.run_njrax(datadir, "NJst", subst_model,cores)
       except Exception as exc:
         printFlush("Failed running NJrax\n" + str(exc))
@@ -186,7 +189,6 @@ class SpeciesRunFilter():
         printFlush("Failed running Astral-pro\n" + str(exc))
     if (self.concatenation_naive):
       printFlush("Run concatenation-naive")
-      run_concatenation.run_concatenation(datadir, subst_model, cores)
       try:
         run_concatenation.run_concatenation(datadir, subst_model, cores)
       except Exception as exc:
@@ -232,6 +234,14 @@ class SpeciesRunFilter():
         run_guenomu.run_guenomu(datadir, subst_model, cores)
       except Exception as exc:
         printFlush("Failed running Guenomu\n" + str(exc))
+    if (self.orthogenerax):
+      printFlush("Run OrthoGeneRax")
+      try:
+        run_orthogenerax.run_orthogenerax(datadir, subst_model, "true", cores)
+        #run_orthogenerax.run_orthogenerax(datadir, subst_model, "njrax-NJst", cores)
+        run_orthogenerax.run_orthogenerax(datadir, subst_model, "speciesrax-dtl-raxml-HYBRID", cores)
+      except Exception as exc:
+        printFlush("Failed running orthogenerax\n" + str(exc))
 
     if (self.analyze):
       printFlush("Run analyze...")
