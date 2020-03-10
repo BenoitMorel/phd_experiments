@@ -38,7 +38,7 @@ def build_supermatrix(datadir, subst_model, supermatrix_path, partition_path):
   supermatrix.write("fasta", supermatrix_path)
   return offset
 
-def run_raxml(datadir, subst_model, cores, run_dir, supermatrix_path, partition_path):
+def run_raxml(subst_model, cores, run_dir, supermatrix_path, partition_path):
   command = []
   command.append("mpiexec")
   command.append("-np")
@@ -56,11 +56,10 @@ def run_raxml(datadir, subst_model, cores, run_dir, supermatrix_path, partition_
   command.append("43")
   command.append("--force")
   FNULL = open(os.devnull, 'w')
-  subprocess.check_call(command, stderr=FNULL, stdout=FNULL)
-  raxml_tree = os.path.join(run_dir, "concatenation.raxml.bestTree")
-  dest = fam.get_species_tree(datadir, subst_model, "concatenation-naive")
-  shutil.copy(raxml_tree, dest)
-
+  print("running " + str(command))
+  process = subprocess.Popen(command, stdout=subprocess.PIPE, stdin=subprocess.PIPE)
+  stdout, stderr = process.communicate()
+  print("end")
 
 def run_concatenation(datadir, subst_model, cores):
   seed = 42
@@ -72,7 +71,10 @@ def run_concatenation(datadir, subst_model, cores):
   partition_path = os.path.join(run_dir, "supermatrix.part")
   sites = build_supermatrix(datadir, subst_model, supermatrix_path, partition_path)
   cores = min(cores, int(sites / 500))
-  run_raxml(datadir, subst_model, cores, run_dir, supermatrix_path, partition_path)
+  run_raxml(subst_model, cores, run_dir, supermatrix_path, partition_path)
+  raxml_tree = os.path.join(run_dir, "concatenation.raxml.bestTree")
+  dest = fam.get_species_tree(datadir, subst_model, "concatenation-naive")
+  shutil.copy(raxml_tree, dest)
 
 if __name__ == "__main__":
   if (len(sys.argv) != 4):

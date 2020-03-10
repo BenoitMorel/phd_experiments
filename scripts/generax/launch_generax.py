@@ -154,6 +154,7 @@ def run(dataset, subst_model, strategy, species_tree, starting_tree, cores, addi
     print("Analyze failed!!!!")
 
   print("Output in " + resultsdir)
+  return resultsdir
 
 def launch(dataset, subst_model, strategy, species_tree, starting_tree, cluster, cores, additional_arguments):
   command = ["python"]

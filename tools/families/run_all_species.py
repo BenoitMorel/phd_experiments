@@ -60,6 +60,7 @@ class SpeciesRunFilter():
     self.pargenes = False
     self.concatenation_naive = False
     self.stag = False
+    self.duptree = False
     self.fastrfs = False
     self.phyldog = False
     self.duptree = False
@@ -117,9 +118,9 @@ class SpeciesRunFilter():
     print("Run tested species inference tools for dataset " + datadir)
     print("*************************************")
     if (self.generate):
-      dataset = os.path.basename(datadir)
-      print(datadir)
-      fam_data.generate_dataset(dataset)
+      if (not os.path.isdir(datadir)):
+        dataset = os.path.basename(datadir)
+        fam_data.generate_dataset(dataset)
 
     if (len(datadir.split("/")) == 1):
       datadir = fam.get_datadir(datadir) 

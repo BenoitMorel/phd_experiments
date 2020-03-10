@@ -129,3 +129,7 @@ def get_param_position(fixed_point, param_name):
   print("ERROR: unknown parameter " + param_name)
   exit(1)
 
+def change_param_in_dataset_name(dataset, param_name, new_value):
+  split = dataset.split("_")
+  split[get_param_position(dataset, param_name)] = param_name + str(new_value)
+
