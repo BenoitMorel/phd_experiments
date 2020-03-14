@@ -18,13 +18,12 @@ class SimphyParameters():
     self.tag = "tag"
     self.prefix = "ssim"
     self.population = 10000
-    self.speciations_per_year = 0.00001
-    self.species_taxa = 30
+    self.speciations_per_year = 0.000000005
+    self.species_taxa = 25
     self.families_number = 100
-    self.substitution_rate = 0.1
     self.bl = 1.0    
-    self.loss_rate = 0.1
-    self.dup_rate = 0.1
+    self.loss_rate = 1.0
+    self.dup_rate = 1.0
     self.transfer_rate = 0.0
     self.sites = 50
     self.model = "GTR"
@@ -34,19 +33,32 @@ def build_config_file(parameters, output_dir):
   config_file = os.path.join(output_dir, "simphy_config.txt")
   with open(config_file, "w") as writer:
     writer.write("// SPECIES TREE\n")
+    # number of replicates
     writer.write("-RS 1 // number of replicates\n")
+    # speciation rates (speciation per yer)
     writer.write("-sb f:" + str(parameters.speciations_per_year) + "\n")
-    writer.write("-sl f:" + str(parameters.species_taxa) + " // species taxa\n")
-    writer.write("-su f:" + str(parameters.substitution_rate * parameters.bl * parameters.speciations_per_year) + "\n") #subsitution rate
-    writer.write("-ld f:" + str(parameters.loss_rate * parameters.speciations_per_year) + "\n") # loss
-    writer.write("-lb f:" + str(parameters.dup_rate * parameters.speciations_per_year) + "\n") # duplications
-    writer.write("-lt f:" + str(parameters.transfer_rate * parameters.speciations_per_year) + "\n") # transfers
+    # number of species taxa 
+    writer.write("-sl f:" + str(parameters.species_taxa) + "\n")
+    # species tree height in years (I don't understand this)
+    writer.write("-st ln:21.25,0.2\n")
+    # substitution rate
+    writer.write("-su ln:-21.9," + str(0.1 * parameters.bl) + "\n")
+    # L, D, T rates 
+    writer.write("-ld f:" + str(0.00000000049 * parameters.loss_rate) + "\n")
+    writer.write("-lb f:" + str(0.00000000049 * parameters.dup_rate) + "\n")
+    writer.write("-lt f:" + str(0.00000000049 * parameters.transfer_rate) +"\n")
 
     writer.write("// POPULATION\n")
     writer.write("-SP f:" + str(parameters.population) + "\n")
 
     writer.write("// LOCUS\n")
     writer.write("-rl f:" + str(parameters.families_number) + " // locus (gene family) per replicate\n")
+
+    writer.write("// Subsitution rates heterogeneity parameters\n")
+    writer.write("-hs ln:1.5,1\n")
+    writer.write("-hl ln:1.551533,0.6931472\n")
+    writer.write("-hg ln:1.5,1\n")
+
 
     writer.write("// GENERAL\n")
     writer.write("-cs " + str(parameters.seed) + "\n") 
@@ -65,13 +77,15 @@ def build_indelible_config_file(parameters, output_dir):
     writer.write("[SETTINGS] [fastaextension] fasta\n")
     writer.write("[SIMPHY-UNLINKED-MODEL] modelA \n")
     if ("GTR" == parameters.model):
-      writer.write("  [submodel] GTR $(rd:2,2,2,2,2,2) // GTR with rates from a Dirichlet  \n")
-      writer.write("  [statefreq] $(d:1,1,1,1)  // frequencies for T C A G sampled from a Dirichlet (1,1,1,1)\n")
+      writer.write("  [submodel] GTR $(rd:16,3,5,5,6,15) // GTR with rates from a Dirichlet  \n")
+      writer.write("  [statefreq] $(d:36,26,28,32)  // frequencies for T C A G sampled from a Dirichlet \n")
+      writer.write("[rates] 0 $(e:2) 0 // Site-specific rate heterogeneities: 0 p-inv, alpha from an E(2) and using a continuous gamma distribution.\n")
     else:
       assert(False)
 
     #writer.write("[SIMPHY-PARTITIONS] simple [1.0 modelA $(n:" + str(sites_mean) + "," + str(sites_sigma) + ")]\n")
-    writer.write("[SIMPHY-PARTITIONS] simple [1.0 modelA $(U:10," + str(int(parameters.sites) * 2) + ")]\n")
+    #writer.write("[SIMPHY-PARTITIONS] simple [1.0 modelA $(U:10," + str(int(parameters.sites) * 2) + ")]\n")
+    writer.write("[SIMPHY-PARTITIONS] simple [1.0 modelA $(f:" + str(int(parameters.sites)) + ")]\n")
 
     writer.write("[SIMPHY-EVOLVE] 1 dataset \n")
 

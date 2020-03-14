@@ -60,7 +60,7 @@ class SpeciesRunFilter():
 
   def disable_all(self):
     self.pargenes = False
-    self.orthogenerax = True
+    self.orthogenerax = False
     self.concatenation_naive = False
     self.stag = False
     self.duptree = False
@@ -237,8 +237,9 @@ class SpeciesRunFilter():
     if (self.orthogenerax):
       printFlush("Run OrthoGeneRax")
       try:
-        run_orthogenerax.run_orthogenerax(datadir, subst_model, "true", False, cores)
-        run_orthogenerax.run_orthogenerax(datadir, subst_model, "speciesrax-dtl-raxml-HYBRID", False, cores)
+        #run_orthogenerax.run_orthogenerax(datadir, subst_model, "true", False, cores)
+        run_orthogenerax.run_orthogenerax(datadir, subst_model, "njrax-NJst", False, cores)
+        #run_orthogenerax.run_orthogenerax(datadir, subst_model, "speciesrax-dtl-raxml-HYBRID", False, cores)
       except Exception as exc:
         printFlush("Failed running orthogenerax\n" + str(exc))
 

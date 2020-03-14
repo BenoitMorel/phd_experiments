@@ -60,6 +60,6 @@ if (__name__ == "__main__"):
   subst_model = sys.argv[2]
   species_method = sys.argv[3]
   cores = int(sys.argv[4])
-  run_orthogenerax(datadir, subst_model, species_method, True, cores)
+  #run_orthogenerax(datadir, subst_model, species_method, True, cores)
   run_orthogenerax(datadir, subst_model, species_method, False, cores)
 

@@ -12,6 +12,7 @@ import ete3
 import get_dico
 import random
 import species_analyze
+import time
 
 def build_supermatrix(datadir, subst_model, supermatrix_path, partition_path):
   all_species = ete3.Tree(fam.get_species_tree(datadir), 1).get_leaf_names()
@@ -56,14 +57,12 @@ def run_raxml(subst_model, cores, run_dir, supermatrix_path, partition_path):
   command.append("43")
   command.append("--force")
   FNULL = open(os.devnull, 'w')
-  print("running " + str(command))
+  print("running " + " ".join(command))
   process = subprocess.Popen(command, stdout=subprocess.PIPE, stdin=subprocess.PIPE)
   stdout, stderr = process.communicate()
-  print("end")
 
 def run_concatenation(datadir, subst_model, cores):
-  seed = 42
-  random.seed(seed)
+  run_name = "concatenation-naive"
   run_dir = fam.get_run_dir(datadir, subst_model, "concatenation")
   shutil.rmtree(run_dir, True)
   os.makedirs(run_dir)
@@ -71,9 +70,13 @@ def run_concatenation(datadir, subst_model, cores):
   partition_path = os.path.join(run_dir, "supermatrix.part")
   sites = build_supermatrix(datadir, subst_model, supermatrix_path, partition_path)
   cores = min(cores, int(sites / 500))
+  start = time.time()
+  
   run_raxml(subst_model, cores, run_dir, supermatrix_path, partition_path)
+  time1 = (time.time() - start)
+  saved_metrics.save_metrics(datadir, fam.get_run_name(run_name, subst_model), time1, "runtimes") 
   raxml_tree = os.path.join(run_dir, "concatenation.raxml.bestTree")
-  dest = fam.get_species_tree(datadir, subst_model, "concatenation-naive")
+  dest = fam.get_species_tree(datadir, subst_model, run_name)
   shutil.copy(raxml_tree, dest)
 
 if __name__ == "__main__":
