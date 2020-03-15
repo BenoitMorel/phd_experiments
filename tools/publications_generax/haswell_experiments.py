@@ -1,7 +1,6 @@
 import subprocess
 import os
 import sys
-import re
 sys.path.insert(0, os.path.join("tools", "families"))
 sys.path.insert(0, os.path.join("scripts"))
 import exp
@@ -19,21 +18,6 @@ run_empirical = True
 run_scaling = False
 run_test = False
 
-def add_dataset(datasets, fixed_point, strings_to_replace):
-  for string_to_replace in strings_to_replace:
-    elems_to_replace = string_to_replace.split("_")
-    split = fixed_point.split("_")
-    for elem in elems_to_replace:
-      param_name =  re.sub("[0-9]*[\.]*[0-9]*", "", elem)
-      param_value =  re.sub("[a-zA-Z]*", "", elem)
-      param_position = fam_data.get_param_position(fixed_point, param_name)
-      split[param_position] = param_name + str(param_value)
-    dataset = "_".join(split)
-    print("Add " + dataset)
-    if (dataset in datasets):
-      print("duplicate: " + dataset)
-      exit(1)
-    datasets.append(dataset)
 
 def submit_single_experiment_haswell(dataset, subst_model, do_generate, cores, run_filter = RunFilter()):
   command = []
@@ -107,19 +91,19 @@ if (run_simulations):
     fixed_point_dtl = "jsimdtl_s19_f100_sites250_dna4_bl0.5_d0.1_l0.2_t0.1_p0.0"
     datasets.append(fixed_point_dl)
     datasets.append(fixed_point_dtl)
-    add_dataset(datasets, fixed_point_dl, ["p0.1", "p0.2", "p0.3", "p0.5", "p0.75"])
-    add_dataset(datasets, fixed_point_dl, ["d0.01_l0.01", "d0.05_l0.05", "d0.1_l0.1", "d0.4_l0.4"])
-    add_dataset(datasets, fixed_point_dl, ["d0.1", "d0.2", "d0.3", "d0.4"])
-    add_dataset(datasets, fixed_point_dl, ["sites100", "sites500", "sites750"])
-    add_dataset(datasets, fixed_point_dl, ["bl0.01", "bl0.05", "bl0.1", "bl0.2", "bl1.0", "bl2.0"])
-    add_dataset(datasets, fixed_point_dl, ["s5", "s10", "s27", "s41"])
+    fam_data.get_dataset_variations(datasets, fixed_point_dl, ["p0.1", "p0.2", "p0.3", "p0.5", "p0.75"])
+    fam_data.get_dataset_variations(datasets, fixed_point_dl, ["d0.01_l0.01", "d0.05_l0.05", "d0.1_l0.1", "d0.4_l0.4"])
+    fam_data.get_dataset_variations(datasets, fixed_point_dl, ["d0.1", "d0.2", "d0.3", "d0.4"])
+    fam_data.get_dataset_variations(datasets, fixed_point_dl, ["sites100", "sites500", "sites750"])
+    fam_data.get_dataset_variations(datasets, fixed_point_dl, ["bl0.01", "bl0.05", "bl0.1", "bl0.2", "bl1.0", "bl2.0"])
+    fam_data.get_dataset_variations(datasets, fixed_point_dl, ["s5", "s10", "s27", "s41"])
 
-    add_dataset(datasets, fixed_point_dtl, ["p0.1", "p0.2", "p0.3", "p0.5"])
-    add_dataset(datasets, fixed_point_dtl, ["s5", "s10", "s12", "s16", "s27", "s41"])
-    add_dataset(datasets, fixed_point_dtl, ["sites100", "sites500", "sites750"])
-    add_dataset(datasets, fixed_point_dtl, ["bl0.01", "bl0.05", "bl0.1", "bl0.2", "bl1.0", "bl2.0"])
-    add_dataset(datasets, fixed_point_dtl, ["d0.01_l0.02_t0.01", "d0.05_l0.1_t0.05", "d0.15_l0.3_t0.15", "d0.2_l0.4_t0.2"])
-    add_dataset(datasets, fixed_point_dtl, ["d0.01_l0.2_t0.19", "d0.05_l0.2_t0.15", "d0.15_l0.2_t0.05", "d0.19_l0.2_t0.01"])
+    fam_data.get_dataset_variations(datasets, fixed_point_dtl, ["p0.1", "p0.2", "p0.3", "p0.5"])
+    fam_data.get_dataset_variations(datasets, fixed_point_dtl, ["s5", "s10", "s12", "s16", "s27", "s41"])
+    fam_data.get_dataset_variations(datasets, fixed_point_dtl, ["sites100", "sites500", "sites750"])
+    fam_data.get_dataset_variations(datasets, fixed_point_dtl, ["bl0.01", "bl0.05", "bl0.1", "bl0.2", "bl1.0", "bl2.0"])
+    fam_data.get_dataset_variations(datasets, fixed_point_dtl, ["d0.01_l0.02_t0.01", "d0.05_l0.1_t0.05", "d0.15_l0.3_t0.15", "d0.2_l0.4_t0.2"])
+    fam_data.get_dataset_variations(datasets, fixed_point_dtl, ["d0.01_l0.2_t0.19", "d0.05_l0.2_t0.15", "d0.15_l0.2_t0.05", "d0.19_l0.2_t0.01"])
   
   submit_multiple_experiments_haswell(datasets, subst_models, do_generate, cores, run_filter)
   

@@ -37,7 +37,8 @@ class SpeciesRunFilter():
     self.generate = False
     self.pargenes = True
     self.orthogenerax = True
-    self.concatenation_naive = True
+    self.concatenation_min = True
+    self.concatenation_max = True
     self.stag = True
     self.duptree = True
     self.fastrfs = True
@@ -61,7 +62,8 @@ class SpeciesRunFilter():
   def disable_all(self):
     self.pargenes = False
     self.orthogenerax = False
-    self.concatenation_naive = False
+    self.concatenation_min = False
+    self.concatenation_max = False
     self.stag = False
     self.duptree = False
     self.fastrfs = False
@@ -85,7 +87,8 @@ class SpeciesRunFilter():
     self.disable_all()
     self.pargenes = True
     self.orthogenerax = True
-    self.concatenation_naive = True
+    self.concatenation_min = True
+    self.concatenation_max = True
     self.stag = True
     self.duptree = True
     self.fastrfs = True
@@ -187,12 +190,18 @@ class SpeciesRunFilter():
         run_astral_pro.run_astralpro(datadir, "raxml-ng", subst_model)
       except Exception as exc:
         printFlush("Failed running Astral-pro\n" + str(exc))
-    if (self.concatenation_naive):
-      printFlush("Run concatenation-naive")
+    if (self.concatenation_min):
+      printFlush("Run concatenation-min")
       try:
-        run_concatenation.run_concatenation(datadir, subst_model, cores)
+        run_concatenation.run_concatenation(datadir, subst_model,False,cores)
       except Exception as exc:
-        printFlush("Failed running concatenation-naive\n" + str(exc))
+        printFlush("Failed running concatenation-min\n" + str(exc))
+    if (self.concatenation_max):
+      printFlush("Run concatenation-max")
+      try:
+        run_concatenation.run_concatenation(datadir, subst_model,True,cores)
+      except Exception as exc:
+        printFlush("Failed running concatenation-min\n" + str(exc))
     if (self.speciesraxfastdl or self.speciesraxfastdtl):
       printFlush("Run SpeciesRaxFast")
       try:

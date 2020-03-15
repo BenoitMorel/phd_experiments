@@ -14,7 +14,8 @@ import random
 import species_analyze
 import time
 
-def build_supermatrix(datadir, subst_model, supermatrix_path, partition_path):
+def build_supermatrix(datadir, subst_model, supermatrix_path, partition_path, use_all_genes):
+  
   all_species = ete3.Tree(fam.get_species_tree(datadir), 1).get_leaf_names()
   supermatrix = ete3.SeqGroup()
   partition_writer = open(partition_path, "w")
@@ -28,14 +29,23 @@ def build_supermatrix(datadir, subst_model, supermatrix_path, partition_path):
     species_to_genes = get_dico.get_species_to_genes_family(datadir, family)
     species_to_sample = {}
     for species in all_species:
-      seq = gaps
       if (species in species_to_genes):
-        seq = seqgroup.get_seq(random.choice(species_to_genes[species]))
-      supermatrix.set_seq(species, supermatrix.get_seq(species) + seq)
-    partition_writer.write(subst_model + ", " + family + " = ")
-    partition_writer.write(str(offset) + "-" + str(offset + seq_len - 1))
-    partition_writer.write("\n")
-    offset += seq_len
+        random.shuffle(species_to_genes[species])
+    while (len(species_to_genes) > 3):
+      for species in all_species:
+        seq = gaps
+        if (species in species_to_genes):
+          seq = seqgroup.get_seq(species_to_genes[species][-1])
+          species_to_genes[species].pop()
+          if (len(species_to_genes[species]) == 0):
+            del species_to_genes[species]
+        supermatrix.set_seq(species, supermatrix.get_seq(species) + seq)
+      partition_writer.write(subst_model + ", " + family + " = ")
+      partition_writer.write(str(offset) + "-" + str(offset + seq_len - 1))
+      partition_writer.write("\n")
+      offset += seq_len
+      if (not use_all_genes):
+        break
   supermatrix.write("fasta", supermatrix_path)
   return offset
 
@@ -61,14 +71,16 @@ def run_raxml(subst_model, cores, run_dir, supermatrix_path, partition_path):
   process = subprocess.Popen(command, stdout=subprocess.PIPE, stdin=subprocess.PIPE)
   stdout, stderr = process.communicate()
 
-def run_concatenation(datadir, subst_model, cores):
-  run_name = "concatenation-naive"
-  run_dir = fam.get_run_dir(datadir, subst_model, "concatenation")
+def run_concatenation(datadir, subst_model, use_all_genes, cores):
+  run_name = "concatenation-min"
+  if (use_all_genes):
+    run_name = "concatenation-max"
+  run_dir = fam.get_run_dir(datadir, subst_model,  run_name)
   shutil.rmtree(run_dir, True)
   os.makedirs(run_dir)
   supermatrix_path = os.path.join(run_dir, "supermatrix.fasta")
   partition_path = os.path.join(run_dir, "supermatrix.part")
-  sites = build_supermatrix(datadir, subst_model, supermatrix_path, partition_path)
+  sites = build_supermatrix(datadir, subst_model, supermatrix_path, partition_path, use_all_genes)
   cores = min(cores, int(sites / 500))
   start = time.time()
   

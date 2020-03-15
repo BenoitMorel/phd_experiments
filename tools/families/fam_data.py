@@ -1,3 +1,4 @@
+import re
 import fam
 import generate_families_with_jprime as jprime
 import generate_families_with_zombi as zombi
@@ -71,7 +72,7 @@ def get_param_from_dataset_name(parameter, dataset):
       return "-1.0"
     return str((d + t + l) / 2.0)
   elif (parameter == "discordance"):
-    return float(fam.get_discordance_rate(get_datadir(dataset)))
+    return float(fam.get_discordance_rate(fam.get_datadir(dataset)))
   else:
     return "invalid"
 
@@ -132,4 +133,23 @@ def get_param_position(fixed_point, param_name):
 def change_param_in_dataset_name(dataset, param_name, new_value):
   split = dataset.split("_")
   split[get_param_position(dataset, param_name)] = param_name + str(new_value)
+
+def get_dataset_variations(datasets, fixed_point, strings_to_replace):
+  for string_to_replace in strings_to_replace:
+    if (string_to_replace == "none"):
+      datasets.append(fixed_point)
+      continue
+    elems_to_replace = string_to_replace.split("_")
+    split = fixed_point.split("_")
+    for elem in elems_to_replace:
+      param_name =  re.sub("[0-9]*[\.]*[0-9]*", "", elem)
+      param_value =  re.sub("[a-zA-Z]*", "", elem)
+      param_position = get_param_position(fixed_point, param_name)
+      split[param_position] = param_name + str(param_value)
+    dataset = "_".join(split)
+    print("Add " + dataset)
+    if (dataset in datasets):
+      print("duplicate: " + dataset)
+      exit(1)
+    datasets.append(dataset)
 

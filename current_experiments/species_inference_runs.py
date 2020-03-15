@@ -4,6 +4,7 @@ import sys
 import re
 sys.path.insert(0, os.path.join("tools", "families"))
 import fam
+import fam_data
 import saved_metrics
 from run_all import RunFilter
 import run_all_species
@@ -14,48 +15,58 @@ datasets = []
 cores = 40
 launch_mode = "normal"
 
-varying_enabled = False
-test_enabled = True
+varying_enabled = True
+test_enabled = False
 
 
-varying_subst_model = "GTR"
-varying_dataset = "ssim_vary_s20_f100_sites75_GTR_bl1.0_d0.0_l0.0_t0.0_p0.0_pop1_mu1.0_theta0.0_seed20"
+
+astral_dataset = "ssim_astral_s25_f1000_sites100_GTR_bl1.0_d1.0_l1.0_t0.0_p0.0_pop470000000_mu1.0_theta0.0_seed20"
+
+varying_subst_model = "GTR+G"
+varying_dataset = "ssim_var_s25_f100_sites100_GTR_bl1.0_d1.0_l1.0_t1.0_p0.0_pop470000000_mu1.0_theta0.0_seed20"
 varying_replicates = 10
+varying_params = []
+varying_params += ["none"]
+#varying_params += ["s10", "s15", "s20", "s30"]
+#varying_params += ["sites200", "sites500"]
+#varying_params += ["d0.1_t0.1_l0.1", "d0.5_t0.5_l0.5", "d1.5_l1.5_t1.5", "d2.0_l2.0_t2.0", "d3.0_l3.0_t3.0"]
+#varying_params += ["t0.0", "t0.5", "t2.0", "t4.0"]
+#varying_params += ["pop50000000","pop100000000","pop1000000000"]
+#varying_params += ["f20", "f50", "f200", "f500", "f1000"]
 
 test_subst_model = "GTR+G"
-#test_dataset = "ssim_test_s10_f10_sites75_GTR_bl1.0_d0.3_l0.3_t0.3_p0.0_pop10_mu1.0_theta0.0_seed20"
 test_datasets = []
-for i in range(20, 30):
-  # ASTRAL:
-  #test_datasets.append("ssim_test_s25_f1000_sites100_GTR_bl1.0_d1.0_l1.0_t0.0_p0.0_pop470000000_mu1.0_theta0.0_seed" + str(i))
-  #test_datasets.append("ssim_test_s25_f100_sites100_GTR_bl1.0_d1.0_l1.0_t0.1_p0.0_pop10_mu1.0_theta0.0_seed" + str(i))
-  #test_datasets.append("ssim_test_s25_f100_sites100_GTR_bl1.0_d1.0_l1.0_t0.0_p0.0_pop470000000_mu1.0_theta0.0_seed" + str(i))
-  #test_datasets.append("ssim_test_s25_f200_sites100_GTR_bl1.0_d1.0_l1.0_t0.0_p0.0_pop470000000_mu0.5_theta0.0_seed" + str(i))
-  #test_datasets.append("ssim_test_s25_f100_sites100_GTR_bl1.0_d1.0_l1.0_t0.0_p0.0_pop10_mu1.0_theta0.0_seed" + str(i))
-  #MINE
-  #test_datasets.append("ssim_test_s25_f100_sites100_GTR_bl1.0_d2.0_l2.0_t2.0_p0.0_pop10_mu1.0_theta0.0_seed" + str(i))
-  for mu in ["0.3", "0.5", "0.75"]:
-    test_datasets.append("ssim_test_s25_f100_sites100_GTR_bl1.0_d1.0_l1.0_t1.0_p0.0_pop470000000_mu" + mu + "_theta0.0_seed" + str(i))
-  #for population in ["50", "200", "470", "1000"]:
-  #  test_datasets.append("ssim_test_s25_f100_sites100_GTR_bl1.0_d1.0_l1.0_t1.0_p0.0_pop" + population + "000000_mu1.0_theta0.0_seed" + str(i))
-  #for rates in ["0.5", "1.0", "1.5", "2.0"]:
-  #  test_datasets.append("ssim_test_s25_f100_sites100_GTR_bl1.0_d" + rates + "_l" + rates + "_t" + rates + "_p0.0_pop470000000_mu1.0_theta0.0_seed" + str(i))
-test_datasets = sorted(test_datasets)
 
 def run_species_methods(datasets, subst_model, cores, run_filter, launch_mode):
   for dataset in datasets:
     dataset_dir = os.path.join("../BenoitDatasets/families", dataset)
     run_filter.run_reference_methods(dataset_dir, subst_model, cores, launch_mode)
 
-
-def get_dataset_list(ref_dataset, varying_param, param_list, replicates):
-  res = []
-  return res
-
-
+def get_dataset_list(ref_dataset, strings_to_replace, replicates):
+  seeds_to_replace = []
+  for i in range(0, replicates):
+    seeds_to_replace.append("seed" + str(i + 20))
+  unreplicated_datasets = []
+  fam_data.get_dataset_variations(unreplicated_datasets, ref_dataset, strings_to_replace)
+  replicated_datasets = []
+  for d in unreplicated_datasets:
+    fam_data.get_dataset_variations(replicated_datasets, d, seeds_to_replace)
+  return replicated_datasets
 
 def run_varying_experiment():
-  pass
+  run_filter = SpeciesRunFilter()
+  run_filter.generate = True
+  run_filter.pargenes = True
+  run_filter.duptree = True
+  run_filter.njrax = True
+  run_filter.astralpro = True
+  run_filter.speciesraxfastdtl = True
+  run_filter.disable_all()
+  run_filter.concatenation_min = True
+  run_filter.concatenation_max = True
+  datasets = get_dataset_list(varying_dataset, varying_params, varying_replicates)
+  #print("\n".join(datasets))
+  run_species_methods(datasets, varying_subst_model, cores, run_filter, launch_mode)
 
 def run_test_experiment():
   run_filter = SpeciesRunFilter()
@@ -67,9 +78,8 @@ def run_test_experiment():
   run_filter.astralpro = True
   run_filter.speciesraxfastdtl = True
   run_filter.concatenation_naive = True
-  run_filter.stag = True
   #run_filter.disable_all()
-  run_filter.orthogenerax = True
+  #run_filter.orthogenerax = True
   run_species_methods(test_datasets, test_subst_model, cores, run_filter, launch_mode)
 
 
