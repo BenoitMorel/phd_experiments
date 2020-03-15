@@ -21,6 +21,7 @@ import run_njst
 import run_njrax
 import run_concatenation
 import run_orthogenerax
+import run_generax_selector
 sys.path.insert(0, os.path.join("scripts"))
 sys.path.insert(0, os.path.join("tools", "families"))
 import experiments as exp
@@ -46,6 +47,7 @@ class SpeciesRunFilter():
     self.njst = True    
     self.astrid = True    
     self.astral = True
+    self.generaxselect = True
     self.astralpro = True
     self.speciesraxfastdl = True
     self.speciesraxfastdtl = True
@@ -73,6 +75,7 @@ class SpeciesRunFilter():
     self.njst = False    
     self.astrid = False
     self.astral = False
+    self.generaxselect = False
     self.astralpro = False
     self.speciesraxfastdl = False
     self.speciesraxfastdtl = False
@@ -184,6 +187,12 @@ class SpeciesRunFilter():
         run_astral_multi.run_astral(datadir, "raxml-ng", subst_model)
       except Exception as exc:
         printFlush("Failed running Astral\n" + str(exc))
+    if (self.generaxselect):
+      printFlush("Run GeneRaxSelect")
+      try:
+        run_generax_selector.select(datadir, subst_model, "names.txt", cores)
+      except Exception as exc:
+        printFlush("Failed running GeneRaxSelect\n" + str(exc))
     if (self.astralpro):
       printFlush("Run Astral-pro")
       try:

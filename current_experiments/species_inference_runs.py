@@ -59,11 +59,12 @@ def run_varying_experiment():
   run_filter.pargenes = True
   run_filter.duptree = True
   run_filter.njrax = True
+  run_filter.concatenation_min = True
+  run_filter.concatenation_max = True
   run_filter.astralpro = True
   run_filter.speciesraxfastdtl = True
   run_filter.disable_all()
-  run_filter.concatenation_min = True
-  run_filter.concatenation_max = True
+  run_filter.generaxselect = True
   datasets = get_dataset_list(varying_dataset, varying_params, varying_replicates)
   #print("\n".join(datasets))
   run_species_methods(datasets, varying_subst_model, cores, run_filter, launch_mode)
@@ -78,7 +79,6 @@ def run_test_experiment():
   run_filter.astralpro = True
   run_filter.speciesraxfastdtl = True
   run_filter.concatenation_naive = True
-  #run_filter.disable_all()
   #run_filter.orthogenerax = True
   run_species_methods(test_datasets, test_subst_model, cores, run_filter, launch_mode)
 
