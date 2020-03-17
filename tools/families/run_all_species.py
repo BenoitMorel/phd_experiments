@@ -187,12 +187,6 @@ class SpeciesRunFilter():
         run_astral_multi.run_astral(datadir, "raxml-ng", subst_model)
       except Exception as exc:
         printFlush("Failed running Astral\n" + str(exc))
-    if (self.generaxselect):
-      printFlush("Run GeneRaxSelect")
-      try:
-        run_generax_selector.select(datadir, subst_model, "names.txt", cores)
-      except Exception as exc:
-        printFlush("Failed running GeneRaxSelect\n" + str(exc))
     if (self.astralpro):
       printFlush("Run Astral-pro")
       try:
@@ -261,6 +255,13 @@ class SpeciesRunFilter():
       except Exception as exc:
         printFlush("Failed running orthogenerax\n" + str(exc))
 
+    if (self.generaxselect):
+      printFlush("Run GeneRaxSelect")
+      try:
+        candidates = exp.generax_selector_candidates
+        run_generax_selector.select(datadir, subst_model, candidates, cores)
+      except Exception as exc:
+        printFlush("Failed running GeneRaxSelect\n" + str(exc))
     if (self.analyze):
       printFlush("Run analyze...")
       sys.stdout.flush()

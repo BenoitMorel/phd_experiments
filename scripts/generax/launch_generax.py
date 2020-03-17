@@ -25,7 +25,6 @@ def get_generax_datasets():
   
   root_datadir = os.path.join(exp.benoit_datasets_root, "families")
   datasets = {}
-  print(os.listdir(root_datadir))
   for dataset in os.listdir(root_datadir):
     datasets[dataset] = os.path.join(root_datadir, dataset)
   return datasets

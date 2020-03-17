@@ -39,7 +39,11 @@ def plot(grouped_datasets, x_param, methods, subst_model, metric_name, output):
   method_dict = {}
   for method in methods:
     method_dict[method] = method
-  #method_dict["speciesrax-dtl-raxml-HYBRID"] = "generax"
+  method_dict["speciesrax-dtl-raxml-HYBRID"] = "SpeciesRax"
+  method_dict["astralpro"] = "Astral-Pro"
+  method_dict["njrax-NJst"] = "NJRax"
+  method_dict["generax-select"] = "GeneRax-Select"
+  method_dict["orthogenerax-all-njrax-njst"] = "GeneRax-Ortho"
   for key in grouped_datasets:
     datasets_keys.append(key)
   print("Sorting by " + x_param)
@@ -154,8 +158,8 @@ def plot_params(methods, metric_names):
 
 def main_plot_metrics():
   #methods = ["duptree", "astral", "astralpro", "njrax-NJst", "speciesrax-dtl-raxml-HYBRID", "concatenation-naive"]
-  methods = ["astralpro", "njrax-NJst", "speciesrax-dtl-raxml-HYBRID"]
-  metric_names = ["species_unrooted_rf"]#,  "runtimes"]
+  methods = ["astralpro", "njrax-NJst", "speciesrax-dtl-raxml-HYBRID", "generax-select"]
+  metric_names = ["species_unrooted_rf", "species_rooted_rf"]#,  "runtimes"]
   plot_params(methods, metric_names)
 
 if (__name__ == "__main__"):
