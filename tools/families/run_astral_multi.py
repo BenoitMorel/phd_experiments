@@ -53,7 +53,6 @@ def run_astral(datadir, method, subst_model):
   gene_trees_file = init_gene_trees_file(datadir, method, subst_model, output_dir)
   mapping_file = init_mapping_file(datadir, output_dir)
   print("Start executing astral")
-  start = time.time()
   exec_astral(gene_trees_file, mapping_file, fam.get_species_tree(datadir, subst_model, "astral"))
   time1 = (time.time() - start)
   saved_metrics.save_metrics(datadir, fam.get_run_name("astral", subst_model), time1, "runtimes") 

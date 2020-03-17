@@ -101,6 +101,7 @@ astrid_exec = os.path.join(github_root, "ASTRID", "src", "build", "ASTRID")
 prepare_fastrfs_script = os.path.join(tools_root, "rfs", "prepareTrees.py")
 # constants
 mpi_scheduler_heuristic = "--split-scheduler"
+generax_selector_candidates = os.path.join(tools_root, "families", "candidates.txt")
 
 # utils
 def get_git_info(repo_path):
