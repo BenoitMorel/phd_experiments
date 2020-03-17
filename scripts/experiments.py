@@ -149,7 +149,7 @@ def create_result_dir(suffix, additional_args = []):
     result_dir = base + str(i)
     if (not os.path.isdir(result_dir)):
       os.makedirs(result_dir)
-      open(historic, "a+").write("Results directory: " + result_dir + "\n")
+      #open(historic, "a+").write("Results directory: " + result_dir + "\n")
       print("Results directory: " + result_dir)
       return os.path.abspath(result_dir)
 
@@ -188,6 +188,7 @@ def submit_haswell(submit_file_path, command, threads, debug):
   command.append(submit_file_path)
   out = open(historic, "a+")
   subprocess.check_call(command, stdout = out)
+  out.write("Output in " + logfile + "\n")
   print(open(historic).readlines()[-1][:-1])
   out.write("\n")
 
