@@ -22,9 +22,9 @@ def select(dataset_dir, subst_model, method_names_file, cores):
   run_dir = "plop"
   try:
     shutil.rmtree(run_dir)
-    os.makedirs(run_dir)
   except:
     pass
+  os.makedirs(run_dir)
   start = time.time()
   for method in method_names:
     print("Evaluating  joint likelihood for " + method + " species tree")
