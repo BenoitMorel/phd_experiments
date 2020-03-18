@@ -15,7 +15,7 @@ def run_generax(datadir, subst_model, species_method, cores):
   dataset = os.path.basename(os.path.normpath(datadir))
   strategy = "SPR"
   species_tree = species_method
-  starting_tree = "random"
+  starting_tree = "raxml-ng"
   additional_arguments = []
   additional_arguments.append("--reroot-species-tree")
   additional_arguments.append("--build-supermatrix")
