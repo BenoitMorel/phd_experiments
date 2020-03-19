@@ -26,14 +26,13 @@ varying_subst_model = "GTR+G"
 varying_dataset = "ssim_var_s25_f100_sites100_GTR_bl1.0_d1.0_l1.0_t1.0_p0.0_pop470000000_mu1.0_theta0.0_seed20"
 varying_replicates = 10
 varying_params = []
-#varying_params += ["none"]
-#varying_params += ["d0.1_t0.1_l0.1", "d0.5_t0.5_l0.5", "d2.0_l2.0_t2.0", "d3.0_l3.0_t3.0"]
-#varying_params += ["pop50000000","pop100000000","pop1000000000"]
-#varying_params += ["t0.0", "t0.5", "t2.0", "t4.0"]
-varying_params += ["t2.0", "t4.0"]
+varying_params += ["none"]
+varying_params += ["d0.1_t0.1_l0.1", "d0.5_t0.5_l0.5", "d2.0_l2.0_t2.0", "d3.0_l3.0_t3.0"]
+varying_params += ["pop50000000","pop100000000","pop1000000000"]
+varying_params += ["t0.0", "t0.5", "t2.0", "t4.0"]
 varying_params += ["sites200", "sites500"]
 varying_params += ["f20", "f50", "f200", "f500", "f1000"]
-varying_params += ["s10", "s15", "s20", "s30"]
+varying_params += ["s10", "s15", "s20", "s30", "s50", "s75"]
 
 test_subst_model = "GTR+G"
 test_datasets = []
@@ -56,6 +55,7 @@ def get_dataset_list(ref_dataset, strings_to_replace, replicates):
 
 def run_varying_experiment():
   run_filter = SpeciesRunFilter()
+  run_filter.disable_all()
   run_filter.generate = True
   run_filter.pargenes = True
   run_filter.duptree = True
@@ -64,9 +64,10 @@ def run_varying_experiment():
   run_filter.concatenation_max = True
   run_filter.astralpro = True
   run_filter.speciesraxfastdtl = True
-  run_filter.disable_all()
-  run_filter.generaxselect = True
   run_filter.orthogenerax = True
+  run_filter.generaxselect = True
+  run_filter.disable_all()
+  run_filter.speciesraxfastdtl = True
   datasets = get_dataset_list(varying_dataset, varying_params, varying_replicates)
   #print("\n".join(datasets))
   run_species_methods(datasets, varying_subst_model, cores, run_filter, launch_mode)

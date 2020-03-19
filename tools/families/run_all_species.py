@@ -208,7 +208,7 @@ class SpeciesRunFilter():
     if (self.speciesraxfastdl or self.speciesraxfastdtl):
       printFlush("Run SpeciesRaxFast")
       try:
-        run_speciesrax.run_speciesrax_on_families(datadir, subst_model, cores, dl = self.speciesraxfastdl, dtl = self.speciesraxfastdtl, slow = False, strategy = "SPR")
+        #run_speciesrax.run_speciesrax_on_families(datadir, subst_model, cores, dl = self.speciesraxfastdl, dtl = self.speciesraxfastdtl, slow = False, strategy = "SPR")
         #run_speciesrax.run_speciesrax_on_families(datadir, subst_model, cores, dl = False, dtl = self.speciesraxfastdtl, slow = False, strategy = "TRANSFERS")
         run_speciesrax.run_speciesrax_on_families(datadir, subst_model, cores, dl = False, dtl = self.speciesraxfastdtl, slow = False, strategy = "HYBRID")
       except Exception as exc:

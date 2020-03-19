@@ -119,6 +119,7 @@ def get_mode_from_additional_arguments(additional_arguments):
 def extract_trees(datadir, results_family_dir, run_name, subst_model):
   src = os.path.join(results_family_dir, "inferred_species_tree.newick")
   dest = fam.get_species_tree(datadir, None, run_name)
+  print("extracted tree " + dest)
   shutil.copyfile(src, dest)
   #
   results_dir = os.path.join(results_family_dir, "results")
@@ -169,6 +170,7 @@ def run(dataset, subst_model, starting_species_tree, starting_gene_tree, cores, 
   saved_metrics.save_metrics(datadir, run_name, (time.time() - start), "runtimes") 
   saved_metrics.save_metrics(datadir, run_name, (time.time() - start), "seqtimes") 
   if (do_extract):
+    print("DO EXTRACT")
     extract_trees(datadir, os.path.join(resultsdir, "generax"), run_name, subst_model)
   analyze_species_results(datadir, resultsdir)
   try:
