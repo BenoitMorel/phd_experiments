@@ -19,7 +19,7 @@ def need_reroot(method_name):
 def select(dataset_dir, subst_model, method_names_file, cores):
   method_names = open(method_names_file).read().replace("\n", "").split(" ")
   likelihoods = []
-  output_dir = fam.get_run_dir(datadir, subst_model, "generaxselect_run")
+  run_dir = fam.get_run_dir(dataset_dir, subst_model, "generaxselect_run")
   try:
     shutil.rmtree(run_dir)
   except:
