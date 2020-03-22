@@ -42,9 +42,9 @@ def exec_njst(gene_trees_file, mapping_file, output_species_tree_file, algo_type
   print(res)
 
 def run_njst_all(datadir, method, subst_model):
-  run_njst(datadir, method, subst_model, "original")
-  run_njst(datadir, method, subst_model, "liu")
   run_njst(datadir, method, subst_model, "reweighted")
+  run_njst(datadir, method, subst_model, "liu")
+  run_njst(datadir, method, subst_model, "original")
 
 def run_njst(datadir, method, subst_model, algo_type):
   algo_name = "njst-" + algo_type

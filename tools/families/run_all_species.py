@@ -204,12 +204,12 @@ class SpeciesRunFilter():
         run_concatenation.run_concatenation(datadir, subst_model,True,cores)
       except Exception as exc:
         printFlush("Failed running concatenation-min\n" + str(exc))
-    if (self.speciesraxfastdl or self.speciesraxfastdtl):
+    if (self.speciesraxfastdtl):
       printFlush("Run SpeciesRaxFast")
       try:
-        #run_speciesrax.run_speciesrax_on_families(datadir, subst_model, cores, dl = self.speciesraxfastdl, dtl = self.speciesraxfastdtl, slow = False, strategy = "SPR")
-        #run_speciesrax.run_speciesrax_on_families(datadir, subst_model, cores, dl = False, dtl = self.speciesraxfastdtl, slow = False, strategy = "TRANSFERS")
-        run_speciesrax.run_speciesrax_on_families(datadir, subst_model, cores, dl = False, dtl = self.speciesraxfastdtl, slow = False, strategy = "HYBRID")
+        #run_speciesrax.run_speciesrax_on_families(datadir, subst_model, cores, transfers = True, slow = False, strategy = "SPR")
+        #run_speciesrax.run_speciesrax_on_families(datadir, subst_model, cores, transfers = True, slow = False, strategy = "HYBRID")
+        run_speciesrax.run_speciesrax_on_families(datadir, subst_model, cores, transfers = True, slow = False, strategy = "HYBRID", rates_per_family = True)
       except Exception as exc:
         printFlush("Failed running speciesrax\n" + str(exc))
     if (self.speciesraxprune):
