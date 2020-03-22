@@ -16,10 +16,13 @@ def need_reroot(method_name):
     return False
   return True
 
-def select(dataset_dir, subst_model, method_names_file, cores):
+def select(dataset_dir, subst_model, method_names_file, per_fam_rates, cores):
   method_names = open(method_names_file).read().replace("\n", "").split(" ")
   likelihoods = []
-  run_dir = fam.get_run_dir(dataset_dir, subst_model, "generaxselect_run")
+  run_name = "generax-select"
+  if (per_fam_rates):
+    run_name += "-fam"
+  run_dir = fam.get_run_dir(dataset_dir, subst_model, run_name + "_run")
   try:
     shutil.rmtree(run_dir)
   except:
@@ -47,14 +50,14 @@ def select(dataset_dir, subst_model, method_names_file, cores):
     print(ll)
     likelihoods.append((ll, method, tree))
   time1 = (time.time() - start)
-  saved_metrics.save_metrics(dataset_dir, fam.get_run_name("generax-select", subst_model), time1, "runtimes") 
+  saved_metrics.save_metrics(dataset_dir, fam.get_run_name(run_name, subst_model), time1, "runtimes") 
   likelihoods = sorted(likelihoods, reverse = True)
   best_tuple_with_true = likelihoods[0]
   best_tuple = likelihoods[0]
   if (best_tuple[1] == "true"):
     best_tuple = likelihoods[1]
-  select_dest = fam.get_species_tree(dataset_dir, subst_model, "generax-select")
-  select_true_dest = fam.get_species_tree(dataset_dir, subst_model, "generax-select-true")
+  select_dest = fam.get_species_tree(dataset_dir, subst_model, run_name)
+  select_true_dest = fam.get_species_tree(dataset_dir, subst_model, run_name + "-true")
   for t in likelihoods:
     print(str(t[0]) + " " + str(t[1]))
   try:
