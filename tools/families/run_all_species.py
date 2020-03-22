@@ -49,8 +49,7 @@ class SpeciesRunFilter():
     self.astral = True
     self.generaxselect = True
     self.astralpro = True
-    self.speciesraxfastdl = True
-    self.speciesraxfastdtl = True
+    self.speciesrax = True
     self.speciesraxprune = True
     self.speciesraxperfamily = True
     self.speciesraxslowdl = True
@@ -77,8 +76,7 @@ class SpeciesRunFilter():
     self.astral = False
     self.generaxselect = False
     self.astralpro = False
-    self.speciesraxfastdl = False
-    self.speciesraxfastdtl = False
+    self.speciesrax = False
     self.speciesraxprune = False
     self.speciesraxperfamily = False
     self.speciesraxslowdl = False
@@ -99,8 +97,7 @@ class SpeciesRunFilter():
     self.njst = True   
     self.astrid = True
     self.astralpro = True
-    self.speciesraxfastdl = True
-    self.speciesraxfastdtl = True
+    self.speciesrax = True
 
   def launch_reference_methods(self, datadir, subst_model, cores, launch_mode):
     misc_dir = fam.get_misc_dir(datadir)
@@ -205,12 +202,11 @@ class SpeciesRunFilter():
         run_concatenation.run_concatenation(datadir, subst_model,True,cores)
       except Exception as exc:
         printFlush("Failed running concatenation-min\n" + str(exc))
-    if (self.speciesraxfastdtl):
+    if (self.speciesrax):
       printFlush("Run SpeciesRaxFast")
       try:
-        #run_speciesrax.run_speciesrax_on_families(datadir, subst_model, cores, transfers = True, slow = False, strategy = "SPR")
-        #run_speciesrax.run_speciesrax_on_families(datadir, subst_model, cores, transfers = True, slow = False, strategy = "HYBRID")
-        run_speciesrax.run_speciesrax_on_families(datadir, subst_model, cores, transfers = True, slow = False, strategy = "HYBRID", rates_per_family = True)
+        run_speciesrax.run_speciesrax_on_families(datadir, subst_model, cores, transfers = True, slow = False, strategy = "SPR")
+        run_speciesrax.run_speciesrax_on_families(datadir, subst_model, cores, transfers = True, slow = False, strategy = "HYBRID")
       except Exception as exc:
         printFlush("Failed running speciesrax\n" + str(exc))
     if (self.speciesraxprune):
@@ -224,7 +220,7 @@ class SpeciesRunFilter():
       printFlush("Run SpeciesRaxPerFamily")
       try:
         dataset = os.path.basename(datadir)
-        run_speciesrax.run_speciesrax_instance(dataset, "raxml-ng", True, "speciesrax-per-family", subst_model, False, "SPR", cores, ["--per-family-rates"])
+        run_speciesrax.run_speciesrax_on_families(datadir, subst_model, cores, transfers = True, slow = False, strategy = "HYBRID", rates_per_family = True)
       except Exception as exc:
         printFlush("Failed running speciesrax per family\n" + str(exc))
 
@@ -259,7 +255,9 @@ class SpeciesRunFilter():
       printFlush("Run GeneRaxSelect")
       try:
         candidates = exp.generax_selector_candidates
-        run_generax_selector.select(datadir, subst_model, candidates, cores)
+        run_generax_selector.select(datadir, subst_model, candidates, False, cores)
+        # with per-families:
+        #run_generax_selector.select(datadir, subst_model, candidates, True, cores)
       except Exception as exc:
         printFlush("Failed running GeneRaxSelect\n" + str(exc))
     if (self.analyze):

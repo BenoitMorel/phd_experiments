@@ -158,7 +158,7 @@ def plot_params(methods, metric_names):
 
 def main_plot_metrics():
   #methods = ["duptree", "astral", "astralpro", "njrax-NJst", "speciesrax-dtl-raxml-HYBRID", "concatenation-naive"]
-  methods = ["astralpro", "njrax-NJst", "speciesrax-dtl-raxml-HYBRID", "generax-select", "njst-reweighted", "njst-original"]
+  methods = ["astralpro", "njrax-NJst", "speciesrax-dtl-raxml-HYBRID", "generax-select", "speciesrax-dtl-raxml-perfam-HYBRID"]
   metric_names = ["species_unrooted_rf", "species_rooted_rf"]
   plot_params(methods, metric_names)
   metric_names = ["species_rooted_rf"]#,  "runtimes"]
