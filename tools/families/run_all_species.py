@@ -67,7 +67,6 @@ class SpeciesRunFilter():
     self.concatenation_min = False
     self.concatenation_max = False
     self.stag = False
-    self.duptree = False
     self.fastrfs = False
     self.phyldog = False
     self.duptree = False
@@ -139,7 +138,7 @@ class SpeciesRunFilter():
     print("Redirected logs to " + redirected_file)
     sys.stdout.flush()
     sys.stdout = open(redirected_file, "w")
-    if (self.pargenes):
+    if (self.pargenes and subst_model != "true"):
       printFlush("Run pargenes...")
       sys.stdout.flush()
       raxml.run_pargenes_and_extract_trees(datadir, subst_model, self.pargenes_starting_trees, self.pargenes_bootstrap_trees, cores, "pargenes", True)
@@ -193,14 +192,14 @@ class SpeciesRunFilter():
         run_astral_pro.run_astralpro(datadir, "raxml-ng", subst_model)
       except Exception as exc:
         printFlush("Failed running Astral-pro\n" + str(exc))
-    if (self.concatenation_min):
+    if (self.concatenation_min and subst_model != "true"):
       printFlush("Run concatenation-min")
       try:
         run_concatenation.run_concatenation(datadir, subst_model,False,cores)
       except Exception as exc:
         printFlush("Failed running concatenation-min\n" + str(exc))
     if (self.concatenation_max):
-      printFlush("Run concatenation-max")
+      printFlush("Run concatenation-max"  and subst_model != "true")
       try:
         run_concatenation.run_concatenation(datadir, subst_model,True,cores)
       except Exception as exc:
@@ -246,7 +245,7 @@ class SpeciesRunFilter():
         run_guenomu.run_guenomu(datadir, subst_model, cores)
       except Exception as exc:
         printFlush("Failed running Guenomu\n" + str(exc))
-    if (self.orthogenerax):
+    if (self.orthogenerax  and subst_model != "true"):
       printFlush("Run OrthoGeneRax")
       try:
         #run_orthogenerax.run_orthogenerax(datadir, subst_model, "true", False, cores)
@@ -255,7 +254,7 @@ class SpeciesRunFilter():
       except Exception as exc:
         printFlush("Failed running orthogenerax\n" + str(exc))
 
-    if (self.generaxselect):
+    if (self.generaxselect  and subst_model != "true"):
       printFlush("Run GeneRaxSelect")
       try:
         candidates = exp.generax_selector_candidates

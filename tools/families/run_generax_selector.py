@@ -35,8 +35,11 @@ def select(dataset_dir, subst_model, method_names_file, cores):
     optimize_species = False
     radius = 5
     additional_arguments = ["--max-spr-radius", str(radius)] 
-    if (need_reroot(method)):
-      additional_arguments.append("--reroot-species-tree")
+    additional_arguments.append("--rec-model")
+    additional_arguments.append("UndatedDTL")
+
+    #if (need_reroot(method)):
+      #additional_arguments.append("--reroot-species-tree")
     output_dir = launch_generax.run(dataset, subst_model, "SPR", method, starting_tree, cores, additional_arguments, resultsdir, False, False)
     stats_file = os.path.join(output_dir, "generax", "stats.txt")
     ll = float(open(stats_file).readline().split()[1])
@@ -54,8 +57,11 @@ def select(dataset_dir, subst_model, method_names_file, cores):
   select_true_dest = fam.get_species_tree(dataset_dir, subst_model, "generax-select-true")
   for t in likelihoods:
     print(str(t[0]) + " " + str(t[1]))
-  shutil.copy(best_tuple_with_true[2], select_true_dest)
-  shutil.copy(best_tuple[2], select_dest)
+  try:
+    shutil.copy(best_tuple_with_true[2], select_true_dest)
+    shutil.copy(best_tuple[2], select_dest)
+  except:
+    pass
 
 if (__name__== "__main__"):
   if (len(sys.argv) != 5):

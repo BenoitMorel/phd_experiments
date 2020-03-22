@@ -140,8 +140,8 @@ def build_gene_tree_path_from_run(datadir, family, run):
   return os.path.join(get_gene_tree_dir(datadir, family), run + ".geneTree.newick")
 
 def build_gene_tree_path(datadir, subst_model, family, method):
-  if (method == "true"):
-    return os.path.join(get_gene_tree_dir(datadir, family), method + "." + method + ".geneTree.newick")
+  if (method == "true" or subst_model == "true"):
+    return os.path.join(get_gene_tree_dir(datadir, family), "true.true.geneTree.newick")
   else:
     return os.path.join(get_gene_tree_dir(datadir, family), method + "." + subst_model + ".geneTree.newick")
 
