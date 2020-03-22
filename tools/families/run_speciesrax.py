@@ -28,25 +28,28 @@ def run_speciesrax_instance(dataset, starting_tree, with_transfers, run_name, su
   command.append(strategy)
   for arg in additional_args:
     command.append(arg)
-  run_name += "-" + strategy
   command.append("--run")
   command.append(fam.get_run_name(run_name, subst_model))
   print("-> Running " + " ".join(command))
   subprocess.check_call(command)
     
   
-def run_speciesrax_on_families(dataset_dir, subst_model, cores, dl = True, dtl = True, slow = False, strategy = "SPR"):
+def run_speciesrax_on_families(dataset_dir, subst_model, cores, transfers = True, slow = False, strategy = "SPR", rates_per_family = False):
   dataset = os.path.basename(dataset_dir)
-  if (slow):
-    if (dl):
-      run_speciesrax_instance(dataset, "raxml-ng", False, "speciesrax-dl-raxml-slow", subst_model, True, strategy, cores)
-    if (dtl):
-      run_speciesrax_instance(dataset, "raxml-ng", True, "speciesrax-dtl-raxml-slow", subst_model, True, strategy, cores)
+  run_name = "speciesrax-"
+  args = []
+  if (transfers):
+    run_name += "dtl-"
   else:
-    if (dl):
-      run_speciesrax_instance(dataset, "raxml-ng", False, "speciesrax-dl-raxml", subst_model, False, strategy, cores)
-    if (dtl):
-      run_speciesrax_instance(dataset, "raxml-ng", True, "speciesrax-dtl-raxml", subst_model, False, strategy, cores)
+    run_name += "dl-"
+  run_name += "raxml-"
+  if (slow):
+    run_name += "slow-"
+  if (rates_per_family):
+    args.append("--per-family-rates")
+    run_name += "perfam-"
+  run_name += strategy
+  run_speciesrax_instance(dataset, "raxml-ng", transfers, run_name, subst_model, slow, strategy, cores = 40, additional_args = args)
 
 
 if (__name__== "__main__"):

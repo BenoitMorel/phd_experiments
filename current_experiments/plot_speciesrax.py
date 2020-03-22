@@ -41,7 +41,7 @@ def plot(grouped_datasets, x_param, methods, subst_model, metric_name, output):
     method_dict[method] = method
   method_dict["speciesrax-dtl-raxml-HYBRID"] = "SpeciesRax"
   method_dict["astralpro"] = "Astral-Pro"
-  method_dict["njrax-NJst"] = "NJRax"
+  method_dict["njrax-NJst"] = "MinNJ"
   method_dict["generax-select"] = "GeneRax-Select"
   method_dict["orthogenerax-all-njrax-njst"] = "GeneRax-Ortho"
   for key in grouped_datasets:
@@ -158,7 +158,7 @@ def plot_params(methods, metric_names):
 
 def main_plot_metrics():
   #methods = ["duptree", "astral", "astralpro", "njrax-NJst", "speciesrax-dtl-raxml-HYBRID", "concatenation-naive"]
-  methods = ["astralpro", "njrax-NJst", "speciesrax-dtl-raxml-HYBRID", "generax-select"]
+  methods = ["astralpro", "njrax-NJst", "speciesrax-dtl-raxml-HYBRID", "generax-select", "njst-reweighted", "njst-original"]
   metric_names = ["species_unrooted_rf", "species_rooted_rf"]
   plot_params(methods, metric_names)
   metric_names = ["species_rooted_rf"]#,  "runtimes"]
