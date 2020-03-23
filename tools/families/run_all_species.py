@@ -57,6 +57,7 @@ class SpeciesRunFilter():
     self.phyldog = True
     self.guenomu = False
     self.analyze = True
+    self.cleanup = False
     self.pargenes_starting_trees = 2
     self.pargenes_bootstrap_trees = 2
 
@@ -81,6 +82,7 @@ class SpeciesRunFilter():
     self.speciesraxslowdl = False
     self.speciesraxslowdtl = False
     self.guenomu = False
+    self.cleanup = False
     #self.analyze = False
   
   def enable_fast_methods(self):
@@ -131,6 +133,10 @@ class SpeciesRunFilter():
     if (len(datadir.split("/")) == 1):
       datadir = fam.get_datadir(datadir) 
     save_sdtout = sys.stdout
+    try:
+      os.makedirs(os.path.join(datadir, "runs"))
+    except:
+      pass
     redirected_file = os.path.join(datadir, "runs", "logs_run_all_species." + subst_model + ".txt")
     print("Redirected logs to " + redirected_file)
     sys.stdout.flush()
@@ -266,6 +272,11 @@ class SpeciesRunFilter():
         species_analyze.analyze(datadir)
       except Exception as exc:
         printFlush("Failed running analyze\n" + str(exc))
+    if (self.cleanup):
+      try:
+        shutil.rmtree(fam.get_run_dir(datadir, subst_model))
+      except Exception as exc:
+        print("Failed to remove run directory: \n" + str(exc))
     sys.stdout = save_sdtout
     print("End of run_all")
     sys.stdout.flush()

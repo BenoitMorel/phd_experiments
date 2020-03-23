@@ -27,8 +27,8 @@ varying_dataset = "ssim_var_s25_f100_sites100_GTR_bl1.0_d1.0_l1.0_t1.0_p0.0_pop4
 #varying_dataset = "ssim_var_s25_f100_sites100_GTR_bl1.0_d1.0_l1.0_t1.0_p0.0_pop10_mu1.0_theta0.0_seed20"
 varying_replicates = range(30, 45)
 varying_params = []
-varying_params += ["none"]
-varying_params += ["d0.1_t0.1_l0.1", "d0.5_t0.5_l0.5", "d2.0_l2.0_t2.0", "d3.0_l3.0_t3.0"]
+#varying_params += ["none"]
+#varying_params += ["d0.1_t0.1_l0.1", "d0.5_t0.5_l0.5", "d2.0_l2.0_t2.0", "d3.0_l3.0_t3.0"]
 varying_params += ["pop10", "pop50000000","pop100000000","pop1000000000"]
 varying_params += ["t0.0", "t0.5", "t2.0", "t4.0"]
 varying_params += ["sites200", "sites500"]
@@ -70,7 +70,8 @@ def run_varying_experiment():
   #run_filter.orthogenerax = True
   #run_filter.generaxselect = True
   #run_filter.disable_all()
-  
+ 
+  run_filter.cleanup = True
   datasets = get_dataset_list(varying_dataset, varying_params, varying_replicates)
   run_species_methods(datasets, varying_subst_model, cores, run_filter, launch_mode)
 

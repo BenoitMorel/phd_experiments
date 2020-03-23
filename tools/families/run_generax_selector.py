@@ -40,6 +40,8 @@ def select(dataset_dir, subst_model, method_names_file, per_fam_rates, cores):
     additional_arguments = ["--max-spr-radius", str(radius)] 
     additional_arguments.append("--rec-model")
     additional_arguments.append("UndatedDTL")
+    if (per_fam_rates):
+      additional_arguments.append("--per-family-rates")
 
     #if (need_reroot(method)):
       #additional_arguments.append("--reroot-species-tree")
