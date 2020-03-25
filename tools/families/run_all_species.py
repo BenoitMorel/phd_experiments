@@ -48,6 +48,7 @@ class SpeciesRunFilter():
     self.astrid = True    
     self.astral = True
     self.generaxselect = True
+    self.generaxselectfam = True
     self.astralpro = True
     self.speciesrax = True
     self.speciesraxprune = True
@@ -75,6 +76,7 @@ class SpeciesRunFilter():
     self.astrid = False
     self.astral = False
     self.generaxselect = False
+    self.generaxselectfam = False
     self.astralpro = False
     self.speciesrax = False
     self.speciesraxprune = False
@@ -261,8 +263,13 @@ class SpeciesRunFilter():
       try:
         candidates = exp.generax_selector_candidates
         run_generax_selector.select(datadir, subst_model, candidates, False, cores)
-        # with per-families:
-        #run_generax_selector.select(datadir, subst_model, candidates, True, cores)
+      except Exception as exc:
+        printFlush("Failed running GeneRaxSelect\n" + str(exc))
+    if (self.generaxselectfam  and subst_model != "true"):
+      printFlush("Run GeneRaxSelectFam")
+      try:
+        candidates = exp.generax_selector_candidates
+        run_generax_selector.select(datadir, subst_model, candidates, True, cores)
       except Exception as exc:
         printFlush("Failed running GeneRaxSelect\n" + str(exc))
     if (self.analyze):
