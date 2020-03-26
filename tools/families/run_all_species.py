@@ -22,6 +22,7 @@ import run_njrax
 import run_concatenation
 import run_orthogenerax
 import run_generax_selector
+import shutil
 sys.path.insert(0, os.path.join("scripts"))
 sys.path.insert(0, os.path.join("tools", "families"))
 import experiments as exp

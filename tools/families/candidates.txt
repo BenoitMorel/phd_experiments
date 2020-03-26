@@ -1,1 +1,1 @@
-njrax-NJst astralpro speciesrax-dtl-raxml-HYBRID true
+njrax-NJst astralpro speciesrax-dtl-raxml-perfam-HYBRID true

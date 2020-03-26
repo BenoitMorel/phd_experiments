@@ -1,8 +1,13 @@
 import re
 import fam
+import sys
+import os
 import generate_families_with_jprime as jprime
 import generate_families_with_zombi as zombi
 import generate_families_with_simphy as simphy
+import shutil
+sys.path.insert(0, 'scripts')
+import experiments as exp
 
 # couples of (species interval, seed) to get a given number of species node
 jsim_species_to_params = {}
@@ -152,4 +157,17 @@ def get_dataset_variations(datasets, fixed_point, strings_to_replace):
       print("duplicate: " + dataset)
       exit(1)
     datasets.append(dataset)
+
+def duplicate_families_symlink(input_datadir, output_datadir, family):
+  fam.init_family_directories(output_datadir, family)
+  exp.relative_symlink(fam.get_alignment(input_datadir, family), fam.get_alignment(output_datadir, family))
+  exp.relative_symlink(fam.get_mappings(input_datadir, family), fam.get_mappings(output_datadir, family))
+  input_gene_trees_dir = fam.get_gene_tree_dir(input_datadir, family)
+  output_gene_trees_dir = fam.get_gene_tree_dir(output_datadir, family)
+  for f in os.listdir(input_gene_trees_dir):
+    if (f.startswith("true") or f.startswith("raxml")):
+      exp.relative_symlink(os.path.join(input_gene_trees_dir, f), os.path.join(output_gene_trees_dir, f))
+  
+
+
 

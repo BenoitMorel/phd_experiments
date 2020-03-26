@@ -66,12 +66,12 @@ def run_varying_experiment():
   run_filter.njst = True
   run_filter.speciesrax = True
   run_filter.speciesraxperfamily = True
-  run_filter.generaxselect = True
-  #run_filter.generaxselectfam = True
-  run_filter.disable_all()
   run_filter.concatenation_min = True
   run_filter.concatenation_max = True
   run_filter.orthogenerax = True
+  #run_filter.generaxselectfam = True
+  run_filter.disable_all()
+  run_filter.generaxselect = True
  
   run_filter.cleanup = True
   datasets = get_dataset_list(varying_dataset, varying_params, varying_replicates)
