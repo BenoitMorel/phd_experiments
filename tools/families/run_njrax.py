@@ -14,7 +14,7 @@ def run_njrax(dataset, nj_strategy, subst_model, cores = 40):
   command.append(subst_model)
   command.append(nj_strategy)
   command.append("raxml-ng")
-  command.append("normal")
+  command.append("normald")
   command.append(str(cores))
   command.append("--species-fast-radius")
   command.append("0")
@@ -22,8 +22,10 @@ def run_njrax(dataset, nj_strategy, subst_model, cores = 40):
   command.append("SPR")
   command.append("--run")
   run_name = "njrax-" + nj_strategy
+  if (nj_strategy == "NFJ"):
+    run_name = "cherry"
   command.append(fam.get_run_name(run_name, subst_model))
-  print("-> Running " + " ".join(command))
+  command.append("--skip-family-filtering")
   subprocess.check_call(command)
     
   

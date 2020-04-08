@@ -30,7 +30,6 @@ def get_first_dataset_starting_with(dataset):
   for d in os.listdir(parent_dir):
     if (d.startswith(dataset)):
       candidates.append(d)
-  print(sorted(candidates))
   return os.path.basename(sorted(candidates)[0])
 
 def get_species_dir(datadir):
@@ -67,6 +66,8 @@ def get_species_tree(datadir, subst_model= None, method = "true"):
     return "NJ"
   elif (method == "NJst"):
     return "NJst"
+  elif (method == "NFJ"):
+    return "NFJ"
   if (method == "true"):
     return os.path.join(get_species_dir(datadir), "speciesTree.newick")
   if (subst_model != None):
@@ -310,10 +311,6 @@ def convert_to_phyldog_species_tree(speciesTree, phyldog_species_tree):
   command = "sed s/)[nHR][0123456789a-zA-Z]*/)/g " + speciesTree 
   with open(phyldog_species_tree, "w") as output:
     subprocess.check_call(command.split(" "), stdout=output)
-  print(open(speciesTree).read())
-  subprocess.check_call(command.split(" "))
-  print("")
-  print("")
 
 def convert_phyldog_to_treerecs_mapping(phyldog_mappings, treerecs_mappings):
   lines = open(phyldog_mappings).readlines()

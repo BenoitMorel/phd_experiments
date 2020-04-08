@@ -12,6 +12,7 @@ def run_speciesrax_instance(dataset, starting_tree, with_transfers, run_name, su
   command.append(dataset)
   command.append(subst_model)
   command.append("NJst")
+  #command.append("random")
   command.append(starting_tree)
   command.append("normal")
   command.append(str(cores))

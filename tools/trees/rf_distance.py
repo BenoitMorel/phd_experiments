@@ -11,7 +11,7 @@ def str_4(ll):
   return "{0:.4f}".format(ll)
 
 def ete3_rf(tree1, tree2):
-  return tree1.robinson_foulds(tree2, unrooted_trees=True, skip_large_polytomies = True)
+  return tree1.robinson_foulds(tree2, unrooted_trees=False, skip_large_polytomies = True)
 
 def ete3_average_rf_from_list(tree_list_1, tree_list_2, rooted):
   average_cell = [0.0, 0.0]

@@ -19,6 +19,8 @@ def run_generax(datadir, subst_model, species_method, cores):
   additional_arguments = []
   additional_arguments.append("--reroot-species-tree")
   additional_arguments.append("--build-supermatrix")
+  additional_arguments.append("--max-spr-radius")
+  additional_arguments.append("5")
   resultsdir = os.path.join("OrthoGeneRax", dataset, subst_model, species_tree)
   resultsdir = exp.create_result_dir(resultsdir, additional_arguments)
   return launch_generax.run(dataset, subst_model, strategy, species_tree, starting_tree, cores, additional_arguments, resultsdir)
