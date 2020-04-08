@@ -32,18 +32,18 @@ def has_multiple_sample(starting_gene_tree):
   return "ale" in starting_gene_tree.lower() or "multiple" in starting_gene_tree.lower()
 
 def get_starting_gene_tree_path(datadir, subst_model, family, starting_gene_tree):
-  if (has_multiple_sample(starting_gene_tree)):
-    return os.path.join(fam.get_family_misc_dir(datadir, family), starting_gene_tree + "." + subst_model + "_onesample.geneTree")
-  else:
-    return fam.build_gene_tree_path(datadir, subst_model, family, starting_gene_tree)
+  #if (has_multiple_sample(starting_gene_tree)):
+    #return os.path.join(fam.get_family_misc_dir(datadir, family), starting_gene_tree + "." + subst_model + "_onesample.geneTree")
+  #else:
+  return fam.build_gene_tree_path(datadir, subst_model, family, starting_gene_tree)
 
 # GeneRax does not accept tree files with multiple trees
 def sample_one_starting_gene_tree(datadir, subst_model, starting_gene_tree):
   for family in fam.get_families_list(datadir):
     input_tree = fam.build_gene_tree_path(datadir, subst_model, family, starting_gene_tree)
     output_tree = get_starting_gene_tree_path(datadir, subst_model, family, starting_gene_tree)
-    tree = open(input_tree, "r").readline()
-    open(output_tree, "w").write(tree)
+  #  tree = open(input_tree, "r").readline()
+  #  open(output_tree, "w").write(tree)
 
 def build_generax_families_file(datadir, starting_gene_tree, subst_model, output):
   if (has_multiple_sample(starting_gene_tree)):
@@ -101,7 +101,6 @@ def get_generax_command(generax_families_file, starting_species_tree, additional
 def run_generax(datadir, starting_species_tree, generax_families_file, mode, cores, additional_arguments, resultsdir):
   species_tree = fam.get_species_tree(datadir)
   command = get_generax_command(generax_families_file, starting_species_tree, additional_arguments, resultsdir, mode, cores)
-  print(command)
   subprocess.check_call(command.split(" "), stdout = sys.stdout)
 
 
@@ -137,7 +136,6 @@ def av_rf(rf_cell):
 
 def analyze_species_results(datadir, resultsdir):
   true_species_tree = Tree(fam.get_species_tree(datadir), format = 1)
-  print(resultsdir)
   starting_species_tree = Tree(os.path.join(resultsdir, "generax", "starting_species_tree.newick"), format = 1)
   inferred_species_tree = Tree(os.path.join(resultsdir, "generax", "inferred_species_tree.newick"), format = 1)
   starting_rooted_rf = true_species_tree.robinson_foulds(starting_species_tree, unrooted_trees = False)
@@ -193,7 +191,6 @@ def launch(dataset, subst_model, starting_species_tree, starting_gene_tree, clus
   
 
 if (__name__ == "__main__"): 
-  print("launch_generax " + str(sys.argv))
   is_run = ("--exprun" in sys.argv)
   resultsdir = ""
   if (is_run):

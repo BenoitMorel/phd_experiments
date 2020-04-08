@@ -151,7 +151,7 @@ def create_result_dir(suffix, additional_args = []):
     if (not os.path.isdir(result_dir)):
       os.makedirs(result_dir)
       #open(historic, "a+").write("Results directory: " + result_dir + "\n")
-      print("Results directory: " + result_dir)
+      #print("Results directory: " + result_dir)
       return os.path.abspath(result_dir)
 
 def redirect_logs(result_dir):

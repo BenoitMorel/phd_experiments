@@ -17,7 +17,10 @@ def init_gene_trees_file(datadir, method, subst_model, output_dir):
   with open(filepath, "w") as writer:
     for family in fam.get_families_list(datadir):
       raxml_tree_path = fam.build_gene_tree_path(datadir, subst_model, family, method)
-      writer.write(open(raxml_tree_path).read().replace("\n", "") + "\n")
+      towrite = open(raxml_tree_path).read()
+      while (towrite[-1] == "\n"):
+        towrite = towrite[:-1]
+      writer.write(open(raxml_tree_path).read() + "\n")
   return filepath
 
 def init_mapping_file(datadir, output_dir):
@@ -41,23 +44,26 @@ def exec_astralpro(gene_trees_file, mapping_file, output_species_tree_file):
   command.append(mapping_file)
   command.append("-o")
   command.append(output_species_tree_file)
+  command.append("--seed")
+  command.append("692")
   FNULL = open(os.devnull, 'w')
   res = subprocess.check_output(command, stderr=FNULL)
   print(res)
 
 def run_astralpro(datadir, method, subst_model):
   print("Start astral pro script")
-  output_dir = fam.get_run_dir(datadir, subst_model, "astralpro_run")
+  run_name = "astralpro-" + method
+  output_dir = fam.get_run_dir(datadir, subst_model, run_name + "_run")
   shutil.rmtree(output_dir, True)
   os.makedirs(output_dir)
   gene_trees_file = init_gene_trees_file(datadir, method, subst_model, output_dir)
   mapping_file = init_mapping_file(datadir, output_dir)
   print("Start executing astralpro")
   start = time.time()
-  exec_astralpro(gene_trees_file, mapping_file, fam.get_species_tree(datadir, subst_model, "astralpro"))
+  exec_astralpro(gene_trees_file, mapping_file, fam.get_species_tree(datadir, subst_model, run_name))
   time1 = (time.time() - start)
   print("Runtime: " + str(time1) + "s")
-  saved_metrics.save_metrics(datadir, fam.get_run_name("astralpro", subst_model), time1, "runtimes") 
+  saved_metrics.save_metrics(datadir, fam.get_run_name(run_name, subst_model), time1, "runtimes") 
 
 if (__name__ == "__main__"):
   if (len(sys.argv) != 4):

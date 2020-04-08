@@ -10,8 +10,8 @@ def str_2(ll):
 def str_4(ll):
   return "{0:.4f}".format(ll)
 
-def ete3_rf(tree1, tree2):
-  return tree1.robinson_foulds(tree2, unrooted_trees=False, skip_large_polytomies = True)
+def ete3_rf(tree1, tree2, unrooted = True):
+  return tree1.robinson_foulds(tree2, unrooted_trees=unrooted, skip_large_polytomies = True)
 
 def ete3_average_rf_from_list(tree_list_1, tree_list_2, rooted):
   average_cell = [0.0, 0.0]
@@ -36,8 +36,8 @@ def ete3_min_rf_from_list(tree_list_1, tree_list_2):
 def get_rf(tree1, tree2):
   return ete3_rf(tree1, tree2)[0]
 
-def get_relative_rf(tree1, tree2):
-  rf = ete3_rf(tree1, tree2)
+def get_relative_rf(tree1, tree2, unrooted = True):
+  rf = ete3_rf(tree1, tree2, unrooted)
   return float(rf[0]) / float(rf[1])
 
 def get_rf_distance_tuple(tree1_file, tree2_file):
@@ -47,10 +47,13 @@ def get_rf_distance_tuple(tree1_file, tree2_file):
   return (float(rf[0]) / float(rf[1]), rf[0])
 
 if (__name__ == "__main__"):
-  if (len(sys.argv) != 3):
-    print("Syntax python rf_distance.py tree1 tree2")
+  if (len(sys.argv) < 3):
+    print("Syntax python rf_distance.py tree1 tree2 [rooted]")
     sys.exit(1)
   tree1 = Tree(sys.argv[1], format=1)
   tree2 = Tree(sys.argv[2], format=1)
+  rooted = False
+  if (len(sys.argv) > 3):
+    rooted = bool(sys.argv[3])
   print("Relative RF: " + str_4(get_relative_rf(tree1, tree2)))
   print("RF: " + str(get_rf(tree1, tree2)))

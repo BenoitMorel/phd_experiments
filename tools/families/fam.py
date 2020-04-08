@@ -64,10 +64,10 @@ def get_species_tree(datadir, subst_model= None, method = "true"):
     return "random"
   elif (method == "NJ"):
     return "NJ"
-  elif (method == "NJst"):
-    return "NJst"
-  elif (method == "NFJ"):
-    return "NFJ"
+  elif (method == "MiniNJ"):
+    return "MiniNJ"
+  elif (method == "Cherry"):
+    return "Cherry"
   if (method == "true"):
     return os.path.join(get_species_dir(datadir), "speciesTree.newick")
   if (subst_model != None):

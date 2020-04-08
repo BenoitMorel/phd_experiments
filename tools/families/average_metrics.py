@@ -33,6 +33,9 @@ def print_average_metrics(metric_name, datadirs):
       if (method in datadir_metrics):
         bestMethod = min(bestMethod, float(datadir_metrics[method]))
     #metric_vector_dict["generax-select-opt"].append(bestMetric)
+  if (datasets_number == 0):
+    print("NO DATASET")
+    sys.exit(1)
   print("Printing metric for " + str(datasets_number) + " datasets:")
   average_metrics = {}
   for method in metric_vector_dict:
