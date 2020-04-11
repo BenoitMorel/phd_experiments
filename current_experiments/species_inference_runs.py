@@ -13,8 +13,9 @@ datasets = []
 cores = 40
 launch_mode = "normal"
 
-varying_enabled = True
+varying_enabled = False
 test_enabled = False
+extreme_enabled = True
 
 
 
@@ -26,10 +27,7 @@ varying_dataset = "ssim_var_s25_f100_sites100_GTR_bl1.0_d1.0_l1.0_t1.0_p0.0_pop4
 #varying_replicates = range(20, 30)
 varying_replicates = range(20, 45)
 varying_params = []
-varying_params += ["none"]
-varying_params += ["t0.0"]
-varying_params += ["pop10"]
-
+#varying_params += ["none"]
 #varying_params += ["d0.1_t0.1_l0.1", "d0.5_t0.5_l0.5", "d2.0_l2.0_t2.0", "d3.0_l3.0_t3.0"]
 #varying_params += ["pop10", "pop50000000","pop100000000","pop1000000000"]
 #varying_params += ["t0.0", "t0.5", "t2.0", "t4.0"]
@@ -69,9 +67,6 @@ def run_varying_experiment():
   run_filter.speciesraxperfamily = True
   run_filter.concatenation_min = True
   run_filter.concatenation_max = True
-  run_filter.orthogenerax = True
-  #run_filter.generaxselectfam = True
-  run_filter.disable_all()
   run_filter.cherry = True
   run_filter.cleanup = True
   datasets = get_dataset_list(varying_dataset, varying_params, varying_replicates)
@@ -82,8 +77,48 @@ def run_test_experiment():
   run_species_methods(test_datasets, test_subst_model, cores, run_filter, launch_mode)
 
 
+def run_extreme_cases():
+  run_filter = SpeciesRunFilter()
+  run_filter.disable_all()
+  run_filter.generate = True
+  run_filter.pargenes_starting_trees = 10
+  run_filter.pargenes_bootstrap_trees = 2
+  run_filter.pargenes = True
+  run_filter.duptree = True
+  run_filter.njrax = True
+  run_filter.astralpro = True
+  run_filter.astralpromultiple = True
+  run_filter.njst = True
+  run_filter.concatenation_min = True
+  run_filter.concatenation_max = True
+  run_filter.cherry = True
+  run_filter.speciesrax = True
+  run_filter.speciesraxperfamily = True
+  extreme_datasets = []
+  sites = 300
+# nothing 
+  extreme_datasets.append("ssim_var_s20_f100_sites" + str(sites) + "_GTR_bl1.0_d0.0_l0.0_t0.0_p0.0_pop10_mu1.0_theta0.0_seed20")
+# DL 
+  extreme_datasets.append("ssim_var_s20_f100_sites" + str(sites) + "_GTR_bl1.0_d1.0_l1.0_t0.0_p0.0_pop10_mu1.0_theta0.0_seed20")
+# DTL
+  extreme_datasets.append("ssim_var_s20_f100_sites" + str(sites) + "_GTR_bl1.0_d1.0_l1.0_t1.0_p0.0_pop10_mu1.0_theta0.0_seed20")
+# ILS
+  extreme_datasets.append("ssim_var_s20_f100_sites" + str(sites) + "_GTR_bl1.0_d0.0_l0.0_t0.0_p0.0_pop100000000_mu1.0_theta0.0_seed20")
+# ILS and DL
+  extreme_datasets.append("ssim_var_s20_f100_sites" + str(sites) + "_GTR_bl1.0_d1.0_l1.0_t0.0_p0.0_pop100000000_mu1.0_theta0.0_seed20")
+# ILS and DTL
+  extreme_datasets.append("ssim_var_s20_f100_sites" + str(sites) + "_GTR_bl1.0_d1.0_l1.0_t1.0_p0.0_pop100000000_mu1.0_theta0.0_seed20")
+  params = ["none"] 
+  replicates = range(1010, 1020)
+  datasets = []
+  for dataset in extreme_datasets:
+    datasets += get_dataset_list(dataset, params, replicates)
+  run_species_methods(datasets, "GTR+G", cores, run_filter, launch_mode)
+  
 
 if (varying_enabled):
   run_varying_experiment()
 if (test_enabled):
   run_test_experiment()
+if (extreme_enabled):
+  run_extreme_cases()

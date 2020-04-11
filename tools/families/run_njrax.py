@@ -14,7 +14,7 @@ def run_njrax(dataset, nj_strategy, subst_model, gene_trees = "raxml-ng", cores 
   command.append(subst_model)
   command.append(nj_strategy)
   command.append(gene_trees)
-  command.append("normal")
+  command.append("normald")
   command.append(str(cores))
   command.append("--species-fast-radius")
   command.append("0")
