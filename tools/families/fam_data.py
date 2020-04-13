@@ -152,7 +152,6 @@ def get_dataset_variations(datasets, fixed_point, strings_to_replace):
       param_position = get_param_position(fixed_point, param_name)
       split[param_position] = param_name + str(param_value)
     dataset = "_".join(split)
-    print("Add " + dataset)
     if (dataset in datasets):
       print("duplicate: " + dataset)
       exit(1)

@@ -1,3 +1,5 @@
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt; plt.rcdefaults()
 import numpy as np
 import matplotlib.pyplot as plt
@@ -23,7 +25,7 @@ class BoxPlot:
   def plot(self, output):
     plt.clf()
     df = pd.DataFrame(data = self._dict)
-    ax = sns.boxplot(data = df, order = self._order)
+    ax = sns.violinplot(data = df, order = self._order)
     if (self._max_y > 0.0):
       ax.set_ylim(0, self._max_y)
     plt.xticks(rotation = 45) 

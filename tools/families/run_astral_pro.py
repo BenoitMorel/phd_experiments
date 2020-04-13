@@ -16,11 +16,11 @@ def init_gene_trees_file(datadir, method, subst_model, output_dir):
   filepath = os.path.join(output_dir, "gene_trees.txt")
   with open(filepath, "w") as writer:
     for family in fam.get_families_list(datadir):
-      raxml_tree_path = fam.build_gene_tree_path(datadir, subst_model, family, method)
-      towrite = open(raxml_tree_path).read()
+      gene_tree_path = fam.build_gene_tree_path(datadir, subst_model, family, method)
+      towrite = open(gene_tree_path).read()
       while (towrite[-1] == "\n"):
         towrite = towrite[:-1]
-      writer.write(open(raxml_tree_path).read() + "\n")
+      writer.write(open(gene_tree_path).read() + "\n")
   return filepath
 
 def init_mapping_file(datadir, output_dir):

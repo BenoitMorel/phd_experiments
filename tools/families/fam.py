@@ -66,6 +66,8 @@ def get_species_tree(datadir, subst_model= None, method = "true"):
     return "NJ"
   elif (method == "MiniNJ"):
     return "MiniNJ"
+  elif (method == "NJst"):
+    return "NJst"
   elif (method == "Cherry"):
     return "Cherry"
   if (method == "true"):

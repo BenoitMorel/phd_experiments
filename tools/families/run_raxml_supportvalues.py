@@ -76,17 +76,19 @@ def export_pargenes_trees(pargenes_dir, subst_model, light, datadir):
   for family in os.listdir(ml_trees_dir):
     trees_file = os.path.join(ml_trees_dir, family, "sorted_ml_trees.newick")
     best_model = os.path.join(ml_trees_dir, family, family + ".raxml.bestModel")
+    ml_tree_file = os.path.join(ml_trees_dir, family, family + ".raxml.bestTree")
     if (not os.path.isfile(trees_file)):
-      trees_file = os.path.join(ml_trees_dir, family, family + ".raxml.bestTree")
+      trees_file = ml_tree_file
     family = "_".join(family.split("_")[:-1]) # remove everything after the last _
-    new_raxml_tree = fam.get_raxml_multiple_trees(datadir, subst_model, family)
-    if (light):
-      new_raxml_tree = fam.get_raxml_light_tree(datadir, subst_model, family)
-    
+    new_raxml_trees = fam.get_raxml_multiple_trees(datadir, subst_model, family)
+    new_raxml_tree = fam.get_raxml_tree(datadir, subst_model, family)
+    # if there were no supported tree, copy the ML one
+    if (not os.path.isfile(new_raxml_tree)):
+      shutil.copyfile(ml_tree_file, new_raxml_tree)
     try:
-      shutil.copyfile(trees_file, new_raxml_tree)
+      shutil.copyfile(trees_file, new_raxml_trees)
     except:
-      print("Cannot copy " + trees_file + " to " + new_raxml_tree)
+      print("Cannot copy " + trees_file + " to " + new_raxml_trees)
       pass
     new_best_model = fam.get_raxml_best_model(datadir, subst_model, family)
     shutil.copyfile(best_model, new_best_model)

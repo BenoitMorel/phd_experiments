@@ -175,21 +175,22 @@ class SpeciesRunFilter():
       printFlush("Run NJrax")
       try:
         run_njrax.run_njrax(datadir, "MiniNJ", subst_model, "raxml-ng", cores)
-        run_njrax.run_njrax(datadir, "MiniNJ", subst_model, "raxmlMultiple", cores)
+        #run_njrax.run_njrax(datadir, "MiniNJ", subst_model, "raxmlMultiple", cores)
       except Exception as exc:
         printFlush("Failed running NJrax\n" + str(exc))
     if (self.cherry):
       printFlush("Run Cherry")
       try:
         run_njrax.run_njrax(datadir, "Cherry", subst_model, "raxml-ng", cores)
-        run_njrax.run_njrax(datadir, "Cherry", subst_model, "raxmlMultiple", cores)
+        #run_njrax.run_njrax(datadir, "Cherry", subst_model, "raxmlMultiple", cores)
       except Exception as exc:
         printFlush("Failed running Cherry\n" + str(exc))
     if (self.njst):
       printFlush("Run NJst")
       try:
+        run_njrax.run_njrax(datadir, "NJst", subst_model, "raxml-ng", cores)
         run_njst.run_njst(datadir, "raxml-ng", subst_model, "original")
-        run_njst.run_njst(datadir, "raxml-ng", subst_model, "reweighted")
+        #run_njst.run_njst(datadir, "raxml-ng", subst_model, "reweighted")
       except Exception as exc:
         printFlush("Failed running NJst\n" + str(exc))
     if (self.astrid):
