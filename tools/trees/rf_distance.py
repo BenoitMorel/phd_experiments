@@ -54,6 +54,8 @@ if (__name__ == "__main__"):
   tree2 = Tree(sys.argv[2], format=1)
   rooted = False
   if (len(sys.argv) > 3):
-    rooted = bool(sys.argv[3])
-  print("Relative RF: " + str_4(get_relative_rf(tree1, tree2)))
-  print("RF: " + str(get_rf(tree1, tree2)))
+    rooted = int(sys.argv[3]) > 0
+  if (rooted):
+    print("ROOTED")
+  print("Relative RF: " + str_4(get_relative_rf(tree1, tree2, not rooted)))
+  #print("RF: " + str(get_rf(tree1, tree2)))

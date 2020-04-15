@@ -22,6 +22,7 @@ import run_njrax
 import run_concatenation
 import run_orthogenerax
 import run_generax_selector
+import run_mrbayes
 import shutil
 sys.path.insert(0, os.path.join("scripts"))
 sys.path.insert(0, os.path.join("tools", "families"))
@@ -38,6 +39,14 @@ class SpeciesRunFilter():
   def __init__(self):
     self.generate = False
     self.pargenes = True
+    self.pargenes_starting_trees = 2
+    self.pargenes_bootstrap_trees = 2
+    self.mrbayes = False
+    self.mb_runs = 1  
+    self.mb_chains = 4 
+    self.mb_frequencies = 1000
+    self.mb_generations = 10000
+    self.mb_burnin = 1
     self.orthogenerax = True
     self.concatenation_min = True
     self.concatenation_max = True
@@ -61,11 +70,10 @@ class SpeciesRunFilter():
     self.guenomu = False
     self.analyze = True
     self.cleanup = False
-    self.pargenes_starting_trees = 2
-    self.pargenes_bootstrap_trees = 2
 
   def disable_all(self):
     self.pargenes = False
+    self.mrbayes = False
     self.orthogenerax = False
     self.concatenation_min = False
     self.concatenation_max = False
@@ -153,6 +161,12 @@ class SpeciesRunFilter():
       sys.stdout.flush()
       raxml.run_pargenes_and_extract_trees(datadir, subst_model, self.pargenes_starting_trees, self.pargenes_bootstrap_trees, cores, "pargenes", True)
       sys.stdout.flush()
+    if (self.mrbayes):
+      printFlush("Run mrbayes...")
+      try:
+        run_mrbayes.run_mrbayes_on_families(datadir, self.mb_generations, self.mb_frequencies, self.mb_runs, self.mb_chains, self.mb_burnin, subst_model, cores, False)
+      except Exception as exc:
+        printFlush("Failed running mrbayes\n" + str(exc))
     if (self.stag):
       printFlush("Run Stag")
       try:
@@ -174,22 +188,22 @@ class SpeciesRunFilter():
     if (self.njrax):
       printFlush("Run NJrax")
       try:
-        run_njrax.run_njrax(datadir, "MiniNJ", subst_model, "raxml-ng", cores)
+        run_njrax.run_njrax(datadir, "MiniNJ", "raxml-ng", subst_model)
         #run_njrax.run_njrax(datadir, "MiniNJ", subst_model, "raxmlMultiple", cores)
       except Exception as exc:
         printFlush("Failed running NJrax\n" + str(exc))
     if (self.cherry):
       printFlush("Run Cherry")
       try:
-        run_njrax.run_njrax(datadir, "Cherry", subst_model, "raxml-ng", cores)
+        run_njrax.run_njrax(datadir, "Cherry", "raxml-ng", subst_model)
         #run_njrax.run_njrax(datadir, "Cherry", subst_model, "raxmlMultiple", cores)
       except Exception as exc:
         printFlush("Failed running Cherry\n" + str(exc))
     if (self.njst):
       printFlush("Run NJst")
       try:
-        run_njrax.run_njrax(datadir, "NJst", subst_model, "raxml-ng", cores)
-        run_njst.run_njst(datadir, "raxml-ng", subst_model, "original")
+        run_njrax.run_njrax(datadir, "NJst", "raxml-ng", subst_model)
+        #run_njst.run_njst(datadir, "raxml-ng", subst_model, "original")
         #run_njst.run_njst(datadir, "raxml-ng", subst_model, "reweighted")
       except Exception as exc:
         printFlush("Failed running NJst\n" + str(exc))

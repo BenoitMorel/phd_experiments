@@ -33,20 +33,17 @@ def get_default_value(metric_name):
     return 1.0
   return -1.0
 
-def plot(grouped_datasets, x_param, methods, subst_model, metric_name, output):
+def plot(grouped_datasets, x_param, methods, methods_dict, subst_model, metric_name, output):
   df = {}
   datasets_keys = []
   method_dict = {}
   for method in methods:
-    method_dict[method] = method
-  method_dict["speciesrax-dtl-raxml-HYBRID"] = "SpeciesRax"
-  method_dict["astralpro"] = "Astral-Pro"
-  method_dict["njrax-NJst"] = "MinNJ"
-  method_dict["generax-select"] = "GeneRax-Select"
-  method_dict["orthogenerax-all-njrax-njst"] = "GeneRax-Ortho"
+    if (not method in methods_dict):
+      methods_dict[method] = method
   for key in grouped_datasets:
     datasets_keys.append(key)
   print("Sorting by " + x_param)
+  print(datasets_keys)
   datasets_keys.sort(key = lambda t: float(fam_data.get_param_from_dataset_name(x_param, t)))
   print(datasets_keys)
   f, ax = plt.subplots(1)
@@ -75,7 +72,7 @@ def plot(grouped_datasets, x_param, methods, subst_model, metric_name, output):
     print(method)
     print(df)
     #plt.plot(x_param, method, data=df, marker='.', linestyle = "solid", linewidth=2, label = method, markersize=12)
-    plt.plot(x_param, method, data=df, marker='.', linewidth=2, label = method_dict[method], markersize=12)
+    plt.plot(x_param, method, data=df, marker='.', linewidth=2, label = methods_dict[method], markersize=12)
   plt.xlabel(x_param)
   plt.ylabel(metric_name)
   plt.legend()
@@ -119,10 +116,10 @@ def merge_datasets_per_seed(datasets):
 def get_plot_name(simulation_name, param, subst_model, metric_name):
   return "plot_" + simulation_name + "_" + metric_name.replace("_", "-") + "_" + param + "_" + subst_model
 
-def plot_metric(param, fixed_params_values, methods, subst_model, metric_name, datasets, plot_name):
+def plot_metric(param, fixed_params_values, methods, methods_dict, subst_model, metric_name, datasets, plot_name):
   relevant_datasets = get_relevant_datasets(datasets, param, fixed_params_values)
   grouped_datasets = merge_datasets_per_seed(relevant_datasets)
-  plot(grouped_datasets, param, methods, subst_model, metric_name, plot_name + ".svg")
+  plot(grouped_datasets, param, methods, methods_dict, subst_model, metric_name, plot_name + ".svg")
   
 
 
@@ -134,11 +131,11 @@ def get_datasets(prefix):
       res.append(dataset)
   return res
   
-def generate_plot(datasets, params_to_plot, metric_names, methods, simulation_name, fixed_params_values, subst_model):
+def generate_plot(datasets, params_to_plot, metric_names, methods, methods_dict, simulation_name, fixed_params_values, subst_model):
   for param in params_to_plot:
     for metric_name in metric_names:
       plot_name = get_plot_name(simulation_name, param, subst_model, metric_name)
-      plot_metric(param, fixed_params_values, methods, subst_model, metric_name, datasets, plot_name)
+      plot_metric(param, fixed_params_values, methods, methods_dict, subst_model, metric_name, datasets, plot_name)
 
 def plot_params(methods, metric_names):
   simulation_name = "params"

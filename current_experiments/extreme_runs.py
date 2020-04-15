@@ -15,7 +15,7 @@ datasets = []
 cores = 40
 launch_mode = "normal"
 
-do_run = False
+do_run = True
 do_plot = True
 
 run_replicates = range(2000, 2050)
@@ -23,16 +23,18 @@ plot_replicates = range(2000, 2050)
 extreme_datasets = {}
 sites_range = ["100", "200", "300"]
 species_range = ["20", "25", "30"]
-for sites in sites_range:
-  for species in species_range:
-# DTL
-    extreme_datasets["DTL_s" + species + "_sites" + sites] = "ssim_var_s" + species + "_f100_sites" + sites + "_GTR_bl1.0_d1.0_l1.0_t1.0_p0.0_pop10_mu1.0_theta0.0_seed1000"
-# ILS and DL
-    extreme_datasets["ILS_DL_s" + species + "_sites" + sites] = "ssim_var_s" + species + "_f100_sites" + sites + "_GTR_bl1.0_d1.0_l1.0_t0.0_p0.0_pop100000000_mu1.0_theta0.0_seed1000"
-# ILS and DTL
-    #extreme_datasets["ILS_DTL_" + sites] = "ssim_var_s" + species + "_f100_sites" + sites + "_GTR_bl1.0_d1.0_l1.0_t1.0_p0.0_pop100000000_mu1.0_theta0.0_seed1000"
+if (False):
+  for sites in sites_range:
+    for species in species_range:
+      extreme_datasets["DTL_s" + species + "_sites" + sites] = "ssim_var_s" + species + "_f100_sites" + sites + "_GTR_bl1.0_d1.0_l1.0_t1.0_p0.0_pop10_mu1.0_theta0.0_seed1000"
+      extreme_datasets["ILS_DL_s" + species + "_sites" + sites] = "ssim_var_s" + species + "_f100_sites" + sites + "_GTR_bl1.0_d1.0_l1.0_t0.0_p0.0_pop100000000_mu1.0_theta0.0_seed1000"
 
-
+if (True):
+  extreme_datasets["e_bigspecies"] = "ssim_var_s50_f100_sites100_GTR_bl1.0_d1.0_l1.0_t1.0_p0.0_pop10_mu1.0_theta0.0_seed1000"
+  extreme_datasets["d_bigfamilies"] = "ssim_var_s25_f500_sites100_GTR_bl1.0_d1.0_l1.0_t1.0_p0.0_pop10_mu1.0_theta0.0_seed1000"
+  extreme_datasets["b_bigtransfer"] = "ssim_var_s25_f100_sites100_GTR_bl1.0_d1.0_l1.0_t4.0_p0.0_pop10_mu1.0_theta0.0_seed1000"
+  extreme_datasets["a_bigcoal"] = "ssim_var_s25_f100_sites100_GTR_bl1.0_d1.0_l1.0_t0.0_p0.0_pop470000000_mu1.0_theta0.0_seed1000"
+  extreme_datasets["c_bigdup"] = "ssim_var_s25_f100_sites100_GTR_bl1.0_d3.0_l3.0_t1.0_p0.0_pop10_mu1.0_theta0.0_seed1000"
 
 def run_species_methods(datasets, subst_model, cores, run_filter, launch_mode):
   for dataset in datasets:

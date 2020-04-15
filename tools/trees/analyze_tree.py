@@ -26,10 +26,32 @@ def analyze_polytomies(tree):
         print("    some children in this polytomy are internal nodes")
       print("    number of taxa under the polytomy: " + str(len(node.get_leaves())))
 
+def count_leaves_under_polytomy(tree):
+  leaves = 0
+  leaves_under_polytomy = 0
+  leaves_to_prune = 0
+  for node in tree.traverse("postorder"):
+    if (node.is_leaf()):
+      leaves += 1
+      parent = node.up
+      if (len(parent.get_children()) > 2):
+        leaves_under_polytomy += 1
+    children = node.get_children()
+    leaves_under_me = 0
+    for child in children:
+      if (child.is_leaf()):
+        leaves_under_me += 1
+    if (leaves_under_me > 2):
+      leaves_to_prune += (leaves_under_me - 2)
+  print("leaves: " + str(leaves))
+  print("Number of leaves under a polytomy: " + str(leaves_under_polytomy))
+  print("Leaves to prune: " + str(leaves_to_prune))
+
 def analyze_tree(tree_file):
   tree = read_tree(tree_file)
   analyze_dimensions(tree)
   analyze_polytomies(tree)
+  count_leaves_under_polytomy(tree)
  
 def get_tree_taxa_number(tree_file):
   return len(read_tree(tree_file).get_leaves())
@@ -90,4 +112,4 @@ if (__name__ == "__main__"):
     print("Ultrametric")
   else:
     print("Not ultrametric")
-  count_monophylies(tree_file)
+  #count_monophylies(tree_file)
