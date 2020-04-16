@@ -47,6 +47,7 @@ class SpeciesRunFilter():
     self.mb_frequencies = 1000
     self.mb_generations = 10000
     self.mb_burnin = 1
+    self.starting_gene_trees = ["raxml-ng"]
     self.orthogenerax = True
     self.concatenation_min = True
     self.concatenation_max = True
@@ -60,7 +61,6 @@ class SpeciesRunFilter():
     self.generaxselect = True
     self.generaxselectfam = True
     self.astralpro = True
-    self.astralpromultiple = True
     self.speciesrax = True
     self.speciesraxprune = True
     self.speciesraxperfamily = True
@@ -70,7 +70,7 @@ class SpeciesRunFilter():
     self.guenomu = False
     self.analyze = True
     self.cleanup = False
-
+  
   def disable_all(self):
     self.pargenes = False
     self.mrbayes = False
@@ -89,7 +89,6 @@ class SpeciesRunFilter():
     self.generaxselect = False
     self.generaxselectfam = False
     self.astralpro = False
-    self.astralpromultiple = False
     self.speciesrax = False
     self.speciesraxprune = False
     self.speciesraxperfamily = False
@@ -112,7 +111,6 @@ class SpeciesRunFilter():
     self.cherry = True   
     self.njst = True   
     self.astrid = True
-    self.astralpromultiple = True
     self.speciesrax = True
 
   def launch_reference_methods(self, datadir, subst_model, cores, launch_mode):
@@ -187,28 +185,27 @@ class SpeciesRunFilter():
         printFlush("Failed running FastRFS\n" + str(exc))
     if (self.njrax):
       printFlush("Run NJrax")
-      try:
-        run_njrax.run_njrax(datadir, "MiniNJ", "raxml-ng", subst_model)
-        #run_njrax.run_njrax(datadir, "MiniNJ", subst_model, "raxmlMultiple", cores)
-      except Exception as exc:
-        printFlush("Failed running NJrax\n" + str(exc))
+      for gene_tree in self.starting_gene_trees:
+        try:
+          run_njrax.run_njrax(datadir, "MiniNJ", gene_tree, subst_model)
+        except Exception as exc:
+          printFlush("Failed running NJrax with " + gene_tree + "\n" + str(exc))
     if (self.cherry):
       printFlush("Run Cherry")
-      try:
-        run_njrax.run_njrax(datadir, "Cherry", "raxml-ng", subst_model)
-        #run_njrax.run_njrax(datadir, "Cherry", subst_model, "raxmlMultiple", cores)
-      except Exception as exc:
-        printFlush("Failed running Cherry\n" + str(exc))
+      for gene_tree in self.starting_gene_trees:
+        try:
+          run_njrax.run_njrax(datadir, "Cherry", gene_tree, subst_model)
+        except Exception as exc:
+          printFlush("Failed running Cherry with " + gene_tree + "\n" + str(exc))
     if (self.njst):
       printFlush("Run NJst")
-      try:
-        run_njrax.run_njrax(datadir, "NJst", "raxml-ng", subst_model)
-        #run_njst.run_njst(datadir, "raxml-ng", subst_model, "original")
-        #run_njst.run_njst(datadir, "raxml-ng", subst_model, "reweighted")
-      except Exception as exc:
-        printFlush("Failed running NJst\n" + str(exc))
+      for gene_tree in self.starting_gene_trees:
+        try:
+          run_njrax.run_njrax(datadir, "NJst", gene_tree, subst_model)
+        except Exception as exc:
+          printFlush("Failed running NJst with " + gene_tree + "\n" + str(exc))
     if (self.astrid):
-      printFlush("Run Astral")
+      printFlush("Run Astrid")
       try:
         run_astrid.run_astrid(datadir, "raxml-ng", subst_model)
       except Exception as exc:
@@ -221,16 +218,11 @@ class SpeciesRunFilter():
         printFlush("Failed running Astral\n" + str(exc))
     if (self.astralpro):
       printFlush("Run Astral-pro")
-      try:
-        run_astral_pro.run_astralpro(datadir, "raxml-ng", subst_model)
-      except Exception as exc:
-        printFlush("Failed running Astral-pro\n" + str(exc))
-    if (self.astralpromultiple):
-      printFlush("Run Astral-pro from multiple raxml trees")
-      try:
-        run_astral_pro.run_astralpro(datadir, "raxmlMultiple", subst_model)
-      except Exception as exc:
-        printFlush("Failed running Astral-pro from multiple raxml trees\n" + str(exc))
+      for gene_tree in self.starting_gene_trees:
+        try:
+          run_astral_pro.run_astralpro(datadir, gene_tree, subst_model)
+        except Exception as exc:
+          printFlush("Failed running Astral-pro with " + gene_tree + "\n" + str(exc))
     if (self.concatenation_min and subst_model != "true"):
       printFlush("Run concatenation-min")
       try:

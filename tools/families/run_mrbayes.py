@@ -47,7 +47,11 @@ def generate_mrbayes_commands_file(datadir, generations, frequency, runs, chains
   results_dir = os.path.join(output_dir, "results")
   scheduler_commands_file = os.path.join(output_dir, "commands.txt")
   exp.mkdir(results_dir)
-  family_dimensions = run_pargenes.get_family_dimensions(os.path.abspath(datadir), subst_model)
+  family_dimensions = {}
+  try:
+    family_dimensions = run_pargenes.get_family_dimensions(os.path.abspath(datadir), subst_model)
+  except:
+    pass
   with open(scheduler_commands_file, "w") as writer:
     for family in sorted(fam.get_families_list(datadir)):
       family_dir = fam.get_family_path(datadir, family)
