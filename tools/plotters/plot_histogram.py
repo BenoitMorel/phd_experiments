@@ -1,3 +1,5 @@
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt; plt.rcdefaults()
 import numpy as np
 import matplotlib.pyplot as plt
@@ -5,7 +7,7 @@ import seaborn as sns
 import pandas as pd
 sns.set_style("darkgrid")
 
-def plot_histogram(xlabels, yvalues, title = None, xcaption = None, ycaption = None,start_at_min_y = False, reverse_bar = False, output = "show"):
+def plot_histogram(xlabels, yvalues, title = None, xcaption = None, ycaption = None,start_at_min_y = False, reverse_bar = False, log_scale = False, output = "show"):
     y_pos = np.arange(len(xlabels))
     fig, ax = plt.subplots()
     bottom = 0
@@ -18,7 +20,8 @@ def plot_histogram(xlabels, yvalues, title = None, xcaption = None, ycaption = N
     plt.bar(y_pos, yvaluesbar, align='center', bottom = bottom)
     plt.xticks(y_pos, xlabels)
     plt.xticks(rotation=45)
-    plt.xticks(range(len(xlabels)), size='small')
+    #plt.xticks(range(len(xlabels)), size='small')
+    plt.xticks(range(len(xlabels)), size=14)
     if (xcaption != None):
       plt.xlabel(xcaption)
     if (ycaption != None): 
@@ -30,6 +33,8 @@ def plot_histogram(xlabels, yvalues, title = None, xcaption = None, ycaption = N
       ax.set_ylim(min_value - epsilon, max_value + epsilon)
     if (title != None):
       plt.title(title)
+    if (log_scale):
+      ax.set_yscale('log')
     fig.tight_layout()
     if (output == "show"):
         plt.show()
@@ -93,6 +98,7 @@ if (__name__ == "__main__"):
     for i in range(0, len(objects)):
       data["blabla"][objects[i]] = blabla[i]
       data["performance"][objects[i]] = performance[i]
-    plot_grouped_histogram(data = data, output = "show")
+    print(data)
+    plot_grouped_histogram(data = data, output = "yop.svg")
 
 

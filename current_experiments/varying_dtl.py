@@ -10,30 +10,20 @@ from run_all_species import SpeciesRunFilter
 import plot_speciesrax
 
 do_run = True
-do_plot = True
+do_plot = False
 datasets = []
 cores = 40
 subst_model = "GTR+G"
+gene_trees = ["raxml-ng"]
 launch_mode = "normal"
 replicates = range(3000, 3050)
 varying_params = []
-#varying_params += ["none"]
+varying_params += ["none"]
 #varying_params += ["s15", "s50"]
 #varying_params += ["sites100", "sites300"]
 #varying_params += ["f50", "f200"]
 #varying_params += ["d0.5_l0.5", "d3.0_l3.0"]
 #varying_params += ["t0.0", "t3.0"]
-varying_params += ["s15"]
-varying_params += ["sites50"]
-varying_params += ["sites100"]
-varying_params += ["f50"]
-varying_params += ["t0.0"]
-varying_params += ["none"]
-varying_params += ["sites300"]
-varying_params += ["d0.5_l0.5", "d3.0_l3.0"]
-varying_params += ["f200"]
-varying_params += ["t3.0"]
-varying_params += ["s50"]
 
 tag = "varydtl"
 fixed_point = "ssim_varydtl_s30_f100_sites200_GTR_bl1.0_d1.0_l1.0_t1.0_p0.0_pop10_mu1.0_theta0.0_seed20"
@@ -99,23 +89,24 @@ def run_varying_experiment():
   run_filter.njrax = True
   run_filter.astralpro = True
   run_filter.njst = True
-  run_filter.speciesraxperfamily = True
   run_filter.cherry = True
+  run_filter.speciesraxperfamily = True
   
   # mrbayes!!
   run_filter.disable_all()
-  run_filter.mrbayes = True
-  run_filter.mb_runs = 4 
-  run_filter.mb_chains = 4 
-  run_filter.mb_frequencies =  1000
-  run_filter.mb_generations = 25000
-  mb_trees = run_filter.mb_generations * run_filter.mb_runs / (run_filter.mb_frequencies)
-  run_filter.mb_burnin = mb_trees / 10
-  run_filter.starting_gene_trees = ["mrbayes"]
-  run_filter.njrax = True
-  run_filter.njst = True
+  if (False):
+    run_filter.mrbayes = True
+    run_filter.mb_runs = 2
+    run_filter.mb_chains = 4 
+    run_filter.mb_frequencies =  5000
+    run_filter.mb_generations = 500000
+    mb_trees = run_filter.mb_generations * run_filter.mb_runs / (run_filter.mb_frequencies)
+    run_filter.mb_burnin = mb_trees / 10
+  run_filter.starting_gene_trees = gene_trees
+  #run_filter.njrax = True
+  #run_filter.njst = True
   run_filter.cherry = True
-  run_filter.astralpro= True
+  #run_filter.astralpro= True
   run_filter.cleanup = True
   
   datasets = get_dataset_list(fixed_point, varying_params, replicates)

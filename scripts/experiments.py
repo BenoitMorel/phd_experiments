@@ -100,6 +100,7 @@ astralpro_root = os.path.join(github_root, "A-pro")
 astralpro_jar = os.path.join(github_root, "A-pro", "ASTRAL-MP", "astral.1.1.2.jar")
 astrid_exec = os.path.join(github_root, "ASTRID", "src", "build", "ASTRID")
 prepare_fastrfs_script = os.path.join(tools_root, "rfs", "prepareTrees.py")
+paul_exec = os.path.join(github_root, "MasterThesis", "njst", "main")
 # constants
 mpi_scheduler_heuristic = "--split-scheduler"
 generax_selector_candidates = os.path.join(tools_root, "families", "candidates.txt")

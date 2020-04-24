@@ -164,7 +164,7 @@ def duplicate_families_symlink(input_datadir, output_datadir, family):
   input_gene_trees_dir = fam.get_gene_tree_dir(input_datadir, family)
   output_gene_trees_dir = fam.get_gene_tree_dir(output_datadir, family)
   for f in os.listdir(input_gene_trees_dir):
-    if (f.startswith("true") or f.startswith("raxml")):
+    if (f.startswith("true") or f.startswith("raxml") or "mrbayes" in f):
       exp.relative_symlink(os.path.join(input_gene_trees_dir, f), os.path.join(output_gene_trees_dir, f))
   
 

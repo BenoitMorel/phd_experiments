@@ -34,6 +34,7 @@ def init_mapping_file(datadir, output_dir):
 
 def exec_astralpro(gene_trees_file, mapping_file, output_species_tree_file):
   command = []
+  tmp_output_species_tree_file = output_species_tree_file + ".tmp"
   command.append("java")
   command.append("-Djava.library.path=" + exp.astralpro_root + "/ASTRAL-MP/lib")
   command.append("-jar")
@@ -43,12 +44,13 @@ def exec_astralpro(gene_trees_file, mapping_file, output_species_tree_file):
   command.append("-a")
   command.append(mapping_file)
   command.append("-o")
-  command.append(output_species_tree_file)
+  command.append(tmp_output_species_tree_file)
   command.append("--seed")
   command.append("692")
   FNULL = open(os.devnull, 'w')
   res = subprocess.check_output(command, stderr=FNULL)
-  print(res)
+  shutil.move(tmp_output_species_tree_file, output_species_tree_file)
+  
 
 def run_astralpro(datadir, method, subst_model):
   print("Start astral pro script")

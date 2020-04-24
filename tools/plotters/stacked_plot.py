@@ -1,3 +1,5 @@
+import matplotlib
+matplotlib.use('Agg')
 import seaborn as sns
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -24,11 +26,11 @@ def stacked_plot(data, caption_title, stack_labels, xlabels, ylabel, log_scale =
   else:
     print("Saving plot in " + output)
     plt.savefig(output)
-#df = pd.DataFrame(columns=["yo","raxml-ng", "treercs", "generax"], 
-#                  data=[["tool",50, 10, 100],
-#                        ["precomputation",0,200, 0]])
+df = pd.DataFrame(columns=["yo","raxml-ng", "treercs", "generax"], 
+                  data=[["tool",50, 10, 100],
+                        ["precomputation",0,200, 0]])
 
 #sns.set()
 #df.set_index('yo').T.plot(kind='bar', stacked=True)
-#plt.show()
+#plt.savefig("yop.svg")
 

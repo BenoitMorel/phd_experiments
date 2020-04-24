@@ -5,6 +5,7 @@ import subprocess
 import time
 sys.path.insert(0, 'scripts')
 sys.path.insert(0, 'tools/mappings')
+sys.path.insert(0, 'tools/trees')
 import get_dico
 import experiments as exp
 import fam
@@ -17,8 +18,12 @@ def init_gene_trees_file(datadir, gene_trees, subst_model, output_dir):
     for family in fam.get_families_list(datadir):
       gene_tree_path = fam.build_gene_tree_path(datadir, subst_model, family, gene_trees)
       towrite = open(gene_tree_path).read()
+      if (len(towrite) == 0):
+        print("Error in " + gene_tree_path)
       while (towrite[-1] == "\n"):
         towrite = towrite[:-1]
+        if (len(towrite) == 0):
+          print("Error in " + gene_tree_path)
       writer.write(towrite + "\n")
   return filepath
 

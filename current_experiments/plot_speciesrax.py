@@ -3,11 +3,13 @@ import sys
 import subprocess
 sys.path.insert(0, 'scripts')
 sys.path.insert(0, 'tools/families')
+sys.path.insert(0, 'tools/plotters')
 import experiments as exp
 import fam
 import fam_data
 import saved_metrics
 
+import plot_histogram
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt; plt.rcdefaults()
@@ -33,7 +35,15 @@ def get_default_value(metric_name):
     return 1.0
   return -1.0
 
-def plot(grouped_datasets, x_param, methods, methods_dict, subst_model, metric_name, output):
+"""
+  grouped_datasets: dict, with key being a dataset name, and the value a list of this dataset with different seeds
+  methods: list of methods to plot
+  methods_dict: dictionary that mapped a method to the name that should be displaed
+  subst_model:
+  metric_name: metric to plot (for instance runtimes)
+  output: output file
+"""
+def plot(grouped_datasets, x_param, methods, methods_dict, subst_model, metric_name, output, get_param_fct = fam_data.get_param_from_dataset_name, title = None):
   df = {}
   datasets_keys = []
   method_dict = {}
@@ -44,7 +54,7 @@ def plot(grouped_datasets, x_param, methods, methods_dict, subst_model, metric_n
     datasets_keys.append(key)
   print("Sorting by " + x_param)
   print(datasets_keys)
-  datasets_keys.sort(key = lambda t: float(fam_data.get_param_from_dataset_name(x_param, t)))
+  datasets_keys.sort(key = lambda t: float(get_param_fct(x_param, t)))
   print(datasets_keys)
   f, ax = plt.subplots(1)
   df[x_param] = []
@@ -52,7 +62,7 @@ def plot(grouped_datasets, x_param, methods, methods_dict, subst_model, metric_n
     df[method] = []
   for dataset_key in datasets_keys:
     # value for the varying parameter
-    df[x_param].append(fam_data.get_param_from_dataset_name(x_param, grouped_datasets[dataset_key][0]))
+    df[x_param].append(get_param_fct(x_param, grouped_datasets[dataset_key][0]))
     for method in methods:
       key = (method + "." + subst_model).lower()
       average = 0.0
@@ -68,15 +78,31 @@ def plot(grouped_datasets, x_param, methods, methods_dict, subst_model, metric_n
       df[method].append(average)
   df = get_df(df)
   for method in methods:
-    print(x_param)
-    print(method)
-    print(df)
+    #print(x_param)
+    #print(method)
+    #print(df)
+    method_alias = methods_dict[method][0]
+    linestyle = None
+    color = None
+    if (len(methods_dict[method]) > 1):
+      linestyle = methods_dict[method][1]
+    if (len(methods_dict[method]) > 2):
+      color = methods_dict[method][2]
+    
+    method_marker = "."
+    markersize = 12
+    if (linestyle != None and "dash" in linestyle):
+      method_marker = "x"
+      markersize = 8
     #plt.plot(x_param, method, data=df, marker='.', linestyle = "solid", linewidth=2, label = method, markersize=12)
-    plt.plot(x_param, method, data=df, marker='.', linewidth=2, label = methods_dict[method], markersize=12)
+    plt.plot(x_param, method, data=df, marker=method_marker, linewidth=2, label = method_alias, markersize=markersize, linestyle = linestyle, color = color)
   plt.xlabel(x_param)
   plt.ylabel(metric_name)
+  if (title != None):
+    plt.title(title)
   plt.legend()
   plt.savefig(output)
+  
   print("Saving result in " + output)
   plt.close()
 
@@ -103,7 +129,6 @@ def get_relevant_datasets(datasets, param, fixed_params_values):
 
 def merge_datasets_per_seed(datasets):
   grouped_datasets = {}
-  print("yop + " + str(datasets))
   for dataset in datasets:
     key = fam.get_first_dataset_starting_with(dataset.split("seed")[0])
     #key = fam.get_datadir(dataset)
@@ -121,6 +146,22 @@ def plot_metric(param, fixed_params_values, methods, methods_dict, subst_model, 
   grouped_datasets = merge_datasets_per_seed(relevant_datasets)
   plot(grouped_datasets, param, methods, methods_dict, subst_model, metric_name, plot_name + ".svg")
   
+def plot_runtimes(dataset, subst_model, methods, methods_dict):
+  dataset_dir = fam.get_datadir(dataset)
+  metrics = saved_metrics.get_metrics(dataset_dir, "runtimes")
+  xlabels = []
+  yvalues = []
+  for method in methods:
+    metric_key = (method + "." + subst_model).lower()
+    if (metrics != None and metric_key in metrics):
+      xlabels.append(methods_dict[method])
+      yvalues.append(float(metrics[metric_key]))
+    else:
+      print("Error: cannot get runtime from " + dataset + " and " + metric_key)
+  output = "plot_runtime_" + dataset + "_" + subst_model + ".svg"
+  ycaption = "Runtimes (s)" 
+  plot_histogram.plot_histogram(xlabels, yvalues, ycaption = ycaption, log_scale = True, output = output)
+
 
 
 def get_datasets(prefix):

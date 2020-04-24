@@ -38,6 +38,8 @@ def analyze(datadir):
       tree = trees[run]
       rooted_rf_cell = true_tree.robinson_foulds(tree, unrooted_trees=False)
       rooted_arf = float(rooted_rf_cell[0]) / float(rooted_rf_cell[1])
+      if (len(tree) != len(true_tree)):
+        rooted_arf = 10000000.0
       saved_metrics.save_metrics(datadir, run, str(rooted_arf), "species_rooted_rf") 
       rooted_printer.add(run + ":", str(rooted_arf))
     except:
@@ -50,8 +52,12 @@ def analyze(datadir):
   unrooted_printer = AlignedPrinter()
   for run in trees:
     tree = trees[run]
+    if (tree == None):
+      continue
     unrooted_rf_cell = true_tree.robinson_foulds(tree, unrooted_trees=True)
     unrooted_arf = float(unrooted_rf_cell[0]) / float(unrooted_rf_cell[1])
+    if (len(tree) != len(true_tree)):
+      unrooted_arf = 10000000.0
     saved_metrics.save_metrics(datadir, run, str(unrooted_arf), "species_unrooted_rf") 
     unrooted_printer.add(run + ":", str(unrooted_arf))
   unrooted_printer.sort_right_float()

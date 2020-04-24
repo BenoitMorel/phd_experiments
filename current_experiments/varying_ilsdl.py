@@ -9,19 +9,25 @@ import run_all_species
 from run_all_species import SpeciesRunFilter
 import plot_speciesrax
 
-do_run = False
-do_plot = True
+do_run = True
+do_plot = False
 cores = 40
 subst_model = "GTR+G"
 launch_mode = "normal"
 replicates = range(4000, 4050)
+gene_trees = ["raxml-ng", "true"]
 varying_params = []
 varying_params += ["none"]
-varying_params += ["s15", "s50"]
-varying_params += ["sites100", "sites300"]
-varying_params += ["f50", "f200"]
-varying_params += ["d0.5_l0.5", "d3.0_l3.0"]
-varying_params += ["pop10000000", "pop100000000", "pop1000000000"]
+#varying_params += ["s15", "s50"]
+#varying_params += ["sites100", "sites300"]
+#varying_params += ["f50", "f200"]
+#varying_params += ["d0.5_l0.5", "d3.0_l3.0"]
+#varying_params += ["pop10000000", "pop100000000", "pop1000000000"]
+
+
+
+
+
 
 fixed_point = "ssim_varyilsdl_s30_f100_sites200_GTR_bl1.0_d1.0_l1.0_t0.0_p0.0_pop470000000_mu1.0_theta0.0_seed20"
 tag = "varyilsdl"
@@ -79,16 +85,30 @@ def run_varying_experiment():
   run_filter = SpeciesRunFilter()
   run_filter.disable_all()
   run_filter.generate = True
-  run_filter.pargenes = True
+  #run_filter.pargenes = True
   run_filter.pargenes_starting_trees = 1
   run_filter.pargenes_bootstrap_trees = 0
   run_filter.duptree = True
   run_filter.njrax = True
   run_filter.astralpro = True
   run_filter.njst = True
-  run_filter.speciesraxperfamily = True
+  #run_filter.speciesraxperfamily = True
   run_filter.cherry = True
   run_filter.cleanup = True
+  
+  # mrbayes!!
+  if (False):
+    run_filter.disable_all()
+    run_filter.mrbayes = True
+    run_filter.mb_runs = 4 
+    run_filter.mb_chains = 4 
+    run_filter.mb_frequencies =  1000
+    run_filter.mb_generations = 25000
+    mb_trees = run_filter.mb_generations * run_filter.mb_runs / (run_filter.mb_frequencies)
+    run_filter.mb_burnin = mb_trees / 10
+  run_filter.starting_gene_trees = gene_trees
+  run_filter.cleanup = True
+  
   datasets = get_dataset_list(fixed_point, varying_params, replicates)
   run_species_methods(datasets, subst_model, cores, run_filter, launch_mode)
 

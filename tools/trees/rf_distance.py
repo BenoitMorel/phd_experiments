@@ -1,7 +1,7 @@
 import sys
 import os
 from ete3 import Tree
-
+import dendropy
 
 
 def str_2(ll):
@@ -46,6 +46,14 @@ def get_rf_distance_tuple(tree1_file, tree2_file):
   rf = ete3_rf(tree1, tree2)
   return (float(rf[0]) / float(rf[1]), rf[0])
 
+def dendropy_rf_distance(tree1_file, tree2_file):
+  dataSet = dendropy.DataSet()
+  dataSet.read(file=open(tree1_file), schema = "newick")
+  dataSet.read(file=open(tree2_file), schema = "newick", taxon_namespace=dataSet.tree_lists[0].taxon_namespace)
+  distance = dendropy.calculate.treecompare.symmetric_difference(dataSet.tree_lists[0][0], dataSet.tree_lists[1][0], is_bipartitions_updated=False)
+
+  return float(distance)
+
 if (__name__ == "__main__"):
   if (len(sys.argv) < 3):
     print("Syntax python rf_distance.py tree1 tree2 [rooted]")
@@ -59,3 +67,5 @@ if (__name__ == "__main__"):
     print("ROOTED")
   print("Relative RF: " + str_4(get_relative_rf(tree1, tree2, not rooted)))
   #print("RF: " + str(get_rf(tree1, tree2)))
+#  print("dendrop distance: " + str(dendropy_rf_distance(sys.argv[1], sys.argv[2])))
+

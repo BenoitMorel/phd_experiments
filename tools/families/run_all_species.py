@@ -173,10 +173,11 @@ class SpeciesRunFilter():
         printFlush("Failed running STAG\n" + str(exc))
     if (self.duptree):
       printFlush("Run Duptree")
-      try:
-        run_duptree.run_duptree(datadir, subst_model)
-      except Exception as exc:
-        printFlush("Failed running DupTree\n" + str(exc))
+      for gene_tree in self.starting_gene_trees:
+        try:
+          run_duptree.run_duptree(datadir, gene_tree, subst_model)
+        except Exception as exc:
+          printFlush("Failed running DupTree\n" + str(exc))
     if (self.fastrfs):
       printFlush("Run FastRFS")
       try:
@@ -290,7 +291,7 @@ class SpeciesRunFilter():
       printFlush("Run GeneRaxSelect")
       try:
         candidates = exp.generax_selector_candidates
-        run_generax_selector.select(datadir, subst_model, candidates, False, cores)
+        run_generax_selector.select(datadir, subst_model, candidates, True, cores)
       except Exception as exc:
         printFlush("Failed running GeneRaxSelect\n" + str(exc))
     if (self.generaxselectfam  and subst_model != "true"):

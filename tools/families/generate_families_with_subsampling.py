@@ -51,7 +51,7 @@ def generate_replicate(input_datadir, sampling_ratio, replicate):
 
 
 def generate(input_datadir, sampling_ratio, replicates):
-  for replicate in range(0, replicates):
+  for replicate in replicates:
     generate_replicate(input_datadir, sampling_ratio, replicate)
 
 
@@ -65,5 +65,5 @@ if (__name__ == "__main__"):
   input_datadir = sys.argv[1]
   sampling_ratio = float(sys.argv[2])
   replicates = int(sys.argv[3])
-  generate(input_datadir, sampling_ratio, replicates)
+  generate(input_datadir, sampling_ratio, range(0, replicates))
 
