@@ -10,19 +10,19 @@ from run_all_species import SpeciesRunFilter
 import plot_speciesrax
 
 do_run = True
-do_plot = False
+do_plot = True
 cores = 40
 subst_model = "GTR+G"
 launch_mode = "normal"
 replicates = range(4000, 4050)
-gene_trees = ["raxml-ng", "true"]
+gene_trees = ["raxml-ng"]
 varying_params = []
 varying_params += ["none"]
-#varying_params += ["s15", "s50"]
-#varying_params += ["sites100", "sites300"]
-#varying_params += ["f50", "f200"]
-#varying_params += ["d0.5_l0.5", "d3.0_l3.0"]
-#varying_params += ["pop10000000", "pop100000000", "pop1000000000"]
+varying_params += ["s15", "s50"]
+varying_params += ["sites100", "sites300"]
+varying_params += ["f50", "f200"]
+varying_params += ["d0.5_l0.5", "d3.0_l3.0"]
+varying_params += ["pop10000000", "pop100000000", "pop1000000000"]
 
 
 
@@ -41,6 +41,7 @@ methods_tuples.append(("speciesrax-dtl-raxml-perfam-hybrid", "SpeciesRax"))
 methods_tuples.append(("astralpro-raxml-ng", "Astral-Pro"))
 methods_tuples.append(("njrax-mininj-raxml-ng", "MiniNJ"))
 methods_tuples.append(("njrax-cherry-raxml-ng", "CherryMerging"))
+methods_tuples.append(("njrax-cherrypro-raxml-ng", "CherryMergingPro"))
 methods_tuples.append(("njrax-njst-raxml-ng", "NJst"))
 methods_tuples.append(("duptree", "DupTree"))
   
@@ -88,12 +89,13 @@ def run_varying_experiment():
   #run_filter.pargenes = True
   run_filter.pargenes_starting_trees = 1
   run_filter.pargenes_bootstrap_trees = 0
-  run_filter.duptree = True
-  run_filter.njrax = True
-  run_filter.astralpro = True
-  run_filter.njst = True
+  #run_filter.duptree = True
+  #run_filter.njrax = True
+  #run_filter.astralpro = True
+  #run_filter.njst = True
   #run_filter.speciesraxperfamily = True
-  run_filter.cherry = True
+  #run_filter.cherry = True
+  run_filter.cherrypro = True
   run_filter.cleanup = True
   
   # mrbayes!!

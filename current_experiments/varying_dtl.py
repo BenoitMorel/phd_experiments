@@ -10,7 +10,7 @@ from run_all_species import SpeciesRunFilter
 import plot_speciesrax
 
 do_run = True
-do_plot = False
+do_plot = True
 datasets = []
 cores = 40
 subst_model = "GTR+G"
@@ -19,11 +19,11 @@ launch_mode = "normal"
 replicates = range(3000, 3050)
 varying_params = []
 varying_params += ["none"]
-#varying_params += ["s15", "s50"]
-#varying_params += ["sites100", "sites300"]
-#varying_params += ["f50", "f200"]
-#varying_params += ["d0.5_l0.5", "d3.0_l3.0"]
-#varying_params += ["t0.0", "t3.0"]
+varying_params += ["s15", "s50"]
+varying_params += ["sites100", "sites300"]
+varying_params += ["f50", "f200"]
+varying_params += ["d0.5_l0.5", "d3.0_l3.0"]
+varying_params += ["t0.0", "t3.0"]
 
 tag = "varydtl"
 fixed_point = "ssim_varydtl_s30_f100_sites200_GTR_bl1.0_d1.0_l1.0_t1.0_p0.0_pop10_mu1.0_theta0.0_seed20"
@@ -38,6 +38,7 @@ methods_tuples.append(("astralpro-raxml-ng", "Astral-Pro"))
 methods_tuples.append(("njrax-mininj-raxml-ng", "MiniNJ"))
 methods_tuples.append(("njrax-cherry-raxml-ng", "CherryMerging"))
 methods_tuples.append(("njrax-njst-raxml-ng", "NJst"))
+methods_tuples.append(("njrax-cherrypro-raxml-ng", "CherryMergingPro"))
 #methods_tuples.append(("duptree", "DupTree"))
   
 params_to_plot = ["species", "sites", "dup_rate", "families", "transfer_rate"]
@@ -82,18 +83,17 @@ def run_varying_experiment():
   run_filter = SpeciesRunFilter()
   run_filter.disable_all()
   run_filter.generate = True
-  run_filter.pargenes = True
+  #run_filter.pargenes = True
   run_filter.pargenes_starting_trees = 1
   run_filter.pargenes_bootstrap_trees = 0
-  run_filter.duptree = True
-  run_filter.njrax = True
-  run_filter.astralpro = True
-  run_filter.njst = True
-  run_filter.cherry = True
-  run_filter.speciesraxperfamily = True
+  #run_filter.duptree = True
+  #run_filter.njrax = True
+  #run_filter.astralpro = True
+  #run_filter.njst = True
+  #run_filter.cherry = True
+  #run_filter.speciesraxperfamily = True
   
   # mrbayes!!
-  run_filter.disable_all()
   if (False):
     run_filter.mrbayes = True
     run_filter.mb_runs = 2
@@ -105,7 +105,8 @@ def run_varying_experiment():
   run_filter.starting_gene_trees = gene_trees
   #run_filter.njrax = True
   #run_filter.njst = True
-  run_filter.cherry = True
+  #run_filter.cherry = True
+  run_filter.cherrypro = True
   #run_filter.astralpro= True
   run_filter.cleanup = True
   

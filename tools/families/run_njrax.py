@@ -43,6 +43,7 @@ def exec_njrax(algo, gene_trees_file, mapping_file, output_tree):
   command.append(gene_trees_file)
   command.append(mapping_file)
   command.append(output_tree)
+  print(" ".join(command))
   subprocess.check_call(command)
     
 

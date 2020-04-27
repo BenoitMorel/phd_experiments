@@ -56,6 +56,7 @@ class SpeciesRunFilter():
     self.fastrfs = True
     self.njrax = True    
     self.cherry = True    
+    self.cherrypro = True    
     self.astrid = True    
     self.astral = True
     self.generaxselect = True
@@ -64,8 +65,6 @@ class SpeciesRunFilter():
     self.speciesrax = True
     self.speciesraxprune = True
     self.speciesraxperfamily = True
-    self.speciesraxslowdl = True
-    self.speciesraxslowdtl = True
     self.phyldog = True
     self.guenomu = False
     self.analyze = True
@@ -83,6 +82,7 @@ class SpeciesRunFilter():
     self.duptree = False
     self.njrax = False    
     self.cherry = False    
+    self.cherrypro = False    
     self.njst = False    
     self.astrid = False
     self.astral = False
@@ -92,8 +92,6 @@ class SpeciesRunFilter():
     self.speciesrax = False
     self.speciesraxprune = False
     self.speciesraxperfamily = False
-    self.speciesraxslowdl = False
-    self.speciesraxslowdtl = False
     self.guenomu = False
     self.cleanup = False
     #self.analyze = False
@@ -109,6 +107,7 @@ class SpeciesRunFilter():
     self.fastrfs = True
     self.njrax = True   
     self.cherry = True   
+    self.cherrypro = True   
     self.njst = True   
     self.astrid = True
     self.speciesrax = True
@@ -198,6 +197,13 @@ class SpeciesRunFilter():
           run_njrax.run_njrax(datadir, "Cherry", gene_tree, subst_model)
         except Exception as exc:
           printFlush("Failed running Cherry with " + gene_tree + "\n" + str(exc))
+    if (self.cherrypro):
+      printFlush("Run CherryPro")
+      for gene_tree in self.starting_gene_trees:
+        try:
+          run_njrax.run_njrax(datadir, "CherryPro", gene_tree, subst_model)
+        except Exception as exc:
+          printFlush("Failed running CherryPro with " + gene_tree + "\n" + str(exc))
     if (self.njst):
       printFlush("Run NJst")
       for gene_tree in self.starting_gene_trees:
@@ -236,35 +242,28 @@ class SpeciesRunFilter():
         run_concatenation.run_concatenation(datadir, subst_model,True,cores)
       except Exception as exc:
         printFlush("Failed running concatenation-min\n" + str(exc))
-    if (self.speciesrax):
-      printFlush("Run SpeciesRaxFast")
-      try:
-        #run_speciesrax.run_speciesrax_on_families(datadir, subst_model, cores, transfers = True, slow = False, strategy = "SPR")
-        run_speciesrax.run_speciesrax_on_families(datadir, subst_model, cores, transfers = True, slow = False, strategy = "HYBRID")
-      except Exception as exc:
-        printFlush("Failed running speciesrax\n" + str(exc))
-    if (self.speciesraxprune):
-      printFlush("Run SpeciesRaxPrune")
-      try:
-        dataset = os.path.basename(datadir)
-        run_speciesrax.run_speciesrax_instance(dataset, "raxml-ng", True, "speciesrax-prune", subst_model, False, "SPR", cores, ["--prune-species-tree", "--per-family-rates"])
-      except Exception as exc:
-        printFlush("Failed running speciesrax prune\n" + str(exc))
-    if (self.speciesraxperfamily):
-      printFlush("Run SpeciesRaxPerFamily")
-      try:
-        dataset = os.path.basename(datadir)
-        #run_speciesrax.run_speciesrax_on_families(datadir, subst_model, cores, transfers = True, slow = False, strategy = "SPR", rates_per_family = True)
-        run_speciesrax.run_speciesrax_on_families(datadir, subst_model, cores, transfers = True, slow = False, strategy = "HYBRID", rates_per_family = True)
-      except Exception as exc:
-        printFlush("Failed running speciesrax per family\n" + str(exc))
+    for gene_tree in self.starting_gene_trees:
+      if (self.speciesrax):
+        printFlush("Run SpeciesRaxFast")
+        try:
+          run_speciesrax.run_speciesrax_on_families(datadir, gene_tree, subst_model, cores, transfers = True, strategy = "HYBRID")
+        except Exception as exc:
+          printFlush("Failed running speciesrax\n" + str(exc))
+      if (self.speciesraxprune):
+        printFlush("Run SpeciesRaxPrune")
+        try:
+          dataset = os.path.basename(datadir)
+          run_speciesrax.run_speciesrax_instance(dataset, gene_tree, True, "speciesrax-prune", subst_model, False, "SPR", cores, ["--prune-species-tree", "--per-family-rates"])
+        except Exception as exc:
+          printFlush("Failed running speciesrax prune\n" + str(exc))
+      if(self.speciesraxperfamily):
+        printFlush("Run SpeciesRaxPerFamily")
+        try:
+          dataset = os.path.basename(datadir)
+          run_speciesrax.run_speciesrax_on_families(datadir, gene_tree, subst_model, cores, transfers = True, strategy = "HYBRID", rates_per_family = True)
+        except Exception as exc:
+          printFlush("Failed running speciesrax per family\n" + str(exc))
 
-    if (self.speciesraxslowdl or self.speciesraxslowdtl):
-      printFlush("Run SpeciesRaxSlow")
-      try:
-        run_speciesrax.run_speciesrax_on_families(datadir, subst_model, cores, dl = self.speciesraxslowdl, dtl = self.speciesraxslowdtl, slow = True)
-      except Exception as exc:
-        printFlush("Failed running speciesrax\n" + str(exc))
     if (self.phyldog):
       printFlush("Run Phyldgo")
       try:

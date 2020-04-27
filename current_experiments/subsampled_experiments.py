@@ -14,13 +14,14 @@ import plot_speciesrax
 do_run = True
 do_plot = False
 
-plot_mrbayes = False
+plot_mrbayes = True
 launch_mode = "normald"
 cores = 40
 gene_trees = ["raxml-ng"]
 replicates = range(1000, 1050)
 experiments = []
-subsample_range = [0.01, 0.02, 0.05, 0.1]
+subsample_range = [0.01]
+#subsample_range = [0.01, 0.02, 0.05, 0.1, 1.0]
 experiments.append(("ensembl_98_ncrna_primates", "GTR+G", subsample_range))
 experiments.append(("cyano_empirical", "LG+G+I", subsample_range))
 plot_metric_names = ["species_unrooted_rf"]
@@ -111,9 +112,10 @@ if (do_run):
   #run_filter.duptree = True
   #run_filter.njst = True
   #run_filter.njrax = True
-  run_filter.cherry = True
+  run_filter.cherrypro = True
+  #run_filter.cherry = True
   #run_filter.astralpro = True
-  #run_filter.starting_gene_trees = gene_trees
+  run_filter.starting_gene_trees = gene_trees
   #run_filter.speciesraxperfamily = True
   #run_filter.stag = True
   #run_filter.generaxselect = True

@@ -5,7 +5,7 @@ sys.path.insert(0, 'scripts')
 import experiments as exp
 import fam
 
-def run_speciesrax_instance(dataset, starting_tree, with_transfers, run_name, subst_model, slow, strategy, cores = 40, additional_args = []):
+def run_speciesrax_instance(dataset, starting_tree, with_transfers, run_name, subst_model, strategy, cores = 40, additional_args = []):
   command = []
   command.append("python")
   command.append(os.path.join(exp.scripts_root, "generax/launch_speciesrax.py"))
@@ -22,9 +22,6 @@ def run_speciesrax_instance(dataset, starting_tree, with_transfers, run_name, su
   else:
     command.append("--rec-model")
     command.append("UndatedDL")
-  if (slow):
-    command.append("--species-slow-radius")
-    command.append("1")
   command.append("--species-strategy")
   command.append(strategy)
   for arg in additional_args:
@@ -35,7 +32,7 @@ def run_speciesrax_instance(dataset, starting_tree, with_transfers, run_name, su
   subprocess.check_call(command)
     
   
-def run_speciesrax_on_families(dataset_dir, subst_model, cores, transfers = True, slow = False, strategy = "SPR", rates_per_family = False):
+def run_speciesrax_on_families(dataset_dir, gene_trees, subst_model, cores, transfers = True, strategy = "HYBRID", rates_per_family = True):
   dataset = os.path.basename(dataset_dir)
   run_name = "speciesrax-"
   args = []
@@ -43,14 +40,12 @@ def run_speciesrax_on_families(dataset_dir, subst_model, cores, transfers = True
     run_name += "dtl-"
   else:
     run_name += "dl-"
-  run_name += "raxml-"
-  if (slow):
-    run_name += "slow-"
+  run_name += gene_trees + "-"
   if (rates_per_family):
     args.append("--per-family-rates")
     run_name += "perfam-"
   run_name += strategy
-  run_speciesrax_instance(dataset, "raxml-ng", transfers, run_name, subst_model, slow, strategy, cores = 40, additional_args = args)
+  run_speciesrax_instance(dataset, gene_trees, transfers, run_name, subst_model, strategy, cores = 40, additional_args = args)
 
 
 if (__name__== "__main__"):
