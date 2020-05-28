@@ -66,10 +66,18 @@ def get_species_tree(datadir, subst_model= None, method = "true"):
     return "NJ"
   elif (method == "MiniNJ"):
     return "MiniNJ"
+  elif (method == "WMiniNJ"):
+    return "WMiniNJ"
+  elif (method == "NJst"):
+    return "NJst"
+  elif (method == "Ustar"):
+    return "Ustar"
   elif (method == "NJst"):
     return "NJst"
   elif (method == "Cherry"):
     return "Cherry"
+  elif (method == "CherryPro"):
+    return "CherryPro"
   if (method == "true"):
     return os.path.join(get_species_dir(datadir), "speciesTree.newick")
   if (subst_model != None):
@@ -168,6 +176,9 @@ def get_raxml_light_tree(datadir, subst_model, family):
 
 def get_raxml_multiple_trees(datadir, subst_model, family):
   return build_gene_tree_path(datadir, subst_model, family, "raxmlMultiple")
+
+def get_fasttree_tree(datadir, subst_model, family):
+  return build_gene_tree_path(datadir, subst_model, family, "fasttree")
 
 def get_phyldog_tree(datadir, subst_model, family):
   return build_gene_tree_path(datadir, subst_model, family, "phyldog")

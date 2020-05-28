@@ -14,22 +14,23 @@ do_plot = True
 cores = 40
 subst_model = "GTR+G"
 launch_mode = "normal"
-replicates = range(4000, 4050)
+replicates = range(4036, 4050)
 gene_trees = ["raxml-ng"]
 varying_params = []
 varying_params += ["none"]
-varying_params += ["s15", "s50"]
-varying_params += ["sites100", "sites300"]
-varying_params += ["f50", "f200"]
-varying_params += ["d0.5_l0.5", "d3.0_l3.0"]
-varying_params += ["pop10000000", "pop100000000", "pop1000000000"]
+#varying_params += ["f1000"]
+#varying_params += ["s15", "s50"]
+#varying_params += ["sites100", "sites300"]
+#varying_params += ["f50", "f200"]
+#varying_params += ["d0.5_l0.5", "d3.0_l3.0"]
+#varying_params += ["pop10000000", "pop100000000", "pop1000000000"]
 
 
 
 
 
 
-fixed_point = "ssim_varyilsdl_s30_f100_sites200_GTR_bl1.0_d1.0_l1.0_t0.0_p0.0_pop470000000_mu1.0_theta0.0_seed20"
+fixed_point = "ssim_varyilsdl_s25_f100_sites100_GTR_bl1.0_d1.0_l1.0_t0.0_p0.0_pop470000000_mu1.0_theta0.0_seed20"
 tag = "varyilsdl"
 
 # metric to plot
@@ -40,10 +41,12 @@ methods_tuples = []
 methods_tuples.append(("speciesrax-dtl-raxml-perfam-hybrid", "SpeciesRax"))
 methods_tuples.append(("astralpro-raxml-ng", "Astral-Pro"))
 methods_tuples.append(("njrax-mininj-raxml-ng", "MiniNJ"))
+#methods_tuples.append(("njrax-wmininj-raxml-ng", "WMiniNJ"))
 methods_tuples.append(("njrax-cherry-raxml-ng", "CherryMerging"))
 methods_tuples.append(("njrax-cherrypro-raxml-ng", "CherryMergingPro"))
-methods_tuples.append(("njrax-njst-raxml-ng", "NJst"))
-methods_tuples.append(("duptree", "DupTree"))
+#methods_tuples.append(("njrax-ustar-raxml-ng", "USTAR-NJ"))
+#methods_tuples.append(("njrax-njst-raxml-ng", "NJst"))
+#methods_tuples.append(("duptree", "DupTree"))
   
 params_to_plot = ["species", "sites", "dup_rate", "families", "population"]
 fixed_params_values = {}
@@ -59,13 +62,13 @@ methods = []
 methods_dict = {}
 for t in methods_tuples:
   methods.append(t[0])
-  methods_dict[t[0]] = t[1]
+  methods_dict[t[0]] = (t[1], None)
 
 
 # run run_filter on all datasets in dataset
 def run_species_methods(datasets, subst_model, cores, run_filter, launch_mode):
   for dataset in datasets:
-    dataset_dir = os.path.join("../BenoitDatasets/families", dataset)
+    dataset_dir = fam.get_datadir(dataset)
     run_filter.run_reference_methods(dataset_dir, subst_model, cores, launch_mode)
 
 # get a list of replicated datasets with varying parameters
@@ -86,16 +89,19 @@ def run_varying_experiment():
   run_filter = SpeciesRunFilter()
   run_filter.disable_all()
   run_filter.generate = True
-  #run_filter.pargenes = True
+  run_filter.pargenes = True
   run_filter.pargenes_starting_trees = 1
   run_filter.pargenes_bootstrap_trees = 0
-  #run_filter.duptree = True
-  #run_filter.njrax = True
-  #run_filter.astralpro = True
-  #run_filter.njst = True
-  #run_filter.speciesraxperfamily = True
-  #run_filter.cherry = True
+  run_filter.duptree = True
+  run_filter.astralpro = True
+  run_filter.njst = True
+  #run_filter.speciesrax = True
+  run_filter.speciesraxperfamily = True
+  run_filter.cherry = True
   run_filter.cherrypro = True
+  run_filter.speciesraxprune = True
+  run_filter.disable_all()
+  run_filter.njrax = True
   run_filter.cleanup = True
   
   # mrbayes!!

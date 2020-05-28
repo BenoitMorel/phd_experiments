@@ -11,17 +11,17 @@ import generate_families_with_subsampling
 from run_all_species import SpeciesRunFilter
 import plot_speciesrax
 
-do_run = True
-do_plot = False
+do_run = False
+do_plot = True
 
-plot_mrbayes = True
+plot_mrbayes = False
 launch_mode = "normald"
 cores = 40
 gene_trees = ["raxml-ng"]
 replicates = range(1000, 1050)
 experiments = []
-subsample_range = [0.01]
-#subsample_range = [0.01, 0.02, 0.05, 0.1, 1.0]
+#subsample_range = [0.01]
+subsample_range = [0.01, 0.02, 0.05, 0.1, 1.0]
 experiments.append(("ensembl_98_ncrna_primates", "GTR+G", subsample_range))
 experiments.append(("cyano_empirical", "LG+G+I", subsample_range))
 plot_metric_names = ["species_unrooted_rf"]
@@ -29,10 +29,12 @@ plot_metric_names = ["species_unrooted_rf"]
 # methods to plot
 methods_tuples = []
 if (not plot_mrbayes):
-  methods_tuples.append(("speciesrax-dtl-raxml-perfam-hybrid", "SpeciesRax", None))
+  #methods_tuples.append(("speciesrax-dtl-raxml-perfam-hybrid", "SpeciesRax", None))
   methods_tuples.append(("astralpro-raxml-ng", "Astral-Pro", None))
   methods_tuples.append(("njrax-mininj-raxml-ng", "MiniNJ", None))
+  #methods_tuples.append(("njrax-wmininj-raxml-ng", "WMiniNJ", None))
   methods_tuples.append(("njrax-cherry-raxml-ng", "CherryMerging", None))
+  methods_tuples.append(("njrax-cherrypro-raxml-ng", "CherryMergingPro", None))
   methods_tuples.append(("duptree-raxml-ng", "DupTree", None))
 else:
   methods_tuples.append(("astralpro-raxml-ng", "Astral-Pro-ML", "blue"))
@@ -123,7 +125,7 @@ if (do_run):
   for experiment in experiments:
     dataset, subst_model, dataset_subsample_range = experiment
     for subsample in dataset_subsample_range:
-      run_subsampled(dataset, subst_model, cores, subsample, replicates, run_filter)
+     run_subsampled(dataset, subst_model, cores, subsample, replicates, run_filter)
 
 if (do_plot):
   for experiment in experiments:

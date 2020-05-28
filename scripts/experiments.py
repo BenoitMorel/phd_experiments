@@ -33,11 +33,15 @@ installer_root = os.path.join(root, "installer")
 
 historic = os.path.join(root, "historic.txt")
 
+fast_github_root = "/hits/fast/cme/benoit/github"
+
 # externals
 github_root = os.path.join(root, "..")
+benoit_datasets_root = os.path.join(fast_github_root, "BenoitDatasets")
 benoit_datasets_root = os.path.join(github_root, "BenoitDatasets")
 families_datasets_root  = os.path.join(benoit_datasets_root, "families")
 dna4_model_samples  = os.path.join(benoit_datasets_root, "DNA_models_sample")
+fasttree_exec = os.path.join(github_root, "FastTree", "FastTree")
 treerecs_root = os.path.join(github_root, "Treerecs")
 treerecs_exec = os.path.join(treerecs_root, "build", "bin", "Treerecs")
 joint_likelihood_evaluator_exec = os.path.join(treerecs_root, "build", "bin", "misc", "JointLikelihoodEvaluator")
@@ -100,6 +104,7 @@ astralpro_root = os.path.join(github_root, "A-pro")
 astralpro_jar = os.path.join(github_root, "A-pro", "ASTRAL-MP", "astral.1.1.2.jar")
 astrid_exec = os.path.join(github_root, "ASTRID", "src", "build", "ASTRID")
 prepare_fastrfs_script = os.path.join(tools_root, "rfs", "prepareTrees.py")
+rangerdtl_exec = os.path.join(github_root, "RangerDTL", "ranger-dtl-U.linux")
 paul_exec = os.path.join(github_root, "MasterThesis", "njst", "main")
 # constants
 mpi_scheduler_heuristic = "--split-scheduler"

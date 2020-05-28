@@ -22,11 +22,17 @@ def filter_ok(datadir, family, min_species, min_sites):
       return False
   return True 
 
-def generate(input_datadir, coverage_ratio, min_sites):
+def get_output_dir(input_datadir, coverage_ratio, min_sites):
+  if (coverage_ratio == 0.0 and min_sites == 0):
+    return input_datadir
   output_datadir = os.path.normpath(input_datadir)
   output_datadir += "_mincov" + str(coverage_ratio) 
   if (min_sites > 0):
     output_datadir += "_minsites" + str(min_sites)
+  return output_datadir
+
+def generate(input_datadir, coverage_ratio, min_sites):
+  output_datadir = get_output_dir(input_datadir, coverage_ratio, min_sites)
   if (os.path.exists(output_datadir)):
     print("Error, output datadir already exists " + output_datadir)
     sys.exit(1)
@@ -47,7 +53,7 @@ def generate(input_datadir, coverage_ratio, min_sites):
   print("Input families: \t" + str(len(families)))
   print("Output families: \t" + str(len(output_families)))
   print("Done. Resulting datadir in " + output_datadir)
-
+  return output_datadir
 
 
 

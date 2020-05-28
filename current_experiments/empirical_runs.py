@@ -11,22 +11,35 @@ import generate_families_with_subsampling
 from run_all_species import SpeciesRunFilter
 import plot_speciesrax
 
-do_run = False
-do_plot = True
+do_run = True
+do_plot = False
 launch_mode = "normald"
 cores = 40
 
 run_filter = SpeciesRunFilter()
 run_filter.disable_all()
-run_filter.duptree = True
-run_filter.njrax = True
-run_filter.cherry = True
-run_filter.njst = True
-run_filter.astralpro = True
+#run_filter.duptree = True
+#run_filter.fasttree = True
+#run_filter.njrax = True
+#run_filter.cherry = True
+#run_filter.njst = True
+#run_filter.astralpro = True
 run_filter.starting_gene_trees = ["raxml-ng"]
 #run_filter.speciesrax = True
+#run_filter.speciesraxprune = True
 run_filter.speciesraxperfamily = True
 run_filter.stag = True
+    
+datasets = []
+dna_model = "GTR+G"
+datasets.append(("ensembl_98_ncrna_primates", dna_model))
+datasets.append(("ensembl_98_ncrna_lowprimates", dna_model))
+datasets.append(("ensembl_98_ncrna_mammals", dna_model))
+#datasets.append(("ensembl_98_ncrna_vertebrates", dna_model))
+#datasets.append(("ensembl_98_ncrna_sauropsids", dna_model))
+#datasets.append(("cyano_empirical", "LG+G"))
+#datasets.append(("cyano_empirical", "LG+G+I"))
+
 run_filter.cleanup = True
 
 # methods to plot
@@ -38,13 +51,6 @@ methods_tuples.append(("njrax-cherry-raxml-ng", "CherryMerging"))
 methods_tuples.append(("njrax-njst-raxml-ng", "NJst"))
 methods_tuples.append(("duptree-raxml-ng", "DupTree"))
     
-    
-datasets = []
-datasets.append(("ensembl_98_ncrna_primates", "GTR+G"))
-datasets.append(("ensembl_98_ncrna_mammals", "GTR+G"))
-#datasets.append(("ensembl_98_ncrna_sauropsids", "GTR+G"))
-datasets.append(("cyano_empirical", "LG+G"))
-datasets.append(("cyano_empirical", "LG+G+I"))
 
 if (do_run):
   for dataset in datasets:

@@ -23,6 +23,7 @@ import run_concatenation
 import run_orthogenerax
 import run_generax_selector
 import run_mrbayes
+import run_fasttree
 import shutil
 sys.path.insert(0, os.path.join("scripts"))
 sys.path.insert(0, os.path.join("tools", "families"))
@@ -41,6 +42,7 @@ class SpeciesRunFilter():
     self.pargenes = True
     self.pargenes_starting_trees = 2
     self.pargenes_bootstrap_trees = 2
+    self.fasttree = False
     self.mrbayes = False
     self.mb_runs = 1  
     self.mb_chains = 4 
@@ -72,6 +74,7 @@ class SpeciesRunFilter():
   
   def disable_all(self):
     self.pargenes = False
+    self.fasttree = False
     self.mrbayes = False
     self.orthogenerax = False
     self.concatenation_min = False
@@ -99,6 +102,7 @@ class SpeciesRunFilter():
   def enable_fast_methods(self):
     self.disable_all()
     self.pargenes = True
+    self.fasttree = True
     self.orthogenerax = True
     self.concatenation_min = True
     self.concatenation_max = True
@@ -158,6 +162,11 @@ class SpeciesRunFilter():
       sys.stdout.flush()
       raxml.run_pargenes_and_extract_trees(datadir, subst_model, self.pargenes_starting_trees, self.pargenes_bootstrap_trees, cores, "pargenes", True)
       sys.stdout.flush()
+    if (self.fasttree and subst_model != "true"):
+      printFlush("Run FastTree...")
+      sys.stdout.flush()
+      run_fasttree.run_fasttree_on_families(datadir, subst_model, cores)
+      sys.stdout.flush()
     if (self.mrbayes):
       printFlush("Run mrbayes...")
       try:
@@ -188,6 +197,7 @@ class SpeciesRunFilter():
       for gene_tree in self.starting_gene_trees:
         try:
           run_njrax.run_njrax(datadir, "MiniNJ", gene_tree, subst_model)
+          run_njrax.run_njrax(datadir, "WMiniNJ", gene_tree, subst_model)
         except Exception as exc:
           printFlush("Failed running NJrax with " + gene_tree + "\n" + str(exc))
     if (self.cherry):
@@ -209,6 +219,7 @@ class SpeciesRunFilter():
       for gene_tree in self.starting_gene_trees:
         try:
           run_njrax.run_njrax(datadir, "NJst", gene_tree, subst_model)
+          run_njrax.run_njrax(datadir, "Ustar", gene_tree, subst_model)
         except Exception as exc:
           printFlush("Failed running NJst with " + gene_tree + "\n" + str(exc))
     if (self.astrid):
@@ -246,14 +257,15 @@ class SpeciesRunFilter():
       if (self.speciesrax):
         printFlush("Run SpeciesRaxFast")
         try:
-          run_speciesrax.run_speciesrax_on_families(datadir, gene_tree, subst_model, cores, transfers = True, strategy = "HYBRID")
+          dataset = os.path.basename(datadir)
+          run_speciesrax.run_speciesrax_on_families(dataset, gene_tree, subst_model, cores, transfers = True, strategy = "HYBRID", rates_per_family = False)
         except Exception as exc:
           printFlush("Failed running speciesrax\n" + str(exc))
       if (self.speciesraxprune):
         printFlush("Run SpeciesRaxPrune")
         try:
           dataset = os.path.basename(datadir)
-          run_speciesrax.run_speciesrax_instance(dataset, gene_tree, True, "speciesrax-prune", subst_model, False, "SPR", cores, ["--prune-species-tree", "--per-family-rates"])
+          run_speciesrax.run_speciesrax_instance(dataset, gene_tree, True, "speciesrax-prune", subst_model, "SPR", cores, ["--prune-species-tree", "--per-family-rates"])
         except Exception as exc:
           printFlush("Failed running speciesrax prune\n" + str(exc))
       if(self.speciesraxperfamily):
@@ -281,7 +293,7 @@ class SpeciesRunFilter():
       try:
         #run_orthogenerax.run_orthogenerax(datadir, subst_model, "true", False, cores)
         #run_orthogenerax.run_orthogenerax(datadir, subst_model, "njrax-NJst", False, cores)
-        run_orthogenerax.run_orthogenerax(datadir, subst_model, "astralpro", False, cores)
+        run_orthogenerax.run_orthogenerax(datadir, subst_model, "astralpro-raxml-ng", False, cores)
         #run_orthogenerax.run_orthogenerax(datadir, subst_model, "speciesrax-dtl-raxml-HYBRID", False, cores)
       except Exception as exc:
         printFlush("Failed running orthogenerax\n" + str(exc))
