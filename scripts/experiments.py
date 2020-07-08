@@ -282,6 +282,15 @@ def getAndDelete(arg, arguments, default_value):
   else:
     return default_value
 
+def getArg(arg, arguments, default_value):
+  print ("looking for " + arg + " in " + str(arguments))
+  if (arg in arguments):
+    index = arguments.index(arg)
+    res = arguments[index + 1]
+    return res
+  else:
+    return default_value
+
 def run_with_scheduler(executable, command_file, parallelization, cores, scheduler_output_dir, logname = None):
   command = ""
   out = sys.stdout

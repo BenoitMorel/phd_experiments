@@ -151,6 +151,23 @@ def analyze_species_results(datadir, resultsdir):
 
 def run(dataset, subst_model, starting_species_tree, starting_gene_tree, cores, additional_arguments, resultsdir, do_analyze = True, do_extract = True):
   run_name = exp.getAndDelete("--run", additional_arguments, "generax-last." +subst_model) 
+  
+  if (run_name == "generax-last." + subst_model):
+    run_name = "generax-last-" + starting_species_tree
+    rec_model = exp.getArg("--rec-model", additional_arguments, "UndatedDTL")
+    if (starting_species_tree == "random"):
+      run_name += exp.getArg("--seed", additional_arguments, "noseed")
+    if (rec_model == "ParsimonyDL"):
+      run_name += "-parsi"
+    if ("--prune-species-tree" in additional_arguments):
+      run_name += "-prune"
+    if ("--per-family-rates" in additional_arguments):
+      run_name += "-fam"
+    if ("--unconstrained-species-search" in additional_arguments):
+      run_name += "-uncon"
+    run_name += "." + subst_model
+      
+
   arg_analyze = exp.getAndDelete("--analyze", additional_arguments, "yes")
   do_analyze = do_analyze and (arg_analyze == "no")
   print("Run name " + run_name)

@@ -155,7 +155,7 @@ def plot_simulated_metrics():
   fixed_params_dtl["families"] = "50"
   fixed_params_dtl["sites"] = "250"
   fixed_params_dtl["perturbation"] = "0.0"
- 
+
   suffix = "f50_s250"
   plot_rrf(x_labels, params_to_plot_dl, params_to_plot_dtl, fixed_params_dl, fixed_params_dtl, subst_model, True, suffix)
   plot_rrf(x_labels, params_to_plot_dl, params_to_plot_dtl, fixed_params_dl, fixed_params_dtl, subst_model, False, suffix)

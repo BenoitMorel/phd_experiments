@@ -42,6 +42,8 @@ def exec_duptree(gene_trees_file, output_dir):
   command.append(gene_trees_file)
   command.append("-o")
   command.append(os.path.join(output_dir, "plop.txt"))
+  #command.append("-r")
+  #command.append("all")
   FNULL = open(os.devnull, 'w')
   res = subprocess.check_output(command, stderr=FNULL)
   return res.split("\n")[-3]

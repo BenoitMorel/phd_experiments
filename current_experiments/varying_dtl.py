@@ -96,7 +96,7 @@ def run_varying_experiment():
   run_filter.cherrypro = True
   run_filter.cherry = True
   run_filter.disable_all()
-  #run_filter.speciesraxprune = True
+  run_filter.speciesraxprune = True
   #run_filter.speciesraxperfamily = True
   
   run_filter.njrax = True

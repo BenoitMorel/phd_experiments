@@ -12,11 +12,11 @@ import saved_metrics
 import fam
 
 
-def init_gene_trees_file(datadir, subst_model, stag_gene_trees_dir):
+def init_gene_trees_file(datadir, gene_trees, subst_model, stag_gene_trees_dir):
   exp.mkdir(stag_gene_trees_dir) 
   print("datadir " + datadir)
   for family in fam.get_families_list(datadir):
-    gene_tree = fam.get_raxml_tree(datadir, subst_model, family)
+    gene_tree = fam.build_gene_tree_path(datadir, subst_model, family, gene_trees)
     dest = os.path.join(stag_gene_trees_dir, family + ".newick")
     shutil.copyfile(gene_tree, dest)
 
@@ -38,26 +38,27 @@ def init_mappings(datadir, output_mapping_file):
         writer.write(gene + " " + species + "\n")
   print("wrote into " + output_mapping_file)
 
-def run_stag(datadir, subst_model):
-  output_dir = fam.get_run_dir(datadir, subst_model, "stag_run")
+def run_stag(datadir, gene_trees,  subst_model):
+  run_name = "stag-" + gene_trees
+  output_dir = fam.get_run_dir(datadir, subst_model, run_name + "_run")
   shutil.rmtree(output_dir, True)
   os.makedirs(output_dir)
-  output_species_tree = fam.get_species_tree(datadir, subst_model, "stag") 
+  output_species_tree = fam.get_species_tree(datadir, subst_model, run_name) 
   stag_gene_trees_dir = os.path.join(output_dir, "stag_gene_trees")
-  init_gene_trees_file(datadir, subst_model, stag_gene_trees_dir)
+  init_gene_trees_file(datadir, gene_trees, subst_model, stag_gene_trees_dir)
   mapping_file = os.path.join(output_dir, "stag_mapping.txt")
   init_mappings(datadir, mapping_file)
   start = time.time()
   stag.run_stag(mapping_file, stag_gene_trees_dir, output_species_tree)
   time1 = (time.time() - start)
-  saved_metrics.save_metrics(datadir, fam.get_run_name("stag", subst_model), time1, "runtimes") 
+  saved_metrics.save_metrics(datadir, fam.get_run_name(run_name, subst_model), time1, "runtimes") 
   true_species_tree = fam.get_species_tree(datadir)
   print("Stag output: " + output_species_tree)
 
 
 if (__name__ == "__main__"):
-  if (len(sys.argv) != 3):
-    print("Syntax python run_stag.py datadir subst_model")
+  if (len(sys.argv) != 4):
+    print("Syntax python run_stag.py datadir gene_trees subst_model")
     sys.exit(1)
-  run_stag(sys.argv[1], sys.argv[2])
+  run_stag(sys.argv[1], sys.argv[2], sys.argv[3])
   

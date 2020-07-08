@@ -16,7 +16,10 @@ def run_speciesrax_instance(dataset, starting_tree, with_transfers, run_name, su
   command.append(starting_tree)
   command.append("normal")
   command.append(str(cores))
-  if (with_transfers):
+  if (with_transfers == 2):
+    command.append("--rec-model")
+    command.append("ParsimonyDL")
+  elif (with_transfers == True):
     command.append("--rec-model")
     command.append("UndatedDTL")
   else:

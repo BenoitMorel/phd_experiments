@@ -40,8 +40,8 @@ class SpeciesRunFilter():
   def __init__(self):
     self.generate = False
     self.pargenes = True
-    self.pargenes_starting_trees = 2
-    self.pargenes_bootstrap_trees = 2
+    self.pargenes_starting_trees = 1
+    self.pargenes_bootstrap_trees = 0
     self.fasttree = False
     self.mrbayes = False
     self.mb_runs = 1  
@@ -65,6 +65,7 @@ class SpeciesRunFilter():
     self.generaxselectfam = True
     self.astralpro = True
     self.speciesrax = True
+    self.speciesraxparsidl = True
     self.speciesraxprune = True
     self.speciesraxperfamily = True
     self.phyldog = True
@@ -93,6 +94,7 @@ class SpeciesRunFilter():
     self.generaxselectfam = False
     self.astralpro = False
     self.speciesrax = False
+    self.speciesraxparsidl = False
     self.speciesraxprune = False
     self.speciesraxperfamily = False
     self.guenomu = False
@@ -261,11 +263,18 @@ class SpeciesRunFilter():
           run_speciesrax.run_speciesrax_on_families(dataset, gene_tree, subst_model, cores, transfers = True, strategy = "HYBRID", rates_per_family = False)
         except Exception as exc:
           printFlush("Failed running speciesrax\n" + str(exc))
+      if (self.speciesraxparsidl):
+        printFlush("Run SpeciesRaxPrune")
+        try:
+          dataset = os.path.basename(datadir)
+          run_speciesrax.run_speciesrax_instance(dataset, gene_tree, 2, "speciesrax-parsidl", subst_model, "SPR", cores)
+        except Exception as exc:
+          printFlush("Failed running speciesrax prune\n" + str(exc))
       if (self.speciesraxprune):
         printFlush("Run SpeciesRaxPrune")
         try:
           dataset = os.path.basename(datadir)
-          run_speciesrax.run_speciesrax_instance(dataset, gene_tree, True, "speciesrax-prune", subst_model, "SPR", cores, ["--prune-species-tree", "--per-family-rates"])
+          run_speciesrax.run_speciesrax_instance(dataset, gene_tree, True, "speciesrax-prune", subst_model, "HYBRID", cores, ["--prune-species-tree", "--per-family-rates"])
         except Exception as exc:
           printFlush("Failed running speciesrax prune\n" + str(exc))
       if(self.speciesraxperfamily):
