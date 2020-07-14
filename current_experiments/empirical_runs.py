@@ -14,7 +14,7 @@ import plot_speciesrax
 do_run = True
 do_plot = False
 launch_mode = "normald"
-cores = 40
+cores = 16
 
 run_filter = SpeciesRunFilter()
 run_filter.disable_all()
@@ -33,10 +33,10 @@ run_filter.stag = True
     
 datasets = []
 dna_model = "GTR+G"
-aa_model = "WAG"
-datasets.append(("aa_ensembl_98_ncrna_primates", aa_model))
-datasets.append(("aa_ensembl_98_ncrna_lowprimates", aa_model))
+#datasets.append(("aa_ensembl_98_ncrna_primates", dna_model))
+#datasets.append(("aa_ensembl_98_ncrna_lowprimates", dna_model))
 datasets.append(("aa_ensembl_98_ncrna_mammals", dna_model))
+#datasets.append(("aa_ensembl_98_ncrna_vertebrates", dna_model))
 #datasets.append(("ensembl_98_ncrna_primates", dna_model))
 #datasets.append(("ensembl_98_ncrna_lowprimates", dna_model))
 #datasets.append(("ensembl_98_ncrna_mammals", dna_model))
