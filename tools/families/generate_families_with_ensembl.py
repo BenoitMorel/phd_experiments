@@ -17,6 +17,82 @@ try:
 except:
   izip = zip
 
+
+species_to_remove = set()
+species_to_remove.add("Oryzias_latipes_ASM223467v1")
+species_to_remove.add("Oryzias_latipes_ASM223471v1")
+species_to_remove.add("Oryzias_latipes_ASM223469v1")
+species_to_remove.add("Bos_indicus_x_Bos_taurus_UOA_Brahman_1")
+species_to_remove.add("Bos_indicus_x_Bos_taurus_UOA_Angus_1")
+species_to_remove.add("Mus_musculus_strain_reference_CL57BL6")
+species_to_remove.add("Mus_musculus_strain_129S1/SvImJ")
+species_to_remove.add("Mus_musculus_strain_NOD/ShiLtJ")
+species_to_remove.add("Mus_musculus_strain_A/J")
+species_to_remove.add("Mus_musculus_strain_C3H/HeJ")
+species_to_remove.add("Mus_musculus_domesticus")
+species_to_remove.add("Mus_musculus_strain_DBA/2J")
+species_to_remove.add("Mus_musculus_musculus")
+species_to_remove.add("Mus_musculus_strain_NZO/HlLtJ")
+species_to_remove.add("Mus_musculus_strain_C57BL/6NJ")
+species_to_remove.add("Mus_musculus_strain_LP/J")
+species_to_remove.add("Mus_musculus_strain_CBA/J")
+species_to_remove.add("Mus_musculus_strain_FVB/NJ")
+species_to_remove.add("Mus_musculus_strain_BALB/cJ")
+species_to_remove.add("Mus_musculus_strain_AKR/J")
+species_to_remove.add("Mus_musculus_castaneus")
+#species_to_remove.add("Sus_scrofa_strain_reference")
+species_to_remove.add("Sus_scrofa_strain_rongchang")
+species_to_remove.add("Sus_scrofa_strain_pietrain")
+species_to_remove.add("Sus_scrofa_strain_meishan")
+species_to_remove.add("Sus_scrofa_strain_bamei")
+species_to_remove.add("Sus_scrofa_strain_largewhite")
+species_to_remove.add("Sus_scrofa_strain_berkshire")
+species_to_remove.add("Sus_scrofa_strain_wuzhishan")
+species_to_remove.add("Sus_scrofa_strain_usmarc")
+species_to_remove.add("Sus_scrofa_strain_hampshire")
+species_to_remove.add("Sus_scrofa_strain_tibetan")
+species_to_remove.add("Sus_scrofa_strain_landrace")
+species_to_remove.add("Sus_scrofa_strain_jinhua")
+
+
+
+species_to_replace = {}
+species_to_replace["Gorilla_gorilla_gorilla"] = "Gorilla_gorilla"
+species_to_replace["Mus_caroli_strain_CAROLI_EIJ"] = "Mus_Caroli"
+species_to_replace["Sus_scrofa_strain_reference"] = "Sus_Scrofa"
+species_to_replace["Mus_spretus_strain_SPRET/EiJ"] = "Mus_Spretus"
+species_to_replace["Mus_pahari_strain_PAHARI_EIJ"] = "Mus_Pahari"
+species_to_replace["Cricetulus_griseus"] = "Cricetulus_Griseus_Chok1Gshd"
+species_to_replace["Cricetulus_griseus_CHOK1GS_HDv1"] = "Cricetulus_Griseus_Chok1Gshd"
+species_to_replace["Cricetulus_griseus_CriGri_1.0"] = "Cricetulus_Griseus_CriGri"
+species_to_replace["Cricetulus_griseus_CriGri-PICR"] = "Cricetulus_Griseus_PICR"
+species_to_replace["Astyanax_mexicanus_Astyanax_mexicanus-2.0"] = "astyanax_mexicanus"
+species_to_replace["Astyanax_mexicanus_Astyanax_mexicanus-1.0.2"] = "astyanax_mexicanus_pachon"
+species_to_replace["Canis_lupus_familiaris"] = "Canis_familiaris"
+species_to_replace["Heterocephalus_glaber_HetGla_1.0"] = "heterocephalus_glaber_male"
+species_to_replace["Heterocephalus_glaber_HetGla_female_1.0"] = "heterocephalus_glaber_female"
+species_to_replace["Cebus_capucinus_imitator"] = "Cebus_capucinus"
+species_to_replace["Saccharomyces_cerevisiae_strain_S288C"] = "Saccharomyces_cerevisiae"
+species_to_replace["Caenorhabditis_elegans_strain_N2"] = "Caenorhabditis_elegans"
+#species_to_replace["Mus_musculus_strain_reference_CL57BL6"] = "Mus_Musculus"
+
+def edit_species_tree(species_tree, edited_species_tree):
+  tree = Tree(species_tree, format = 1)
+  tree.write(outfile = edited_species_tree)
+  # remove
+  to_keep = []
+  for leaf in tree.get_leaves():
+    if (not leaf.name in species_to_remove):
+      to_keep.append(leaf.name)
+  tree.prune(to_keep, True)
+  # replace
+  for leaf in tree.get_leaves():
+    if (leaf.name in species_to_replace):
+      leaf.name = species_to_replace[leaf.name]
+  tree.write(outfile = edited_species_tree)
+
+
+
 def mycmp(a, b):
   return (a > b) - (a < b) 
 
@@ -199,8 +275,10 @@ def get_species_dict(species_tree_file):
 
 
 def extract_from_ensembl(nhx_emf_file, fasta_file, species_tree, datadir, max_families):
+  edited_species_tree = species_tree + ".edited"
+  edit_species_tree(species_tree, edited_species_tree)
   new_species_tree = species_tree + ".titled"
-  title_node_names.title_node_names(species_tree, new_species_tree)
+  title_node_names.title_node_names(edited_species_tree, new_species_tree)
   species_tree = new_species_tree
   species_dict = get_species_dict(species_tree)
   print(species_dict)

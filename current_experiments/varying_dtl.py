@@ -12,7 +12,7 @@ import plot_speciesrax
 do_run = True
 do_plot = False
 datasets = []
-cores = 30
+cores = 40
 subst_model = "GTR+G"
 gene_trees = ["raxml-ng"]
 launch_mode = "normal"
@@ -97,7 +97,7 @@ def run_varying_experiment():
   run_filter.cherry = True
   run_filter.disable_all()
   run_filter.speciesraxprune = True
-  #run_filter.speciesraxperfamily = True
+  run_filter.speciesraxperfamily = True
   
   run_filter.njrax = True
   # mrbayes!!

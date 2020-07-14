@@ -264,10 +264,10 @@ class SpeciesRunFilter():
         except Exception as exc:
           printFlush("Failed running speciesrax\n" + str(exc))
       if (self.speciesraxparsidl):
-        printFlush("Run SpeciesRaxPrune")
+        printFlush("Run SpeciesRaxParsi")
         try:
           dataset = os.path.basename(datadir)
-          run_speciesrax.run_speciesrax_instance(dataset, gene_tree, 2, "speciesrax-parsidl", subst_model, "SPR", cores)
+          run_speciesrax.run_speciesrax_instance(dataset, gene_tree, 2, "speciesrax-parsidl", subst_model, "HYBRID", cores)
         except Exception as exc:
           printFlush("Failed running speciesrax prune\n" + str(exc))
       if (self.speciesraxprune):

@@ -180,6 +180,9 @@ def get_raxml_multiple_trees(datadir, subst_model, family):
 def get_fasttree_tree(datadir, subst_model, family):
   return build_gene_tree_path(datadir, subst_model, family, "fasttree")
 
+def get_fasttreepoly_tree(datadir, subst_model, family):
+  return build_gene_tree_path(datadir, subst_model, family, "fasttreepoly")
+
 def get_phyldog_tree(datadir, subst_model, family):
   return build_gene_tree_path(datadir, subst_model, family, "phyldog")
 

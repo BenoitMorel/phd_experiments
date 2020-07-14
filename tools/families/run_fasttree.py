@@ -10,7 +10,7 @@ import experiments as exp
 import fam
 import run_raxml_supportvalues as run_pargenes
 import sequence_model
-
+import ete3
 
 def generate_scheduler_commands_file(datadir, subst_model, cores, output_dir):
   results_dir = os.path.join(output_dir, "results")
@@ -30,7 +30,12 @@ def generate_scheduler_commands_file(datadir, subst_model, cores, output_dir):
       command.append("1")
       #command.append(exp.fasttree_exec)
       #../FastTree/FastTree -out out.newick -nt -gtr
-      command.append("-nt")
+      if ("WAG" in subst_model):
+        command.append("-wag")
+      elif ("LG" in subst_model):
+        command.append("-lg")
+      else:
+        command.append("-nt")
       command.append("-" + subst_model.lower())
       command.append("-out")
       command.append(fasttree_output)
@@ -44,10 +49,14 @@ def extract_fasttree_trees(datadir, subst_model):
     fasttreeTree = os.path.join(families_dir, family, "misc", "fasttree_output." + subst_model + ".newick")
     if (os.path.isfile(fasttreeTree)):
       lines = open(fasttreeTree).readlines()
+      writerpoly = open(fam.get_fasttreepoly_tree(datadir, subst_model, family), "w")
       with open(fam.get_fasttree_tree(datadir, subst_model, family), "w") as writer:
         for line in lines:
           if (not line.startswith(">")):
-            writer.write(line)
+            writerpoly.write(line)
+            tree = ete3.Tree(line, format = 1)
+            tree.resolve_polytomy()
+            writer.write(tree.write())
     else:
       print("Warning: no fasttree tree for family " + family)  
 

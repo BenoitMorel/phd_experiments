@@ -36,7 +36,7 @@ def analyze(datadir):
   for run in trees:
     try:
       tree = trees[run]
-      rooted_rf_cell = true_tree.robinson_foulds(tree, unrooted_trees=False)
+      rooted_rf_cell = true_tree.robinson_foulds(tree, unrooted_trees=False, correct_by_polytomy_size = True)
       rooted_arf = float(rooted_rf_cell[0]) / float(rooted_rf_cell[1])
       if (len(tree) != len(true_tree)):
         rooted_arf = 10000000.0
@@ -54,7 +54,7 @@ def analyze(datadir):
     tree = trees[run]
     if (tree == None):
       continue
-    unrooted_rf_cell = true_tree.robinson_foulds(tree, unrooted_trees=True)
+    unrooted_rf_cell = true_tree.robinson_foulds(tree, unrooted_trees=True, correct_by_polytomy_size = True)
     unrooted_arf = float(unrooted_rf_cell[0]) / float(unrooted_rf_cell[1])
     if (len(tree) != len(true_tree)):
       unrooted_arf = 10000000.0

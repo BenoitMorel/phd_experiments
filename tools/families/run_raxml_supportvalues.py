@@ -18,7 +18,7 @@ def run_pargenes(datadir, pargenes_dir, subst_model, starting_trees, bs_trees, c
   raxml_command = "--model " + sequence_model.get_raxml_model(subst_model) + " --blopt nr_safe"
   command = []
   command.append("python")
-  command.append(exp.pargenes_script_debug)
+  command.append(exp.pargenes_script)
   command.append("-a")
   command.append(os.path.join(datadir, "alignments"))
   command.append("-b")
@@ -132,12 +132,13 @@ def get_family_dimensions(datadir, subst_model, pargenes_dir = "pargenes", defau
 
   
 
-def run_pargenes_and_extract_trees(datadir, subst_model, starting_trees, bs_trees, cores, pargenes_dir = "pargenes", extract_trees = True):
+def run_pargenes_and_extract_trees(datadir, subst_model, starting_trees, bs_trees, cores, pargenes_dir = "pargenes", extract_trees = True, restart = False):
   saved_metrics_key = "RAxML-NG"
   if (pargenes_dir != "pargenes"):
     saved_metrics_key = pargenes_dir
   pargenes_dir = fam.get_run_dir(datadir, subst_model, pargenes_dir)
-  shutil.rmtree(pargenes_dir, True)
+  if (not restart):
+    shutil.rmtree(pargenes_dir, True)
   start = time.time()
   run_pargenes(datadir, pargenes_dir, subst_model, starting_trees, bs_trees, cores)
   saved_metrics.save_metrics(datadir, fam.get_run_name(saved_metrics_key, subst_model), (time.time() - start), "runtimes") 
@@ -157,6 +158,6 @@ if __name__ == "__main__":
   bs_trees = int(sys.argv[4])
   cores = int(sys.argv[5])
   
-  run_pargenes_and_extract_trees(dataset, subst_model, starting_trees, bs_trees, cores)
+  run_pargenes_and_extract_trees(dataset, subst_model, starting_trees, bs_trees, cores, restart = False)
 
   

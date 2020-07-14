@@ -11,19 +11,21 @@ import generate_families_with_subsampling
 from run_all_species import SpeciesRunFilter
 import plot_speciesrax
 
-do_run = False
-do_plot = True
+do_run = True
+do_plot = False
 
 plot_mrbayes = False
 launch_mode = "normald"
 cores = 40
-gene_trees = ["raxml-ng"]
-replicates = range(1000, 1050)
+gene_trees = ["true"]
+replicates = range(1000, 1020)
 experiments = []
 #subsample_range = [0.01]
-subsample_range = [0.01, 0.02, 0.05, 0.1, 1.0]
-experiments.append(("ensembl_98_ncrna_primates", "GTR+G", subsample_range))
-experiments.append(("cyano_empirical", "LG+G+I", subsample_range))
+subsample_range = [0.002, 0.001]
+experiments.append(("aa_ensembl_98_ncrna_primates", "WAG", subsample_range))
+experiments.append(("aa_ensembl_98_ncrna_lowprimates", "WAG", subsample_range))
+#experiments.append(("ensembl_98_ncrna_primates", "GTR+G", subsample_range))
+#experiments.append(("cyano_empirical", "LG+G+I", subsample_range))
 plot_metric_names = ["species_unrooted_rf"]
 
 # methods to plot
@@ -111,15 +113,18 @@ def plot_subsampled(initial_dataset, subst_model, subsamples, replicates, metric
 if (do_run):
   run_filter = SpeciesRunFilter()
   run_filter.disable_all()
-  #run_filter.duptree = True
+  run_filter.duptree = True
   #run_filter.njst = True
-  #run_filter.njrax = True
+  run_filter.njrax = True
   run_filter.cherrypro = True
-  #run_filter.cherry = True
-  #run_filter.astralpro = True
+  run_filter.cherry = True
+  run_filter.astralpro = True
   run_filter.starting_gene_trees = gene_trees
+  run_filter.speciesrax = True
+  run_filter.speciesraxprune = True
+  run_filter.speciesraxperfamily = True
   #run_filter.speciesraxperfamily = True
-  #run_filter.stag = True
+  run_filter.stag = True
   #run_filter.generaxselect = True
   run_filter.cleanup = True
   for experiment in experiments:
