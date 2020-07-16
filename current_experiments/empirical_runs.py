@@ -14,29 +14,30 @@ import plot_speciesrax
 do_run = True
 do_plot = False
 launch_mode = "normald"
-cores = 16
+cores = 40
 
 run_filter = SpeciesRunFilter()
 run_filter.disable_all()
-run_filter.pargenes = True
-run_filter.duptree = True
-#run_filter.fasttree = True
+#run_filter.pargenes = True
+#run_filter.duptree = True
+run_filter.fasttree = True
 run_filter.njrax = True
 run_filter.cherry = True
 #run_filter.njst = True
-run_filter.astralpro = True
-run_filter.starting_gene_trees = ["raxml-ng"]
-run_filter.speciesrax = True
-run_filter.speciesraxprune = True
-run_filter.speciesraxperfamily = True
-run_filter.stag = True
+#run_filter.astralpro = True
+#run_filter.starting_gene_trees = ["raxml-ng"]
+#run_filter.speciesrax = True
+#run_filter.speciesraxprune = True
+#run_filter.speciesraxperfamily = True
+#run_filter.stag = True
     
 datasets = []
-dna_model = "GTR+G"
+dna_model = "GTR"
 #datasets.append(("aa_ensembl_98_ncrna_primates", dna_model))
 #datasets.append(("aa_ensembl_98_ncrna_lowprimates", dna_model))
-datasets.append(("aa_ensembl_98_ncrna_mammals", dna_model))
+#datasets.append(("aa_ensembl_98_ncrna_mammals", dna_model))
 #datasets.append(("aa_ensembl_98_ncrna_vertebrates", dna_model))
+datasets.append(("aa_ensembl_98_ncrna_allvertebrates", dna_model))
 #datasets.append(("ensembl_98_ncrna_primates", dna_model))
 #datasets.append(("ensembl_98_ncrna_lowprimates", dna_model))
 #datasets.append(("ensembl_98_ncrna_mammals", dna_model))
