@@ -17,6 +17,7 @@ def init_gene_trees_file(datadir, method, subst_model, output_dir):
   with open(filepath, "w") as writer:
     for family in fam.get_families_list(datadir):
       gene_tree_path = fam.build_gene_tree_path(datadir, subst_model, family, method)
+      print(gene_tree_path)
       tree = ete3.Tree(gene_tree_path)
       for node in tree.traverse("postorder"):
         node.support = 100
@@ -60,7 +61,7 @@ def exec_astralpro(gene_trees_file, mapping_file, output_species_tree_file):
 
 def run_astralpro(datadir, method, subst_model):
   print("Start astral pro script")
-  run_name = "astralpro-" + method
+  run_name = "astralpro_" + method
   output_dir = fam.get_run_dir(datadir, subst_model, run_name + "_run")
   shutil.rmtree(output_dir, True)
   os.makedirs(output_dir)

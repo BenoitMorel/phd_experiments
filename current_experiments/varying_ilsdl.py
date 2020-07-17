@@ -14,7 +14,7 @@ do_plot = True
 cores = 40
 subst_model = "GTR+G"
 launch_mode = "normal"
-replicates = range(4036, 4050)
+replicates = range(4000, 4050)
 gene_trees = ["raxml-ng"]
 varying_params = []
 varying_params += ["none"]
@@ -100,8 +100,9 @@ def run_varying_experiment():
   run_filter.cherry = True
   run_filter.cherrypro = True
   run_filter.speciesraxprune = True
-  run_filter.disable_all()
   run_filter.njrax = True
+  run_filter.disable_all()
+  run_filter.fastmulrfs = True
   run_filter.cleanup = True
   
   # mrbayes!!

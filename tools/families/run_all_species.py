@@ -17,6 +17,7 @@ import run_astrid
 import run_astral_multi
 import run_astral_pro
 import run_fastrfs
+import run_fastmulrfs
 import run_njst  
 import run_njrax
 import run_concatenation
@@ -56,6 +57,7 @@ class SpeciesRunFilter():
     self.stag = True
     self.duptree = True
     self.fastrfs = True
+    self.fastmulrfs = True
     self.njrax = True    
     self.cherry = True    
     self.cherrypro = True    
@@ -68,6 +70,7 @@ class SpeciesRunFilter():
     self.speciesraxparsidl = True
     self.speciesraxprune = True
     self.speciesraxperfamily = True
+    self.speciesraxbench = True
     self.phyldog = True
     self.guenomu = False
     self.analyze = True
@@ -82,6 +85,7 @@ class SpeciesRunFilter():
     self.concatenation_max = False
     self.stag = False
     self.fastrfs = False
+    self.fastmulrfs = False
     self.phyldog = False
     self.duptree = False
     self.njrax = False    
@@ -97,6 +101,7 @@ class SpeciesRunFilter():
     self.speciesraxparsidl = False
     self.speciesraxprune = False
     self.speciesraxperfamily = False
+    self.speciesraxbench = False
     self.guenomu = False
     self.cleanup = False
     #self.analyze = False
@@ -111,6 +116,7 @@ class SpeciesRunFilter():
     self.stag = True
     self.duptree = True
     self.fastrfs = True
+    self.fastmulrfs = True
     self.njrax = True   
     self.cherry = True   
     self.cherrypro = True   
@@ -176,11 +182,12 @@ class SpeciesRunFilter():
       except Exception as exc:
         printFlush("Failed running mrbayes\n" + str(exc))
     if (self.stag):
-      printFlush("Run Stag")
-      try:
-        run_stag.run_stag(datadir, subst_model)
-      except Exception as exc:
-        printFlush("Failed running STAG\n" + str(exc))
+      for gene_tree in self.starting_gene_trees:
+        printFlush("Run Stag")
+        try:
+          run_stag.run_stag(datadir, gene_tree, subst_model)
+        except Exception as exc:
+          printFlush("Failed running STAG\n" + str(exc))
     if (self.duptree):
       printFlush("Run Duptree")
       for gene_tree in self.starting_gene_trees:
@@ -188,12 +195,20 @@ class SpeciesRunFilter():
           run_duptree.run_duptree(datadir, gene_tree, subst_model)
         except Exception as exc:
           printFlush("Failed running DupTree\n" + str(exc))
+    if (self.fastmulrfs):
+      printFlush("Run FastMulRFS")
+      for gene_tree in self.starting_gene_trees:
+        try:
+          run_fastmulrfs.run_fastmulrfs(datadir, gene_tree, subst_model)
+        except Exception as exc:
+          printFlush("Failed running FastMulRFS\n" + str(exc))
     if (self.fastrfs):
       printFlush("Run FastRFS")
-      try:
-        run_fastrfs.run_fastrfs(datadir, subst_model)
-      except Exception as exc:
-        printFlush("Failed running FastRFS\n" + str(exc))
+      for gene_tree in self.starting_gene_trees:
+        try:
+          run_fastrfs.run_fastrfs(datadir, gene_tree, subst_model)
+        except Exception as exc:
+          printFlush("Failed running FastRFS\n" + str(exc))
     if (self.njrax):
       printFlush("Run NJrax")
       for gene_tree in self.starting_gene_trees:
@@ -277,6 +292,17 @@ class SpeciesRunFilter():
           run_speciesrax.run_speciesrax_instance(dataset, gene_tree, True, "speciesrax-prune", subst_model, "HYBRID", cores, ["--prune-species-tree", "--per-family-rates"])
         except Exception as exc:
           printFlush("Failed running speciesrax prune\n" + str(exc))
+      if (self.speciesraxbench):
+        printFlush("Run speciesRaxBench")
+        dataset = os.path.basename(datadir)
+        try:
+          
+          run_speciesrax.run_speciesrax_bench(dataset, "UndatedDTL", "MiniNJ", gene_tree, subst_model, cores)
+          run_speciesrax.run_speciesrax_bench(dataset, "UndatedDTL", "random", gene_tree, subst_model, cores, ["--seed", "1"])
+          run_speciesrax.run_speciesrax_bench(dataset, "UndatedDTL", "random", gene_tree, subst_model, cores, ["--seed", "2"])
+        except Exception as exc:
+          printFlush("Failed running speciesrax bench\n" + str(exc))
+
       if(self.speciesraxperfamily):
         printFlush("Run SpeciesRaxPerFamily")
         try:

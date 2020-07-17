@@ -39,7 +39,7 @@ def init_mappings(datadir, output_mapping_file):
   print("wrote into " + output_mapping_file)
 
 def run_stag(datadir, gene_trees,  subst_model):
-  run_name = "stag-" + gene_trees
+  run_name = "stag_" + gene_trees
   output_dir = fam.get_run_dir(datadir, subst_model, run_name + "_run")
   shutil.rmtree(output_dir, True)
   os.makedirs(output_dir)

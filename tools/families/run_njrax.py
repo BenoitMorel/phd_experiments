@@ -49,7 +49,7 @@ def exec_njrax(algo, gene_trees_file, mapping_file, output_tree):
 
 def run_njrax(datadir, algo, gene_trees, subst_model):
   
-  run_name = "njrax-" + algo + "-" + gene_trees
+  run_name = "njrax-" + algo + "_" + gene_trees
   #if (algo == "CherryPro"):
     #run_name = "TEST"
   output_dir = fam.get_run_dir(datadir, subst_model, run_name + "_run")

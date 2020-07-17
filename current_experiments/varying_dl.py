@@ -16,17 +16,18 @@ cores = 40
 subst_model = "GTR+G"
 gene_trees = ["raxml-ng"]
 launch_mode = "normal"
-replicates = range(3000, 3050)
+replicates = range(2000, 2050)
 varying_params = []
 varying_params += ["none"]
+#varying_params += ["f1000"]
 #varying_params += ["s15", "s50"]
 #varying_params += ["sites100", "sites300"]
 #varying_params += ["f50", "f200"]
 #varying_params += ["d0.5_l0.5", "d3.0_l3.0"]
 #varying_params += ["t0.0", "t3.0"]
 
-tag = "varydtl"
-fixed_point = "ssim_varydtl_s25_f100_sites100_GTR_bl1.0_d1.0_l1.0_t1.0_p0.0_pop10_mu1.0_theta0.0_seed20"
+tag = "varydl"
+fixed_point = "ssim_varydl_s25_f100_sites100_GTR_bl1.0_d1.0_l1.0_t0.0_p0.0_pop10_mu1.0_theta0.0_seed20"
 
 # metric to plot
 metric_names = ["species_unrooted_rf"]
@@ -95,11 +96,13 @@ def run_varying_experiment():
   run_filter.njst = True
   run_filter.cherrypro = True
   run_filter.cherry = True
-  run_filter.speciesraxprune = True
   run_filter.speciesraxperfamily = True
   run_filter.njrax = True
+  run_filter.speciesraxparsidl = True
   run_filter.disable_all()
-  run_filter.fastmulrfs = True 
+ # run_filter.orthogenerax = True
+  run_filter.fastmulrfs = True
+
   # mrbayes!!
   if (False):
     run_filter.mrbayes = True

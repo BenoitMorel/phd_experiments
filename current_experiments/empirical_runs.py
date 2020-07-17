@@ -14,39 +14,46 @@ import plot_speciesrax
 do_run = True
 do_plot = False
 launch_mode = "normald"
-cores = 40
+cores = 36
+
+
+run_inputs_aa = []
+run_inputs_aa.append(("fasttree", "LG"))
+run_inputs_aa.append(("raxml-ng", "LG+G+I"))
+run_inputs_aa.append(("true", "true"))
+
+run_inputs_dna = []
+run_inputs_dna.append(("fasttree", "GTR"))
+run_inputs_dna.append(("raxml-ng", "GTR+G"))
+run_inputs_dna.append(("true", "true"))
 
 run_filter = SpeciesRunFilter()
 run_filter.disable_all()
 #run_filter.pargenes = True
-#run_filter.duptree = True
-run_filter.fasttree = True
+#run_filter.fasttree = True
+run_filter.duptree = True
 run_filter.njrax = True
 run_filter.cherry = True
-#run_filter.njst = True
-#run_filter.astralpro = True
-#run_filter.starting_gene_trees = ["raxml-ng"]
-#run_filter.speciesrax = True
-#run_filter.speciesraxprune = True
-#run_filter.speciesraxperfamily = True
-#run_filter.stag = True
-    
-datasets = []
-dna_model = "GTR"
-#datasets.append(("aa_ensembl_98_ncrna_primates", dna_model))
-#datasets.append(("aa_ensembl_98_ncrna_lowprimates", dna_model))
-#datasets.append(("aa_ensembl_98_ncrna_mammals", dna_model))
-#datasets.append(("aa_ensembl_98_ncrna_vertebrates", dna_model))
-datasets.append(("aa_ensembl_98_ncrna_allvertebrates", dna_model))
-#datasets.append(("ensembl_98_ncrna_primates", dna_model))
-#datasets.append(("ensembl_98_ncrna_lowprimates", dna_model))
-#datasets.append(("ensembl_98_ncrna_mammals", dna_model))
-#datasets.append(("ensembl_98_ncrna_vertebrates", dna_model))
-#datasets.append(("ensembl_98_ncrna_sauropsids", dna_model))
-#datasets.append(("cyano_empirical", "LG+G"))
-#datasets.append(("cyano_empirical", "LG+G+I"))
+run_filter.njst = True
+run_filter.astralpro = True
+run_filter.fastmulrfs = True
+run_filter.speciesraxbench = True
+run_filter.stag = True
+#run_filter.cleanup = False
 
-run_filter.cleanup = True
+datasets = []
+#datasets.append(("aa_ensembl_98_ncrna_primates", run_inputs_dna))
+#datasets.append(("aa_ensembl_98_ncrna_lowprimates", run_inputs_dna))
+datasets.append(("aa_ensembl_98_ncrna_mammals", run_inputs_dna))
+datasets.append(("aa_ensembl_98_ncrna_vertebrates", run_inputs_dna))
+#datasets.append(("aa_ensembl_98_ncrna_allvertebrates", run_inputs_dna))
+#datasets.append(("ensembl_98_ncrna_primates", run_inputs_dna))
+#datasets.append(("ensembl_98_ncrna_lowprimates", run_inputs_dna))
+#datasets.append(("ensembl_98_ncrna_mammals", run_inputs_dna))
+#datasets.append(("ensembl_98_ncrna_vertebrates", run_inputs_dna))
+#datasets.append(("ensembl_98_ncrna_sauropsids", run_inputs_dna))
+#datasets.append(("cyano_empirical", run_inputs_aa))
+
 
 # methods to plot
 methods_tuples = []
@@ -61,9 +68,12 @@ methods_tuples.append(("duptree-raxml-ng", "DupTree"))
 if (do_run):
   for dataset in datasets:
     datadir = fam.get_datadir(dataset[0])
-    subst_model = dataset[1]
-    run_filter.run_reference_methods(datadir, subst_model, cores, launch_mode)
-
+    run_inputs = dataset[1]
+    for run_input in run_inputs:
+      run_filter.starting_gene_trees = [run_input[0]]
+      subst_model = run_input[1]
+      run_filter.run_reference_methods(datadir, subst_model, cores, launch_mode)
+    
 methods = []
 methods_dict = {}
 for t in methods_tuples:

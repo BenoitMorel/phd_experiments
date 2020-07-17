@@ -5,6 +5,29 @@ sys.path.insert(0, 'scripts')
 import experiments as exp
 import fam
 
+
+def run_speciesrax_bench(dataset, rec_model, starting_species_tree, gene_trees, subst_model, cores, additional_args = []):
+  command = []
+  command.append("python")
+  command.append(os.path.join(exp.scripts_root, "generax/launch_speciesrax.py"))
+  command.append(dataset)
+  command.append(subst_model)
+  command.append(starting_species_tree)
+  command.append(gene_trees)
+  command.append("normal")
+  command.append(str(cores))
+  command.append("--rec-model")
+  command.append(rec_model)
+  command.append("--species-strategy")
+  command.append("HYBRID")
+  command.append("--prune-species-tree")
+  command.append("--per-family-rates")
+  for arg in additional_args:
+    command.append(arg)
+  print("-> Running " + " ".join(command))
+  subprocess.check_call(command)
+
+
 def run_speciesrax_instance(dataset, starting_tree, with_transfers, run_name, subst_model, strategy, cores = 40, additional_args = []):
   command = []
   command.append("python")

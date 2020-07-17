@@ -51,15 +51,18 @@ def analyze(datadir):
   print("Unrooted average RF:")
   unrooted_printer = AlignedPrinter()
   for run in trees:
-    tree = trees[run]
-    if (tree == None):
-      continue
-    unrooted_rf_cell = true_tree.robinson_foulds(tree, unrooted_trees=True, correct_by_polytomy_size = True)
-    unrooted_arf = float(unrooted_rf_cell[0]) / float(unrooted_rf_cell[1])
-    if (len(tree) != len(true_tree)):
-      unrooted_arf = 10000000.0
-    saved_metrics.save_metrics(datadir, run, str(unrooted_arf), "species_unrooted_rf") 
-    unrooted_printer.add(run + ":", str(unrooted_arf))
+    try:
+      tree = trees[run]
+      if (tree == None):
+        continue
+      unrooted_rf_cell = true_tree.robinson_foulds(tree, unrooted_trees=True, correct_by_polytomy_size = True)
+      unrooted_arf = float(unrooted_rf_cell[0]) / float(unrooted_rf_cell[1])
+      if (len(tree) != len(true_tree)):
+        unrooted_arf = 10000000.0
+      saved_metrics.save_metrics(datadir, run, str(unrooted_arf), "species_unrooted_rf") 
+      unrooted_printer.add(run + ":", str(unrooted_arf))
+    except:
+      pass
   unrooted_printer.sort_right_float()
   unrooted_printer.display()
     

@@ -49,7 +49,7 @@ def exec_duptree(gene_trees_file, output_dir):
   return res.split("\n")[-3]
 
 def run_duptree(datadir, gene_trees, subst_model):
-  run_name = "duptree-" + gene_trees
+  run_name = "duptree_" + gene_trees
   output_dir = fam.get_run_dir(datadir, subst_model, run_name + "_run")
   shutil.rmtree(output_dir, True)
   os.makedirs(output_dir)

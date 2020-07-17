@@ -13,6 +13,7 @@ import saved_metrics
 import get_dico
 import run_astral_multi as astral
 import run_duptree
+import species_analyze
 
 def init_gene_trees_file(datadir, gene_trees, subst_model, output_dir):
   
@@ -56,14 +57,14 @@ def exec_fastmulrfs(gene_trees_file, output_prefix):
   subprocess.check_call(command)
   #subprocess.check_call(command, stdout=FNULL, stderr=FNULL)
 
-def extract_species_trees(datadir, gene_trees, subst_model, output_prefix, method):
+def extract_species_trees(datadir, subst_model, output_prefix, method, sub_run_name):
   greedy = output_prefix + "." + method
-  greedy_out = fam.get_species_tree(datadir, subst_model, "fastmulrfs-" + gene_trees + "_" + method)
+  greedy_out = fam.get_species_tree(datadir, subst_model, sub_run_name)
   shutil.copyfile(greedy, greedy_out)
-
+  print(greedy_out)
 
 def run_fastmulrfs(datadir, gene_trees, subst_model):
-  run_name = "fastmulrfs-" + gene_trees
+  run_name = "fastmulrfs_" + gene_trees
   output_dir = fam.get_run_dir(datadir, subst_model, run_name + "_run")
   shutil.rmtree(output_dir, True)
   os.makedirs(output_dir)
@@ -73,14 +74,16 @@ def run_fastmulrfs(datadir, gene_trees, subst_model):
   exec_fastmulrfs(gene_trees_file, prefix)
   time1 = (time.time() - start)
   for method in ["greedy", "single", "strict", "majority"]:
-    saved_metrics.save_metrics(datadir, fam.get_run_name("fastmulrfs_" + method, subst_model), time1, "runtimes") 
-    extract_species_trees(datadir, gene_trees, subst_model, prefix, method)
+    sub_run_name = run_name.replace("fastmulrfs", "fastmulrfs-" + method)
+    saved_metrics.save_metrics(datadir, fam.get_run_name(sub_run_name, subst_model), time1, "runtimes") 
+    extract_species_trees(datadir, subst_model, prefix, method, sub_run_name)
 
 if (__name__ == "__main__"):
   if (len(sys.argv) != 4):
     print("Syntax python run_fastmulrfs.py datadir gene_trees subst_model")
     sys.exit(1)
   run_fastmulrfs(sys.argv[1], sys.argv[2], sys.argv[3])
+  species_analyze.analyze(sys.argv[1])
   
 
 
