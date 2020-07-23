@@ -98,8 +98,11 @@ def run_varying_experiment():
   run_filter.speciesraxprune = True
   run_filter.speciesraxperfamily = True
   run_filter.njrax = True
-  run_filter.disable_all()
   run_filter.fastmulrfs = True 
+  run_filter.disable_all()
+  #run_filter.speciesraxbench = True
+  run_filter.speciesraxperfamily = True
+  run_filter.speciesraxprune = True
   # mrbayes!!
   if (False):
     run_filter.mrbayes = True

@@ -121,6 +121,7 @@ def extract_trees(datadir, results_family_dir, run_name, subst_model):
   print("extracted tree " + dest)
   shutil.copyfile(src, dest)
   #
+  return
   results_dir = os.path.join(results_family_dir, "results")
   for family in fam.get_families_list(datadir):
     source = os.path.join(results_dir, family, "geneTree.newick")
@@ -148,6 +149,10 @@ def analyze_species_results(datadir, resultsdir):
   print("Inferred species tree:")
   print("  Rooted RF: " + str(av_rf(inferred_rooted_rf)))
   print("  Unrooted RF: " + str(av_rf(inferred_unrooted_rf)))
+
+def cleanup(resultsdir):
+  reconciliations = os.path.join(resultsdir, "generax", "reconciliations")
+  shutil.rmtree(reconciliations)
 
 def run(dataset, subst_model, starting_species_tree, starting_gene_tree, cores, additional_arguments, resultsdir, do_analyze = True, do_extract = True):
   run_name = exp.getAndDelete("--run", additional_arguments, None) 
@@ -194,7 +199,7 @@ def run(dataset, subst_model, starting_species_tree, starting_gene_tree, cores, 
       fast_rf_cells.analyze(datadir, "all", cores, run_name)
   except:
     print("Analyze failed!!!!")
-
+  cleanup(resultsdir)
   print("Output in " + resultsdir)
 
 def launch(dataset, subst_model, starting_species_tree, starting_gene_tree, cluster, cores, additional_arguments):

@@ -102,6 +102,8 @@ def run_varying_experiment():
   run_filter.disable_all()
  # run_filter.orthogenerax = True
   run_filter.fastmulrfs = True
+  run_filter.disable_all()
+  run_filter.speciesraxbench = True
 
   # mrbayes!!
   if (False):

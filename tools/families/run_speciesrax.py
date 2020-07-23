@@ -22,6 +22,7 @@ def run_speciesrax_bench(dataset, rec_model, starting_species_tree, gene_trees, 
   command.append("HYBRID")
   command.append("--prune-species-tree")
   command.append("--per-family-rates")
+  command.append("--do-not-reconcile")
   for arg in additional_args:
     command.append(arg)
   print("-> Running " + " ".join(command))
