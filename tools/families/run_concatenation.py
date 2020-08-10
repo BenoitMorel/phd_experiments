@@ -58,12 +58,16 @@ def build_supermatrix(datadir, subst_model, supermatrix_path, partition_path, co
       offset += seq_len
       if (not use_all_genes):
         break
+  partition_writer.close()
   print("Writing the supermatrix...")
   supermatrix = ete3.SeqGroup()
   print("Number of partitions:" + str(len(columns[all_species[0]])))
+  print("Number of sites: " + str(offset))
   for species in all_species:
+    print("Add " + species + " to supermatrix...")
     supermatrix.set_seq(species, "".join(columns[species]))
-  supermatrix.write("fasta", supermatrix_path)
+  supermatrix.write("phylip_relaxed", supermatrix_path)
+  print("End of writing the supermatrix")
   return offset
 
 def run_raxml(subst_model, cores, run_dir, supermatrix_path, partition_path):

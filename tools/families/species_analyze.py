@@ -55,6 +55,9 @@ def analyze(datadir):
       tree = trees[run]
       if (tree == None):
         continue
+      if (len(tree.children) == 3):
+        tree.set_outgroup(tree.children[0])
+        print("reroot")
       unrooted_rf_cell = true_tree.robinson_foulds(tree, unrooted_trees=True, correct_by_polytomy_size = True)
       unrooted_arf = float(unrooted_rf_cell[0]) / float(unrooted_rf_cell[1])
       if (len(tree) != len(true_tree)):

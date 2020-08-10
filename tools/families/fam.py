@@ -78,6 +78,8 @@ def get_species_tree(datadir, subst_model= None, method = "true"):
     return "Cherry"
   elif (method == "CherryPro"):
     return "CherryPro"
+  elif (method == "Clades"):
+    return "Clades"
   if (method == "true"):
     return os.path.join(get_species_dir(datadir), "speciesTree.newick")
   if (subst_model != None):

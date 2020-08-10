@@ -75,7 +75,8 @@ class SpeciesRunFilter():
     self.guenomu = False
     self.analyze = True
     self.cleanup = False
-  
+    self.verbose = False
+
   def disable_all(self):
     self.pargenes = False
     self.fasttree = False
@@ -161,10 +162,11 @@ class SpeciesRunFilter():
       os.makedirs(os.path.join(datadir, "runs"))
     except:
       pass
-    redirected_file = os.path.join(datadir, "runs", "logs_run_all_species." + subst_model + ".txt")
-    print("Redirected logs to " + redirected_file)
-    sys.stdout.flush()
-    sys.stdout = open(redirected_file, "w")
+    if (not self.verbose):
+      redirected_file = os.path.join(datadir, "runs", "logs_run_all_species." + subst_model + ".txt")
+      print("Redirected logs to " + redirected_file)
+      sys.stdout.flush()
+      sys.stdout = open(redirected_file, "w")
     if (self.pargenes and subst_model != "true"):
       printFlush("Run pargenes...")
       sys.stdout.flush()

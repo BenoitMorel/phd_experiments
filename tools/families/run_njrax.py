@@ -45,7 +45,7 @@ def exec_njrax(algo, gene_trees_file, mapping_file, output_tree):
   command.append(output_tree)
   print(" ".join(command))
   subprocess.check_call(command)
-    
+  print(open(output_tree).read())  
 
 def run_njrax(datadir, algo, gene_trees, subst_model):
   
@@ -79,6 +79,6 @@ if (__name__== "__main__"):
   gene_trees = sys.argv[3]
   subst_model = sys.argv[4] 
   run_njrax(datadir, algo, gene_trees, subst_model)
-  species_analyze.analyze(datadir)
+  #species_analyze.analyze(datadir)
 
 

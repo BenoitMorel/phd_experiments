@@ -23,9 +23,9 @@ run_inputs_aa.append(("true", "true"))
 run_inputs_aa.append(("raxml-ng", "LG+G+I"))
 
 run_inputs_dna = []
-run_inputs_dna.append(("fasttree", "GTR"))
+#run_inputs_dna.append(("fasttree", "GTR"))
 run_inputs_dna.append(("true", "true"))
-run_inputs_dna.append(("raxml-ng", "GTR+G"))
+#run_inputs_dna.append(("raxml-ng", "GTR+G"))
 
 run_filter = SpeciesRunFilter()
 #run_filter.pargenes = True
@@ -42,10 +42,10 @@ run_filter.speciesraxbench = True
 #run_filter.cleanup = False
 
 datasets = []
-datasets.append(("aa_ensembl_98_ncrna_primates", run_inputs_dna))
-datasets.append(("aa_ensembl_98_ncrna_mammals", run_inputs_dna))
-datasets.append(("aa_ensembl_98_ncrna_vertebrates", run_inputs_dna))
-datasets.append(("aa_ensembl_98_ncrna_lowprimates", run_inputs_dna))
+#datasets.append(("aa_ensembl_98_ncrna_primates", run_inputs_dna))
+#datasets.append(("aa_ensembl_98_ncrna_mammals", run_inputs_dna))
+#datasets.append(("aa_ensembl_98_ncrna_vertebrates", run_inputs_dna))
+#datasets.append(("aa_ensembl_98_ncrna_lowprimates", run_inputs_dna))
 datasets.append(("aa_ensembl_98_ncrna_allvertebrates", run_inputs_dna))
 #datasets.append(("ensembl_98_ncrna_primates", run_inputs_dna))
 #datasets.append(("ensembl_98_ncrna_lowprimates", run_inputs_dna))

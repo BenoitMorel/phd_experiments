@@ -14,7 +14,7 @@ def run_speciesrax_bench(dataset, rec_model, starting_species_tree, gene_trees, 
   command.append(subst_model)
   command.append(starting_species_tree)
   command.append(gene_trees)
-  command.append("normal")
+  command.append("normald")
   command.append(str(cores))
   command.append("--rec-model")
   command.append(rec_model)
@@ -22,6 +22,7 @@ def run_speciesrax_bench(dataset, rec_model, starting_species_tree, gene_trees, 
   command.append("HYBRID")
   command.append("--prune-species-tree")
   command.append("--per-family-rates")
+  command.append("--skip-family-filtering")
   command.append("--do-not-reconcile")
   for arg in additional_args:
     command.append(arg)
@@ -38,7 +39,7 @@ def run_speciesrax_instance(dataset, starting_tree, with_transfers, run_name, su
   command.append("random")
   #command.append("random")
   command.append(starting_tree)
-  command.append("normal")
+  command.append("normald")
   command.append(str(cores))
   if (with_transfers == 2):
     command.append("--rec-model")
@@ -53,6 +54,7 @@ def run_speciesrax_instance(dataset, starting_tree, with_transfers, run_name, su
   command.append(strategy)
   for arg in additional_args:
     command.append(arg)
+  command.append("--skip-family-filtering")
   command.append("--run")
   command.append(fam.get_run_name(run_name, subst_model))
   print("-> Running " + " ".join(command))

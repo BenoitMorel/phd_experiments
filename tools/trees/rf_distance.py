@@ -11,6 +11,11 @@ def str_4(ll):
   return "{0:.4f}".format(ll)
 
 def ete3_rf(tree1, tree2, unrooted = True):
+  if (len(tree2.children) == 3):
+    tree2.set_outgroup(tree2.children[0])
+  if (len(tree1.children) == 3):
+    tree1.set_outgroup(tree1.children[0])
+
   return tree1.robinson_foulds(tree2, unrooted_trees=unrooted, skip_large_polytomies = True, correct_by_polytomy_size = True)
 
 def ete3_average_rf_from_list(tree_list_1, tree_list_2, rooted):
