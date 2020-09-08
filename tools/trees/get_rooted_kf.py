@@ -26,6 +26,5 @@ if __name__ == '__main__':
         sys.exit(1)
     tree1 = sys.argv[1]
     tree2 = sys.argv[2]
-    for i in range(0, 10):
-      get_rooted_kf(tree1, tree2)
+    get_rooted_kf(tree1, tree2)
     
