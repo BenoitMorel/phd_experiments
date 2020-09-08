@@ -19,6 +19,7 @@ tools_root = os.path.join(root, "tools")
 rf_distance_tool = os.path.join(tools_root, "trees", "rf_distance.py")
 rf_cells_tool = os.path.join(tools_root, "families", "rf_cells.py")
 treedist_R_script = os.path.join(tools_root, "families", "treedist.R")
+getrootedkf_R_script = os.path.join(tools_root, "families", "get_rooted_kf.R")
 
 # programs
 programs_root = os.path.join(root, "programs")
