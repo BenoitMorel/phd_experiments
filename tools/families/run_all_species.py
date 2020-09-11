@@ -144,17 +144,17 @@ class SpeciesRunFilter():
 
 
   def run_reference_methods(self, datadir, subst_model, cores, launch_mode = "normal"):
+    if (self.generate):
+      if (not os.path.isdir(datadir)):
+        dataset = os.path.basename(datadir)
+        fam_data.generate_dataset(dataset)
+
     if (launch_mode != "normal"):
       self.launch_reference_methods(datadir, subst_model, cores, launch_mode)
       return
     print("*************************************")
     print("Run tested species inference tools for dataset " + datadir)
     print("*************************************")
-    if (self.generate):
-      if (not os.path.isdir(datadir)):
-        dataset = os.path.basename(datadir)
-        fam_data.generate_dataset(dataset)
-
     if (len(datadir.split("/")) == 1):
       datadir = fam.get_datadir(datadir) 
     save_sdtout = sys.stdout
@@ -299,9 +299,10 @@ class SpeciesRunFilter():
         dataset = os.path.basename(datadir)
         try:
           
-          run_speciesrax.run_speciesrax_bench(dataset, "UndatedDTL", "MiniNJ", gene_tree, subst_model, cores)
-          run_speciesrax.run_speciesrax_bench(dataset, "UndatedDTL", "random", gene_tree, subst_model, cores, ["--seed", "1"])
-          run_speciesrax.run_speciesrax_bench(dataset, "UndatedDTL", "random", gene_tree, subst_model, cores, ["--seed", "2"])
+          run_speciesrax.run_speciesrax_bench(dataset, "UndatedDTL", True, "MiniNJ", gene_tree, subst_model, cores)
+          run_speciesrax.run_speciesrax_bench(dataset, "UndatedDTL", True, "random", gene_tree, subst_model, cores, ["--seed", "1"])
+          run_speciesrax.run_speciesrax_bench(dataset, "UndatedDTL", False, "MiniNJ", gene_tree, subst_model, cores)
+          run_speciesrax.run_speciesrax_bench(dataset, "UndatedDTL", False, "random", gene_tree, subst_model, cores, ["--seed", "1"])
         except Exception as exc:
           printFlush("Failed running speciesrax bench\n" + str(exc))
 

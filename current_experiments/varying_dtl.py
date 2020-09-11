@@ -19,11 +19,11 @@ launch_mode = "normald"
 replicates = range(3000, 3050)
 varying_params = []
 varying_params += ["none"]
-#varying_params += ["s15", "s50"]
-#varying_params += ["sites100", "sites300"]
-#varying_params += ["f50", "f200"]
-#varying_params += ["d0.5_l0.5", "d3.0_l3.0"]
-#varying_params += ["t0.0", "t3.0"]
+varying_params += ["s15", "s35", "s50"]
+varying_params += ["d0.5_l0.5", "d3.0_l3.0"]
+varying_params += ["t2.0", "t3.0"]
+varying_params += ["sites50", "sites200", "sites500"]
+varying_params += ["f50", "f300", "f1000"]
 
 tag = "varydtl"
 fixed_point = "ssim_varydtl_s25_f100_sites100_GTR_bl1.0_d1.0_l1.0_t1.0_p0.0_pop10_mu1.0_theta0.0_seed20"
@@ -95,11 +95,11 @@ def run_varying_experiment():
   run_filter.njst = True
   run_filter.cherrypro = True
   run_filter.cherry = True
-  run_filter.speciesraxprune = True
-  run_filter.speciesraxperfamily = True
+  #run_filter.speciesraxprune = True
+  #run_filter.speciesraxperfamily = True
   run_filter.njrax = True
   run_filter.fastmulrfs = True 
-  run_filter.disable_all()
+  #run_filter.disable_all()
   run_filter.speciesraxbench = True
   #run_filter.speciesraxperfamily = True
   #run_filter.speciesraxprune = True

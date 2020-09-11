@@ -6,7 +6,7 @@ import experiments as exp
 import fam
 
 
-def run_speciesrax_bench(dataset, rec_model, starting_species_tree, gene_trees, subst_model, cores, additional_args = []):
+def run_speciesrax_bench(dataset, rec_model, prune, starting_species_tree, gene_trees, subst_model, cores, additional_args = []):
   command = []
   command.append("python")
   command.append(os.path.join(exp.scripts_root, "generax/launch_speciesrax.py"))
@@ -18,9 +18,8 @@ def run_speciesrax_bench(dataset, rec_model, starting_species_tree, gene_trees, 
   command.append(str(cores))
   command.append("--rec-model")
   command.append(rec_model)
-  command.append("--species-strategy")
-  command.append("HYBRID")
-  command.append("--prune-species-tree")
+  if (prune):
+    command.append("--prune-species-tree")
   command.append("--per-family-rates")
   command.append("--skip-family-filtering")
   command.append("--do-not-reconcile")
