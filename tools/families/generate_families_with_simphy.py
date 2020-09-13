@@ -1,3 +1,4 @@
+import math
 import os
 import sys
 import subprocess
@@ -43,10 +44,19 @@ def build_config_file(parameters, output_dir):
     writer.write("-st ln:21.25,0.2\n")
     # substitution rate
     writer.write("-su ln:-21.9," + str(0.1 * parameters.bl) + "\n")
-    # L, D, T rates 
-    writer.write("-ld f:" + str(0.00000000049 * parameters.loss_rate) + "\n")
-    writer.write("-lb f:" + str(0.00000000049 * parameters.dup_rate) + "\n")
-    writer.write("-lt f:" + str(0.00000000049 * parameters.transfer_rate) +"\n")
+    # L, D, T global rates 
+    loss_freq = 0.00000000049 * parameters.loss_rate
+    dup_freq = 0.00000000049 * parameters.dup_rate
+    transfer_freq = 0.00000000049 * parameters.transfer_rate
+    writer.write("-gd f:" + str(loss_freq) + "\n")
+    writer.write("-gb f:" + str(dup_freq) + "\n")
+    writer.write("-gt f:" + str(transfer_freq) +"\n")
+    lognormal_scale = 1.0
+    lognormal_location = math.log(1.0 - 0.5 * pow(lognormal_scale, 2.0))
+    # L, D, T per family rates
+    writer.write("-ld sl:" + str(lognormal_location) + "," + str(lognormal_scale) + ",gd")
+    writer.write("-lb sl:" + str(lognormal_location) + "," + str(lognormal_scale) + ",gb")
+    writer.write("-lt sl:" + str(lognormal_location) + "," + str(lognormal_scale) + ",gt")
 
     writer.write("// POPULATION\n")
     writer.write("-SP f:" + str(parameters.population) + "\n")

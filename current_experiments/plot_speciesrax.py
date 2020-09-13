@@ -119,8 +119,8 @@ def get_relevant_datasets(datasets, param, fixed_params_values):
         continue
       value = fam_data.get_param_from_dataset_name(fixed_param, dataset)
       if (value != fixed_params_values[fixed_param]):
-        print("get param from " + fixed_param + " " + dataset + ": " + value)
-        print (str(fixed_param) + " " + str(value) + " " + str(fixed_params_values[fixed_param]))
+        #print("get param from " + fixed_param + " " + dataset + ": " + value)
+        #print (str(fixed_param) + " " + str(value) + " " + str(fixed_params_values[fixed_param]))
         ok = False
         break
     if (ok):
@@ -132,7 +132,7 @@ def merge_datasets_per_seed(datasets):
   for dataset in datasets:
     key = fam.get_first_dataset_starting_with(dataset.split("seed")[0])
     #key = fam.get_datadir(dataset)
-    print(key)
+    #print(key)
     if (not key in grouped_datasets):
       grouped_datasets[key] = []
     grouped_datasets[key].append(dataset)

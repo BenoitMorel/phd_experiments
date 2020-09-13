@@ -158,7 +158,7 @@ def run(dataset, subst_model, strategy, species_tree, starting_tree, cores, addi
   return resultsdir
 
 def launch(dataset, subst_model, strategy, species_tree, starting_tree, cluster, cores, additional_arguments):
-  command = ["python"]
+  command = ["python3"]
   command.extend(sys.argv)
   command.append("--exprun")
   resultsdir = os.path.join("GeneRax", dataset, strategy + "_" + species_tree +  "_start_" + starting_tree, "run")

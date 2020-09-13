@@ -23,7 +23,7 @@ def get_metrics_methods(dataset_dir, metric_name):
     with open(os.path.join(dataset_dir, "metrics", metric_name + ".txt")) as writer:
       for line in writer.readlines():
         split = line.split(" : ")
-        methods.append(split[0])
+        methods.append(split[0].lower())
   except:
     pass
   return methods

@@ -10,20 +10,21 @@ from run_all_species import SpeciesRunFilter
 import plot_speciesrax
 
 do_run = True
-do_plot = False
+do_plot = not do_run
 datasets = []
 cores = 40
 subst_model = "GTR+G"
 gene_trees = ["raxml-ng"]
 launch_mode = "normald"
-replicates = range(3000, 3050)
+replicates = range(3000, 3010)
 varying_params = []
+
 varying_params += ["none"]
-varying_params += ["s15", "s35", "s50"]
-varying_params += ["d0.5_l0.5", "d3.0_l3.0"]
-varying_params += ["t2.0", "t3.0"]
-varying_params += ["sites50", "sites200", "sites500"]
-varying_params += ["f50", "f300", "f1000"]
+#varying_params += ["s15", "s35", "s50"]
+#varying_params += ["d0.5_l0.5", "d3.0_l3.0"]
+#varying_params += ["t2.0", "t3.0"]
+#varying_params += ["sites50", "sites200", "sites500"]
+#varying_params += ["f50", "f300", "f1000"]
 
 tag = "varydtl"
 fixed_point = "ssim_varydtl_s25_f100_sites100_GTR_bl1.0_d1.0_l1.0_t1.0_p0.0_pop10_mu1.0_theta0.0_seed20"
@@ -33,21 +34,22 @@ metric_names = ["species_unrooted_rf"]
 
 # methods to plot
 methods_tuples = []
-methods_tuples.append(("speciesrax-dtl-raxml-perfam-hybrid", "SpeciesRax"))
-methods_tuples.append(("astralpro-raxml-ng", "Astral-Pro"))
-methods_tuples.append(("njrax-mininj-raxml-ng", "MiniNJ"))
+methods_tuples.append(("generax-mininj-fam_raxml-ng", "SpeciesRaxMini"))
+methods_tuples.append(("generax-random1-fam_raxml-ng", "SpeciesRaxRand"))
+methods_tuples.append(("astralpro_raxml-ng", "Astral-Pro"))
+methods_tuples.append(("njrax-mininj_raxml-ng", "MiniNJ"))
 #methods_tuples.append(("njrax-wmininj-raxml-ng", "WMiniNJ"))
-methods_tuples.append(("njrax-cherry-raxml-ng", "CherryMerging"))
+#methods_tuples.append(("njrax-cherry-raxml-ng", "CherryMerging"))
 #methods_tuples.append(("njrax-njst-raxml-ng", "NJst"))
 #methods_tuples.append(("njrax-ustar-raxml-ng", "USTAR-NJ"))
-methods_tuples.append(("njrax-cherrypro-raxml-ng", "CherryMergingPro"))
+#methods_tuples.append(("njrax-cherrypro-raxml-ng", "CherryMergingPro"))
 #methods_tuples.append(("duptree", "DupTree"))
   
 params_to_plot = ["species", "sites", "dup_rate", "families", "transfer_rate"]
 fixed_params_values = {}
-fixed_params_values["species"] = "30"
+fixed_params_values["species"] = "25"
 fixed_params_values["families"] = "100"
-fixed_params_values["sites"] = "200"
+fixed_params_values["sites"] = "100"
 fixed_params_values["tag"] = tag
 fixed_params_values["dup_rate"] = "1.0"
 fixed_params_values["transfer_rate"] = "1.0"
