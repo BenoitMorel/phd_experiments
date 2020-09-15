@@ -46,16 +46,16 @@ def build_config_file(parameters, output_dir):
     # substitution rate
     writer.write("-su ln:-21.9," + str(0.1 * parameters.bl) + "\n")
     # L, D, T global rates 
-    loss_freq = 0.00000000049 * parameters.loss_rate
-    dup_freq = 0.00000000049 * parameters.dup_rate
-    transfer_freq = 0.0000000049 * parameters.transfer_rate
+    lognormal_scale = 1.0
+    lognormal_location = 0.0 #math.log(1.0 - 0.5 * pow(lognormal_scale, 2.0))
+    lognormal_mean = math.exp((lognormal_location + pow(lognormal_scale, 2.0)) / 2.0)
+    loss_freq = 0.00000000049 * parameters.loss_rate / lognormal_mean
+    dup_freq = 0.00000000049 * parameters.dup_rate / lognormal_mean
+    transfer_freq = 0.0000000049 * parameters.transfer_rate / lognormal_mean
     assert(loss_freq == dup_freq)
     writer.write("-gd f:" + str(loss_freq) + "\n")
     writer.write("-gb f:" + str(dup_freq) + "\n")
     writer.write("-gt f:" + str(transfer_freq) +"\n")
-    lognormal_scale = 1.0
-    lognormal_location = 0.0 #math.log(1.0 - 0.5 * pow(lognormal_scale, 2.0))
-    lognormal_mean = math.exp((lognormal_location + pow(lognormal_scale, 2.0)) / 2.0)
 
     # L, D, T per family rates
     writer.write("-ld sl:" + str(lognormal_location) + "," + str(lognormal_scale) + ",gd\n")
