@@ -16,7 +16,7 @@ cores = 40
 subst_model = "GTR+G"
 gene_trees = ["raxml-ng"]
 launch_mode = "normald"
-replicates = range(3000, 3010)
+replicates = range(3000, 3001)
 varying_params = []
 
 varying_params += ["none"]
@@ -106,6 +106,8 @@ def run_varying_experiment():
   #run_filter.speciesraxperfamily = True
   #run_filter.speciesraxprune = True
   run_filter.verbose = True
+  run_filter.disable_all()
+  run_filter.generate = True
   # mrbayes!!
   if (False):
     run_filter.mrbayes = True

@@ -29,6 +29,7 @@ class SimphyParameters():
     self.sites = 50
     self.model = "GTR"
     self.seed = 42
+    self.distance_hgt = True
 
 def build_config_file(parameters, output_dir):
   config_file = os.path.join(output_dir, "simphy_config.txt")
@@ -47,16 +48,29 @@ def build_config_file(parameters, output_dir):
     # L, D, T global rates 
     loss_freq = 0.00000000049 * parameters.loss_rate
     dup_freq = 0.00000000049 * parameters.dup_rate
-    transfer_freq = 0.00000000049 * parameters.transfer_rate
+    transfer_freq = 0.0000000049 * parameters.transfer_rate
+    assert(loss_freq == dup_freq)
     writer.write("-gd f:" + str(loss_freq) + "\n")
     writer.write("-gb f:" + str(dup_freq) + "\n")
     writer.write("-gt f:" + str(transfer_freq) +"\n")
     lognormal_scale = 1.0
-    lognormal_location = math.log(1.0 - 0.5 * pow(lognormal_scale, 2.0))
+    lognormal_location = 0.0 #math.log(1.0 - 0.5 * pow(lognormal_scale, 2.0))
+    lognormal_mean = math.exp((lognormal_location + pow(lognormal_scale, 2.0)) / 2.0)
+    print("HEY " + str(lognormal_mean))
+
     # L, D, T per family rates
-    writer.write("-ld sl:" + str(lognormal_location) + "," + str(lognormal_scale) + ",gd")
-    writer.write("-lb sl:" + str(lognormal_location) + "," + str(lognormal_scale) + ",gb")
-    writer.write("-lt sl:" + str(lognormal_location) + "," + str(lognormal_scale) + ",gt")
+    writer.write("-ld sl:" + str(lognormal_location) + "," + str(lognormal_scale) + ",gd\n")
+    #writer.write("-lb f:ld\n")
+    writer.write("-lt sl:" + str(lognormal_location) + "," + str(lognormal_scale) + ",gd\n")
+    #writer.write("-lt f:ld\n")
+    
+    lk = 0
+    if (parameters.distance_hgt):
+        lk = 1
+    writer.write("-lk " + str(lk) + "\n")
+    
+    #writer.write("-lb sl:" + str(lognormal_location) + "," + str(lognormal_scale) + ",gb\n")
+    #writer.write("-lt sl:" + str(lognormal_location) + "," + str(lognormal_scale) + ",gt\n")
 
     writer.write("// POPULATION\n")
     writer.write("-SP f:" + str(parameters.population) + "\n")
