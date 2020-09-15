@@ -16,7 +16,7 @@ cores = 40
 subst_model = "GTR+G"
 gene_trees = ["raxml-ng"]
 launch_mode = "normald"
-replicates = range(3000, 3001)
+replicates = range(3000, 3015)
 varying_params = []
 
 varying_params += ["none"]
@@ -26,8 +26,8 @@ varying_params += ["none"]
 #varying_params += ["sites50", "sites200", "sites500"]
 #varying_params += ["f50", "f300", "f1000"]
 
-tag = "varydtl"
-fixed_point = "ssim_varydtl_s25_f100_sites100_GTR_bl1.0_d1.0_l1.0_t1.0_p0.0_pop10_mu1.0_theta0.0_seed20"
+tag = "varydtlunif"
+fixed_point = "ssim_" + tag + "_s25_f100_sites200_GTR_bl1.0_d1.0_l1.0_t0.5_p0.0_pop10_mu1.0_theta0.0_seed20"
 
 # metric to plot
 metric_names = ["species_unrooted_rf"]
@@ -106,8 +106,7 @@ def run_varying_experiment():
   #run_filter.speciesraxperfamily = True
   #run_filter.speciesraxprune = True
   run_filter.verbose = True
-  run_filter.disable_all()
-  run_filter.generate = True
+  run_filter.cleanup = True
   # mrbayes!!
   if (False):
     run_filter.mrbayes = True
@@ -117,7 +116,9 @@ def run_varying_experiment():
     run_filter.mb_generations = 500000
     mb_trees = run_filter.mb_generations * run_filter.mb_runs / (run_filter.mb_frequencies)
     run_filter.mb_burnin = mb_trees / 10
-  run_filter.cleanup = True
+  
+  run_filter.disable_all()
+  run_filter.generate = True
   
   datasets = get_dataset_list(fixed_point, varying_params, replicates)
   run_species_methods(datasets, subst_model, cores, run_filter, launch_mode)
