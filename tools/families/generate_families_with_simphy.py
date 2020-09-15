@@ -21,7 +21,7 @@ class SimphyParameters():
     self.population = 10000
     self.speciations_per_year = 0.000000005
     self.species_taxa = 25
-    self.families_number = 100
+    self.families_number = 200
     self.bl = 1.0    
     self.loss_rate = 1.0
     self.dup_rate = 1.0
@@ -29,6 +29,7 @@ class SimphyParameters():
     self.sites = 50
     self.model = "GTR"
     self.seed = 42
+    self.distance_hgt = False
 
 def build_config_file(parameters, output_dir):
   config_file = os.path.join(output_dir, "simphy_config.txt")
@@ -45,18 +46,30 @@ def build_config_file(parameters, output_dir):
     # substitution rate
     writer.write("-su ln:-21.9," + str(0.1 * parameters.bl) + "\n")
     # L, D, T global rates 
-    loss_freq = 0.00000000049 * parameters.loss_rate
-    dup_freq = 0.00000000049 * parameters.dup_rate
-    transfer_freq = 0.00000000049 * parameters.transfer_rate
+    lognormal_scale = 1.0
+    lognormal_location = 0.0 #math.log(1.0 - 0.5 * pow(lognormal_scale, 2.0))
+    lognormal_mean = math.exp((lognormal_location + pow(lognormal_scale, 2.0)) / 2.0)
+    loss_freq = 0.00000000049 * parameters.loss_rate / lognormal_mean
+    dup_freq = 0.00000000049 * parameters.dup_rate / lognormal_mean
+    transfer_freq = 0.0000000049 * parameters.transfer_rate / lognormal_mean
+    assert(loss_freq == dup_freq)
     writer.write("-gd f:" + str(loss_freq) + "\n")
     writer.write("-gb f:" + str(dup_freq) + "\n")
     writer.write("-gt f:" + str(transfer_freq) +"\n")
-    lognormal_scale = 1.0
-    lognormal_location = math.log(1.0 - 0.5 * pow(lognormal_scale, 2.0))
+
     # L, D, T per family rates
-    writer.write("-ld sl:" + str(lognormal_location) + "," + str(lognormal_scale) + ",gd")
-    writer.write("-lb sl:" + str(lognormal_location) + "," + str(lognormal_scale) + ",gb")
-    writer.write("-lt sl:" + str(lognormal_location) + "," + str(lognormal_scale) + ",gt")
+    writer.write("-ld sl:" + str(lognormal_location) + "," + str(lognormal_scale) + ",gd\n")
+    writer.write("-lb f:ld\n")
+    writer.write("-lt sl:" + str(lognormal_location) + "," + str(lognormal_scale) + ",gt\n")
+    #writer.write("-lt f:ld\n")
+    
+    lk = 0
+    if (parameters.distance_hgt):
+        lk = 1
+    writer.write("-lk " + str(lk) + "\n")
+    
+    #writer.write("-lb sl:" + str(lognormal_location) + "," + str(lognormal_scale) + ",gb\n")
+    #writer.write("-lt sl:" + str(lognormal_location) + "," + str(lognormal_scale) + ",gt\n")
 
     writer.write("// POPULATION\n")
     writer.write("-SP f:" + str(parameters.population) + "\n")
@@ -216,21 +229,29 @@ def get_output_dir(parameters, root_output):
   res += "_pop" + str(parameters.population)
   res += "_mu" + str(parameters.mu)
   res += "_theta" + str(parameters.theta)
+  """
+  res += "_hgt" 
+  if (parameters.distance_hgt):
+    res += "dist"
+  else:
+    res += "unif"
+  """
   res += "_seed" + str(parameters.seed)
   return os.path.join(root_output, res)
 
 def compute_and_write_discordance_rate(parameters, output_dir):
   d = 0.0
-  if (parameters.dup_rate == 0.0 and parameters.transfer_rate == 0.0):
-    d = discordance_rate.get_discordance_rate(output_dir)
-  else:
-    no_dtl_parameters = copy.deepcopy(parameters) 
-    no_dtl_parameters.dup_rate = 0.0
-    no_dtl_parameters.loss_rate = 0.0
-    no_dtl_parameters.transfer_rate = 0.0
-    temp_output_dir = generate_from_parameters(no_dtl_parameters, output_dir)
-    d = fam.get_discordance_rate(temp_output_dir)
-    shutil.rmtree(temp_output_dir)
+  if (parameters.population > 20):
+      if (parameters.dup_rate == 0.0 and parameters.transfer_rate == 0.0):
+        d = discordance_rate.get_discordance_rate(output_dir)
+      else:
+        no_dtl_parameters = copy.deepcopy(parameters) 
+        no_dtl_parameters.dup_rate = 0.0
+        no_dtl_parameters.loss_rate = 0.0
+        no_dtl_parameters.transfer_rate = 0.0
+        temp_output_dir = generate_from_parameters(no_dtl_parameters, output_dir)
+        d = fam.get_discordance_rate(temp_output_dir)
+        shutil.rmtree(temp_output_dir)
     
   print("Discordance rate: " + str(d))
   fam.write_discordance_rate(output_dir, d)
