@@ -241,7 +241,7 @@ def get_output_dir(parameters, root_output):
 
 def compute_and_write_discordance_rate(parameters, output_dir):
   d = 0.0
-  if (parameters.population > 20):
+  if (int(parameters.population) > 20):
       if (parameters.dup_rate == 0.0 and parameters.transfer_rate == 0.0):
         d = discordance_rate.get_discordance_rate(output_dir)
       else:
