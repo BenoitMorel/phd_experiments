@@ -11,7 +11,7 @@ def get_parent_path(path):
 
 root = get_parent_path(get_parent_path(os.path.realpath(__file__)))
 
-python = "python3"
+python = "python"
 
 # scripts
 scripts_root = os.path.join(root, "scripts")

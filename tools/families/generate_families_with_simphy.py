@@ -20,8 +20,8 @@ class SimphyParameters():
     self.prefix = "ssim"
     self.population = 10000
     self.speciations_per_year = 0.000000005
-    self.extinction_per_year = 0.000000004
-    self.species_taxa = 25
+    self.extinction_per_year = 0.0000000049
+    self.species_taxa = 30 
     self.families_number = 200
     self.bl = 1.0    
     self.loss_rate = 1.0
@@ -50,10 +50,10 @@ def build_config_file(parameters, output_dir):
     # L, D, T global rates 
     lognormal_scale = 1.0
     lognormal_location = 0.0 #math.log(1.0 - 0.5 * pow(lognormal_scale, 2.0))
-    lognormal_mean = math.exp((lognormal_location + pow(lognormal_scale, 2.0)) / 2.0)
-    loss_freq =     0.00000000049 * parameters.loss_rate / lognormal_mean
-    dup_freq =      0.00000000049 * parameters.dup_rate / lognormal_mean
-    transfer_freq = 0.00000000049 * parameters.transfer_rate / lognormal_mean
+    #lognormal_mean = math.exp((lognormal_location + pow(lognormal_scale, 2.0)) / 2.0)
+    loss_freq =     0.00000000049 * parameters.loss_rate 
+    dup_freq =      0.00000000049 * parameters.dup_rate
+    transfer_freq = 0.00000000049 * parameters.transfer_rate 
     assert(loss_freq == dup_freq)
     writer.write("-gd f:" + str(loss_freq) + "\n")
     writer.write("-gb f:" + str(dup_freq) + "\n")

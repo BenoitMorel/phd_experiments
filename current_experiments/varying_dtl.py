@@ -16,7 +16,7 @@ cores = 40
 subst_model = "GTR+G"
 gene_trees = ["raxml-ng"]
 launch_mode = "normald"
-replicates = range(3000, 3010)
+replicates = range(3000, 3050)
 varying_params = []
 
 varying_params += ["none"]
