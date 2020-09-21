@@ -8,7 +8,7 @@ import fam
 
 def run_speciesrax_bench(dataset, rec_model, prune, starting_species_tree, gene_trees, subst_model, cores, additional_args = []):
   command = []
-  command.append("python")
+  command.append("python3")
   command.append(os.path.join(exp.scripts_root, "generax/launch_speciesrax.py"))
   command.append(dataset)
   command.append(subst_model)
