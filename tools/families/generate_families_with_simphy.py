@@ -20,6 +20,7 @@ class SimphyParameters():
     self.prefix = "ssim"
     self.population = 10000
     self.speciations_per_year = 0.000000005
+    self.extinction_per_year = 0.000000004
     self.species_taxa = 25
     self.families_number = 200
     self.bl = 1.0    
@@ -39,6 +40,7 @@ def build_config_file(parameters, output_dir):
     writer.write("-RS 1 // number of replicates\n")
     # speciation rates (speciation per yer)
     writer.write("-sb f:" + str(parameters.speciations_per_year) + "\n")
+    writer.write("-sd f:" + str(parameters.extinction_per_year) + "\n")
     # number of species taxa 
     writer.write("-sl f:" + str(parameters.species_taxa) + "\n")
     # species tree height in years (I don't understand this)

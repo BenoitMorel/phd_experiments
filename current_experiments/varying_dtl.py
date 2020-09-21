@@ -16,7 +16,7 @@ cores = 40
 subst_model = "GTR+G"
 gene_trees = ["raxml-ng"]
 launch_mode = "normald"
-replicates = range(3000, 3050)
+replicates = range(3000, 3010)
 varying_params = []
 
 varying_params += ["none"]
@@ -117,8 +117,8 @@ def run_varying_experiment():
     mb_trees = run_filter.mb_generations * run_filter.mb_runs / (run_filter.mb_frequencies)
     run_filter.mb_burnin = mb_trees / 10
   
-  #run_filter.disable_all()
-  #run_filter.generate = True
+  run_filter.disable_all()
+  run_filter.generate = True
   
   datasets = get_dataset_list(fixed_point, varying_params, replicates)
   run_species_methods(datasets, subst_model, cores, run_filter, launch_mode)
