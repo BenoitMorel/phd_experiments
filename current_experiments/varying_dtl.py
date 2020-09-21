@@ -20,11 +20,13 @@ replicates = range(3000, 3050)
 varying_params = []
 
 varying_params += ["none"]
-#varying_params += ["d0.5_l0.5", "d3.0_l3.0"]
-#varying_params += ["t0.0", "t0.5", "t2.0", "t3.0"]
-#varying_params += ["s15", "s35", "s50"]
-#varying_params += ["sites100", "sites500"]
-#varying_params += ["f100", "f500", "f1000"]
+varying_params += ["d0.0_l0.0_t0.5", "d0.0_l0.0_t1.0", "d0.0_l0.0_t2.0", "d0.0_l0.0_t5.0"]
+varying_params += ["t0.0", "t0.5", "t2.0", "t5.0"]
+varying_params += ["d0.5_l0.5", "d2.0_l2.0", "d3.0_l3.0"]
+varying_params += ["d0.5_l0.5_t0.0", "d2.0_l2.0_t0.0", "d3.0_l3.0_t0.0"]
+varying_params += ["s15", "s35", "s50", "s75"]
+varying_params += ["sites50", "sites200", "sites300"]
+varying_params += ["f50", "f200", "f500"]
 
 tag = "varydtlunif"
 fixed_point = "ssim_" + tag + "_s25_f100_sites100_GTR_bl1.0_d1.0_l1.0_t1.0_p0.0_pop10_mu1.0_theta0.0_seed20"
