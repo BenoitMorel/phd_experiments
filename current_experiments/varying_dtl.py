@@ -20,14 +20,14 @@ replicates = range(3000, 3050)
 varying_params = []
 
 varying_params += ["none"]
-varying_params += ["d0.5_l0.5", "d3.0_l3.0"]
-varying_params += ["t0.0", "t0.5", "t2.0", "t3.0"]
-varying_params += ["s15", "s35", "s50"]
-varying_params += ["sites100", "sites500"]
-varying_params += ["f100", "f500", "f1000"]
+#varying_params += ["d0.5_l0.5", "d3.0_l3.0"]
+#varying_params += ["t0.0", "t0.5", "t2.0", "t3.0"]
+#varying_params += ["s15", "s35", "s50"]
+#varying_params += ["sites100", "sites500"]
+#varying_params += ["f100", "f500", "f1000"]
 
 tag = "varydtlunif"
-fixed_point = "ssim_" + tag + "_s25_f200_sites200_GTR_bl1.0_d1.0_l1.0_t1.0_p0.0_pop10_mu1.0_theta0.0_seed20"
+fixed_point = "ssim_" + tag + "_s25_f100_sites100_GTR_bl1.0_d1.0_l1.0_t1.0_p0.0_pop10_mu1.0_theta0.0_seed20"
 
 # metric to plot
 metric_names = ["species_unrooted_rf"]

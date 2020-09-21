@@ -130,7 +130,7 @@ class SpeciesRunFilter():
     run_filter_file_path = os.path.join(misc_dir, str(uuid.uuid4()))
     pickle.dump(self, open(run_filter_file_path, "wb"))
     command = []
-    command.append("python3")
+    command.append("python")
     command.append(os.path.realpath(__file__))
     command.append(datadir)
     command.append(subst_model)

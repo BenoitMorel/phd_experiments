@@ -49,9 +49,9 @@ def build_config_file(parameters, output_dir):
     lognormal_scale = 1.0
     lognormal_location = 0.0 #math.log(1.0 - 0.5 * pow(lognormal_scale, 2.0))
     lognormal_mean = math.exp((lognormal_location + pow(lognormal_scale, 2.0)) / 2.0)
-    loss_freq = 0.00000000049 * parameters.loss_rate / lognormal_mean
-    dup_freq = 0.00000000049 * parameters.dup_rate / lognormal_mean
-    transfer_freq = 0.0000000049 * parameters.transfer_rate / lognormal_mean
+    loss_freq =     0.00000000049 * parameters.loss_rate / lognormal_mean
+    dup_freq =      0.00000000049 * parameters.dup_rate / lognormal_mean
+    transfer_freq = 0.00000000049 * parameters.transfer_rate / lognormal_mean
     assert(loss_freq == dup_freq)
     writer.write("-gd f:" + str(loss_freq) + "\n")
     writer.write("-gb f:" + str(dup_freq) + "\n")
@@ -95,7 +95,9 @@ def build_indelible_config_file(parameters, output_dir):
   config_file = os.path.join(output_dir, "indelible_config.txt")
   with open(config_file, "w") as writer:
     sites_mean = parameters.sites
-    sites_sigma = sites_mean / 3
+    sites_min = str(20)
+    sites_max = str(2 * int(parameters.sites) - 20)
+    #sites_sigma = sites_mean / 3
     writer.write("[TYPE] NUCLEOTIDE 1\n") # DNA using algorithm 1 
     writer.write("[SETTINGS] [fastaextension] fasta\n")
     writer.write("[SIMPHY-UNLINKED-MODEL] modelA \n")
@@ -106,9 +108,8 @@ def build_indelible_config_file(parameters, output_dir):
     else:
       assert(False)
 
-    #writer.write("[SIMPHY-PARTITIONS] simple [1.0 modelA $(n:" + str(sites_mean) + "," + str(sites_sigma) + ")]\n")
-    #writer.write("[SIMPHY-PARTITIONS] simple [1.0 modelA $(U:10," + str(int(parameters.sites) * 2) + ")]\n")
-    writer.write("[SIMPHY-PARTITIONS] simple [1.0 modelA $(f:" + str(int(parameters.sites)) + ")]\n")
+    #writer.write("[SIMPHY-PARTITIONS] simple [1.0 modelA $(f:" + str(int(parameters.sites)) + ")]\n")
+    writer.write("[SIMPHY-PARTITIONS] simple [1.0 modelA $(u::" + sites_min + "," + sites_max + ")]\n")
 
     writer.write("[SIMPHY-EVOLVE] 1 dataset \n")
 
