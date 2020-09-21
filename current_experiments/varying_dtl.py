@@ -86,7 +86,7 @@ def get_dataset_list(ref_dataset, strings_to_replace, replicates):
 def run_varying_experiment():
   run_filter = SpeciesRunFilter()
   run_filter.disable_all()
-  run_filter.generate = True
+  #run_filter.generate = True
   run_filter.starting_gene_trees = gene_trees
   run_filter.pargenes = True
   run_filter.pargenes_starting_trees = 1
@@ -117,8 +117,8 @@ def run_varying_experiment():
     mb_trees = run_filter.mb_generations * run_filter.mb_runs / (run_filter.mb_frequencies)
     run_filter.mb_burnin = mb_trees / 10
   
-  run_filter.disable_all()
-  run_filter.generate = True
+  #run_filter.disable_all()
+  #run_filter.generate = True
   
   datasets = get_dataset_list(fixed_point, varying_params, replicates)
   run_species_methods(datasets, subst_model, cores, run_filter, launch_mode)

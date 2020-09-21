@@ -208,7 +208,7 @@ def run(dataset, subst_model, starting_species_tree, starting_gene_tree, cores, 
   print("Output in " + resultsdir)
 
 def launch(dataset, subst_model, starting_species_tree, starting_gene_tree, cluster, cores, additional_arguments):
-  command = ["python3"]
+  command = [exp.python]
   command.extend(sys.argv)
   command.append("--exprun")
   resultsdir = os.path.join("GeneRax", dataset, starting_species_tree + "_start_" + starting_gene_tree, "run")
