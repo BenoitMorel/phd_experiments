@@ -16,7 +16,7 @@ launch_mode = "normal"
 
 
 
-test_dataset = "ssim_test_s25_f1000_sites100_GTR_bl1.0_d1.0_l1.0_t0.0_p0.0_pop10_mu1.0_theta0.0_seed20"
+test_dataset = "ssim_test_s8_f10_sites100_GTR_bl1.0_d0.0_l0.0_t0.0_p0.0_pop10_mu1.0_theta0.0_seed20"
 
 
 test_subst_model = "GTR+G"
