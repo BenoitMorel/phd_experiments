@@ -137,7 +137,7 @@ def av_rf(rf_cell):
 
 def analyze_species_results(datadir, resultsdir):
   true_species_tree = Tree(fam.get_species_tree(datadir), format = 1)
-  starting_species_tree = Tree(os.path.join(resultsdir, "generax", "starting_species_tree.newick"), format = 1)
+  starting_species_tree = Tree(os.path.join(resultsdir, "generax", "species_trees", "starting_species_tree.newick"), format = 1)
   inferred_species_tree = Tree(os.path.join(resultsdir, "generax", "inferred_species_tree.newick"), format = 1)
   starting_rooted_rf = true_species_tree.robinson_foulds(starting_species_tree, unrooted_trees = False, correct_by_polytomy_size = True)
   starting_unrooted_rf = true_species_tree.robinson_foulds(starting_species_tree, unrooted_trees = True, correct_by_polytomy_size = True)

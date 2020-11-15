@@ -16,7 +16,7 @@ launch_mode = "normal"
 
 
 
-test_dataset = "ssim_test_s8_f10_sites100_GTR_bl1.0_d0.0_l0.0_t0.0_p0.0_pop10_mu1.0_theta0.0_seed20"
+test_dataset = "ssim_test_s25_f100_sites100_GTR_bl1.0_d1.0_l1.0_t0.0_p0.0_pop10_mu1.0_theta0.0_seed20"
 
 
 test_subst_model = "GTR+G"
@@ -31,6 +31,7 @@ def run_test_experiment():
   run_filter = SpeciesRunFilter()
   run_filter.disable_all()
   run_filter.generate = True
+  run_filter.pargenes = True
   run_species_methods(test_datasets, test_subst_model, cores, run_filter, launch_mode)
 
 run_test_experiment()

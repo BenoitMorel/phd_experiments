@@ -321,6 +321,14 @@ def get_ran_methods(datadir):
   print(methods)
   return methods
 
+def get_family_genes_number(datadir, family):
+  mappings = get_treerecs_mappings(datadir, family)
+  lines = open(mappings).readlines()
+  res = 0
+  for line in lines:
+    if (len(line) > 1):
+      res += 1
+  return res
 
 ######################
 # convert functions
