@@ -40,8 +40,8 @@ def exec_astralpro(gene_trees_file, mapping_file, output_species_tree_file):
   command = []
   tmp_output_species_tree_file = output_species_tree_file + ".tmp"
   command.append("java")
-  command.append("-Xms500G")
-  command.append("-Xmx500G")
+  command.append("-Xms700G")
+  command.append("-Xmx700G")
   command.append("-Djava.library.path=" + exp.astralpro_root + "/ASTRAL-MP/lib")
   command.append("-jar")
   command.append(exp.astralpro_jar)

@@ -26,6 +26,7 @@ def _get_param_to_datasets(datasets, param_name):
   param_to_datasets = []
   for key in param_to_datasets_dict:
     pair = (key, param_to_datasets_dict[key])
+    print(key + ": " + str(len(param_to_datasets_dict[key])) + " datasets")
     param_to_datasets.append(pair) 
   return param_to_datasets
 
@@ -42,8 +43,8 @@ def _get_average_methods_values(param_name, datasets, metric, methods, subst_mod
         if (metrics != None and key in metrics):
           average += float(metrics[key])
         else:
-          average += float(get_default_value(metric_name))
           print("WARNING: missing value for run " + key + " and dataset " + dataset)
+          average += float(get_default_value(metric_name))
       average /= float(len(datasets))
       values[method] = average
   return values
@@ -56,7 +57,6 @@ def _get_df(values, methods, param_name):
     temp[method] = []
   keys = list(values)
   keys.sort(key = lambda t: float(t))
-  print(keys)
   for param in keys:
     temp[param_name].append(param)
     for method in values[param]:
@@ -84,8 +84,7 @@ def _get_methods(methods_tuples):
 def plot_varying_params(datasets, param_name, metric, method_tuples, subst_model, output):
   param_to_datasets = _get_param_to_datasets(datasets, param_name)
   methods = _get_methods(method_tuples)
-  print(param_to_datasets)
-  values = {} # values[method][ 
+  values = {}  
   for xvalue,xdatasets in param_to_datasets:
     values[xvalue] = _get_average_methods_values(param_name, xdatasets, metric, methods, subst_model)
   df = _get_df(values, methods, param_name)
@@ -102,4 +101,3 @@ def plot_varying_params(datasets, param_name, metric, method_tuples, subst_model
   print("Saving result in " + output)
   plt.close()
 
-  print(values)

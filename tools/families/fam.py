@@ -392,7 +392,8 @@ def init_families_directories(datadir, families):
 
 def postprocess_datadir(datadir):
   # phyldog species trees
-  convert_to_phyldog_species_tree(get_species_tree(datadir), get_phyldog_species_tree(datadir)) 
+  if (os.path.isfile(get_species_tree(datadir))):
+    convert_to_phyldog_species_tree(get_species_tree(datadir), get_phyldog_species_tree(datadir)) 
   # alignments
   for family in get_families_list(datadir):
     family_dir = get_family_path(datadir, family)

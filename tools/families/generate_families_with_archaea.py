@@ -12,7 +12,9 @@ import ete3
 
 
 def treat_alignment(input_file, output_file, output_mapping_file, authorized_species):
-  seq = ete3.SeqGroup(input_file, format="iphylip_relaxed")
+  #seq = ete3.SeqGroup(input_file, format="iphylip_relaxed")
+  print(input_file)
+  seq = ete3.SeqGroup(input_file, format="fasta")
   filtered_seq = ete3.SeqGroup()
   species_to_genes = {}
   for entry in seq.iter_entries():

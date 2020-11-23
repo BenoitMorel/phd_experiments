@@ -20,14 +20,13 @@ launch_mode = "normald"
 replicates = range(3000, 3050)
 varying_params = []
 
-#varying_params += (None, ["none"])
+#varying_params.append((None, ["none"]))
 varying_params.append(("sites", ["sites50", "sites200", "sites300"]))
-#varying_params += ["t0.0", "t0.5", "t2.0", "t5.0"]
-#varying_params += ["d0.5_l0.5", "d2.0_l2.0", "d3.0_l3.0"]
-#varying_params += ["d0.5_l0.5_t0.0", "d2.0_l2.0_t0.0", "d3.0_l3.0_t0.0"]
-#varying_params += ["s15", "s35", "s50", "s75"]
-#varying_params += ["f50", "f200", "f500"]
-#varying_params += ["pop10000000", "pop100000000", "pop1000000000"]
+varying_params.append(("transfer_rate", ["t0.0", "t0.5", "t2.0", "t5.0"]))
+varying_params.append(("dup_rate", ["d0.5_l0.5_t0.5", "d2.0_l2.0_t2.0", "d3.0_l3.0_t3.0"]))
+varying_params.append(("species", ["s15", "s35", "s50", "s75"]))
+varying_params.append(("families", ["f50", "f200", "f500", "f1000"]))
+varying_params.append(("population", ["pop10000000", "pop100000000", "pop1000000000"]))
 
 tag = "varydtlunif"
 fixed_point = "ssim_" + tag + "_s25_f100_sites100_GTR_bl1.0_d1.0_l1.0_t1.0_p0.0_pop10_mu1.0_theta0.0_seed20"
@@ -37,11 +36,13 @@ metric_names = ["species_unrooted_rf"]
 
 # methods to plot
 methods_tuples = []
-methods_tuples.append(("generax-mininj-fam_raxml-ng", "SpeciesRaxMini"))
-#methods_tuples.append(("generax-random1-fam_raxml-ng", "SpeciesRaxRand"))
-methods_tuples.append(("astralpro_raxml-ng", "Astral-Pro"))
+methods_tuples.append(("generax-mininj-fam_raxml-ng", "SpeciesRax"))
 methods_tuples.append(("njrax-mininj_raxml-ng", "MiniNJ"))
+methods_tuples.append(("astralpro_raxml-ng", "Astral-Pro"))
 methods_tuples.append(("fastmulrfs-single_raxml-ng", "FastMulRFS"))
+#methods_tuples.append(("generax-random1-fam_raxml-ng", "SpeciesRaxRand"))
+#methods_tuples.append(("njrax-njst_raxml-ng", "NJst"))
+#methods_tuples.append(("njrax-ustar_raxml-ng", "USTAR"))
 #methods_tuples.append(("njrax-wmininj-raxml-ng", "WMiniNJ"))
 #methods_tuples.append(("njrax-cherry-raxml-ng", "CherryMerging"))
 #methods_tuples.append(("njrax-njst-raxml-ng", "NJst"))
@@ -104,23 +105,24 @@ def run_varying_experiment():
     mb_trees = run_filter.mb_generations * run_filter.mb_runs / (run_filter.mb_frequencies)
     run_filter.mb_burnin = mb_trees / 10
   
-  #run_filter.disable_all()
   run_filter.pargenes = True
   run_filter.pargenes_starting_trees = 1
   run_filter.pargenes_bootstrap_trees = 0
   
-  datasets = get_dataset_list(fixed_point, varying_params, replicates)
+  #run_filter.disable_all()
+  #run_filter.analyse = True
+  
+  for entry in varying_params:
+    datasets = simulations_common.get_dataset_list(fixed_point, entry[1], replicates)
   run_species_methods(datasets, subst_model, cores, run_filter, launch_mode)
 
 def plot_varying_experiment():
-  print(varying_params)
   for entry in varying_params:
-    print(entry)
-    datasets = simulations_common.get_dataset_list(fixed_point, entry[1], replicates)
+    datasets = simulations_common.get_dataset_list(fixed_point, entry[1], replicates, True)
     print("Plotting parameter " + entry[0])
     for metric in metric_names:
-      output = "plop.svg"
       param = entry[0]
+      output = simulations_common.get_plot_name("varydtl", param, subst_model, metric)  
       plot_simulations.plot_varying_params(datasets, param, metric, methods_tuples, subst_model, output)
 
 
