@@ -19,8 +19,8 @@ except:
   izip = zip
 
 species_to_remove = set()
-species_to_remove.add("HUMAN")
-species_to_remove.add("ARATH")
+#species_to_remove.add("HUMAN")
+#species_to_remove.add("ARATH")
 
 def wget_gunzip(base_url, outdir, filename):
   url = os.path.join(base_url, filename + ".gz")
@@ -73,9 +73,12 @@ def extract_tree(datadir, family, tree):
   mapping_file = fam.get_mappings(datadir, family)
   fam.write_phyldog_mapping(species_to_genes, mapping_file)
 
+def get_data_dir(name):
+  return os.path.join(exp.families_datasets_root, "pdb_" + name)
+
 def extract(name):
   rawdir = get_raw_dir(name)
-  datadir = os.path.join(exp.families_datasets_root, "pdb_" + name)
+  datadir = get_data_dir(name)
   fam.init_top_directories(datadir)
   best_trees = os.path.join(rawdir, "best_trees.txt")
   
@@ -86,11 +89,34 @@ def extract(name):
     tree = Tree(sp[3], format = 1)
     extract_tree(datadir, family, tree)
   fam.postprocess_datadir(datadir)
+ 
+  
+def extract_species_dict(name):
+  
+  rawdir = get_raw_dir(name)
+  datadir = get_data_dir(name)
+  phylome_info = os.path.join(rawdir, "phylome_info.txt")
+  shutil.copy(phylome_info, os.path.join(fam.get_misc_dir(datadir), "phylome_info.txt"))
+  lines = open(phylome_info).readlines()
+  with open(fam.get_species_dict(datadir), "w") as writer:
+    index = -3
+    for line in lines:
+      if (index >= 0):
+        sp = line.split("\t")
+        shortname = sp[1].split(".")[0]
+        species= sp[5][:-1]
+        writer.write(shortname + ":" + species + "\n")
+      else:
+        if (line[:-1] == "-----"):
+          index += 1
+
+  
+
 
 def dl_and_extract(index, name):
-  dl(index, name)
-  extract(name)  
-
+  #dl(index, name)
+  #extract(name)  
+  extract_species_dict(name)
 
 
 if (__name__ == "__main__"): 

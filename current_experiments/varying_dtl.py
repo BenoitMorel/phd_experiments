@@ -17,7 +17,7 @@ cores = 40
 subst_model = "GTR+G"
 gene_trees = ["raxml-ng"]
 launch_mode = "normald"
-replicates = range(3000, 3050)
+replicates = range(3000, 3100)
 varying_params = []
 
 #varying_params.append((None, ["none"]))
@@ -33,6 +33,7 @@ fixed_point = "ssim_" + tag + "_s25_f100_sites100_GTR_bl1.0_d1.0_l1.0_t1.0_p0.0_
 
 # metric to plot
 metric_names = ["species_unrooted_rf"]
+metric_names = ["runtimes"]
 
 # methods to plot
 methods_tuples = []
@@ -40,6 +41,7 @@ methods_tuples.append(("generax-mininj-fam_raxml-ng", "SpeciesRax"))
 methods_tuples.append(("njrax-mininj_raxml-ng", "MiniNJ"))
 methods_tuples.append(("astralpro_raxml-ng", "Astral-Pro"))
 methods_tuples.append(("fastmulrfs-single_raxml-ng", "FastMulRFS"))
+methods_tuples.append(("duptree_raxml-ng", "DupTree"))
 #methods_tuples.append(("generax-random1-fam_raxml-ng", "SpeciesRaxRand"))
 #methods_tuples.append(("njrax-njst_raxml-ng", "NJst"))
 #methods_tuples.append(("njrax-ustar_raxml-ng", "USTAR"))
@@ -114,7 +116,7 @@ def run_varying_experiment():
   
   for entry in varying_params:
     datasets = simulations_common.get_dataset_list(fixed_point, entry[1], replicates)
-  run_species_methods(datasets, subst_model, cores, run_filter, launch_mode)
+    run_species_methods(datasets, subst_model, cores, run_filter, launch_mode)
 
 def plot_varying_experiment():
   for entry in varying_params:

@@ -10,14 +10,15 @@ import plot_speciesrax
 import simulations_common
 import plot_simulations
 
-do_run = not True
+do_run = True
+#do_run = False
 do_plot = not do_run
 datasets = []
 cores = 40
 subst_model = "GTR+G"
 gene_trees = ["raxml-ng"]
 launch_mode = "normald"
-replicates = range(3000, 3050)
+replicates = range(3000, 3100)
 varying_params = []
 
 #varying_params.append((None, ["none"]))

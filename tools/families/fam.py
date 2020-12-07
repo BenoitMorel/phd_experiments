@@ -119,6 +119,9 @@ def write_discordance_rate(datadir, rate):
   df = get_discordance_file(datadir)
   open(df, "w").write(str(rate))
 
+def get_species_dict(datadir):
+  return os.path.join(get_misc_dir(datadir), "species_dict.txt")
+
 #####################
 # families
 #####################
