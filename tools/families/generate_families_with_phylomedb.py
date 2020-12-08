@@ -18,10 +18,6 @@ try:
 except:
   izip = zip
 
-species_to_remove = set()
-#species_to_remove.add("HUMAN")
-#species_to_remove.add("ARATH")
-
 def wget_gunzip(base_url, outdir, filename):
   url = os.path.join(base_url, filename + ".gz")
   outfile = os.path.join(outdir, filename + ".gz")
@@ -33,6 +29,18 @@ def wget_gunzip(base_url, outdir, filename):
   subprocess.check_call(wget)
   subprocess.check_call(["gunzip", outfile])
 
+def wget_targz(base_url, outdir, filename):
+  url = os.path.join(base_url, filename + ".tar.gz")
+  outfile = os.path.join(outdir, filename + ".tar.gz")
+  wget = []
+  wget.append("wget")
+  wget.append(url)
+  wget.append("--output-document=" + outfile)
+  print(" ".join(wget))
+  subprocess.check_call(wget)
+  outputarchive = os.path.join(outdir, filename)
+  subprocess.check_call(["tar", "-xf", outfile, "-C",outdir])
+
 def get_raw_dir(name):
   return os.path.join(exp.raw_datasets_root, "phylomedb", name)
 
@@ -42,6 +50,7 @@ def dl(index, name):
   url = "ftp://phylomedb.org/phylomedb/phylomes/phylome_" + str(index)
   wget_gunzip(url, rawdir, "best_trees.txt")
   wget_gunzip(url, rawdir, "phylome_info.txt")
+  wget_targz(url, rawdir, "all_algs")
 
 def extract_tree(datadir, family, tree):
   to_keep = []
@@ -55,12 +64,9 @@ def extract_tree(datadir, family, tree):
       prefix += "o"
     leaf.name = prefix + "_" + species
     unique_names.add(leaf.name)
-    if (not species in species_to_remove):
-      to_keep.append(leaf.name)
-  tree.prune(to_keep, True)
   leaves = tree.get_leaves()
   if (len(leaves) < 4):
-    return 
+    return False
   fam.init_family_directories(datadir, family)
   tree.write(outfile = fam.get_true_tree(datadir, family)) 
   species_to_genes = {}
@@ -72,6 +78,7 @@ def extract_tree(datadir, family, tree):
     species_to_genes[species].append(gene)
   mapping_file = fam.get_mappings(datadir, family)
   fam.write_phyldog_mapping(species_to_genes, mapping_file)
+  return True
 
 def get_data_dir(name):
   return os.path.join(exp.families_datasets_root, "pdb_" + name)
@@ -87,7 +94,9 @@ def extract(name):
     print(sp[0])
     family = sp[0]
     tree = Tree(sp[3], format = 1)
-    extract_tree(datadir, family, tree)
+    if (extract_tree(datadir, family, tree)):
+      in_ali = os.path.join(rawdir,"all_algs", family + ".clean.fasta")
+      shutil.copy(in_ali, fam.get_alignment(datadir, family))
   fam.postprocess_datadir(datadir)
  
   
@@ -114,8 +123,8 @@ def extract_species_dict(name):
 
 
 def dl_and_extract(index, name):
-  #dl(index, name)
-  #extract(name)  
+  dl(index, name)
+  extract(name)  
   extract_species_dict(name)
 
 

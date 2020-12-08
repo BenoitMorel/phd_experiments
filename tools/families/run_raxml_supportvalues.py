@@ -15,7 +15,10 @@ import sequence_model
 def run_pargenes(datadir, pargenes_dir, subst_model, starting_trees, bs_trees, cores):
   parsimony_trees = int(starting_trees) // 2
   random_trees = starting_trees - parsimony_trees
-  raxml_command = "--model " + sequence_model.get_raxml_model(subst_model) + " --blopt nr_safe"
+  raxml_command = ""
+  run_modeltest = (subst_model == "bestAA" or subst_model == "bestNT")
+  if (not run_modeltest):
+    raxml_command +="--model " + sequence_model.get_raxml_model(subst_model) + " --blopt nr_safe"
   command = []
   command.append("python")
   command.append(exp.pargenes_script)
@@ -32,8 +35,14 @@ def run_pargenes(datadir, pargenes_dir, subst_model, starting_trees, bs_trees, c
   if (parsimony_trees > 0):
     command.append("-p")
     command.append(str(parsimony_trees))
-  command.append("-R")
-  command.append(raxml_command)
+  if (len(raxml_command) > 0):
+    command.append("-R")
+    command.append(raxml_command)
+  if (run_modeltest):
+    command.append("-m")
+    if (subst_model == "bestAA"):
+      command.append("-d")
+      command.append("aa")
   command.append("--continue")
   try:
     subprocess.check_call(command, stdout = sys.stdout)
@@ -149,15 +158,15 @@ def run_pargenes_and_extract_trees(datadir, subst_model, starting_trees, bs_tree
     export_pargenes_trees(pargenes_dir, subst_model, light, datadir)
 
 if __name__ == "__main__":
-  if (len(sys.argv) != 6):
-    print("syntax: python run_raxml_supportvalues.py datadir subst_model starting_trees bs_trees cores")
+  if (len(sys.argv) < 7):
+    print("syntax: python run_raxml_supportvalues.py datadir subst_model starting_trees bs_trees cores restart")
     sys.exit(1)
   dataset = sys.argv[1]
   subst_model = sys.argv[2]
   starting_trees = int(sys.argv[3])
   bs_trees = int(sys.argv[4])
   cores = int(sys.argv[5])
-  
-  run_pargenes_and_extract_trees(dataset, subst_model, starting_trees, bs_trees, cores, restart = False)
+  restart = int(sys.argv[6]) == 1
+  run_pargenes_and_extract_trees(dataset, subst_model, starting_trees, bs_trees, cores, restart = restart)
 
   
