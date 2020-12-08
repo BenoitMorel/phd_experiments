@@ -34,18 +34,23 @@ run_filter = SpeciesRunFilter()
 run_filter.disable_all()
 #run_filter.pargenes = True
 #run_filter.fasttree = True
-run_filter.duptree = True
-run_filter.njrax = True
-run_filter.cherry = True
-run_filter.njst = True
-run_filter.astralpro = True
-run_filter.fastmulrfs = True
-run_filter.speciesraxbench = True
+#run_filter.duptree = True
+#run_filter.njrax = True
+#run_filter.cherry = True
+#run_filter.njst = True
+#run_filter.astralpro = True
+#run_filter.fastmulrfs = True
+#run_filter.speciesraxbench = True
 #run_filter.stag = True
 #run_filter.cleanup = False
-
+run_filter.speciesraxperfamily = True
 datasets = []
-#datasets.append(("aa_ensembl_98_ncrna_primates", run_inputs_dna))
+datasets.append(("aa_ensembl_98_ncrna_primates", run_inputs_dna))
+datasets.append(("pdb_vertebrates_ali", run_inputs_true))
+datasets.append(("pdb_fungi60", run_inputs_true))
+datasets.append(("pdb_insects", run_inputs_true))
+datasets.append(("pdb_melo", run_inputs_true))
+datasets.append(("pdb_mycoplasma", run_inputs_true))
 #datasets.append(("aa_ensembl_98_ncrna_mammals", run_inputs_dna))
 #datasets.append(("aa_ensembl_98_ncrna_vertebrates", run_inputs_dna))
 #datasets.append(("aa_ensembl_98_ncrna_lowprimates", run_inputs_dna))
@@ -56,7 +61,6 @@ datasets = []
 #datasets.append(("ensembl_98_ncrna_vertebrates", run_inputs_dna))
 #datasets.append(("ensembl_98_ncrna_sauropsids", run_inputs_dna))
 #datasets.append(("cyano_empirical", run_inputs_aa))
-datasets.append(("pdb_croco", run_inputs_true))
 
 # methods to plot
 methods_tuples = []

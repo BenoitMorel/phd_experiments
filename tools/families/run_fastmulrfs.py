@@ -73,7 +73,8 @@ def run_fastmulrfs(datadir, gene_trees, subst_model):
   start = time.time()
   exec_fastmulrfs(gene_trees_file, prefix)
   time1 = (time.time() - start)
-  for method in ["greedy", "single", "strict", "majority"]:
+  #for method in ["greedy", "single", "strict", "majority"]:
+  for method in ["single"]:
     sub_run_name = run_name.replace("fastmulrfs", "fastmulrfs-" + method)
     saved_metrics.save_metrics(datadir, fam.get_run_name(sub_run_name, subst_model), time1, "runtimes") 
     extract_species_trees(datadir, subst_model, prefix, method, sub_run_name)

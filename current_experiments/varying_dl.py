@@ -10,8 +10,8 @@ import plot_speciesrax
 import simulations_common
 import plot_simulations
 
-do_run = True
-#do_run = False
+#do_run = True
+do_run = False
 do_plot = not do_run
 datasets = []
 cores = 40
