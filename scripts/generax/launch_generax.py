@@ -3,6 +3,7 @@ import os
 import subprocess
 sys.path.insert(0, 'scripts')
 sys.path.insert(0, 'tools/families')
+sys.path.insert(0, 'tools/generax')
 import saved_metrics
 import rf_cells
 import experiments as exp
@@ -11,6 +12,7 @@ import time
 import fam
 import sequence_model
 import fast_rf_cells
+import extract_event_number
 
 def get_possible_strategies():
   return ["SPR", "EVAL"]
@@ -126,7 +128,17 @@ def extract_trees(datadir, results_family_dir, run_name, subst_model):
     except:
       pass
 
-
+def extract_events(datadir, results_family_dir, additional_arguments):
+  #try:
+    rec_model = exp.getArg("--rec-model", additional_arguments, "UndatedDTL")
+    metric_name = "events_" + rec_model
+    events = extract_event_number.extract(results_family_dir)
+    print("Metric_name " + metric_name)
+    print("Events: " + str(events))
+    for event in events:
+      saved_metrics.save_metrics(datadir, event, events[event], metric_name) 
+  #except:
+    #print("Failed to extract events")
 
 def run(dataset, subst_model, strategy, species_tree, starting_tree, cores, additional_arguments, resultsdir, do_analyze = True, do_extract = True):
   run_name = exp.getAndDelete("--run", additional_arguments, "generax-last." +subst_model) 
@@ -153,7 +165,7 @@ def run(dataset, subst_model, strategy, species_tree, starting_tree, cores, addi
       fast_rf_cells.analyze(datadir, "all", cores, run_name)
   except:
     print("Analyze failed!!!!")
-
+  extract_events(datadir, os.path.join(resultsdir, "generax"), additional_arguments)
   print("Output in " + resultsdir)
   return resultsdir
 
