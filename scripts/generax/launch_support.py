@@ -61,7 +61,7 @@ def build_generax_families_file(datadir, starting_gene_tree, subst_model, output
       if (starting_gene_tree == "random"):
         gene_tree = "__random__"
       writer.write("starting_gene_tree = " + gene_tree + "\n")
-      writer.write("alignment = " + fam.get_alignment_file(family_path) + "\n")
+      #writer.write("alignment = " + fam.get_alignment_file(family_path) + "\n")
       mapping_file = fam.get_mappings(datadir, family)
       if (os.path.isfile(mapping_file)):
         writer.write("mapping = " + fam.get_mappings(datadir, family) + "\n")
@@ -89,10 +89,12 @@ def get_generax_command(generax_families_file, starting_species_tree, additional
     command.append(generax_families_file)
     command.append("-s")
     command.append(starting_species_tree)
-    command.append("--optimize-species-tree")
     command.append("--do-not-optimize-gene-trees")
-    command.append("--strategy")
-    command.append("SPR")
+    command.append("--skip-family-filtering")
+    command.append("--quartet-support")
+    #command.append("--quartet-support-slow")
+    #command.append("--quartet-support-paralogy")
+    command.append("--do-not-reconcile")
     command.append("-p")
     command.append(generax_output)
     command.extend(additional_arguments)
@@ -137,16 +139,11 @@ def av_rf(rf_cell):
 
 def analyze_species_results(datadir, resultsdir):
   true_species_tree = Tree(fam.get_species_tree(datadir), format = 1)
-  starting_species_tree = Tree(os.path.join(resultsdir, "generax", "species_trees", "starting_species_tree.newick"), format = 1)
+  starting_species_tree = Tree(os.path.join(resultsdir, "generax", "starting_species_tree.newick"), format = 1)
   inferred_species_tree = Tree(os.path.join(resultsdir, "generax", "inferred_species_tree.newick"), format = 1)
-  starting_rooted_rf = -1
-  inferred_rooted_rf = -1
-  try:
-    starting_rooted_rf = true_species_tree.robinson_foulds(starting_species_tree, unrooted_trees = False, correct_by_polytomy_size = True)
-    inferred_rooted_rf = true_species_tree.robinson_foulds(inferred_species_tree, unrooted_trees = False, correct_by_polytomy_size = True)
-  except:
-    print("can't computed rooted distance")
+  starting_rooted_rf = true_species_tree.robinson_foulds(starting_species_tree, unrooted_trees = False, correct_by_polytomy_size = True)
   starting_unrooted_rf = true_species_tree.robinson_foulds(starting_species_tree, unrooted_trees = True, correct_by_polytomy_size = True)
+  inferred_rooted_rf = true_species_tree.robinson_foulds(inferred_species_tree, unrooted_trees = False, correct_by_polytomy_size = True)
   inferred_unrooted_rf = true_species_tree.robinson_foulds(inferred_species_tree, unrooted_trees = True, correct_by_polytomy_size = True)
   print("Starting species tree:")
   print("  Rooted RF: " + str(av_rf(starting_rooted_rf)))
