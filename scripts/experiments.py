@@ -173,6 +173,38 @@ def redirect_logs(result_dir):
     sys.stdout = open(logs, 'w')
     sys.stderr = open(err, 'w')
 
+def submit_cascade(submit_file_path, command, threads, debug):
+  threads = int(threads)
+  nodes = str((int(threads) - 1) // 20 + 1)
+  logfile = os.path.join(os.path.dirname(submit_file_path), "logs.out")
+  with open(submit_file_path, "w") as f:
+    f.write("#!/bin/bash\n")
+    f.write("#SBATCH -o " + logfile + "\n")
+    #f.write("#SBATCH -B 2:8:1\n")
+    f.write("#SBATCH -N " + str(nodes) + "\n")
+    f.write("#SBATCH -n " + str(threads) + "\n")
+    f.write("#SBATCH --threads-per-core=1\n")
+    f.write("#SBATCH --cpus-per-task=20\n")
+    f.write("#SBATCH --hint=compute_bound\n")
+    if (debug):
+      f.write("#SBATCH -t 2:00:00\n")
+    else:
+      f.write("#SBATCH -t 24:00:00\n")
+
+    f.write("\n")
+    f.write(command)
+  command = []
+  command.append("sbatch")
+  if (debug):
+    command.append("--qos=debug")
+  command.append("-s")
+  command.append(submit_file_path)
+  out = open(historic, "a+")
+  subprocess.check_call(command, stdout = out)
+  out.write("Output in " + logfile + "\n")
+  print(open(historic).readlines()[-1][:-1])
+  out.write("\n")
+
 def submit_haswell(submit_file_path, command, threads, debug):
   threads = int(threads)
   nodes = str((int(threads) - 1) // 16 + 1)
@@ -244,6 +276,10 @@ def submit(submit_file_path, command, threads, cluster):
     submit_haswell(submit_file_path, command, threads, False)
   elif (cluster == "haswelld"):
     submit_haswell(submit_file_path, command, threads, True)
+  elif (cluster == "cascade"):
+    submit_cascade(submit_file_path, command, threads, False)
+  elif (cluster == "cascaded"):
+    submit_cascade(submit_file_path, command, threads, True)
   elif (cluster == "magny"):
     submit_magny(submit_file_path, command, threads)
   else:
