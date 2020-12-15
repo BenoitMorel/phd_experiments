@@ -44,7 +44,7 @@ def get_rf(tree1, tree2):
 def get_relative_rf(tree1, tree2, unrooted = True):
   
   rf = ete3_rf(tree1, tree2, unrooted)
-  #print(rf[0])
+  print(rf[0])
   return float(rf[0]) / float(rf[1])
 
 def get_rf_distance_tuple(tree1_file, tree2_file):

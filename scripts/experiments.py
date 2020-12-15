@@ -114,6 +114,8 @@ paul_exec = os.path.join(github_root, "MasterThesis", "njst", "main")
 # constants
 mpi_scheduler_heuristic = "--split-scheduler"
 generax_selector_candidates = os.path.join(tools_root, "families", "candidates.txt")
+ensembl_plants_species_dict = os.path.join(tools_root, "families", "ensembl_plant_dict.txt")
+ensembl_plants_species_blacklist = os.path.join(tools_root, "families", "ensembl_plant_blacklist.txt")
 
 # utils
 def get_git_info(repo_path):

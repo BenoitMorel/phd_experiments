@@ -57,6 +57,7 @@ species_to_remove.add("Sus_scrofa_strain_jinhua")
 
 
 species_to_replace = {}
+# VERTEBRATES
 species_to_replace["Gorilla_gorilla_gorilla"] = "Gorilla_gorilla"
 species_to_replace["Mus_caroli_strain_CAROLI_EIJ"] = "Mus_Caroli"
 species_to_replace["Sus_scrofa_strain_reference"] = "Sus_Scrofa"
@@ -76,31 +77,93 @@ species_to_replace["Saccharomyces_cerevisiae_strain_S288C"] = "Saccharomyces_cer
 species_to_replace["Caenorhabditis_elegans_strain_N2"] = "Caenorhabditis_elegans"
 #species_to_replace["Mus_musculus_strain_reference_CL57BL6"] = "Mus_Musculus"
 
-def edit_species_tree(species_tree, edited_species_tree):
+
+
+
+
+
+
+def load_species_dict(filepath):
+  d = {}
+  for line in open(filepath).readlines():
+    sp = line.replace("\n", "").split("=")
+    if (len(sp) == 2):
+      d[sp[0]] = sp[1]
+  return d
+
+def load_species_blacklist(filepath):
+  b = set()
+  for line in open(filepath).readlines():
+    b.add(line.replace("\n", ""))
+  return b
+
+def get_plant_default_dict(species_tree):
+  d = {}
+  errored = False
   tree = Tree(species_tree, format = 1)
-  tree.write(outfile = edited_species_tree)
-  # remove
+  reverse_d = {}
+  for name in tree.get_leaf_names():
+    sp = name.split("_")
+    if (len(sp) > 2):
+      new_name = "_".join(sp[0:2])
+      if (new_name in reverse_d):
+        print("WARNING: duplicate name between " + name + " and " + reverse_d[new_name])
+        errored = True
+      else:
+          d[name] = "_".join(sp[0:2])
+          reverse_d[new_name] = name
+  #if  (errored):
+  #  sys.exit(1)
+  return d
+
+def remove_species_tree_inplace(species_tree, to_remove):
+  tree = Tree(species_tree, format = 1)
   to_keep = []
   for leaf in tree.get_leaves():
-    if (not leaf.name in species_to_remove):
+    if (not leaf.name in to_remove):
       to_keep.append(leaf.name)
   tree.prune(to_keep, True)
-  # replace
-  for leaf in tree.get_leaves():
-    if (leaf.name in species_to_replace):
-      leaf.name = species_to_replace[leaf.name]
-  tree.write(outfile = edited_species_tree)
+  tree.write(outfile = species_tree)
+  print("UPDATE " + species_tree)
 
+def rename_species_tree_inplace(species_tree, to_replace_1, to_replace_2):
+  tree = Tree(species_tree, format = 1)
+  for leaf in tree.get_leaves():
+    if (leaf.name in to_replace_1):
+      leaf.name = to_replace_1[leaf.name]
+    elif (leaf.name in to_replace_2):
+      leaf.name = to_replace_2[leaf.name]
+  print("UPDATE " + species_tree)
+  tree.write(outfile = species_tree)
+
+def edit_species_tree(database, species_tree, edited_species_tree):
+  tree = Tree(species_tree, format = 1)
+  tree.write(outfile = edited_species_tree)
+  if (database == "plants"):
+    bl = load_species_blacklist(exp.ensembl_plants_species_blacklist)
+    remove_species_tree_inplace(edited_species_tree, bl)
+    d1 = load_species_dict(exp.ensembl_plants_species_dict)
+    d2 = get_plant_default_dict(edited_species_tree)
+    rename_species_tree_inplace(edited_species_tree, d1, d2)
+  elif (database != "vertebrates"):
+    print("Invalid database value")
+    sys.exit(1)
+    remove_species_tree_inplace(edited_species_tree, species_to_remove)
+    rename_species_tree_inplace(edited_species_tree, species_to_replace, species_to_replace)
+  
 
 
 def mycmp(a, b):
   return (a > b) - (a < b) 
 
+def gene_name(name):
+  return name.replace(":", "")
+
 class SeqEntry():
   def __init__(self, line, family):
     split = line.split(" ")
     self.species = title_node_names.get_title(split[1])
-    self.gene = split[2]
+    self.gene = gene_name(split[2])
     self.chromozome = split[3]
     self.begin = int(split[4])
     self.end = int(split[5])
@@ -129,12 +192,13 @@ def compare(entry1, entry2):
 
 # read an ensembl tree, prune the genes that we do not consider,
 # and return true if the resulting tree has more than 3 taxa
-def read_ensembl_tree(line, family, trees_dict, seq_entries_dict):
+def read_ensembl_tree(line, family, trees_dict, seq_entries_dict, alignments_dico):
   tree = Tree(line.replace("\n", ""), format = 1)
   leaves = tree.get_leaves()
   filtered_leaves = []
   for leaf in leaves:
-    if leaf.name in seq_entries_dict:
+    leaf.name = gene_name(leaf.name)
+    if leaf.name in seq_entries_dict and leaf.name in alignments_dico:
       filtered_leaves.append(leaf.name)
   try:
     tree.prune(filtered_leaves)
@@ -147,7 +211,7 @@ def read_ensembl_tree(line, family, trees_dict, seq_entries_dict):
   return False
 
 
-def parse_nhx_emf(emf_file, species_dict, max_families):
+def parse_nhx_emf(emf_file, species_dict, max_families, alignments_dico):
   seq_entries_dict = {}  
   current_entries_dict = {}
   trees_dict = {}
@@ -157,7 +221,7 @@ def parse_nhx_emf(emf_file, species_dict, max_families):
   for line in open(emf_file).readlines():
     if (last_was_data):
       last_was_data = False
-      if (read_ensembl_tree(line, family, trees_dict, current_entries_dict)):
+      if (read_ensembl_tree(line, family, trees_dict, current_entries_dict, alignments_dico)):
         for gene in current_entries_dict:
           seq_entries_dict[gene] = current_entries_dict[gene]
         family_index += 1
@@ -177,7 +241,7 @@ def parse_nhx_emf(emf_file, species_dict, max_families):
   return seq_entries_dict, trees_dict
 
 
-def parse_fasta(fasta_file, genes_dict):
+def parse_fasta(fasta_file):
   alignments_dico = {}
   cur_name = ""
   cur_seq = ""
@@ -185,9 +249,9 @@ def parse_fasta(fasta_file, genes_dict):
     if (line.strip() == "" or line[0] == "/"):
       continue
     if (line[0] == ">"):
-      if (len(cur_name) and cur_name in genes_dict):
+      if (len(cur_name)):
         alignments_dico[cur_name] = cur_seq
-      cur_name = line[1:-1]
+      cur_name = gene_name(line[1:-1])
       cur_seq = line
     else:
       cur_seq += line
@@ -274,17 +338,17 @@ def get_species_dict(species_tree_file):
   return res
 
 
-def extract_from_ensembl(nhx_emf_file, fasta_file, species_tree, datadir, max_families):
+def extract_from_ensembl(database, nhx_emf_file, fasta_file, species_tree, datadir, max_families):
   edited_species_tree = species_tree + ".edited"
-  edit_species_tree(species_tree, edited_species_tree)
+  edit_species_tree(database, species_tree, edited_species_tree)
   new_species_tree = species_tree + ".titled"
   title_node_names.title_node_names(edited_species_tree, new_species_tree)
   species_tree = new_species_tree
   species_dict = get_species_dict(species_tree)
   print(species_dict)
-  seq_entries_dict, trees_dict = parse_nhx_emf(nhx_emf_file, species_dict, max_families)
+  alignments_dico = parse_fasta(fasta_file)
+  seq_entries_dict, trees_dict = parse_nhx_emf(nhx_emf_file, species_dict, max_families, alignments_dico)
   
-  alignments_dico = parse_fasta(fasta_file, seq_entries_dict)
   export(species_tree, seq_entries_dict, trees_dict, alignments_dico, datadir)
 
 
@@ -297,13 +361,15 @@ def get_max_families(argv):
   return max_families
 
 if (__name__ == "__main__"): 
-  if (len(sys.argv) < 5): 
-    print("Syntax: python " + os.path.basename(__file__) + " nhx_emf fasta species_tree output")
+  if (len(sys.argv) < 6): 
+    print("Syntax: python " + os.path.basename(__file__) + " database nhx_emf fasta species_tree output")
+    print("Database can be either plants or vertebrates")
     exit(1)
-  nhx_emf_file = sys.argv[1]
-  fasta_file = sys.argv[2]
-  species_tree = sys.argv[3]
-  datadir = sys.argv[4]
+  database = sys.argv[1]
+  nhx_emf_file = sys.argv[2]
+  fasta_file = sys.argv[3]
+  species_tree = sys.argv[4]
+  datadir = sys.argv[5]
   max_families = get_max_families(sys.argv)
-  extract_from_ensembl(nhx_emf_file, fasta_file, species_tree, datadir, max_families)
+  extract_from_ensembl(database, nhx_emf_file, fasta_file, species_tree, datadir, max_families)
   
