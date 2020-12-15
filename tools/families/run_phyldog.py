@@ -106,7 +106,7 @@ def generate_options(datadir, subst_model, opt_species_tree):
   prepare_data_script = os.path.join(exp.tools_root, "families", "prepareData.py")
   logs = open(os.path.join(phyldog_run_dir, "options_logs.txt"), "w")
   
-  subprocess.check_call(["/bin/bash", "-c", "python " + prepare_data_script + " < " + prepare_input], stdout = logs)
+  subprocess.check_call(["/bin/bash", "-c", exp.python() + " " + prepare_data_script + " < " + prepare_input], stdout = logs)
   time.sleep(1)
   for family in fam.get_families_list(datadir):
     option_file = os.path.join(phyldog_run_dir, "options", family + ".opt")

@@ -20,7 +20,7 @@ def run_pargenes(datadir, pargenes_dir, subst_model, starting_trees, bs_trees, c
   if (not run_modeltest):
     raxml_command +="--model " + sequence_model.get_raxml_model(subst_model) + " --blopt nr_safe"
   command = []
-  command.append("python")
+  command.append(exp.python())
   command.append(exp.pargenes_script)
   command.append("-a")
   command.append(os.path.join(datadir, "alignments"))
