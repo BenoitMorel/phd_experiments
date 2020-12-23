@@ -15,7 +15,7 @@ import fast_rf_cells
 import extract_event_number
 
 def get_possible_strategies():
-  return ["SPR", "EVAL"]
+  return ["SPR", "EVAL", "SKIP"]
 
 def check_inputs(strategy):
   if (not (strategy in get_possible_strategies())):

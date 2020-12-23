@@ -89,9 +89,9 @@ def get_generax_command(generax_families_file, starting_species_tree, additional
     command.append(generax_families_file)
     command.append("-s")
     command.append(starting_species_tree)
-    command.append("--do-not-optimize-gene-trees")
+    command.append("--strategy SKIP")
     command.append("--skip-family-filtering")
-    command.append("--quartet-support")
+    command.append("--si-quartet-support")
     #command.append("--quartet-support-slow")
     #command.append("--quartet-support-paralogy")
     command.append("--do-not-reconcile")
@@ -173,7 +173,7 @@ def run(dataset, subst_model, starting_species_tree, starting_gene_tree, cores, 
       run_name += "-prune"
     if ("--per-family-rates" in additional_arguments):
       run_name += "-fam"
-    if ("--constrained-species-search" in additional_arguments):
+    if ("--si-constrained-search" in additional_arguments):
       run_name += "-constr"
     if ("--unrooted-gene-tree" in additional_arguments):
       run_name += "-unrooted"

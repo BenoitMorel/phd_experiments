@@ -14,7 +14,7 @@ import fast_rf_cells
 from ete3 import Tree
 
 def get_possible_strategies():
-  return ["SPR", "EVAL"]
+  return ["SPR", "EVAL", "SKIP"]
 
 
 
@@ -89,10 +89,10 @@ def get_generax_command(generax_families_file, starting_species_tree, additional
     command.append(generax_families_file)
     command.append("-s")
     command.append(starting_species_tree)
-    command.append("--optimize-species-tree")
-    command.append("--do-not-optimize-gene-trees")
+    command.append("--si-strategy")
+    command.append("HYBRID")
     command.append("--strategy")
-    command.append("SPR")
+    command.append("SKIP")
     command.append("-p")
     command.append(generax_output)
     command.extend(additional_arguments)
@@ -176,7 +176,7 @@ def run(dataset, subst_model, starting_species_tree, starting_gene_tree, cores, 
       run_name += "-prune"
     if ("--per-family-rates" in additional_arguments):
       run_name += "-fam"
-    if ("--constrained-species-search" in additional_arguments):
+    if ("--si-constrained-search" in additional_arguments):
       run_name += "-constr"
     if ("--unrooted-gene-tree" in additional_arguments):
       run_name += "-unrooted"
@@ -213,7 +213,7 @@ def run(dataset, subst_model, starting_species_tree, starting_gene_tree, cores, 
   print("Output in " + resultsdir)
 
 def launch(dataset, subst_model, starting_species_tree, starting_gene_tree, cluster, cores, additional_arguments):
-  command = [exp.python]
+  command = [exp.python()]
   command.extend(sys.argv)
   command.append("--exprun")
   resultsdir = os.path.join("GeneRax", dataset, starting_species_tree + "_start_" + starting_gene_tree, "run")

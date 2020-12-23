@@ -49,7 +49,7 @@ def run_speciesrax_instance(dataset, starting_tree, with_transfers, run_name, su
   else:
     command.append("--rec-model")
     command.append("UndatedDL")
-  command.append("--species-strategy")
+  command.append("--si-strategy")
   command.append(strategy)
   for arg in additional_args:
     command.append(arg)

@@ -116,6 +116,9 @@ def get_plant_default_dict(species_tree):
   #  sys.exit(1)
   return d
 
+def get_fungi_default_dict(species_tree):
+  return get_plant_default_dict(species_tree)
+
 def remove_species_tree_inplace(species_tree, to_remove):
   tree = Tree(species_tree, format = 1)
   to_keep = []
@@ -126,12 +129,12 @@ def remove_species_tree_inplace(species_tree, to_remove):
   tree.write(outfile = species_tree)
   print("UPDATE " + species_tree)
 
-def rename_species_tree_inplace(species_tree, to_replace_1, to_replace_2):
+def rename_species_tree_inplace(species_tree, to_replace_1, to_replace_2 = None):
   tree = Tree(species_tree, format = 1)
   for leaf in tree.get_leaves():
     if (leaf.name in to_replace_1):
       leaf.name = to_replace_1[leaf.name]
-    elif (leaf.name in to_replace_2):
+    elif (to_replace_2 != None and leaf.name in to_replace_2):
       leaf.name = to_replace_2[leaf.name]
   print("UPDATE " + species_tree)
   tree.write(outfile = species_tree)
@@ -145,6 +148,10 @@ def edit_species_tree(database, species_tree, edited_species_tree):
     d1 = load_species_dict(exp.ensembl_plants_species_dict)
     d2 = get_plant_default_dict(edited_species_tree)
     rename_species_tree_inplace(edited_species_tree, d1, d2)
+  elif (database == "fungi"):
+    d2 = get_fungi_default_dict(edited_species_tree)
+    rename_species_tree_inplace(edited_species_tree, d2)
+
   elif (database != "vertebrates"):
     print("Invalid database value")
     sys.exit(1)
@@ -251,8 +258,9 @@ def parse_fasta(fasta_file):
     if (line[0] == ">"):
       if (len(cur_name)):
         alignments_dico[cur_name] = cur_seq
-      cur_name = gene_name(line[1:-1])
-      cur_seq = line
+      gene = gene_name(line[1:-1])
+      cur_name= gene
+      cur_seq = ">" + gene + "\n"
     else:
       cur_seq += line
   alignments_dico[cur_name] = cur_seq
@@ -363,7 +371,7 @@ def get_max_families(argv):
 if (__name__ == "__main__"): 
   if (len(sys.argv) < 6): 
     print("Syntax: python " + os.path.basename(__file__) + " database nhx_emf fasta species_tree output")
-    print("Database can be either plants or vertebrates")
+    print("Database can be either fungi, plants or vertebrates")
     exit(1)
   database = sys.argv[1]
   nhx_emf_file = sys.argv[2]

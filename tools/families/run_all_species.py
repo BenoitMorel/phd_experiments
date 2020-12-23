@@ -299,8 +299,6 @@ class SpeciesRunFilter():
         dataset = os.path.basename(datadir)
         try:
           
-          #run_speciesrax.run_speciesrax_bench(dataset, "UndatedDTL", True, "MiniNJ", gene_tree, subst_model, cores)
-          #run_speciesrax.run_speciesrax_bench(dataset, "UndatedDTL", True, "random", gene_tree, subst_model, cores, ["--seed", "1"])
           run_speciesrax.run_speciesrax_bench(dataset, "UndatedDTL", False, "MiniNJ", gene_tree, subst_model, cores)
           run_speciesrax.run_speciesrax_bench(dataset, "UndatedDTL", False, "random", gene_tree, subst_model, cores, ["--seed", "1"])
         except Exception as exc:
