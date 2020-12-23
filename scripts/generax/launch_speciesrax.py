@@ -93,6 +93,8 @@ def get_generax_command(generax_families_file, starting_species_tree, additional
     command.append("HYBRID")
     command.append("--strategy")
     command.append("SKIP")
+    command.append("--si-estimate-bl")
+    command.append("--si-quartet-support")
     command.append("-p")
     command.append(generax_output)
     command.extend(additional_arguments)
