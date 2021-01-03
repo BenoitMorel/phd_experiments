@@ -18,7 +18,10 @@ import run_raxml_supportvalues as run_pargenes
 
 def get_mrbayes_output_dir(datadir, subst_model):
   return fam.get_run_dir(datadir, subst_model, "mrbayes_run")
-      
+
+def get_treelist(datadir, subst_model, family):
+    return os.path.join(get_mrbayes_output_dir(datadir, subst_model), "results", family, family + ".treelist")
+
 
 def generate_config_file(mrbayes_config, generations, frequency, chains, nexus_alignment, subst_model, seed, output_prefix):
   with open(mrbayes_config, "w") as writer:
@@ -79,7 +82,7 @@ def generate_mrbayes_commands_file(datadir, generations, frequency, runs, chains
         writer.write(" ".join(command) + "\n")
   return scheduler_commands_file
 
-def get_treelist(datadir, subst_model, family):
+def get_reelist(datadir, subst_model, family):
   return os.path.join(get_mrbayes_output_dir(datadir, subst_model), "results", family, family + ".treelist")
 
 def remove_mrbayes_run(datadir, subst_model):
@@ -89,8 +92,8 @@ def remove_mrbayes_run(datadir, subst_model):
 def extract_mrbayes_family(params):
   datadir, subst_model, family, mrbayes_dir, burnin = params
   family_mist_dir = fam.get_family_misc_dir(datadir, family) 
-  #output = get_treelist(datadir, subst_model, family)
-  output = gene_tree_path = fam.build_gene_tree_path(datadir, subst_model, family, "mrbayes")
+  output = get_treelist(datadir, subst_model, family)
+  gene_tree_path = fam.build_gene_tree_path(datadir, subst_model, family, "mrbayes")
   
   with open(output, "w") as writer:
     d = os.path.join(mrbayes_dir, "results", family)

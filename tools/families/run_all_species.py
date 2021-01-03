@@ -130,7 +130,7 @@ class SpeciesRunFilter():
     run_filter_file_path = os.path.join(misc_dir, str(uuid.uuid4()))
     pickle.dump(self, open(run_filter_file_path, "wb"))
     command = []
-    command.append(exp.python)
+    command.append(exp.python())
     command.append(os.path.realpath(__file__))
     command.append(datadir)
     command.append(subst_model)
@@ -298,9 +298,9 @@ class SpeciesRunFilter():
         printFlush("Run speciesRaxBench")
         dataset = os.path.basename(datadir)
         try:
-          
-          run_speciesrax.run_speciesrax_bench(dataset, "UndatedDTL", False, "MiniNJ", gene_tree, subst_model, cores)
-          run_speciesrax.run_speciesrax_bench(dataset, "UndatedDTL", False, "random", gene_tree, subst_model, cores, ["--seed", "1"])
+          no_opt_args = ["--dtl-rates-opt", "NONE"]
+          run_speciesrax.run_speciesrax_bench(dataset, "UndatedDTL", False, "MiniNJ", gene_tree, subst_model, cores, no_opt_args)
+          run_speciesrax.run_speciesrax_bench(dataset, "UndatedDTL", False, "random", gene_tree, subst_model, cores, ["--seed", "1"] + no_opt_args)
         except Exception as exc:
           printFlush("Failed running speciesrax bench\n" + str(exc))
 

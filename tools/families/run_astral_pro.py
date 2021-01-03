@@ -17,7 +17,11 @@ def init_gene_trees_file(datadir, method, subst_model, output_dir):
   with open(filepath, "w") as writer:
     for family in fam.get_families_list(datadir):
       gene_tree_path = fam.build_gene_tree_path(datadir, subst_model, family, method)
-      tree = ete3.Tree(gene_tree_path)
+      try:
+        tree = ete3.Tree(gene_tree_path)
+      except:
+        print("Cannot read " + gene_tree_path)
+        sys.exit(1)
       for node in tree.traverse("postorder"):
         node.support = 100
         node.dist = 1.0

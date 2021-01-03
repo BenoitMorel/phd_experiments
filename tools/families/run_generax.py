@@ -1,4 +1,4 @@
-mport sys
+import sys
 import os
 import subprocess
 sys.path.insert(0, 'scripts')

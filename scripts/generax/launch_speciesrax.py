@@ -118,7 +118,7 @@ def get_mode_from_additional_arguments(additional_arguments):
 
 
 def extract_trees(datadir, results_family_dir, run_name, subst_model):
-  src = os.path.join(results_family_dir, "inferred_species_tree.newick")
+  src = os.path.join(results_family_dir, "species_trees", "inferred_species_tree.newick")
   dest = fam.get_species_tree(datadir, None, run_name)
   print("extracted tree " + dest)
   shutil.copyfile(src, dest)
@@ -140,7 +140,7 @@ def av_rf(rf_cell):
 def analyze_species_results(datadir, resultsdir):
   true_species_tree = Tree(fam.get_species_tree(datadir), format = 1)
   starting_species_tree = Tree(os.path.join(resultsdir, "generax", "species_trees", "starting_species_tree.newick"), format = 1)
-  inferred_species_tree = Tree(os.path.join(resultsdir, "generax", "inferred_species_tree.newick"), format = 1)
+  inferred_species_tree = Tree(os.path.join(resultsdir, "generax", "species_trees", "inferred_species_tree.newick"), format = 1)
   starting_rooted_rf = -1
   inferred_rooted_rf = -1
   try:
@@ -164,6 +164,13 @@ def cleanup(resultsdir):
   except:
     pass
 
+def do_not_opt_rates(additional_arguments):
+  arg = "--dtl-rates-opt"
+  if (not arg in additional_arguments):
+    return False
+  pos = additional_arguments.index(arg)
+  return (additional_arguments[pos + 1] == "NONE")
+
 def run(dataset, subst_model, starting_species_tree, starting_gene_tree, cores, additional_arguments, resultsdir, do_analyze = True, do_extract = True):
   run_name = exp.getAndDelete("--run", additional_arguments, None) 
   
@@ -178,13 +185,15 @@ def run(dataset, subst_model, starting_species_tree, starting_gene_tree, cores, 
       run_name += "-prune"
     if ("--per-family-rates" in additional_arguments):
       run_name += "-fam"
+    if (do_not_opt_rates(additional_arguments)):
+      run_name += "-fixed"
     if ("--si-constrained-search" in additional_arguments):
       run_name += "-constr"
     if ("--unrooted-gene-tree" in additional_arguments):
       run_name += "-unrooted"
     run_name += "_" + starting_gene_tree
     run_name += "." + subst_model
-      
+   
   print(run_name)
   arg_analyze = exp.getAndDelete("--analyze", additional_arguments, "yes")
   do_analyze = do_analyze and (arg_analyze == "no")

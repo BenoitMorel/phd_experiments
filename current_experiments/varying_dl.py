@@ -37,10 +37,11 @@ metric_names = ["species_unrooted_rf"]
 # methods to plot
 methods_tuples = []
 methods_tuples.append(("generax-mininj-fam_raxml-ng", "SpeciesRax"))
-methods_tuples.append(("njrax-mininj_raxml-ng", "MiniNJ"))
-methods_tuples.append(("astralpro_raxml-ng", "Astral-Pro"))
-methods_tuples.append(("fastmulrfs-single_raxml-ng", "FastMulRFS"))
-methods_tuples.append(("duptree_raxml-ng", "DupTree"))
+methods_tuples.append(("generax-mininj-fam-fixed_raxml-ng", "SpeciesRaxFixed"))
+#methods_tuples.append(("njrax-mininj_raxml-ng", "MiniNJ"))
+#methods_tuples.append(("astralpro_raxml-ng", "Astral-Pro"))
+#methods_tuples.append(("fastmulrfs-single_raxml-ng", "FastMulRFS"))
+#methods_tuples.append(("duptree_raxml-ng", "DupTree"))
 #methods_tuples.append(("njrax-ustar_raxml-ng", "USTAR"))
 
 # run run_filter on all datasets in dataset
@@ -75,7 +76,7 @@ def run_varying_experiment():
   run_filter.pargenes_bootstrap_trees = 0
   
   run_filter.disable_all()
-  run_filter.analyze = True
+  run_filter.speciesraxbench = True
   
   for entry in varying_params:
     

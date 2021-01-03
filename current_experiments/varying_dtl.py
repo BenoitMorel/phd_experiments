@@ -10,7 +10,7 @@ import plot_speciesrax
 import simulations_common
 import plot_simulations
 
-do_run = not True
+do_run = False
 do_plot = not do_run
 datasets = []
 cores = 40
@@ -33,34 +33,15 @@ fixed_point = "ssim_" + tag + "_s25_f100_sites100_GTR_bl1.0_d1.0_l1.0_t1.0_p0.0_
 
 # metric to plot
 metric_names = ["species_unrooted_rf"]
-metric_names = ["runtimes"]
 
 # methods to plot
 methods_tuples = []
 methods_tuples.append(("generax-mininj-fam_raxml-ng", "SpeciesRax"))
-methods_tuples.append(("njrax-mininj_raxml-ng", "MiniNJ"))
-methods_tuples.append(("astralpro_raxml-ng", "Astral-Pro"))
-methods_tuples.append(("fastmulrfs-single_raxml-ng", "FastMulRFS"))
-methods_tuples.append(("duptree_raxml-ng", "DupTree"))
-#methods_tuples.append(("generax-random1-fam_raxml-ng", "SpeciesRaxRand"))
-#methods_tuples.append(("njrax-njst_raxml-ng", "NJst"))
-#methods_tuples.append(("njrax-ustar_raxml-ng", "USTAR"))
-#methods_tuples.append(("njrax-wmininj-raxml-ng", "WMiniNJ"))
-#methods_tuples.append(("njrax-cherry-raxml-ng", "CherryMerging"))
-#methods_tuples.append(("njrax-njst-raxml-ng", "NJst"))
-#methods_tuples.append(("njrax-ustar-raxml-ng", "USTAR-NJ"))
-#methods_tuples.append(("njrax-cherrypro-raxml-ng", "CherryMergingPro"))
-#methods_tuples.append(("duptree", "DupTree"))
-  
-#params_to_plot = ["species", "sites", "dup_rate", "families", "transfer_rate", "population"]
-#fixed_params_values = {}
-#fixed_params_values["species"] = "25"
-#fixed_params_values["families"] = "100"
-#fixed_params_values["sites"] = "100"
-#fixed_params_values["tag"] = tag
-#fixed_params_values["dup_rate"] = "1.0"
-#fixed_params_values["transfer_rate"] = "1.0"
-#fixed_params_values["population"] = "10"
+methods_tuples.append(("generax-mininj-fam-fixed_raxml-ng", "SpeciesRaxFixed"))
+#methods_tuples.append(("njrax-mininj_raxml-ng", "MiniNJ"))
+#methods_tuples.append(("astralpro_raxml-ng", "Astral-Pro"))
+#methods_tuples.append(("fastmulrfs-single_raxml-ng", "FastMulRFS"))
+#methods_tuples.append(("duptree_raxml-ng", "DupTree"))
 
 
 methods = []
@@ -111,7 +92,8 @@ def run_varying_experiment():
   run_filter.pargenes_starting_trees = 1
   run_filter.pargenes_bootstrap_trees = 0
   
-  #run_filter.disable_all()
+  run_filter.disable_all()
+  run_filter.speciesraxbench = True
   #run_filter.analyse = True
   
   for entry in varying_params:
