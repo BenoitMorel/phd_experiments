@@ -122,6 +122,9 @@ def write_discordance_rate(datadir, rate):
 def get_species_dict(datadir):
   return os.path.join(get_misc_dir(datadir), "species_dict.txt")
 
+def get_event_counts_file(datadir):
+  return os.path.join(get_misc_dir(datadir), "event_counts.txt")
+
 #####################
 # families
 #####################

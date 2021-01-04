@@ -13,6 +13,7 @@ import fam
 import sequence_model
 import fast_rf_cells
 import extract_event_number
+import events
 
 def get_possible_strategies():
   return ["SPR", "EVAL", "SKIP"]
@@ -24,14 +25,11 @@ def check_inputs(strategy):
 
 
 def get_generax_datasets():
-  
   root_datadir = os.path.join(exp.benoit_datasets_root, "families")
   datasets = {}
   for dataset in os.listdir(root_datadir):
     datasets[dataset] = os.path.join(root_datadir, dataset)
   return datasets
-
-
 
 def has_multiple_sample(starting_tree):
   return "ale" in starting_tree.lower() or "multiple" in starting_tree.lower()
@@ -131,14 +129,9 @@ def extract_trees(datadir, results_family_dir, run_name, subst_model):
 def extract_events(datadir, results_family_dir, additional_arguments):
   #try:
     rec_model = exp.getArg("--rec-model", additional_arguments, "UndatedDTL")
-    metric_name = "events_" + rec_model
-    events = extract_event_number.extract(results_family_dir)
-    print("Metric_name " + metric_name)
-    print("Events: " + str(events))
-    for event in events:
-      saved_metrics.save_metrics(datadir, event, events[event], metric_name) 
-  #except:
-    #print("Failed to extract events")
+    radius = int(exp.getArg("--max-spr-radius", additional_arguments, "5"))
+    event_counts = extract_event_number.extract(results_family_dir)
+    events.update_event_counts(datadir, rec_model, radius, event_counts)
 
 def run(dataset, subst_model, strategy, species_tree, starting_tree, cores, additional_arguments, resultsdir, do_analyze = True, do_extract = True):
   run_name = exp.getAndDelete("--run", additional_arguments, "generax-last." +subst_model) 
