@@ -151,6 +151,11 @@ def run(dataset, subst_model, strategy, species_tree, starting_tree, cores, addi
   run_generax(datadir, subst_model, strategy, species_tree, generax_families_file, mode, cores, additional_arguments, resultsdir)
   saved_metrics.save_metrics(datadir, run_name, (time.time() - start), "runtimes") 
   saved_metrics.save_metrics(datadir, run_name, (time.time() - start), "seqtimes") 
+  radius = int(exp.getArg("--max-spr-radius", additional_arguments, "5"))
+  if (radius == 0):
+    print("Warning, not extracting trees when --max-spr-radius 0 is set")
+    do_extract = False
+    do_analyze = False
   if (do_extract):
     extract_trees(datadir, os.path.join(resultsdir, "generax"), run_name, subst_model)
   try:

@@ -31,6 +31,7 @@ def get_all_event_counts(datadir):
   f = fam.get_event_counts_file(datadir) 
   aec = {}
   if (not os.path.isfile(f)):
+    print("Warning: " + f + " is not a file")
     return aec
   for line in open(f).readlines():
     sp = line.split("|")
@@ -63,10 +64,10 @@ def print_event_counts(datadir):
     for generax_radius in aec[model]:
       toprint = "counts for model " + model 
       toprint += " and radius " + str(generax_radius)
-      toprint += " "
+      toprint += "\n"
       event_counts = aec[model][generax_radius]
       for event in event_counts:
-        toprint += event + "=" + str(event_counts[event]) + " "
+        toprint += "  " + event + "\t= " + str(event_counts[event]) + "\n"
       print(toprint)
 
 if (__name__ == "__main__"):
