@@ -20,7 +20,7 @@ launch_mode = "normald"
 replicates = range(3000, 3100)
 varying_params = []
 
-#varying_params.append((None, ["none"]))
+varying_params.append((None, ["none"]))
 varying_params.append(("sites", ["sites50", "sites200", "sites300"]))
 varying_params.append(("transfer_rate", ["t0.0", "t0.5", "t2.0", "t5.0"]))
 varying_params.append(("dup_rate", ["d0.5_l0.5_t0.5", "d2.0_l2.0_t2.0", "d3.0_l3.0_t3.0"]))

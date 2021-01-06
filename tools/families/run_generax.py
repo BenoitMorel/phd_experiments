@@ -7,7 +7,7 @@ import fam
 
 def run_generax_instance(dataset, starting_tree, with_transfers, method, subst_model, per_sp_rates, optimize_species, cores = 40):
   command = []
-  command.append("python")
+  command.append(exp.python())
   if (optimize_species):
     command.append(os.path.join(exp.scripts_root, "generax/launch_speciesrax.py"))
   else:
