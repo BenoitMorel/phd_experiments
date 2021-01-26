@@ -14,7 +14,7 @@ import get_dico
 
 
 def get_species_to_keep(inputdir, species_to_prune):
-  species_tree = Tree(fam.get_species_tree(inputdir))
+  species_tree = Tree(fam.get_species_tree(inputdir), format = 1)
   all_species = set(species_tree.get_leaf_names())
   return all_species - set(species_to_prune)
 
@@ -25,7 +25,7 @@ def extract_species_tree(inputdir, outputdir, species_to_keep):
   tree.write(outfile = fam.get_species_tree(outputdir))
 
 def extract_family(family, inputdir, outputdir, gene_method, subst_model, species_to_keep):
-  tree = Tree(fam.get_true_tree(inputdir, family))
+  tree = Tree(fam.get_true_tree(inputdir, family), format = 1)
   species_to_genes = get_dico.get_species_to_genes_family(inputdir, family)
   new_species_to_genes = {}
   genes_to_keep = set()

@@ -84,11 +84,11 @@ class RunFilter():
     print("*************************************")
     if (len(datadir.split("/")) == 1):
       datadir = fam.get_datadir(datadir) 
-    save_sdtout = sys.stdout
+    save_stdout = sys.stdout
     redirected_file = os.path.join(datadir, "runs", "logs_run_all_genes." + subst_model + ".txt")
     print("Redirected logs to " + redirected_file)
     sys.stdout.flush()
-    sys.stdout = open(redirected_file, "w")
+    #sys.stdout = open(redirected_file, "w")
     if (self.raxml):
       printFlush("Run pargenes light...")
       raxml.run_pargenes_and_extract_trees(datadir, subst_model, 1, 0, cores, "RAxML-light", False)
@@ -218,7 +218,8 @@ class RunFilter():
       except:
         printFlush("Failed removing mrbayes files\n", str(exc))
     print("Done")
-
+    sys.stdout = save_stdout
+    
   def run_all_reference_methods(self, datasets, subst_model, cores = 40):
     for dataset in datasets:
        self.run_reference_methods(dataset, subst_model, cores)

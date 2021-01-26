@@ -146,6 +146,7 @@ class SpeciesRunFilter():
   def run_reference_methods(self, datadir, subst_model, cores, launch_mode = "normal"):
     if (self.generate):
       if (not os.path.isdir(datadir)):
+        print("Generating " + datadir)
         dataset = os.path.basename(datadir)
         fam_data.generate_dataset(dataset)
 

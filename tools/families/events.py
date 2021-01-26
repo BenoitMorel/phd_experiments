@@ -79,7 +79,7 @@ def get_D_L(event_counts):
   D = event_counts["D"]
   return float(D)/float(L)
 
-def print_event_counts(aec):
+def print_event_counts_norm(aec):
   if (aec == {}):
     print("No event counts")
     return
@@ -89,17 +89,60 @@ def print_event_counts(aec):
       toprint += " and radius " + str(generax_radius)
       toprint += "\n"
       event_counts = aec[model][generax_radius]
-      for event in event_counts:
-        toprint += "  " + event + "\t= " + str(event_counts[event]) + "\n"
-      toprint += "  D/S\t= " + str(get_D_S(event_counts)) + "\n"
-      toprint += "  D/lf\t= " + str(get_D_lf(event_counts)) + "\n"
-      toprint += "  D/L\t= " + str(get_D_L(event_counts)) + "\n"
-      toprint += "  T/S\t= " + str(get_T_S(event_counts)) + "\n"
-      toprint += "  T/lf\t= " + str(get_T_lf(event_counts)) + "\n"
+      D = float(event_counts["D"])
+      T = float(event_counts["T"])
+      S = float(event_counts["S"])
+      SL = float(event_counts["SL"])
+      LF = float(event_counts["Leaf"])
+      #for event in event_counts:
+        #toprint += "  " + event + "\t= " + str(event_counts[event]) + "\n"
+      toprint += "  lf\t= " + str(int(LF)) + "\n"
+      toprint += "  D/lf\t= " + str(D/LF) + "\n"
+      toprint += "  D/S\t= " + str(D/S) + "\n"
+      toprint += "  D/(S+SL)= " + str(D/(S+SL)) + "\n"
+      toprint += "  S/lf\t= " + str(S/LF) + "\n"
+      toprint += "  SL/lf\t= " + str(SL/LF) + "\n"
+      toprint += "  (S+SL)/lf= " + str((S+SL)/LF) + "\n"
+      toprint += "  T/lf\t= " + str(T/LF) + "\n"
+      toprint += "  T/S\t= " + str(T/S) + "\n"
+      toprint += "  T/(S+SL)= " + str(T/(S+SL)) + "\n"
       print(toprint)
 
+def str2(s):
+  return "{:.2f}".format(s)
+
+def print_event_freqs(aec):
+  if (aec == {}):
+    print("No event counts")
+    return
+  for model in aec:
+    for generax_radius in aec[model]:
+      toprint = "counts for model " + model 
+      toprint += " and radius " + str(generax_radius)
+      toprint += "\n"
+      event_counts = aec[model][generax_radius]
+      D = float(event_counts["D"])
+      T = float(event_counts["T"])
+      S = float(event_counts["SL"]) + float(event_counts["S"])
+      L = float(event_counts["SL"])
+      norm = D + T + S + L
+      D /= norm
+      T /= norm
+      S /= norm
+      L /= norm
+      toprint += "  S\t= " + str2(S) + "\n"
+      toprint += "  D\t= " + str2(D) + "\n"
+      toprint += "  L\t= " + str2(L) + "\n"
+      toprint += "  D/S\t= " + str2(D/S) + "\n"
+      if (T != 0.0):
+        toprint += "  T\t= " + str2(T) + "\n"
+        toprint += "  T/S\t= " + str2(T/S) + "\n"
+      print(toprint)
+
+
 def print_event_counts_datadir(datadir):
-  print_event_counts(get_all_event_counts(datadir))
+  print_event_freqs(get_all_event_counts(datadir))
+  #print_event_counts_norm(get_all_event_counts(datadir))
 
 def sum_event_counts(datadirs):
   sum_aec = get_all_event_counts(datadirs[0])
@@ -115,7 +158,7 @@ def sum_event_counts(datadirs):
         sum_ec = sum_aec[model][generax_radius]        
         for event in sum_ec:
           sum_ec[event] += ec[event]
-  print_event_counts(sum_aec)
+  print_event_freqs(sum_aec)
 
 if (__name__ == "__main__"):
   if (len(sys.argv) < 2):

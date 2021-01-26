@@ -18,17 +18,18 @@ def init_gene_trees_file(datadir, method, subst_model, output_dir):
     for family in fam.get_families_list(datadir):
       gene_tree_path = fam.build_gene_tree_path(datadir, subst_model, family, method)
       try:
-        tree = ete3.Tree(gene_tree_path)
+        lines = open(gene_tree_path).readlines()
+        for line in lines:
+          if (not "(" in line):
+            continue
+          tree = ete3.Tree(line)
+          towrite = tree.write()
+          while (towrite[-1] == "\n"):
+            towrite = towrite[:-1] 
+          writer.write(towrite + "\n")
       except:
         print("Cannot read " + gene_tree_path)
         sys.exit(1)
-      for node in tree.traverse("postorder"):
-        node.support = 100
-        node.dist = 1.0
-      towrite = tree.write()
-      while (towrite[-1] == "\n"):
-        towrite = towrite[:-1] 
-      writer.write(towrite + "\n")
   return filepath
 
 def init_mapping_file(datadir, output_dir):

@@ -86,12 +86,12 @@ def get_data_dir(name):
 def extract(name):
   rawdir = get_raw_dir(name)
   datadir = get_data_dir(name)
+  print("Datadir: " + datadir)
   fam.init_top_directories(datadir)
   best_trees = os.path.join(rawdir, "best_trees.txt")
   
   for line in open(best_trees).readlines():
     sp = line.split()
-    print(sp[0])
     family = sp[0]
     tree = Tree(sp[3], format = 1)
     if (extract_tree(datadir, family, tree)):
@@ -129,7 +129,7 @@ def dl_and_extract(index, name):
 
 
 if (__name__ == "__main__"): 
-  if (len(sys.argv) < 3): 
+  if (len(sys.argv) != 3): 
     print("Syntax: python " + os.path.basename(__file__) + " db_index outname output")
     exit(1)
   index = sys.argv[1]

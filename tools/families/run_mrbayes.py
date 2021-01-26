@@ -94,13 +94,14 @@ def extract_mrbayes_family(params):
   family_mist_dir = fam.get_family_misc_dir(datadir, family) 
   output = get_treelist(datadir, subst_model, family)
   gene_tree_path = fam.build_gene_tree_path(datadir, subst_model, family, "mrbayes")
-  
+  output = gene_tree_path
   with open(output, "w") as writer:
     d = os.path.join(mrbayes_dir, "results", family)
     for topologies in os.listdir(d):
       if (not topologies.endswith(".t")):
         continue
       topologies = os.path.join(d, topologies)
+      
       lines = open(topologies).readlines()
       is_translation = False
       translator = {}
@@ -136,7 +137,7 @@ def extract_mrbayes_results(datadir, subst_model, burnin):
   print("Finished extracting mrbayes results " + str(time.time() - start) + "s")
   sys.stdout.flush()
 
-def run_mrbayes_on_families(datadir, generations, frequency, runs, chains, burnin, subst_model, cores, prefix_species = True):
+def run_mrbayes_on_families(datadir, generations, frequency, runs, chains, burnin, subst_model, cores, prefix_species = False):
   output_dir = os.path.abspath(get_mrbayes_output_dir(datadir, subst_model))
   datadir = os.path.abspath(datadir)
   cwd = os.getcwd()
