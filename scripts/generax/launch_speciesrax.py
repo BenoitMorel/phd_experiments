@@ -95,6 +95,8 @@ def get_generax_command(generax_families_file, starting_species_tree, additional
     command.append("SKIP")
     command.append("--si-estimate-bl")
     command.append("--si-quartet-support")
+    command.append("--si-eqpic-radius")
+    command.append("3")
     command.append("-p")
     command.append(generax_output)
     command.extend(additional_arguments)
