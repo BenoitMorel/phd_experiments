@@ -21,7 +21,7 @@ def run_pargenes(datadir, pargenes_dir, subst_model, starting_trees, bs_trees, c
     raxml_command +="--model " + sequence_model.get_raxml_model(subst_model) + " --blopt nr_safe"
   command = []
   command.append(exp.python())
-  command.append(exp.pargenes_script)
+  command.append(exp.pargenes_script_debug)
   command.append("-a")
   command.append(os.path.join(datadir, "alignments"))
   command.append("-b")
@@ -47,7 +47,7 @@ def run_pargenes(datadir, pargenes_dir, subst_model, starting_trees, bs_trees, c
   try:
     subprocess.check_call(command, stdout = sys.stdout)
   except:
-    command[0] = "python2.7"
+    command[0] = exp.python()
     print(" ".join(command))
     subprocess.check_call(command, stdout = sys.stdout)
 
