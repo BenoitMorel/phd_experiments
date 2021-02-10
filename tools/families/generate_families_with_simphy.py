@@ -96,10 +96,13 @@ def build_config_file(parameters, output_dir):
 def build_indelible_config_file(parameters, output_dir):
   config_file = os.path.join(output_dir, "indelible_config.txt")
   with open(config_file, "w") as writer:
+    
     sites_mean = parameters.sites
-    sites_min = str(20)
-    sites_max = str(2 * int(parameters.sites) - 20)
-    #sites_sigma = sites_mean / 3
+    sites_teta = 0.25
+    sites_mu = 0
+    sites_scale = sites_mean / math.exp(sites_mu + sites_teta * sites_teta / 2.0)
+    #sites_min = str(20)
+    #sites_max = str(2 * int(parameters.sites) - 20)
     writer.write("[TYPE] NUCLEOTIDE 1\n") # DNA using algorithm 1 
     writer.write("[SETTINGS] [fastaextension] fasta\n")
     writer.write("[SIMPHY-UNLINKED-MODEL] modelA \n")
@@ -110,8 +113,8 @@ def build_indelible_config_file(parameters, output_dir):
     else:
       assert(False)
 
-    #writer.write("[SIMPHY-PARTITIONS] simple [1.0 modelA $(f:" + str(int(parameters.sites)) + ")]\n")
-    writer.write("[SIMPHY-PARTITIONS] simple [1.0 modelA $(u::" + sites_min + "," + sites_max + ")]\n")
+    #writer.write("[SIMPHY-PARTITIONS] simple [1.0 modelA $(u::" + sites_min + "," + sites_max + ")]\n")
+    writer.write("[SIMPHY-PARTITIONS] simple [1.0 modelA $(sl:" + str(sites_mu) + "," + str(sites_teta) + "," + str(sites_scale) + ")]\n")
 
     writer.write("[SIMPHY-EVOLVE] 1 dataset \n")
 

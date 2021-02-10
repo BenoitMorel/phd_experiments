@@ -10,8 +10,8 @@ import plot_speciesrax
 import simulations_common
 import plot_simulations
 
-#do_run = True
-do_run = False
+do_run = True
+#do_run = False
 do_plot = not do_run
 datasets = []
 cores = 40
@@ -28,7 +28,7 @@ varying_params.append(("species", ["s15", "s35", "s50", "s75"]))
 varying_params.append(("families", ["f50", "f200", "f500", "f1000"]))
 varying_params.append(("population", ["pop10000000", "pop100000000", "pop1000000000"]))
 
-tag = "varydl"
+tag = "dlsim"
 fixed_point = "ssim_" + tag + "_s25_f100_sites100_GTR_bl1.0_d1.0_l1.0_t0.0_p0.0_pop10_mu1.0_theta0.0_seed20"
 
 # metric to plot
@@ -75,7 +75,6 @@ def run_varying_experiment():
   run_filter.pargenes_starting_trees = 1
   run_filter.pargenes_bootstrap_trees = 0
   
-  run_filter.disable_all()
   run_filter.speciesraxbench = True
   
   for entry in varying_params:

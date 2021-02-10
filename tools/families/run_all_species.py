@@ -10,6 +10,7 @@ import run_generax
 import run_stag
 import species_analyze
 import run_speciesrax
+import run_tegrator
 import run_phyldog
 import run_duptree
 import run_guenomu
@@ -71,6 +72,7 @@ class SpeciesRunFilter():
     self.speciesraxprune = True
     self.speciesraxperfamily = True
     self.speciesraxbench = True
+    self.genetegratorbench = True
     self.phyldog = True
     self.guenomu = False
     self.analyze = True
@@ -102,6 +104,7 @@ class SpeciesRunFilter():
     self.speciesraxparsidl = False
     self.speciesraxprune = False
     self.speciesraxperfamily = False
+    self.genetegratorbench = False
     self.speciesraxbench = False
     self.guenomu = False
     self.cleanup = False
@@ -295,11 +298,15 @@ class SpeciesRunFilter():
           run_speciesrax.run_speciesrax_instance(dataset, gene_tree, True, "speciesrax-prune", subst_model, "HYBRID", cores, ["--prune-species-tree", "--per-family-rates"])
         except Exception as exc:
           printFlush("Failed running speciesrax prune\n" + str(exc))
+      if (self.genetegratorbench):
+        printFlush("Run genetegrator bench")
+        dataset = os.path.basename(datadir)
+        run_tegrator.run_genetegrator_bench(dataset, "generax-MiniNJ-fam_raxml-ng", "mrbayes", subst_model, cores)
       if (self.speciesraxbench):
         printFlush("Run speciesRaxBench")
         dataset = os.path.basename(datadir)
         try:
-          no_opt_args = ["--dtl-rates-opt", "NONE"]
+          no_opt_args = [] #"--dtl-rates-opt", "NONE"]
           run_speciesrax.run_speciesrax_bench(dataset, "UndatedDTL", False, "MiniNJ", gene_tree, subst_model, cores, no_opt_args)
           run_speciesrax.run_speciesrax_bench(dataset, "UndatedDTL", False, "random", gene_tree, subst_model, cores, ["--seed", "1"] + no_opt_args)
         except Exception as exc:

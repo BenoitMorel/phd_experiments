@@ -137,13 +137,17 @@ def extract_mrbayes_results(datadir, subst_model, burnin):
   print("Finished extracting mrbayes results " + str(time.time() - start) + "s")
   sys.stdout.flush()
 
-def run_mrbayes_on_families(datadir, generations, frequency, runs, chains, burnin, subst_model, cores, prefix_species = False):
+def run_mrbayes_on_families(datadir, generations, frequency, runs, chains, burnin, subst_model, cores, do_continue = False, prefix_species = False):
   output_dir = os.path.abspath(get_mrbayes_output_dir(datadir, subst_model))
   datadir = os.path.abspath(datadir)
   cwd = os.getcwd()
   try:
-    shutil.rmtree(output_dir, True)
-    exp.mkdir(output_dir)
+    if (not do_continue):
+      shutil.rmtree(output_dir, True)
+    try:
+      exp.mkdir(output_dir)
+    except:
+      pass
     print("chdir " + output_dir)
     os.chdir(output_dir)
     output_dir = os.path.relpath(output_dir)
@@ -163,8 +167,8 @@ def run_mrbayes_on_families(datadir, generations, frequency, runs, chains, burni
     os.chdir(cwd)
 
 if (__name__== "__main__"):
-  if len(sys.argv) != 9:
-    print("Syntax error: python run_mrbayes.py datadir generations frequency runs chains burnin subst_model cores")
+  if len(sys.argv) != 10:
+    print("Syntax error: python run_mrbayes.py datadir generations frequency runs chains burnin subst_model cores continue{0,1}")
     print(len(sys.argv))
     sys.exit(0)
 
@@ -176,7 +180,9 @@ if (__name__== "__main__"):
   burnin = int(sys.argv[6])
   subst_model = sys.argv[7]
   cores = int(sys.argv[8])
-  run_mrbayes_on_families(datadir, generations, frequency, runs, chains, burnin, subst_model, cores)
+  do_continue = int(sys.argv[9]) > 0
+  run_mrbayes_on_families(datadir, generations, frequency, runs, chains, burnin, subst_model, cores, do_continue)
+  
 
 
 #
