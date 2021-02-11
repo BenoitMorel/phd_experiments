@@ -16,23 +16,67 @@ import rename_leaves
 import sequence_model
 import run_raxml_supportvalues as run_pargenes
 
-def get_mrbayes_output_dir(datadir, subst_model):
-  return fam.get_run_dir(datadir, subst_model, "mrbayes_run")
 
-def get_treelist(datadir, subst_model, family):
-    return os.path.join(get_mrbayes_output_dir(datadir, subst_model), "results", family, family + ".treelist")
+def short_str(num):
+  if (num >= 1000000):
+    return str(num/1000000) + "M"
+  elif (num >= 1000):
+    return str(num/1000) + "K"
+  else:
+    return str(num)
 
+class MrbayesInstance():
+  def __init__(self, datadir, subst_model, runs = 4, chains = 2, generations = 1000000, frequency = 1000, burnin = 100):
+    self.datadir = os.path.abspath(datadir)
+    self.subst_model = subst_model
+    self.runs = runs
+    self.chains = chains
+    self.generations = generations
+    self.frequency = frequency
+    self.burnin = burnin
+    basename = self.get_tag("mrbayes_run")
+    self.output_dir = fam.get_run_dir(self.datadir, self.subst_model, basename)
+    self.output_dir = os.path.abspath(self.output_dir)
 
-def generate_config_file(mrbayes_config, generations, frequency, chains, nexus_alignment, subst_model, seed, output_prefix):
-  with open(mrbayes_config, "w") as writer:
-    writer.write("\tbegin mrbayes;\n")
-    writer.write("\tset seed=" + str(seed) + ";\n")
-    writer.write("\tset autoclose=yes nowarn=yes;\n")
-    writer.write("\texecute " + nexus_alignment + ";\n")
-    writer.write(sequence_model.get_mrbayes_preset_line(subst_model))
-    writer.write(sequence_model.get_mrbayes_lset_line(subst_model))
-    writer.write("\tmcmc nruns=1" + " nchains=" + str(chains) + " ngen=" + str(generations) + " samplefreq=" + str(frequency) + " file=" + output_prefix + ";\n")
-    writer.write("end;")
+  def get_tag(self, prefix = "mrbayes"):
+    tag = prefix
+    tag += "-r" + short_str(self.runs)
+    tag += "-c" + short_str(self.chains)
+    tag += "-g" + short_str(self.generations)
+    tag += "-f" + short_str(self.frequency)
+    tag += "-b" + short_str(self.burnin)
+    return tag
+
+  def save_parameters(self):
+    output_dir = self.output_dir
+    out = os.path.join(output_dir, "mrbayes_parameters.txt")
+    with open(out, "w") as writer:
+      writer.write("Parameters:")
+      writer.write(" " + self.datadir)
+      writer.write(" " + str(self.subst_model))
+      writer.write(" " + str(self.runs))
+      writer.write(" " + str(self.chains))
+      writer.write(" " + str(self.generations))
+      writer.write(" " + str(self.frequency))
+      writer.write(" " + str(self.burnin))
+      
+  def get_treelist(self, family):
+    return os.path.join(self.output_dir, "results", family, family + ".treelist")
+
+  def generate_config_file(self, output_config_file, nexus_alignment, seed, output_prefix):
+    with open(output_config_file, "w") as writer:
+      writer.write("\tbegin mrbayes;\n")
+      writer.write("\tset seed=" + str(seed) + ";\n")
+      writer.write("\tset autoclose=yes nowarn=yes;\n")
+      writer.write("\texecute " + nexus_alignment + ";\n")
+      writer.write(sequence_model.get_mrbayes_preset_line(subst_model))
+      writer.write(sequence_model.get_mrbayes_lset_line(subst_model))
+      writer.write("\tmcmc nruns=1" + " nchains=" + str(self.chains) + " ngen=" + str(self.generations) + " samplefreq=" + str(self.frequency) + " file=" + output_prefix + ";\n")
+      writer.write("end;")
+
+  def remove_mrbayes_run(self):
+    output_dir = os.path.abspath(self.absoutput_dir)
+    shutil.rmtree(os.path.join(output_dir, "results"), True)
 
 def get_mapping_dictionnary(mapping_file):
   res = {}
@@ -45,14 +89,15 @@ def get_mapping_dictionnary(mapping_file):
       res[gene] = species
   return res
 
-def generate_mrbayes_commands_file(datadir, generations, frequency, runs, chains, subst_model, cores, output_dir, prefix_species):
-  output_dir = get_mrbayes_output_dir(datadir, subst_model)
+def generate_commands_file(instance, cores, prefix_species):
+  output_dir = instance.output_dir
   results_dir = os.path.join(output_dir, "results")
   scheduler_commands_file = os.path.join(output_dir, "commands.txt")
   exp.mkdir(results_dir)
   family_dimensions = {}
+  datadir = instance.datadir
   try:
-    family_dimensions = run_pargenes.get_family_dimensions(os.path.abspath(datadir), subst_model)
+    family_dimensions = run_pargenes.get_family_dimensions(datadir, instance.subst_model)
   except:
     pass
   with open(scheduler_commands_file, "w") as writer:
@@ -67,9 +112,10 @@ def generate_mrbayes_commands_file(datadir, generations, frequency, runs, chains
         mapping_dictionnary = get_mapping_dictionnary(fam.get_mappings(datadir, family))
       msa_converter.msa_convert(fasta_alignment, nexus_alignment, "fasta", "nexus", mapping_dictionnary)
       for run in range(0, runs):
-        mrbayes_config = os.path.join(mrbayes_family_dir, "mrbayes_config_run" + str(run) + "." + subst_model + ".nex")
+        mrbayes_config = os.path.join(mrbayes_family_dir, "mrbayes_config_run" + str(run) + "." + instance.subst_model + ".nex")
         output_prefix = os.path.join(mrbayes_family_dir, family) + str(run)
-        generate_config_file(mrbayes_config, generations, frequency, chains, nexus_alignment, subst_model, run + 42, output_prefix)
+        seed = run + 42
+        instance.generate_config_file(mrbayes_config, nexus_alignment, seed, output_prefix)
         command = []
         command.append(family + "__" + str(run))
         command.append("1")
@@ -82,26 +128,26 @@ def generate_mrbayes_commands_file(datadir, generations, frequency, runs, chains
         writer.write(" ".join(command) + "\n")
   return scheduler_commands_file
 
-def get_reelist(datadir, subst_model, family):
-  return os.path.join(get_mrbayes_output_dir(datadir, subst_model), "results", family, family + ".treelist")
+#def get_reelist(datadir, subst_model, family):
+#  return os.path.join(get_mrbayes_output_dir(datadir, subst_model), "results", family, family + ".treelist")
 
-def remove_mrbayes_run(datadir, subst_model):
-  output_dir = os.path.abspath(get_mrbayes_output_dir(datadir, subst_model))
-  shutil.rmtree(os.path.join(output_dir, "results"), True)
 
-def extract_mrbayes_family(params):
-  datadir, subst_model, family, mrbayes_dir, burnin = params
-  family_mist_dir = fam.get_family_misc_dir(datadir, family) 
-  output = get_treelist(datadir, subst_model, family)
-  gene_tree_path = fam.build_gene_tree_path(datadir, subst_model, family, "mrbayes")
-  output = gene_tree_path
+def extract_mrbayes_family(futures_params):
+  instance, family = futures_params
+  datadir = instance.datadir
+  subst_model = instance.subst_model
+  burnin = instance.burnin
+  tag = instance.get_tag()
+  mrbayes_dir = instance.output_dir
+  family_misc_dir = fam.get_family_misc_dir(datadir, family) 
+  #output = instance.get_treelist(family)
+  output = fam.build_gene_tree_path(datadir, subst_model, family, tag)
   with open(output, "w") as writer:
     d = os.path.join(mrbayes_dir, "results", family)
     for topologies in os.listdir(d):
       if (not topologies.endswith(".t")):
         continue
       topologies = os.path.join(d, topologies)
-      
       lines = open(topologies).readlines()
       is_translation = False
       translator = {}
@@ -124,66 +170,60 @@ def extract_mrbayes_family(params):
           right = split[-1][:-2]
           translator[left] = right
 
-def extract_mrbayes_results(datadir, subst_model, burnin):
-  output_dir = get_mrbayes_output_dir(datadir, subst_model)
+def extract_mrbayes_results(instance):
   start = time.time()
   print("Extracting mrbayes results...")
-  params = []
-  for family in fam.get_families_list(datadir):
-    params.append((datadir, subst_model, family, output_dir, burnin))
+  futures_params = []
+  for family in fam.get_families_list(instance.datadir):
+    futures_params.append((instance, family))
   with concurrent.futures.ProcessPoolExecutor() as executor:
-    executor.map(extract_mrbayes_family, params)
+    executor.map(extract_mrbayes_family, futures_params)
 
   print("Finished extracting mrbayes results " + str(time.time() - start) + "s")
   sys.stdout.flush()
 
-def run_mrbayes_on_families(datadir, generations, frequency, runs, chains, burnin, subst_model, cores, do_continue = False, prefix_species = False):
-  output_dir = os.path.abspath(get_mrbayes_output_dir(datadir, subst_model))
-  datadir = os.path.abspath(datadir)
+def run_mrbayes_on_families(instance, cores, do_continue = False, prefix_species = False):
   cwd = os.getcwd()
   try:
     if (not do_continue):
-      shutil.rmtree(output_dir, True)
+      shutil.rmtree(instance.output_dir, True)
     try:
-      exp.mkdir(output_dir)
+      exp.mkdir(instance.output_dir)
     except:
       pass
-    print("chdir " + output_dir)
-    os.chdir(output_dir)
-    output_dir = os.path.relpath(output_dir)
-    datadir = os.path.relpath(datadir)
-    parameters = os.path.join(output_dir, "..", "mrbayes_parameters." + subst_model + ".txt")
-    open(parameters, "w").write("Parameters: " + datadir + " " + str(generations) + " " + str(frequency) + " " + str(runs) + " " + str(chains) + " " + str(burnin) + " " + str(subst_model) + " " + str(cores))
-    scheduler_commands_file = generate_mrbayes_commands_file(datadir, generations, frequency, runs, chains, subst_model, cores, output_dir, prefix_species)
+    print("chdir " + instance.output_dir)
+    os.chdir(instance.output_dir)
+    instance.output_dir = os.path.relpath(instance.output_dir)
+    instance.datadir = os.path.relpath(instance.datadir)
+    instance.save_parameters()
+    commands = generate_commands_file(instance, cores, prefix_species)
     start = time.time()
-    exp.run_with_scheduler(exp.mrbayes_exec, scheduler_commands_file, "onecore", cores, output_dir, "logs.txt")   
-    saved_metrics.save_metrics(datadir, fam.get_run_name("mrbayes", subst_model), (time.time() - start), "runtimes") 
-    lb = fam.get_lb_from_run(output_dir)
-    saved_metrics.save_metrics(datadir, fam.get_run_name("mrbayes", subst_model), (time.time() - start) * lb, "seqtimes") 
+    exp.run_with_scheduler(exp.mrbayes_exec, commands, "onecore", cores, instance.output_dir, "logs.txt")   
+    tag = instance.get_tag()
+    saved_metrics.save_metrics(datadir, fam.get_run_name(tag, subst_model), (time.time() - start), "runtimes") 
+    lb = fam.get_lb_from_run(instance.output_dir)
+    saved_metrics.save_metrics(datadir, fam.get_run_name(tag, subst_model), (time.time() - start) * lb, "seqtimes") 
     print("Finished running mrbayes after " + str(time.time() - start) + "s")
     sys.stdout.flush()
-    extract_mrbayes_results(datadir, subst_model, burnin)
+    extract_mrbayes_results(instance)
   finally:
     os.chdir(cwd)
 
 if (__name__== "__main__"):
   if len(sys.argv) != 10:
-    print("Syntax error: python run_mrbayes.py datadir generations frequency runs chains burnin subst_model cores continue{0,1}")
+    print("Syntax error: python run_mrbayes.py datadir subst_model runs chains generations frequency burnin cores continue{0,1}")
     print(len(sys.argv))
     sys.exit(0)
 
   datadir = sys.argv[1]
-  generations = int(sys.argv[2])
-  frequency = int(sys.argv[3])
-  runs = int(sys.argv[4])
-  chains = int(sys.argv[5])
-  burnin = int(sys.argv[6])
-  subst_model = sys.argv[7]
+  subst_model = sys.argv[2]
+  runs = int(sys.argv[3])
+  chains = int(sys.argv[4])
+  generations = int(sys.argv[5])
+  frequency = int(sys.argv[6])
+  burnin = int(sys.argv[7])
   cores = int(sys.argv[8])
   do_continue = int(sys.argv[9]) > 0
-  run_mrbayes_on_families(datadir, generations, frequency, runs, chains, burnin, subst_model, cores, do_continue)
+  instance = MrbayesInstance(datadir, subst_model, runs, chains, generations, frequency, burnin) 
+  run_mrbayes_on_families(instance, cores, do_continue)
   
-
-
-#
-
