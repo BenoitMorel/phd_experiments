@@ -38,11 +38,14 @@ def msa_convert(input_file, output_file, input_format, output_format, prefixes_d
       new_msa.set_seq(prefixes_dictionnary[seq[0]] + "_" + seq[0], seq[1])
     msa = new_msa 
 
-  if (output_format.lower() == "nexus"):
-    write_nexus(msa, output_file)
-  else:
-    msa.write(output_format, output_file)
-
+  try:
+    if (output_format.lower() == "nexus"):
+      write_nexus(msa, output_file)
+    else:
+      msa.write(output_format, output_file)
+  except:
+    print("Error when converting the file " + input_file)
+    raise
 if (__name__ == "__main__"):
   if (len(sys.argv) != 5):
     print("Syntax: python phy_to_fasta.py file1 file2 format1 format2")
