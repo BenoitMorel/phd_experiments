@@ -22,9 +22,10 @@ replicates = range(3000, 3100)
 varying_params = []
 
 #varying_params.append((None, ["none"]))
-varying_params.append(("sites", ["sites50", "sites200", "sites300"]))
-varying_params.append(("dup_rate", ["d0.0_l0.0", "d0.5_l0.5", "d2.0_l2.0", "d3.0_l3.0"]))
-varying_params.append(("species", ["s15", "s35", "s50", "s75"]))
+#varying_params.append(("sites", ["sites50", "sites200", "sites300"]))
+#varying_params.append(("dup_rate", ["d0.0_l0.0", "d0.5_l0.5", "d2.0_l2.0", "d3.0_l3.0"]))
+#varying_params.append(("species", ["s15", "s35", "s50", "s75"]))
+varying_params.append(("species", ["s75"]))
 varying_params.append(("families", ["f50", "f200", "f500", "f1000"]))
 varying_params.append(("population", ["pop10000000", "pop100000000", "pop1000000000"]))
 
@@ -53,7 +54,7 @@ def run_species_methods(datasets, subst_model, cores, run_filter, launch_mode):
 def run_varying_experiment():
   run_filter = SpeciesRunFilter()
   run_filter.disable_all()
-  run_filter.generate = True
+  #run_filter.generate = True
   run_filter.starting_gene_trees = gene_trees
   run_filter.duptree = True
   run_filter.njrax = True
@@ -65,9 +66,6 @@ def run_varying_experiment():
   #run_filter.speciesraxperfamily = True
   run_filter.fastmulrfs = True 
   #run_filter.disable_all()
-  run_filter.speciesraxbench = True
-  #run_filter.speciesraxperfamily = True
-  #run_filter.speciesraxprune = True
   run_filter.verbose = True
   run_filter.cleanup = True
   
@@ -75,7 +73,10 @@ def run_varying_experiment():
   run_filter.pargenes_starting_trees = 1
   run_filter.pargenes_bootstrap_trees = 0
   
+  run_filter.disable_all()
   run_filter.speciesraxbench = True
+  run_filter.speciesraxprune = True
+  
   
   for entry in varying_params:
     

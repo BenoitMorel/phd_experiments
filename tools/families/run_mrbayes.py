@@ -64,6 +64,10 @@ class MrbayesInstance():
     return os.path.join(self.output_dir, "results", family, family + ".treelist")
 
   def generate_config_file(self, output_config_file, nexus_alignment, seed, output_prefix):
+    append = "no"
+    ckp = output_prefix + r".ckp~"
+    if (os.path.isfile(ckp)):
+      append = "yes"
     with open(output_config_file, "w") as writer:
       writer.write("\tbegin mrbayes;\n")
       writer.write("\tset seed=" + str(seed) + ";\n")
@@ -71,7 +75,7 @@ class MrbayesInstance():
       writer.write("\texecute " + nexus_alignment + ";\n")
       writer.write(sequence_model.get_mrbayes_preset_line(subst_model))
       writer.write(sequence_model.get_mrbayes_lset_line(subst_model))
-      writer.write("\tmcmc nruns=1" + " nchains=" + str(self.chains) + " ngen=" + str(self.generations) + " samplefreq=" + str(self.frequency) + " file=" + output_prefix + ";\n")
+      writer.write("\tmcmc nruns=1" + " nchains=" + str(self.chains) + " ngen=" + str(self.generations) + " samplefreq=" + str(self.frequency) + " file=" + output_prefix + " append=" + append + ";\n")
       writer.write("end;")
 
   def remove_mrbayes_run(self):
