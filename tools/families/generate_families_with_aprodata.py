@@ -12,20 +12,27 @@ from ete3 import Tree
 # download data from https://github.com/chaoszhang/A-pro_data
 
 
-def extract(gene_trees, species_tree, datadir):
+def extract(gene_trees, species_tree, datadir, cut_underscore = False):
   fam.init_top_directories(datadir)
   index = 0
-  shutil.copyfile(species_tree, fam.get_species_tree(datadir))
-  print("\tCopied species tree into " + fam.get_species_tree(datadir))
+  if (species_tree != None):
+    shutil.copyfile(species_tree, fam.get_species_tree(datadir))
+    print("\tCopied species tree into " + fam.get_species_tree(datadir))
   for line in open(gene_trees).readlines():
+    if (line[0] == "#"):
+      continue
     family = "family_" + str(index)
     tree_str = line.replace("[&U]", "")
     tree = Tree(tree_str)
     leaves = tree.get_leaves()
+    if (len(leaves) < 4):
+      continue
     leaves_dict = {}
     species_to_genes = {}
     for leaf in leaves:
       species = leaf.name
+      if (cut_underscore):
+        species = species.split("_")[0]
       if (not species in species_to_genes):
         species_to_genes[species] = []
       genes = species_to_genes[species]
@@ -52,6 +59,19 @@ def extract_plants(inputdir, datadir):
   print("Extracting 1kplant astral-pro data...")
   extract(gene_trees_path, astral_species_tree, datadir)
 
+def extract_tom(datadir):
+  inputdir = os.path.join(exp.benoit_datasets_root, "raw_data", "tom")
+  gene_trees_path = os.path.join(inputdir, "gene_trees.txt")
+  species_tree = None
+  extract(gene_trees_path, species_tree, datadir)
+
+def extract_bigcyano36(datadir):
+  inputdir = os.path.join(exp.benoit_datasets_root, "raw_data", "bigcyano")
+  gene_trees_path = os.path.join(inputdir, "gene_trees.txt")
+  species_tree = None
+  extract(gene_trees_path, species_tree, datadir, True)
+
+
 def extract_aprodata(rawdatadir):
   families_dir = os.path.join(exp.benoit_datasets_root, "families")
   fungi_input_dir = os.path.join(rawdatadir, "fungi")
@@ -62,10 +82,10 @@ def extract_aprodata(rawdatadir):
   #extract_plants(plants_input_dir, plants_output_dir)
 
 
+
 if (__name__ == "__main__"): 
   if (len(sys.argv) < 2): 
     print("Syntax: python " + os.path.basename(__file__) + " astralprodata_repository_path")
     exit(1)
-  rawdatadir = sys.argv[1]
-  extract_aprodata(rawdatadir)
-
+  #extract_aprodata(sys.argv[1])
+  extract_bigcyano36(sys.argv[1])

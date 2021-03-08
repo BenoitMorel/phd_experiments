@@ -70,6 +70,7 @@ class SpeciesRunFilter():
     self.speciesrax = True
     self.speciesraxparsidl = True
     self.speciesraxprune = True
+    self.speciesraxnofam = True
     self.speciesraxperfamily = True
     self.speciesraxbench = True
     self.genetegratorbench = True
@@ -102,6 +103,7 @@ class SpeciesRunFilter():
     self.astralpro = False
     self.speciesrax = False
     self.speciesraxparsidl = False
+    self.speciesraxnofam = False
     self.speciesraxprune = False
     self.speciesraxperfamily = False
     self.genetegratorbench = False
@@ -289,6 +291,13 @@ class SpeciesRunFilter():
         try:
           dataset = os.path.basename(datadir)
           run_speciesrax.run_speciesrax_instance(dataset, gene_tree, 2, "speciesrax-parsidl", subst_model, "HYBRID", cores)
+        except Exception as exc:
+          printFlush("Failed running speciesrax prune\n" + str(exc))
+      if (self.speciesraxnofam):
+        printFlush("Run SpeciesRaxNoFam")
+        try:
+          dataset = os.path.basename(datadir)
+          run_speciesrax.run_speciesrax_instance(dataset, gene_tree, True, "speciesrax-prune", subst_model, "HYBRID", cores, ["--prune-species-tree"])
         except Exception as exc:
           printFlush("Failed running speciesrax prune\n" + str(exc))
       if (self.speciesraxprune):

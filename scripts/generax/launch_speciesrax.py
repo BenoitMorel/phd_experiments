@@ -93,7 +93,7 @@ def get_generax_command(generax_families_file, starting_species_tree, additional
     command.append("HYBRID")
     command.append("--strategy")
     command.append("SKIP")
-    command.append("--si-estimate-bl")
+    #command.append("--si-estimate-bl")
     command.append("--si-quartet-support")
     command.append("--si-eqpic-radius")
     command.append("3")
@@ -185,6 +185,8 @@ def run(dataset, subst_model, starting_species_tree, starting_gene_tree, cores, 
       run_name += rec_model
     if ("--prune-species-tree" in additional_arguments):
       run_name += "-prune"
+    if ("--no-dup" in additional_arguments):
+      run_name += "-nodup"
     if ("--per-family-rates" in additional_arguments):
       run_name += "-fam"
     if (do_not_opt_rates(additional_arguments)):

@@ -16,7 +16,7 @@ methods_tuples.append(("generax-MiniNJ-prune-fam", "S"))
 methods_tuples.append(("njrax-MiniNJ", "M"))
 methods_tuples.append(("astralpro", "A"))
 methods_tuples.append(("fastmulrfs-single", "F"))
-methods_tuples.append(("duptree", "D"))
+#methods_tuples.append(("duptree", "D"))
 
 methods = []
 for m in methods_tuples: 
@@ -24,14 +24,15 @@ for m in methods_tuples:
 
 # list of tuples (dataset, paper_name, subst model, gene tree method)
 datasets_tuples = []
-datasets_tuples.append(("aa_ensembl_98_ncrna_primates", "primates13", "GTR+G", "raxml-ng"))
-datasets_tuples.append(("cyano_empirical", "cyanobacteria36", "LG+G+I", "raxml-ng"))
-datasets_tuples.append(("pdb_vertebrates21", "vertebrates21", "true", "true"))
-datasets_tuples.append(("pdb_fungi59", "fungi59", "bestAA", "raxml-ng"))
-datasets_tuples.append(("pdb_fungi60", "fungi60", "bestAA", "raxml-ng"))
-datasets_tuples.append(("aa_plants", "plants23", "bestAA", "raxml-ng"))
-datasets_tuples.append(("apro_plants", "plants83", "true", "true"))
-datasets_tuples.append(("vertebrates188", "vertebrates188", "GTR+G", "raxml-ng"))
+#datasets_tuples.append(("aa_ensembl_98_ncrna_primates", "primates13", "GTR+G", "raxml-ng"))
+#datasets_tuples.append(("cyano_empirical", "cyanobacteria36", "LG+G+I", "raxml-ng"))
+#datasets_tuples.append(("pdb_vertebrates21", "vertebrates21", "true", "true"))
+#datasets_tuples.append(("pdb_fungi59", "fungi59", "bestAA", "raxml-ng"))
+#datasets_tuples.append(("pdb_fungi60", "fungi60", "bestAA", "raxml-ng"))
+#datasets_tuples.append(("aa_plants", "plants23", "bestAA", "raxml-ng"))
+#datasets_tuples.append(("apro_plants", "plants83", "true", "true"))
+#datasets_tuples.append(("vertebrates188", "vertebrates188", "GTR+G", "raxml-ng"))
+datasets_tuples.append(("tom", "tom", "true", "true"))
 
 tex = "\\begin{table*}\\begin{center}\n"
 tables_per_line = 2

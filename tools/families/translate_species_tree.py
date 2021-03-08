@@ -23,7 +23,7 @@ def translate(species_tree_path):
       leaf.name = species_dict[leaf.name]
   except:
     pass
-  return tree.write()
+  return tree.write(format = 1)
 
 def dump_into(species_tree_path, output_path):
   with open(output_path, "w") as writer:

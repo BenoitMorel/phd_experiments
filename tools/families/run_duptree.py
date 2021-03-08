@@ -12,7 +12,7 @@ from read_tree import read_trees_list
 import saved_metrics
 import get_dico
 
-def init_gene_trees_file(datadir, gene_trees, subst_model, output_dir):
+def init_gene_trees_file(datadir, gene_trees, subst_model, output_dir, nodashnodot = False):
   filepath = os.path.join(output_dir, "gene_trees.txt")
  
   with open(filepath, "w") as writer:
@@ -30,7 +30,10 @@ def init_gene_trees_file(datadir, gene_trees, subst_model, output_dir):
       for tree in trees:
         for leaf in tree:
           leaf.name = m[leaf.name]
-        writer.write(tree.write().replace("e-", ""))
+          if (nodashnodot):
+            leaf.name = leaf.name.replace("-", "DASHDASH")
+            leaf.name = leaf.name.replace(".", "DOTDOT")
+        writer.write(tree.write(format = 9))
         writer.write("\n")
   return filepath
 
@@ -46,14 +49,17 @@ def exec_duptree(gene_trees_file, output_dir):
   #command.append("all")
   FNULL = open(os.devnull, 'w')
   res = subprocess.check_output(command, stderr=FNULL)
-  return res.split("\n")[-3]
+  tree = res.split("\n")[-3]
+  tree = tree.replace("DASHDASH", "-")
+  tree = tree.replace("DOTDOT", ".")
+  return tree
 
 def run_duptree(datadir, gene_trees, subst_model):
   run_name = "duptree_" + gene_trees
   output_dir = fam.get_run_dir(datadir, subst_model, run_name + "_run")
   shutil.rmtree(output_dir, True)
   os.makedirs(output_dir)
-  gene_trees_file = init_gene_trees_file(datadir, gene_trees, subst_model, output_dir)
+  gene_trees_file = init_gene_trees_file(datadir, gene_trees, subst_model, output_dir, True)
   start = time.time()
   species_tree_str = exec_duptree(gene_trees_file, output_dir)
   time1 = (time.time() - start)

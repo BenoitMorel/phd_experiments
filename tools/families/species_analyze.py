@@ -28,7 +28,11 @@ def analyze(datadir):
   true_tree = read_tree(fam.get_species_tree(datadir))
   trees = {}
   for run in runs:
-    trees[run] = read_tree(get_species_tree(datadir, run))
+    try:
+      trees[run] = read_tree(get_species_tree(datadir, run))
+    except:
+      print("Cannot read " + get_species_tree(datadir, run))
+      raise
 
   print("")
   print("Rooted average RF:")

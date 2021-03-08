@@ -93,7 +93,8 @@ def run_varying_experiment():
   run_filter.pargenes_starting_trees = 1
   run_filter.pargenes_bootstrap_trees = 0
   
-  run_filter.analyse = True
+  run_filter.disable_all()
+  run_filter.analyse = True 
   
   for entry in varying_params:
     datasets = simulations_common.get_dataset_list(fixed_point, entry[1], replicates)

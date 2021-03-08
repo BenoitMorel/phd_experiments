@@ -10,8 +10,7 @@ import plot_speciesrax
 import simulations_common
 import plot_simulations
 
-do_run = True
-#do_run = False
+do_run = False
 do_plot = not do_run
 datasets = []
 cores = 40
@@ -22,10 +21,9 @@ replicates = range(3000, 3100)
 varying_params = []
 
 #varying_params.append((None, ["none"]))
-#varying_params.append(("sites", ["sites50", "sites200", "sites300"]))
-#varying_params.append(("dup_rate", ["d0.0_l0.0", "d0.5_l0.5", "d2.0_l2.0", "d3.0_l3.0"]))
-#varying_params.append(("species", ["s15", "s35", "s50", "s75"]))
-varying_params.append(("species", ["s75"]))
+varying_params.append(("sites", ["sites50", "sites200", "sites300"]))
+varying_params.append(("dup_rate", ["d0.0_l0.0", "d0.5_l0.5", "d2.0_l2.0", "d3.0_l3.0"]))
+varying_params.append(("species", ["s15", "s35", "s50", "s75"]))
 varying_params.append(("families", ["f50", "f200", "f500", "f1000"]))
 varying_params.append(("population", ["pop10000000", "pop100000000", "pop1000000000"]))
 
@@ -38,11 +36,11 @@ metric_names = ["species_unrooted_rf"]
 # methods to plot
 methods_tuples = []
 methods_tuples.append(("generax-mininj-fam_raxml-ng", "SpeciesRax"))
-methods_tuples.append(("generax-mininj-fam-fixed_raxml-ng", "SpeciesRaxFixed"))
-#methods_tuples.append(("njrax-mininj_raxml-ng", "MiniNJ"))
-#methods_tuples.append(("astralpro_raxml-ng", "Astral-Pro"))
-#methods_tuples.append(("fastmulrfs-single_raxml-ng", "FastMulRFS"))
-#methods_tuples.append(("duptree_raxml-ng", "DupTree"))
+#methods_tuples.append(("generax-mininj-fam-fixed_raxml-ng", "SpeciesRaxFixed"))
+methods_tuples.append(("njrax-mininj_raxml-ng", "MiniNJ"))
+methods_tuples.append(("astralpro_raxml-ng", "Astral-Pro"))
+methods_tuples.append(("fastmulrfs-single_raxml-ng", "FastMulRFS"))
+methods_tuples.append(("duptree_raxml-ng", "DupTree"))
 #methods_tuples.append(("njrax-ustar_raxml-ng", "USTAR"))
 
 # run run_filter on all datasets in dataset
@@ -73,10 +71,11 @@ def run_varying_experiment():
   run_filter.pargenes_starting_trees = 1
   run_filter.pargenes_bootstrap_trees = 0
   
-  run_filter.disable_all()
   run_filter.speciesraxbench = True
   run_filter.speciesraxprune = True
-  
+  run_filter.disable_all()
+  run_filter.analyse = True
+  run_filter.analyse = True 
   
   for entry in varying_params:
     
