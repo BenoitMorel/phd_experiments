@@ -11,7 +11,7 @@ import create_random_tree
 import ete3
 
 
-def treat_alignment(input_file, output_file, output_mapping_file, authorized_species):
+def treat_alignment(input_file, authorized_species, datadir, family):
   #seq = ete3.SeqGroup(input_file, format="iphylip_relaxed")
   print(input_file)
   seq = ete3.SeqGroup(input_file, format="fasta")
@@ -23,9 +23,14 @@ def treat_alignment(input_file, output_file, output_mapping_file, authorized_spe
       continue
     if (not species in species_to_genes):
       species_to_genes[species] = []
-    species_to_genes[species].append(entry[0])
-    filtered_seq.set_seq(entry[0], entry[1])
-  filtered_seq.write("fasta", output_file)
+    gene = species + "_" + str(len(species_to_genes[species]))
+    species_to_genes[species].append(gene)
+    filtered_seq.set_seq(gene, entry[1])
+  if (len(filtered_seq) < 4):
+      return 
+  output_mapping_file = fam.get_mappings(datadir, family)
+  fam.init_family_directories(datadir, family)
+  filtered_seq.write("fasta", fam.get_alignment(datadir, family))
   with open(output_mapping_file, "w") as writer:
     for species, genes in species_to_genes.items():
       writer.write(species + ":" + ";".join(genes) + "\n")
@@ -51,13 +56,11 @@ def generate_from_msas(msas_dir, species_tree, datadir):
   families = []
   for f in os.listdir(msas_dir):
     families.append(f.split(".")[0])
-  fam.init_families_directories(datadir, families)
+  #fam.init_families_directories(datadir, families)
   for f in os.listdir(msas_dir):
     family = f.split(".")[0]
     src = os.path.join(msas_dir, f)
-    dest = fam.get_alignment(datadir, family)
-    mapping_dest = fam.get_mappings(datadir, family)
-    treat_alignment(src, dest, mapping_dest, authorized_species)
+    treat_alignment(src, authorized_species, datadir, family)
   fam.postprocess_datadir(datadir)
 
 if (__name__ == "__main__"): 
@@ -68,4 +71,3 @@ if (__name__ == "__main__"):
   species_tree = sys.argv[2]
   datadir = sys.argv[3]
   generate_from_msas(msas_dir, species_tree, datadir)
-

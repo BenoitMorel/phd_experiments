@@ -15,8 +15,9 @@ def get_runs(datadir):
   res = []
   for f in os.listdir(fam.get_species_dir(datadir)):
     split = f.split(".")
-    if (len(split) == 4):
-      res.append(split[0] + "." + split[1])
+    run = ".".join(split[0:-3])
+    if (len(split) >= 4):
+      res.append(run + "." + split[-3])
   return res
 
 def get_species_tree(datadir, run):

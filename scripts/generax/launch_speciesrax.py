@@ -183,6 +183,9 @@ def run(dataset, subst_model, starting_species_tree, starting_gene_tree, cores, 
       run_name += exp.getArg("--seed", additional_arguments, "noseed")
     if (rec_model != "UndatedDTL"):
       run_name += rec_model
+    if ("--si-spr-radius" in additional_arguments):
+      radius = exp.getArg("--si-spr-radius", additional_arguments, "1")
+      run_name += "-radius" + radius
     if ("--prune-species-tree" in additional_arguments):
       run_name += "-prune"
     if ("--no-dup" in additional_arguments):

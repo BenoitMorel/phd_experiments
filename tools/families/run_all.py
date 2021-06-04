@@ -158,7 +158,8 @@ class RunFilter():
     if (self.mrbayes):
       printFlush("Run mrbayes...")
       try:
-        run_mrbayes.run_mrbayes_on_families(datadir, self.mb_generations, self.mb_frequencies, self.mb_runs, self.mb_chains, self.mb_burnin, subst_model, cores)
+        instance = run_mrbayes.MrbayesInstance(datadir, subst_model, self.mb_runs, self.mb_chains, self.mb_generations, self.mb_frequencies, self.mb_burnin) 
+        run_mrbayes.run_mrbayes_on_families(instance, cores, False)
       except Exception as exc:
         printFlush("Failed running mrbayes\n" + str(exc))
     

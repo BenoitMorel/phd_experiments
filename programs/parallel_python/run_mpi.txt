@@ -1,1 +1,0 @@
-python /hits/basement/sco/morel/github/phd_experiments/programs/parallel_python/parallel_python.py 500 64 mpi ${cores}

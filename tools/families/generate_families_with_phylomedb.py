@@ -130,7 +130,7 @@ def dl_and_extract(index, name):
 
 if (__name__ == "__main__"): 
   if (len(sys.argv) != 3): 
-    print("Syntax: python " + os.path.basename(__file__) + " db_index outname output")
+    print("Syntax: python " + os.path.basename(__file__) + " db_index outname")
     exit(1)
   index = sys.argv[1]
   name = sys.argv[2]

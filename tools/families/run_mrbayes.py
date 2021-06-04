@@ -66,6 +66,7 @@ class MrbayesInstance():
   def generate_config_file(self, output_config_file, nexus_alignment, seed, output_prefix):
     append = "no"
     ckp = output_prefix + r".ckp~"
+    parsi_mode = True
     if (os.path.isfile(ckp)):
       append = "yes"
     with open(output_config_file, "w") as writer:
@@ -75,6 +76,13 @@ class MrbayesInstance():
       writer.write("\texecute " + nexus_alignment + ";\n")
       writer.write(sequence_model.get_mrbayes_preset_line(subst_model))
       writer.write(sequence_model.get_mrbayes_lset_line(subst_model))
+      if (parsi_mode):
+        writer.write("\tpropset ParsSPR(Tau,V)$prob=0;\n")
+        writer.write("\tpropset NNI(Tau,V)$prob=0;\n")
+        writer.write("\tpropset   ExtSPR(Tau,V)$prob=0;\n")
+        writer.write("\tpropset ExtTBR(Tau,V)$prob=0;\n")
+        writer.write("\tpropset ParsSPR1(Tau,V)$prob=12;\n")
+        writer.write("\tpropset ParsTBR1(Tau,V)$prob=6;\n")
       writer.write("\tmcmc nruns=1" + " nchains=" + str(self.chains) + " ngen=" + str(self.generations) + " samplefreq=" + str(self.frequency) + " file=" + output_prefix + " append=" + append + ";\n")
       writer.write("end;")
 
