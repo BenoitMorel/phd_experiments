@@ -63,7 +63,7 @@ class MrbayesInstance():
   def get_treelist(self, family):
     return os.path.join(self.output_dir, "results", family, family + ".treelist")
 
-  def generate_config_file(self, output_config_file, nexus_alignment, seed, output_prefix):
+  def generate_config_file(self, output_config_file, nexus_alignment, subst_model, seed, output_prefix):
     append = "no"
     ckp = output_prefix + r".ckp~"
     parsi_mode = True
@@ -87,7 +87,7 @@ class MrbayesInstance():
       writer.write("end;")
 
   def remove_mrbayes_run(self):
-    output_dir = os.path.abspath(self.absoutput_dir)
+    output_dir = os.path.abspath(self.output_dir)
     shutil.rmtree(os.path.join(output_dir, "results"), True)
 
 def get_mapping_dictionnary(mapping_file):
@@ -123,11 +123,11 @@ def generate_commands_file(instance, cores, prefix_species):
       if (prefix_species):
         mapping_dictionnary = get_mapping_dictionnary(fam.get_mappings(datadir, family))
       msa_converter.msa_convert(fasta_alignment, nexus_alignment, "fasta", "nexus", mapping_dictionnary)
-      for run in range(0, runs):
+      for run in range(0, instance.runs):
         mrbayes_config = os.path.join(mrbayes_family_dir, "mrbayes_config_run" + str(run) + "." + instance.subst_model + ".nex")
         output_prefix = os.path.join(mrbayes_family_dir, family) + str(run)
         seed = run + 42
-        instance.generate_config_file(mrbayes_config, nexus_alignment, seed, output_prefix)
+        instance.generate_config_file(mrbayes_config, nexus_alignment, instance.subst_model, seed, output_prefix)
         command = []
         command.append(family + "__" + str(run))
         command.append("1")
@@ -212,9 +212,9 @@ def run_mrbayes_on_families(instance, cores, do_continue = False, prefix_species
     start = time.time()
     exp.run_with_scheduler(exp.mrbayes_exec, commands, "onecore", cores, instance.output_dir, "logs.txt")   
     tag = instance.get_tag()
-    saved_metrics.save_metrics(datadir, fam.get_run_name(tag, subst_model), (time.time() - start), "runtimes") 
+    saved_metrics.save_metrics(instance.datadir, fam.get_run_name(tag, instance.subst_model), (time.time() - start), "runtimes") 
     lb = fam.get_lb_from_run(instance.output_dir)
-    saved_metrics.save_metrics(datadir, fam.get_run_name(tag, subst_model), (time.time() - start) * lb, "seqtimes") 
+    saved_metrics.save_metrics(instance.datadir, fam.get_run_name(tag, instance.subst_model), (time.time() - start) * lb, "seqtimes") 
     print("Finished running mrbayes after " + str(time.time() - start) + "s")
     sys.stdout.flush()
     extract_mrbayes_results(instance)

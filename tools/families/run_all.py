@@ -16,6 +16,7 @@ import run_mrbayes
 import run_stag
 import species_analyze
 import run_speciesrax
+import run_parsi_raxmlng as parsimony
 
 def printFlush(msg):
   print(msg)
@@ -39,6 +40,7 @@ class RunFilter():
       self.eval_joint_ll = True
       self.analyze = True
       self.rm_mrbayes = True
+      self.parsimony = []
     if (species_inference):
       self.raxml = True 
       self.pargenes = True
@@ -61,6 +63,7 @@ class RunFilter():
   def disable_all(self):
     self.raxml = False
     self.pargenes = False
+    self.parsimony = []
     self.treerecs = False
     self.treefix = False
     self.phyldog = False
@@ -96,7 +99,9 @@ class RunFilter():
     if (self.pargenes):
       printFlush("Run pargenes and extract trees...")
       raxml.run_pargenes_and_extract_trees(datadir, subst_model, self.pargenes_starting_trees, self.pargenes_bootstrap_trees, cores)
-    
+    for samples in self.parsimony:
+      printFlush("Run parsimony with " + str(samples) + " samples")
+      parsimony.run_parsi_on_families(datadir, samples, subst_model, cores)
     if (self.treerecs):
       printFlush("Run treerecs...")
       try:
@@ -215,9 +220,10 @@ class RunFilter():
     if (self.rm_mrbayes):
       try:
         printFlush("Removing mrbayes files...")
-        run_mrbayes.remove_mrbayes_run(datadir, subst_model)
-      except:
-        printFlush("Failed removing mrbayes files\n", str(exc))
+        instance = run_mrbayes.MrbayesInstance(datadir, subst_model, self.mb_runs, self.mb_chains, self.mb_generations, self.mb_frequencies, self.mb_burnin) 
+        instance.remove_mrbayes_run()
+      except Exception as exc:
+        printFlush("Failed removing mrbayes files\n" + str(exc))
     print("Done")
     sys.stdout = save_stdout
     

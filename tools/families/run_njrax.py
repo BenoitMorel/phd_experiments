@@ -20,6 +20,7 @@ def init_gene_trees_file(datadir, gene_trees, subst_model, output_dir):
       towrite = open(gene_tree_path).read()
       if (len(towrite) == 0):
         print("Error in " + gene_tree_path)
+        continue
       while (towrite[-1] == "\n"):
         towrite = towrite[:-1]
         if (len(towrite) == 0):
