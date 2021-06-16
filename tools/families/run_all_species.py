@@ -313,7 +313,8 @@ class SpeciesRunFilter():
           printFlush("Run genetegrator bench")
           dataset = os.path.basename(datadir)
           #run_tegrator.run_genetegrator_bench(dataset, "generax-MiniNJ-fam_raxml-ng", gene_tree, subst_model, cores)
-          run_tegrator.run_genetegrator_bench(dataset, "MiniNJ", gene_tree, subst_model, cores, ["--prune-species-tree", "--rec-model", "UndatedDL"])
+          run_tegrator.run_genetegrator_bench(dataset, "MiniNJ", gene_tree, subst_model, cores, ["--rec-model", "UndatedDL"])
+          #run_tegrator.run_genetegrator_bench(dataset, "MiniNJ", gene_tree, subst_model, cores)
       if (self.speciesraxbench):
         printFlush("Run speciesRaxBench")
         dataset = os.path.basename(datadir)

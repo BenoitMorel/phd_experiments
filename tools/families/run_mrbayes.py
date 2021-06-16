@@ -19,11 +19,11 @@ import run_raxml_supportvalues as run_pargenes
 
 def short_str(num):
   if (num >= 1000000):
-    return str(num/1000000) + "M"
+    return str(int(num/1000000)) + "M"
   elif (num >= 1000):
-    return str(num/1000) + "K"
+    return str(int(num/1000)) + "K"
   else:
-    return str(num)
+    return str(int(num))
 
 class MrbayesInstance():
   def __init__(self, datadir, subst_model, runs = 4, chains = 2, generations = 1000000, frequency = 1000, burnin = 100):
