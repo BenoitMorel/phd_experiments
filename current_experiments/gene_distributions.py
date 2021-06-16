@@ -11,6 +11,10 @@ import plot_speciesrax
 import simulations_common
 import plot_simulations
 
+generate_datasets = True
+generate_gene_trees = True
+generate_species_trees = True
+
 datasets = []
 cores = 38
 subst_model = "GTR+G"
@@ -31,8 +35,6 @@ varying_params.append((None, ["none"]))
 tag = "dlsim"
 fixed_point = "ssim_" + tag + "_s25_f100_sites100_GTR_bl1.0_d1.0_l1.0_t0.0_p0.0_pop10_mu1.0_theta0.0_seed3000"
 
-generate_gene_trees = True
-generate_species_trees = True
 
 # run run_filter on all datasets in dataset
 def run_methods(datasets, subst_model, cores, run_filter, launch_mode):
@@ -47,8 +49,13 @@ def run_species_methods(datasets, subst_model, cores, run_filter, launch_mode):
 
 
 def run_varying_experiment():
+  generate_filter = SpeciesRunFilter()
+  generate_filter.disable_all()
+  generate_filter.generate = True
   run_filter = RunFilter()
   run_filter.disable_all()
+  if (generate_datasets):
+    run_filter.generate = True
   run_filter.mrbayes = True
   run_filter.mb_frequencies = 1000
   run_filter.mb_generations = 1000000
@@ -70,12 +77,12 @@ def run_varying_experiment():
     datasets = simulations_common.get_dataset_list(fixed_point, entry[1], replicates)
     for dataset in datasets:
       dataset_dir = fam.get_datadir(dataset)
+      if (generate_datasets):
+        generate_filter.run_reference_methods(dataset_dir, subst_model, cores)
       if (generate_gene_trees):
         run_filter.run_reference_methods(dataset_dir, subst_model, cores)
-        #run_methods(datasets, subst_model, cores, run_filter, launch_mode)
       if (generate_species_trees):
         species_run_filter.run_reference_methods(dataset_dir, subst_model, cores)
-        #run_species_methods(datasets, subst_model, cores, species_run_filter, launch_mode)
 
 def plot_varying_experiment():
   for entry in varying_params:

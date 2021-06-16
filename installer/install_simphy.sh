@@ -1,17 +1,20 @@
+#!/bin/bash
 
 if [ -z "$1" ]
   then
     echo "No argument supplied (please specify user name)"
   fi
-user=$1
+prefix=$1
+temp=$prefix/temp
+opt=$prefix/opt
+rm -rf $temp
+mkdir -p $prefix
+mkdir -p $temp
+mkdir -p $opt
 
-p=/home/$user/temp
 
-#: '
+cd $temp
 
-mkdir -p $p
-mkdir -p /home/$user/opt
-cd $p
 wget http://www.sqlite.org/2015/sqlite-autoconf-3080900.tar.gz #SQlite3 sources
 wget ftp://ftp.gnu.org/gnu/gsl/gsl-latest.tar.gz #GSL sources
 wget https://gmplib.org/download/gmp/gmp-6.0.0a.tar.bz2 #GMP sources
@@ -30,44 +33,46 @@ mv sqlite* sqlite3
 
 
 #step1: SQLite3 compilation and installation
-cd $p/sqlite3
-./configure --prefix=/home/$user/opt/local
+cd $temp/sqlite3
+./configure --prefix=$opt/local
 make
 make install
 make clean
 #Step2: GSL compilation and installation
-cd $p/gsl
-./configure --prefix=/home/$user/opt/local
+cd $temp/gsl
+./configure --prefix=$opt/local
 make
 make install
 make clean
 #Step3: GMP compilation and installation
-cd $p/gmp
-./configure --prefix=/home/$user/opt/local
+cd $temp/gmp
+./configure --prefix=$opt/local
 make
 make install
 make clean
 
 #Step4: Environment configuration
 
-export C_INCLUDE_PATH=/home/$user/opt/local/include
-export LD_LIBRARY_PATH=/home/$user/opt/local/lib
-export LDFLAGS=-L/home/$user/opt/local/lib
-echo 'export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/'"$user"'/opt/local/lib' >> /home/$user/.bashrc
+export C_INCLUDE_PATH=$opt/local/include
+export LD_LIBRARY_PATH=$opt/local/lib
+export LDFLAGS=-L$opt/local/lib
+echo 'export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:'"$opt"'/local/lib' >> $HOME/.bashrc
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:'"$opt"'/local/lib
 
 #Step5: MPFR compilation and installation
-cd /home/$user/temp/mpfr
-./configure --prefix=/home/$user/opt/local --with-gmp=/home/$user/opt/local
+cd $temp/mpfr
+./configure --prefix=$opt/local --with-gmp=$opt/local
 make
 make install
 make clean
 #Step6: SimPhy compilation
 
 
-cd /home/$user/temp/SimPhy
+cd $temp/SimPhy
 make
 make clean
 
-echo "Binary in $p/SimPhy/bin"
-
+rm -rf $prefix/SimPhy_1.0.2
+mv $temp/SimPhy/ $prefix/SimPhy_1.0.2
+echo "Binary in $prefix/SimPhy/bin"
 
