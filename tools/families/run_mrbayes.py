@@ -66,7 +66,7 @@ class MrbayesInstance():
   def generate_config_file(self, output_config_file, nexus_alignment, subst_model, seed, output_prefix):
     append = "no"
     ckp = output_prefix + r".ckp~"
-    parsi_mode = True
+    parsi_mode = False
     if (os.path.isfile(ckp)):
       append = "yes"
     with open(output_config_file, "w") as writer:
