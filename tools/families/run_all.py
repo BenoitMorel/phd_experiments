@@ -1,5 +1,6 @@
 import os
 import sys
+import run_bootstrap_trees
 import run_raxml_supportvalues as raxml
 import run_treerecs as treerecs
 import run_treefixdtl as treefix
@@ -17,6 +18,7 @@ import run_stag
 import species_analyze
 import run_speciesrax
 import run_parsi_raxmlng as parsimony
+import run_multiple_raxml_trees
 
 def printFlush(msg):
   print(msg)
@@ -29,6 +31,7 @@ class RunFilter():
     if (gene_inference):
       self.raxml = True
       self.pargenes = True
+      self.raxml_multi = []
       self.treerecs = True
       self.treefix = False
       self.phyldog = True
@@ -36,6 +39,7 @@ class RunFilter():
       self.eccetera = True
       self.generax = True
       self.mrbayes = True
+      self.bootstrap = []
       self.ALE = True
       self.eval_joint_ll = True
       self.analyze = True
@@ -63,6 +67,7 @@ class RunFilter():
   def disable_all(self):
     self.raxml = False
     self.pargenes = False
+    self.raxml_multi = []
     self.parsimony = []
     self.treerecs = False
     self.treefix = False
@@ -75,6 +80,7 @@ class RunFilter():
     self.eval_joint_ll = False
     self.analyze = False
     self.mrbayes = False
+    self.bootstrap = []
     self.dated_ALE = False
     self.stag = False
     self.phyldog_species = False
@@ -99,6 +105,18 @@ class RunFilter():
     if (self.pargenes):
       printFlush("Run pargenes and extract trees...")
       raxml.run_pargenes_and_extract_trees(datadir, subst_model, self.pargenes_starting_trees, self.pargenes_bootstrap_trees, cores)
+    for samples in self.raxml_multi:
+      printFlush("Run raxml-ng" + str(samples) + "...")
+      try:
+        run_multiple_raxml_trees.run_pargenes_and_extract_trees(datadir, subst_model, samples, cores)  
+      except Exception as exc:
+        printFlush("Failed running raxml\n" + str(exc))
+    for samples in self.bootstrap:
+      printFlush("Run bootstraps" + str(samples) + "...")
+      try:
+        run_bootstrap_trees.run_pargenes_and_extract_trees(datadir, subst_model, samples, cores)  
+      except Exception as exc:
+        printFlush("Failed running bootstraps\n" + str(exc))
     for samples in self.parsimony:
       printFlush("Run parsimony with " + str(samples) + " samples")
       parsimony.run_parsi_on_families(datadir, samples, subst_model, cores)
@@ -159,7 +177,7 @@ class RunFilter():
       except Exception as exc:
         printFlush("Failed running Phyldog species\n" + str(exc))
 
-
+        
     if (self.mrbayes):
       printFlush("Run mrbayes...")
       try:

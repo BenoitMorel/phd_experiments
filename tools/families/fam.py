@@ -179,6 +179,15 @@ def get_true_tree(datadir, family):
 def get_raxml_tree(datadir, subst_model, family):
   return build_gene_tree_path(datadir, subst_model, family, "raxml-ng")
 
+def get_raxml_trees(datadir, samples, subst_model, family):
+  return build_gene_tree_path(datadir, subst_model, family, "raxml-ng" + str(samples))
+
+def get_bootstrap_trees(datadir, samples, subst_model, family):
+  return build_gene_tree_path(datadir, subst_model, family, "bootstrap" + str(samples))
+
+def get_plausible_trees(datadir, samples, subst_model, family):
+  return build_gene_tree_path(datadir, subst_model, family, "plausible" + str(samples))
+
 def get_raxml_light_tree(datadir, subst_model, family):
   return build_gene_tree_path(datadir, subst_model, family, "raxml-light")
 

@@ -25,6 +25,15 @@ def short_str(num):
   else:
     return str(int(num))
 
+def int_from_short_str(num):
+  if (num[-1] == "M"):
+    return int(num[:-1]) * 1000000
+  elif (num[-1] == "K"):
+    return int(num[:-1]) * 1000
+  else:
+    return int(num)
+
+
 class MrbayesInstance():
   def __init__(self, datadir, subst_model, runs = 4, chains = 2, generations = 1000000, frequency = 1000, burnin = 100):
     self.datadir = os.path.abspath(datadir)
@@ -46,6 +55,21 @@ class MrbayesInstance():
     tag += "-f" + short_str(self.frequency)
     tag += "-b" + short_str(self.burnin)
     return tag
+
+  @staticmethod
+  def get_instance(datadir, genetree_name):
+    sp = genetree_name.split(".")
+    tag = sp[0]
+    subst_model = sp[1]
+    sp = tag.split("-")
+    assert(sp[0] == "mrbayes")
+    runs = int_from_short_str(sp[1][1:])
+    chains = int_from_short_str(sp[2][1:])
+    generations = int_from_short_str(sp[3][1:])
+    frequency = int_from_short_str(sp[4][1:])
+    burnin = int_from_short_str(sp[5][1:])
+    inst = MrbayesInstance(datadir, subst_model, runs, chains, generations, frequency, burnin)
+    return inst
 
   def save_parameters(self):
     output_dir = self.output_dir
@@ -223,7 +247,7 @@ def run_mrbayes_on_families(instance, cores, do_continue = False, prefix_species
 
 if (__name__== "__main__"):
   if len(sys.argv) != 10:
-    print("Syntax error: python run_mrbayes.py datadir subst_model runs chains generations frequency burnin cores continue{0,1}")
+    print("Syntax error: python " + os.path.basename(__file__) + " datadir subst_model runs chains generations frequency burnin cores continue{0,1}")
     print(len(sys.argv))
     sys.exit(0)
 

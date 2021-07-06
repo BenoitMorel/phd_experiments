@@ -308,13 +308,11 @@ class SpeciesRunFilter():
           run_speciesrax.run_speciesrax_instance(dataset, gene_tree, True, "speciesrax-prune", subst_model, "HYBRID", cores, ["--prune-species-tree", "--per-family-rates"])
         except Exception as exc:
           printFlush("Failed running speciesrax prune\n" + str(exc))
+      print ("starting gene trees: " + str(self.starting_gene_trees))
       if (self.genetegratorbench):
-        for gene_tree in self.starting_gene_trees:
-          printFlush("Run genetegrator bench")
-          dataset = os.path.basename(datadir)
-          #run_tegrator.run_genetegrator_bench(dataset, "generax-MiniNJ-fam_raxml-ng", gene_tree, subst_model, cores)
-          run_tegrator.run_genetegrator_bench(dataset, "MiniNJ", gene_tree, subst_model, cores, ["--rec-model", "UndatedDL"])
-          #run_tegrator.run_genetegrator_bench(dataset, "MiniNJ", gene_tree, subst_model, cores)
+        printFlush("Run genetegrator bench")
+        dataset = os.path.basename(datadir)
+        run_tegrator.run_genetegrator_bench(dataset, "MiniNJ", gene_tree, subst_model, cores)
       if (self.speciesraxbench):
         printFlush("Run speciesRaxBench")
         dataset = os.path.basename(datadir)

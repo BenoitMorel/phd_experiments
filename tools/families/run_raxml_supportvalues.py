@@ -159,7 +159,7 @@ def run_pargenes_and_extract_trees(datadir, subst_model, starting_trees, bs_tree
 
 if __name__ == "__main__":
   if (len(sys.argv) < 7):
-    print("syntax: python run_raxml_supportvalues.py datadir subst_model starting_trees bs_trees cores restart")
+    print("syntax: python " + os.path.basename(__file__) + " datadir subst_model starting_trees bs_trees cores restart")
     sys.exit(1)
   dataset = sys.argv[1]
   subst_model = sys.argv[2]

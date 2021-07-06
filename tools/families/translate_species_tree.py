@@ -9,6 +9,7 @@ import fam
 
 def get_dict(datadir):
   d = {}
+  print(fam.get_species_dict(datadir))
   for line in open(fam.get_species_dict(datadir)).readlines():
     sp = line.replace("\n", "").split(":")
     d[sp[0]] = sp[1]
@@ -22,6 +23,7 @@ def translate(species_tree_path):
     for leaf in tree.get_leaves():
       leaf.name = species_dict[leaf.name]
   except:
+    print("Cannot find dict");
     pass
   return tree.write(format = 1)
 
