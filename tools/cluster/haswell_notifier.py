@@ -15,7 +15,7 @@ def query_haswell_remote(user_name, query):
   command = []
   command.append("ssh")
   command.append("-t")
-  command.append(user_name + "@bridge-login.h-its.org")
+  command.append(user_name + "@phobos.h-its.org")
   command2 = []
   command2.append("ssh")
   command2.append("-t")
