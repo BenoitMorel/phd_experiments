@@ -15,11 +15,11 @@ datasets = []
 cores = 38
 subst_model = "GTR+G"
 #gene_trees = ["parsimony100"]#, "parsimony500"]# "mrbayes-r2-c2-g100K-f100-b100"]
-gene_trees = ["raxml-ng100", "bootstrap100", "mrbayes-r2-c2-g1M-f100-b10"]
-#gene_trees = ["mrbayes-r2-c2-g1M-f1K-b100"]
+#gene_trees = ["raxml-ng100", "bootstrap100", "mrbayes-r2-c2-g1M-f100-b10"]
+gene_trees = ["mrbayes-r2-c2-g1M-f1K-b100"]
 #gene_trees = ["bootstrap100", "bootstrap1000"]
 launch_mode = "normald"
-replicates = range(3005, 3100)
+replicates = range(3000, 3100)
 varying_params = []
 
 varying_params.append((None, ["none"]))
@@ -29,12 +29,12 @@ varying_params.append((None, ["none"]))
 #varying_params.append(("families", ["f50", "f200", "f500", "f1000"]))
 #varying_params.append(("population", ["pop10000000", "pop100000000", "pop1000000000"]))
 
-#tag = "dlsim"
-#fixed_point = "ssim_" + tag + "_s25_f100_sites100_GTR_bl1.0_d1.0_l1.0_t0.0_p0.0_pop10_mu1.0_theta0.0_seed3000"
-tag = "dtlsim"
-fixed_point = "ssim_" + tag + "_s25_f100_sites100_GTR_bl1.0_d1.0_l1.0_t1.0_p0.0_pop10_mu1.0_theta0.0_seed3000"
+tag = "dlsim"
+fixed_point = "ssim_" + tag + "_s25_f100_sites100_GTR_bl1.0_d1.0_l1.0_t0.0_p0.0_pop10_mu1.0_theta0.0_seed3000"
+#tag = "dtlsim"
+#fixed_point = "ssim_" + tag + "_s25_f100_sites100_GTR_bl1.0_d1.0_l1.0_t1.0_p0.0_pop10_mu1.0_theta0.0_seed3000"
 
-generate_gene_trees = True
+generate_gene_trees = False
 generate_species_trees = True
 
 # run run_filter on all datasets in dataset
@@ -66,13 +66,13 @@ def run_varying_experiment():
   species_run_filter = SpeciesRunFilter()
   species_run_filter.disable_all()
   species_run_filter.starting_gene_trees = gene_trees
-  species_run_filter.genetegratorbench = True
+  #species_run_filter.genetegratorbench = True
   #species_run_filter.astralpro = True
   #species_run_filter.fastmulrfs = True
   #species_run_filter.duptree = True
   #species_run_filter.cherry = True
   #species_run_filter.njrax = True
-  #species_run_filter.speciesraxbench = True
+  species_run_filter.speciesraxbench = True
   for entry in varying_params:
     datasets = simulations_common.get_dataset_list(fixed_point, entry[1], replicates)
     for dataset in datasets:

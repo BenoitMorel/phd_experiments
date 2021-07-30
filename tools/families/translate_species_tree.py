@@ -7,8 +7,11 @@ import experiments as exp
 import fam
 
 
-def get_dict(datadir):
+def get_dict(datadir, species_tree_path):
   d = {}
+  tree = Tree(species_tree_path, format = 1)
+  for leaf in tree.get_leaves():
+    d[leaf.name] = leaf.name
   print(fam.get_species_dict(datadir))
   for line in open(fam.get_species_dict(datadir)).readlines():
     sp = line.replace("\n", "").split(":")
@@ -19,7 +22,7 @@ def translate(species_tree_path):
   tree = Tree(species_tree_path, format = 1)
   datadir = species_tree_path.split("species_tree")[0]
   try:
-    species_dict = get_dict(datadir)
+    species_dict = get_dict(datadir, species_tree_path)
     for leaf in tree.get_leaves():
       leaf.name = species_dict[leaf.name]
   except:

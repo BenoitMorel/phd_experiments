@@ -10,24 +10,25 @@ import plot_speciesrax
 import simulations_common
 import plot_simulations
 
-do_run = False
+do_run = True
 do_plot = not do_run
 datasets = []
 cores = 40
 subst_model = "GTR+G"
 gene_trees = ["raxml-ng"]
 launch_mode = "normald"
-replicates = range(3000, 3100)
+replicates = range(3000, 3001)
 varying_params = []
 
+varying_params.append(("species", ["s15"]))
 #varying_params.append((None, ["none"]))
 
-varying_params.append(("sites", ["sites50", "sites200", "sites300"]))
-varying_params.append(("transfer_rate", ["t0.5", "t2.0", "t3.0"]))
-varying_params.append(("dup_rate", ["d0.5_l0.5_t0.5", "d2.0_l2.0_t2.0", "d3.0_l3.0_t3.0"]))
-varying_params.append(("species", ["s15", "s35", "s50", "s75"]))
-varying_params.append(("families", ["f50", "f200", "f500", "f1000"]))
-varying_params.append(("population", ["pop10000000", "pop100000000", "pop1000000000"]))
+#varying_params.append(("sites", ["sites50", "sites200", "sites300"]))
+#varying_params.append(("transfer_rate", ["t0.5", "t2.0", "t3.0"]))
+#varying_params.append(("dup_rate", ["d0.5_l0.5_t0.5", "d2.0_l2.0_t2.0", "d3.0_l3.0_t3.0"]))
+#varying_params.append(("species", ["s15", "s35", "s50", "s75"]))
+#varying_params.append(("families", ["f50", "f200", "f500", "f1000"]))
+#varying_params.append(("population", ["pop10000000", "pop100000000", "pop1000000000"]))
 
 tag = "dtlsim"
 fixed_point = "ssim_" + tag + "_s25_f100_sites100_GTR_bl1.0_d1.0_l1.0_t1.0_p0.0_pop10_mu1.0_theta0.0_seed20"
@@ -61,8 +62,6 @@ def run_species_methods(datasets, subst_model, cores, run_filter, launch_mode):
 
 def run_varying_experiment():
   run_filter = SpeciesRunFilter()
-  run_filter.disable_all()
-  run_filter.generate = True
   run_filter.starting_gene_trees = gene_trees
   run_filter.duptree = True
   run_filter.njrax = True
@@ -92,9 +91,10 @@ def run_varying_experiment():
   run_filter.pargenes = True
   run_filter.pargenes_starting_trees = 1
   run_filter.pargenes_bootstrap_trees = 0
+  run_filter.analyse = True 
   
   run_filter.disable_all()
-  run_filter.analyse = True 
+  run_filter.generate = True
   
   for entry in varying_params:
     datasets = simulations_common.get_dataset_list(fixed_point, entry[1], replicates)

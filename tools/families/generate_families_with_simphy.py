@@ -27,6 +27,7 @@ class SimphyParameters():
     self.loss_rate = 1.0
     self.dup_rate = 1.0
     self.transfer_rate = 0.0
+    self.gene_conversion_rate = 0.0
     self.sites = 50
     self.model = "GTR"
     self.seed = 42
@@ -54,15 +55,19 @@ def build_config_file(parameters, output_dir):
     loss_freq =     0.00000000049 * parameters.loss_rate 
     dup_freq =      0.00000000049 * parameters.dup_rate
     transfer_freq = 0.00000000049 * parameters.transfer_rate 
+    gene_conversion_freq = 0.00000000049 * parameters.gene_conversion_rate 
+
     assert(loss_freq == dup_freq)
     writer.write("-gd f:" + str(loss_freq) + "\n")
     writer.write("-gb f:" + str(dup_freq) + "\n")
     writer.write("-gt f:" + str(transfer_freq) +"\n")
+    writer.write("-gg f:" + str(gene_conversion_freq) +"\n")
 
     # L, D, T per family rates
     writer.write("-ld sl:" + str(lognormal_location) + "," + str(lognormal_scale) + ",gd\n")
     writer.write("-lb f:ld\n")
     writer.write("-lt sl:" + str(lognormal_location) + "," + str(lognormal_scale) + ",gt\n")
+    writer.write("-lg f:gg\n")
     #writer.write("-lt f:ld\n")
     
     lk = 0
@@ -231,6 +236,7 @@ def get_output_dir(parameters, root_output):
   res += "_d" + str(parameters.dup_rate)
   res += "_l" + str(parameters.loss_rate)
   res += "_t" + str(parameters.transfer_rate)
+  res += "_gc" + str(parameters.gene_conversion_rate)
   res += "_p0.0"
   res += "_pop" + str(parameters.population)
   res += "_mu" + str(parameters.mu)
@@ -277,7 +283,7 @@ def generate_from_parameters(parameters, root_output):
   print("Done! output in " + output_dir) 
   return output_dir
 
-def generate_simphy(tag, species, families, sites, model, bl_factor, dup_rate, loss_rate, transfer_rate, perturbation, population, mu, theta, root_output, seed):
+def generate_simphy(tag, species, families, sites, model, bl_factor, dup_rate, loss_rate, transfer_rate, gene_conversion_rate, perturbation, population, mu, theta, root_output, seed):
   p = SimphyParameters()
   p.tag = tag
   p.species_taxa = int(species)
@@ -288,6 +294,7 @@ def generate_simphy(tag, species, families, sites, model, bl_factor, dup_rate, l
   p.dup_rate = float(dup_rate)
   p.loss_rate = float(loss_rate)
   p.transfer_rate = float(transfer_rate)
+  p.gene_conversion_rate = float(gene_conversion_rate)
   p.seed = int(seed)
   p.population = population
   p.mu = float(mu)

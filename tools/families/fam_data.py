@@ -20,7 +20,6 @@ jsim_species_to_params[27] = (3, 12)
 jsim_species_to_params[41] = (3, 4)
 jsim_species_to_params[16] = (3, 6)
 
-#protein_datasets = ["swiss", "cyano_simulated", "cyano_empirical", "sub_t0.05_s0.5_cyano_empirical", "sub_t0.01_s0.2_ensembl_8880_15"]
 
 def get_param_from_dataset_name(parameter, dataset):
   if (parameter == "tag"):
@@ -41,16 +40,18 @@ def get_param_from_dataset_name(parameter, dataset):
     return dataset.split("_")[8][1:]
   elif (parameter == "transfer_rate"):
     return dataset.split("_")[9][1:]
+  elif (parameter == "gene_conversion_rate"):
+    return dataset.split("_")[10][2:]
   elif (parameter == "perturbation"):
-    return dataset.split("_")[10][1:]
+    return dataset.split("_")[11][1:]
   elif (parameter == "population"):
-    return dataset.split("_")[11][3:]
+    return dataset.split("_")[12][3:]
   elif (parameter == "sample_mu"):
-    return dataset.split("_")[12][2:]
+    return dataset.split("_")[13][2:]
   elif (parameter == "sample_theta"):
-    return dataset.split("_")[13][5:]
+    return dataset.split("_")[14][5:]
   elif (parameter == "seed"):
-    return dataset.split("_")[14][4:]
+    return dataset.split("_")[15][4:]
   elif (parameter == "tl_ratio"):
     t = get_param_from_dataset_name("transfer_rate", dataset)
     l = get_param_from_dataset_name("loss_rate", dataset)
@@ -91,6 +92,7 @@ def generate_dataset(dataset):
   d = get_param_from_dataset_name("dup_rate", dataset)
   l = get_param_from_dataset_name("loss_rate", dataset)
   t = get_param_from_dataset_name("transfer_rate", dataset)
+  gc = get_param_from_dataset_name("gene_conversion_rate", dataset)
   p = get_param_from_dataset_name("perturbation", dataset)
    
   output = exp.families_datasets_root
@@ -105,7 +107,7 @@ def generate_dataset(dataset):
     mu = get_param_from_dataset_name("sample_mu", dataset)
     theta = get_param_from_dataset_name("sample_theta", dataset)
     model = "GTR"
-    simphy.generate_simphy(tag, species, families, sites, model, bl_factor, d, l, t, p, population, mu, theta, output,  seed) 
+    simphy.generate_simphy(tag, species, families, sites, model, bl_factor, d, l, t, gc, p, population, mu, theta, output,  seed) 
   else:
     print("Unknown simulator for dataset " + dataset)
     sys.exit(1)

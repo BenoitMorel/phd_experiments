@@ -27,6 +27,7 @@ import run_generax_selector
 import run_mrbayes
 import run_fasttree
 import shutil
+import subprocess
 sys.path.insert(0, os.path.join("scripts"))
 sys.path.insert(0, os.path.join("tools", "families"))
 import experiments as exp
@@ -73,6 +74,7 @@ class SpeciesRunFilter():
     self.speciesraxnofam = True
     self.speciesraxperfamily = True
     self.speciesraxbench = True
+    self.speciessplit = True
     self.genetegratorbench = True
     self.phyldog = True
     self.guenomu = False
@@ -106,6 +108,7 @@ class SpeciesRunFilter():
     self.speciesraxnofam = False
     self.speciesraxprune = False
     self.speciesraxperfamily = False
+    self.speciessplit = False
     self.genetegratorbench = False
     self.speciesraxbench = False
     self.guenomu = False
@@ -309,17 +312,33 @@ class SpeciesRunFilter():
         except Exception as exc:
           printFlush("Failed running speciesrax prune\n" + str(exc))
       print ("starting gene trees: " + str(self.starting_gene_trees))
+      if (self.speciessplit):
+        printFlush("Run SpeciesSplit search")
+        dataset = os.path.basename(datadir)
+        command = []
+        command.append(exp.python())
+        command.append("scripts/generax/launch_split.py")
+        command.append(dataset)
+        command.append(subst_model)
+        command.append("MiniNJ")
+        command.append(gene_tree)
+        command.append("normald")
+        command.append("1")
+        print(command)
+        subprocess.check_call(command)
       if (self.genetegratorbench):
         printFlush("Run genetegrator bench")
+        dl_args = ["--rec-model", "UndatedDL"]
         dataset = os.path.basename(datadir)
-        run_tegrator.run_genetegrator_bench(dataset, "MiniNJ", gene_tree, subst_model, cores)
+        #run_tegrator.run_genetegrator_bench(dataset, "MiniNJ", gene_tree, subst_model, cores)
+        run_tegrator.run_genetegrator_bench(dataset, "MiniNJ", gene_tree, subst_model, cores, dl_args)
       if (self.speciesraxbench):
         printFlush("Run speciesRaxBench")
         dataset = os.path.basename(datadir)
         try:
           no_opt_args = [] #"--dtl-rates-opt", "NONE"]
           run_speciesrax.run_speciesrax_bench(dataset, "UndatedDTL", False, "MiniNJ", gene_tree, subst_model, cores, no_opt_args)
-          run_speciesrax.run_speciesrax_bench(dataset, "UndatedDTL", False, "random", gene_tree, subst_model, cores, ["--seed", "1"] + no_opt_args)
+          #run_speciesrax.run_speciesrax_bench(dataset, "UndatedDTL", False, "random", gene_tree, subst_model, cores, ["--seed", "1"] + no_opt_args)
         except Exception as exc:
           printFlush("Failed running speciesrax bench\n" + str(exc))
 
