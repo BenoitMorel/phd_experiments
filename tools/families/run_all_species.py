@@ -13,6 +13,7 @@ import run_speciesrax
 import run_tegrator
 import run_phyldog
 import run_duptree
+import run_stride
 import run_guenomu
 import run_astrid
 import run_astral_multi
@@ -58,6 +59,7 @@ class SpeciesRunFilter():
     self.concatenation_max = True
     self.stag = True
     self.duptree = True
+    self.stride = True
     self.fastrfs = True
     self.fastmulrfs = True
     self.njrax = True    
@@ -94,6 +96,7 @@ class SpeciesRunFilter():
     self.fastmulrfs = False
     self.phyldog = False
     self.duptree = False
+    self.stride = False
     self.njrax = False    
     self.cherry = False    
     self.cherrypro = False    
@@ -115,24 +118,6 @@ class SpeciesRunFilter():
     self.cleanup = False
     #self.analyze = False
   
-  def enable_fast_methods(self):
-    self.disable_all()
-    self.pargenes = True
-    self.fasttree = True
-    self.orthogenerax = True
-    self.concatenation_min = True
-    self.concatenation_max = True
-    self.stag = True
-    self.duptree = True
-    self.fastrfs = True
-    self.fastmulrfs = True
-    self.njrax = True   
-    self.cherry = True   
-    self.cherrypro = True   
-    self.njst = True   
-    self.astrid = True
-    self.speciesrax = True
-
   def launch_reference_methods(self, datadir, subst_model, cores, launch_mode):
     misc_dir = fam.get_misc_dir(datadir)
     run_filter_file_path = os.path.join(misc_dir, str(uuid.uuid4()))
@@ -200,6 +185,13 @@ class SpeciesRunFilter():
           run_stag.run_stag(datadir, gene_tree, subst_model)
         except Exception as exc:
           printFlush("Failed running STAG\n" + str(exc))
+    if (self.stride):
+      printFlush("Running stride...")
+      for gene_tree in self.starting_gene_trees:
+        try:
+          run_stride.run_stride(datadir, "generax-MiniNJ-fam", gene_tree, subst_model)
+        except Exception as exc:
+          printFlush("Failed running DupTree\n" + str(exc))
     if (self.duptree):
       printFlush("Run Duptree")
       for gene_tree in self.starting_gene_trees:

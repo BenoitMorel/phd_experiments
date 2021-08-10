@@ -4,6 +4,8 @@ import shutil
 
 def add_gc(datadir):
   print(datadir)
+  if ("gc" in datadir):
+    return
   key = "_p0"
   sp = datadir.split(key)
   newdatadir = sp[0] + "_gc0.0" + key + sp[1]
@@ -13,6 +15,8 @@ def add_gc(datadir):
 def rm_gc(datadir):
   print(datadir)
   key = "_gc0.0"
+  if (not key in datadir):
+    return
   sp = datadir.split(key)
   assert(len(sp) > 1)
   newdatadir = sp[0] + sp[1]
@@ -24,7 +28,7 @@ if (__name__ == "__main__"):
     print("Syntax python " + os.path.basename(__file__) + " datasets")
     sys.exit(1)
   for datadir in sys.argv[1:]:
-    rm_gc(datadir)
+    add_gc(datadir)
 
 
 

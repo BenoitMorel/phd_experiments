@@ -47,7 +47,8 @@ def build_config_file(parameters, output_dir):
     # species tree height in years (I don't understand this)
     writer.write("-st ln:21.25,0.2\n")
     # substitution rate
-    writer.write("-su ln:-21.9," + str(0.1 * parameters.bl) + "\n")
+    #writer.write("-su ln:-21.9," + str(0.1 * parameters.bl) + "\n")
+    writer.write("-su ln:-21.9,0.1\n")
     # L, D, T global rates 
     lognormal_scale = 1.0
     lognormal_location = 0.0 #math.log(1.0 - 0.5 * pow(lognormal_scale, 2.0))
@@ -157,18 +158,25 @@ def run_simphy(output_dir, config_file):
   simphy_output_dir = os.path.join(output_dir, "1")
   species_tree = os.path.join(simphy_output_dir, "s_tree.trees")
   generations = analyze_tree.check_ultrametric_and_get_length(species_tree)
-  if (False):
-    rescale_bl.rescale_bl(species_tree, species_tree, 1.0 / float(generations))
-    families = []
-    for f in os.listdir(simphy_output_dir):
-      if (f.startswith("g_trees")):
-        families.append("family_" + f.split("g_trees")[1].split(".")[0])
-    for family in families:
-      family_number = family.split("_")[1] 
-      # true trees
-      gene_tree = os.path.join(simphy_output_dir, "g_trees" + family_number + ".trees")
-      rescale_bl.rescale_bl(gene_tree, gene_tree, 100.0 / float(generations))
-    
+
+
+def rescale_gene_tree_bl(output_dir, bl):
+  simphy_output_dir = os.path.join(output_dir, "1")
+  bl = float(bl)
+  print("BEFORE RESCALE")
+  if (bl == 1.0):
+    return
+  families = []
+  print("outputdir " + simphy_output_dir)
+  for f in os.listdir(simphy_output_dir):
+    if (f.startswith("g_trees")):
+      families.append("family_" + f.split("g_trees")[1].split(".")[0])
+  for family in families:
+    family_number = family.split("_")[1] 
+    # true trees
+    gene_tree = os.path.join(simphy_output_dir, "g_trees" + family_number + ".trees")
+    rescale_bl.rescale_bl(gene_tree, gene_tree, bl)
+
 def run_indelible(output_dir, config_file, cores):
   commands = []
   seed = "42"
@@ -276,6 +284,7 @@ def generate_from_parameters(parameters, root_output):
   exp.reset_dir(output_dir)
   config_file = build_config_file(parameters, output_dir)
   run_simphy(output_dir, config_file)
+  rescale_gene_tree_bl(output_dir, parameters.bl)
   indelible_config_file = build_indelible_config_file(parameters, output_dir)
   run_indelible(output_dir, indelible_config_file, cores)
   export_to_family(output_dir)

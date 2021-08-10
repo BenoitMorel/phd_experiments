@@ -175,9 +175,8 @@ def do_not_opt_rates(additional_arguments):
 
 def run(dataset, subst_model, starting_species_tree, starting_gene_tree, cores, additional_arguments, resultsdir, do_analyze = True, do_extract = True):
   run_name = exp.getAndDelete("--run", additional_arguments, None) 
-  
   if (run_name == None):
-    run_name = "generax-" + starting_species_tree
+    run_name = "generax-plop-" + starting_species_tree
     rec_model = exp.getArg("--rec-model", additional_arguments, "UndatedDTL")
     if (starting_species_tree == "random"):
       run_name += exp.getArg("--seed", additional_arguments, "noseed")

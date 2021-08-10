@@ -93,7 +93,8 @@ def generate_options(datadir, subst_model, opt_species_tree):
     writer.write(os.path.join(phyldog_run_dir, "options") + "\n")
     writer.write(os.path.join(phyldog_run_dir, "results") + "\n")
     writer.write("yes" + "\n")
-    writer.write(fam.get_phyldog_species_tree(datadir) + "\n")
+    #writer.write(fam.get_phyldog_species_tree(datadir) + "\n")
+    writer.write(fam.get_species_tree(datadir, "MiniNJ") + "\n")
     if (opt_species_tree):
       writer.write("yes" + "\n") #opt species tree
     else:

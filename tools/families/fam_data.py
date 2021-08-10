@@ -67,7 +67,7 @@ def get_param_from_dataset_name(parameter, dataset):
   elif (parameter == "dt_ratio"):
     d = get_param_from_dataset_name("dup_rate", dataset)
     t = get_param_from_dataset_name("transfer_rate", dataset)
-    if (float(l) == 0.0):
+    if (float(t) == 0.0):
       return "-1.0"
     return str(float(d)/float(t))
   elif (parameter == "av_rate"):
@@ -141,6 +141,13 @@ def change_param_in_dataset_name(dataset, param_name, new_value):
   split = dataset.split("_")
   split[get_param_position(dataset, param_name)] = param_name + str(new_value)
 
+def is_float(s):
+  try:
+    float(s)
+    return True
+  except ValueError:
+    return False
+
 def get_dataset_variations(datasets, fixed_point, strings_to_replace):
   for string_to_replace in strings_to_replace:
     if (string_to_replace == "none"):
@@ -150,7 +157,10 @@ def get_dataset_variations(datasets, fixed_point, strings_to_replace):
     split = fixed_point.split("_")
     for elem in elems_to_replace:
       param_name =  re.sub("[0-9]*[\.]*[0-9]*", "", elem)
-      param_value =  re.sub("[a-zA-Z]*", "", elem)
+      param_name = re.sub("e-", "", param_name)
+      param_value =  elem[len(param_name):]
+      if (param_name == "bl"):
+        print(param_value)
       param_position = get_param_position(fixed_point, param_name)
       split[param_position] = param_name + str(param_value)
     dataset = "_".join(split)

@@ -23,10 +23,27 @@ def get_runs(datadir):
 def get_species_tree(datadir, run):
   return os.path.join(fam.get_species_dir(datadir), run + ".speciesTree.newick")
 
+def get_split(tree):
+  res = []
+  for child in tree.get_children():
+    res.append(set(child.get_leaf_names()))
+  return res
+
+def get_split_score(sp1, sp2):
+  if (len(sp1) != 2):
+    return 0.0
+  if (len(sp2) != 2):
+    return 0.0
+  if (sp1[0] == sp2[0]):
+    return 1.0
+  if (sp1[0] == sp2[1]):
+    return 1.0
+  return 0.0
 
 def analyze(datadir):
   runs = get_runs(datadir)
   true_tree = read_tree(fam.get_species_tree(datadir))
+  true_split = get_split(true_tree)
   trees = {}
   for run in runs:
     try:
@@ -35,42 +52,62 @@ def analyze(datadir):
       print("Cannot read " + get_species_tree(datadir, run))
       raise
 
+  root_distance_printer = AlignedPrinter()
+  rooted_printer = AlignedPrinter()
+  unrooted_printer = AlignedPrinter()
+
+  for run in trees:
+    #try:
+      tree = trees[run]
+      if (tree == None):
+        continue
+      # add a fake root if the tree is unrooted
+      if (len(tree.children) == 3):
+        tree.set_outgroup(tree.children[0])
+      # check that split is correct
+      tree_split = get_split(tree)
+      split_score = get_split_score(true_split, tree_split)
+      if ("generax-MiniNJ-fam_raxml-ng.GTR+G" in run):
+        print(true_split)
+        print(tree_split)
+        print(split_score)
+      saved_metrics.save_metrics(datadir, run, str(split_score), "root_split") 
+
+      # compute RF distances
+      rooted_rf = true_tree.robinson_foulds(tree, unrooted_trees=False, correct_by_polytomy_size = True)
+      unrooted_rf = true_tree.robinson_foulds(tree, unrooted_trees= True, correct_by_polytomy_size = True)
+      # relativee distances 
+      rooted_arf = 10000000.0 
+      unrooted_arf = 10000000.0 
+      root_distance = 10000000.0
+      if (len(tree) == len(true_tree)):
+        rooted_arf = float(rooted_rf[0]) / float(rooted_rf[1])
+        unrooted_arf = float(unrooted_rf[0]) / float(unrooted_rf[1])
+        root_distance = float(rooted_rf[0] - unrooted_rf[0]) / float(rooted_rf[1])
+      # save metrics
+      saved_metrics.save_metrics(datadir, run, str(rooted_arf), "species_rooted_rf") 
+      saved_metrics.save_metrics(datadir, run, str(unrooted_arf), "species_unrooted_rf") 
+      saved_metrics.save_metrics(datadir, run, str(root_distance), "root_distance") 
+      # add to printer
+      rooted_printer.add(run + ":", str(rooted_arf))
+      unrooted_printer.add(run + ":", str(unrooted_arf))
+      root_distance_printer.add(run + ":" , str(root_distance))
+    #except:
+   #   pass
+
+  # print results
+  print("")
+  print("Root distance:")
+  root_distance_printer.sort_right_float()
+  root_distance_printer.display()
+
   print("")
   print("Rooted average RF:")
-  rooted_printer = AlignedPrinter()
-  for run in trees:
-    try:
-      tree = trees[run]
-      rooted_rf_cell = true_tree.robinson_foulds(tree, unrooted_trees=False, correct_by_polytomy_size = True)
-      rooted_arf = float(rooted_rf_cell[0]) / float(rooted_rf_cell[1])
-      if (len(tree) != len(true_tree)):
-        rooted_arf = 10000000.0
-      saved_metrics.save_metrics(datadir, run, str(rooted_arf), "species_rooted_rf") 
-      rooted_printer.add(run + ":", str(rooted_arf))
-    except:
-      pass
   rooted_printer.sort_right_float()
   rooted_printer.display()
 
   print("")
   print("Unrooted average RF:")
-  unrooted_printer = AlignedPrinter()
-  for run in trees:
-    try:
-      tree = trees[run]
-      if (tree == None):
-        continue
-      if (len(tree.children) == 3):
-        tree.set_outgroup(tree.children[0])
-        print("reroot")
-      unrooted_rf_cell = true_tree.robinson_foulds(tree, unrooted_trees=True, correct_by_polytomy_size = True)
-      unrooted_arf = float(unrooted_rf_cell[0]) / float(unrooted_rf_cell[1])
-      if (len(tree) != len(true_tree)):
-        unrooted_arf = 10000000.0
-      saved_metrics.save_metrics(datadir, run, str(unrooted_arf), "species_unrooted_rf") 
-      unrooted_printer.add(run + ":", str(unrooted_arf))
-    except:
-      pass
   unrooted_printer.sort_right_float()
   unrooted_printer.display()
     
