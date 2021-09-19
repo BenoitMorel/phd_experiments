@@ -13,41 +13,31 @@ import sequence_model
 import fast_rf_cells
 from ete3 import Tree
 
-def get_possible_strategies():
-  return ["SPR", "EVAL", "SKIP"]
 
 
 
-def get_generax_datasets():
+def get_minibme_datasets():
   root_datadir = os.path.join(exp.benoit_datasets_root, "families")
   datasets = {}
   for dataset in os.listdir(root_datadir):
     datasets[dataset] = os.path.join(root_datadir, dataset)
   return datasets
 
-datasets = get_generax_datasets()
+datasets = get_minibme_datasets()
 
-
-def has_multiple_sample(starting_gene_tree):
-  return "ale" in starting_gene_tree.lower() or "multiple" in starting_gene_tree.lower()
 
 def get_starting_gene_tree_path(datadir, subst_model, family, starting_gene_tree):
-  #if (has_multiple_sample(starting_gene_tree)):
-    #return os.path.join(fam.get_family_misc_dir(datadir, family), starting_gene_tree + "." + subst_model + "_onesample.geneTree")
-  #else:
   return fam.build_gene_tree_path(datadir, subst_model, family, starting_gene_tree)
 
-# GeneRax does not accept tree files with multiple trees
-def sample_one_starting_gene_tree(datadir, subst_model, starting_gene_tree):
-  for family in fam.get_families_list(datadir):
-    input_tree = fam.build_gene_tree_path(datadir, subst_model, family, starting_gene_tree)
-    output_tree = get_starting_gene_tree_path(datadir, subst_model, family, starting_gene_tree)
-  #  tree = open(input_tree, "r").readline()
-  #  open(output_tree, "w").write(tree)
+def do_not_opt_rates(additional_arguments):
+  arg = "--dtl-rates-opt"
+  if (not arg in additional_arguments):
+    return False
+  pos = additional_arguments.index(arg)
+  return (additional_arguments[pos + 1] == "NONE")
 
-def build_generax_families_file(datadir, starting_gene_tree, subst_model, output):
-  if (has_multiple_sample(starting_gene_tree)):
-    sample_one_starting_gene_tree(datadir, subst_model, starting_gene_tree)
+
+def build_minibme_families_file(datadir, starting_gene_tree, subst_model, output):
   families_dir = os.path.join(datadir, "families")
   with open(output, "w") as writer:
     writer.write("[FAMILIES]\n")
@@ -73,50 +63,30 @@ def build_generax_families_file(datadir, starting_gene_tree, subst_model, output
       else:
         writer.write("subst_model = " + sequence_model.get_raxml_model(subst_model) + "\n")
 
-def get_generax_command(generax_families_file, starting_species_tree, additional_arguments, output_dir, mode, cores):
-    executable = exp.generax_exec
-    if (mode == "gprof"):
-      executable = exp.generax_gprof_exec
-    elif (mode == "scalasca"):
-      executable = exp.generax_scalasca_exec
-    generax_output = os.path.join(output_dir, "generax")
+def get_minibme_command(minibme_families_file, starting_species_tree, additional_arguments, output_dir, mode, cores):
+    executable = exp.minibme_exec
+    minibme_output = os.path.join(output_dir, "minibme")
     command = []
     command.append("mpirun")
     command.append("-np")
     command.append(str(cores))
     command.append(executable)
     command.append("-f")
-    command.append(generax_families_file)
+    command.append(minibme_families_file)
     command.append("-s")
     command.append(starting_species_tree)
-    command.append("--si-strategy")
-    command.append("HYBRID")
-    command.append("--strategy")
-    command.append("SKIP")
-    #command.append("--si-estimate-bl")
-    command.append("--si-quartet-support")
-    command.append("--si-eqpic-radius")
-    command.append("3")
     command.append("-p")
-    command.append(generax_output)
+    command.append(minibme_output)
     command.extend(additional_arguments)
     return " ".join(command)
 
-def run_generax(datadir, starting_species_tree, generax_families_file, mode, cores, additional_arguments, resultsdir):
+def run_minibme(datadir, starting_species_tree, minibme_families_file, mode, cores, additional_arguments, resultsdir):
   species_tree = fam.get_species_tree(datadir)
-  command = get_generax_command(generax_families_file, starting_species_tree, additional_arguments, resultsdir, mode, cores)
+  command = get_minibme_command(minibme_families_file, starting_species_tree, additional_arguments, resultsdir, mode, cores)
+  print("Running:")
+  print(command)
   subprocess.check_call(command.split(" "), stdout = sys.stdout)
 
-
-def get_mode_from_additional_arguments(additional_arguments):
-  mode = "normal"
-  if ("--scalasca" in additional_arguments):
-    mode = "scalasca"
-    additional_arguments.remove("--scalasca")
-  elif ("--gprof" in additional_arguments):
-    mode = "gprof"
-    additional_arguments.remove("--gprof")
-  return mode
 
 
 def extract_trees(datadir, results_family_dir, run_name, subst_model):
@@ -124,16 +94,6 @@ def extract_trees(datadir, results_family_dir, run_name, subst_model):
   dest = fam.get_species_tree(datadir, None, run_name)
   print("extracted tree " + dest)
   shutil.copyfile(src, dest)
-  #
-  return
-  results_dir = os.path.join(results_family_dir, "results")
-  for family in fam.get_families_list(datadir):
-    source = os.path.join(results_dir, family, "geneTree.newick")
-    dest = fam.build_gene_tree_path_from_run(datadir, family, run_name)
-    try:
-      shutil.copy(source, dest)
-    except:
-      pass
 
 def av_rf(rf_cell):
   return float(rf_cell[0]) / float(rf_cell[1])
@@ -141,8 +101,8 @@ def av_rf(rf_cell):
 
 def analyze_species_results(datadir, resultsdir):
   true_species_tree = Tree(fam.get_species_tree(datadir), format = 1)
-  starting_species_tree = Tree(os.path.join(resultsdir, "generax", "species_trees", "starting_species_tree.newick"), format = 1)
-  inferred_species_tree = Tree(os.path.join(resultsdir, "generax", "species_trees", "inferred_species_tree.newick"), format = 1)
+  starting_species_tree = Tree(os.path.join(resultsdir, "minibme", "species_trees", "starting_species_tree.newick"), format = 1)
+  inferred_species_tree = Tree(os.path.join(resultsdir, "minibme", "species_trees", "inferred_species_tree.newick"), format = 1)
   starting_rooted_rf = -1
   inferred_rooted_rf = -1
   try:
@@ -160,43 +120,24 @@ def analyze_species_results(datadir, resultsdir):
   print("  Unrooted RF: " + str(av_rf(inferred_unrooted_rf)))
 
 def cleanup(resultsdir):
-  reconciliations = os.path.join(resultsdir, "generax", "reconciliations")
+  reconciliations = os.path.join(resultsdir, "minibme", "reconciliations")
   try:
     shutil.rmtree(reconciliations)
   except:
     pass
 
-def do_not_opt_rates(additional_arguments):
-  arg = "--dtl-rates-opt"
-  if (not arg in additional_arguments):
-    return False
-  pos = additional_arguments.index(arg)
-  return (additional_arguments[pos + 1] == "NONE")
 
-def run(dataset, subst_model, starting_species_tree, starting_gene_tree, cores, additional_arguments, resultsdir, do_analyze = True, do_extract = True):
+def run(dataset, subst_model, starting_species_tree, starting_gene_tree, cores, additional_arguments, resultsdir, do_analyze = False, do_extract = True):
   run_name = exp.getAndDelete("--run", additional_arguments, None) 
+  
   if (run_name == None):
-    run_name = "generax-" + starting_species_tree
-    rec_model = exp.getArg("--rec-model", additional_arguments, "UndatedDTL")
+    if ("--missing-data" in sys.argv):
+      run_name = "minibmepruned-" 
+    else:
+      run_name = "minibme-"
+    run_name += starting_species_tree
     if (starting_species_tree == "random"):
       run_name += exp.getArg("--seed", additional_arguments, "noseed")
-    if (rec_model != "UndatedDTL"):
-      run_name += rec_model
-    if ("--si-spr-radius" in additional_arguments):
-      radius = exp.getArg("--si-spr-radius", additional_arguments, "1")
-      run_name += "-radius" + radius
-    if ("--prune-species-tree" in additional_arguments):
-      run_name += "-prune"
-    if ("--no-dup" in additional_arguments):
-      run_name += "-nodup"
-    if ("--per-family-rates" in additional_arguments):
-      run_name += "-fam"
-    if (do_not_opt_rates(additional_arguments)):
-      run_name += "-fixed"
-    if ("--si-constrained-search" in additional_arguments):
-      run_name += "-constr"
-    if ("--unrooted-gene-tree" in additional_arguments):
-      run_name += "-unrooted"
     run_name += "_" + starting_gene_tree
     run_name += "." + subst_model
    
@@ -205,21 +146,20 @@ def run(dataset, subst_model, starting_species_tree, starting_gene_tree, cores, 
   do_analyze = do_analyze and (arg_analyze == "no")
   print("Run name " + run_name)
   sys.stdout.flush()
-  mode = get_mode_from_additional_arguments(additional_arguments)
   if (not dataset in datasets):
     print("Error: " + dataset + " is not in " + str(datasets))
     exit(1)
   datadir = datasets[dataset]
-  generax_families_file = os.path.join(resultsdir, "families.txt")
-  build_generax_families_file(datadir, starting_gene_tree, subst_model, generax_families_file)
+  minibme_families_file = os.path.join(resultsdir, "families.txt")
+  build_minibme_families_file(datadir, starting_gene_tree, subst_model, minibme_families_file)
   start = time.time()
   species_tree = fam.get_species_tree(datadir, subst_model, starting_species_tree)  
-  run_generax(datadir, species_tree, generax_families_file, mode, cores, additional_arguments, resultsdir)
+  run_minibme(datadir, species_tree, minibme_families_file, "normal", cores, additional_arguments, resultsdir)
   saved_metrics.save_metrics(datadir, run_name, (time.time() - start), "runtimes") 
   saved_metrics.save_metrics(datadir, run_name, (time.time() - start), "seqtimes") 
   if (do_extract):
     print("DO EXTRACT")
-    extract_trees(datadir, os.path.join(resultsdir, "generax"), run_name, subst_model)
+    extract_trees(datadir, os.path.join(resultsdir, "minibme"), run_name, subst_model)
   analyze_species_results(datadir, resultsdir)
   try:
     if (do_analyze):

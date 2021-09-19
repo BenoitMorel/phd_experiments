@@ -310,7 +310,7 @@ def generate_simphy(tag, species, families, sites, model, bl_factor, dup_rate, l
   p.theta = float(theta)
   print(perturbation)
   assert(float(perturbation) == 0.0)
-  if (p.mu != 1.0 or p.theta != 0.0):
+  if (p.mu != 1.0):
     p.prefix = p.prefix + "temp"
     temp_output_dir = generate_from_parameters(p, root_output)
     p.prefix = p.prefix[:-4]

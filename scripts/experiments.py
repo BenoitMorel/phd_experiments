@@ -55,6 +55,7 @@ treefix_exec = "treefixDTL"
 joint_search_root = os.path.join(github_root, "GeneRax")
 generax_exec = os.path.join(joint_search_root, "build", "bin", "generax")
 splitsearch_exec = os.path.join(joint_search_root, "build", "bin", "speciessplitsearch")
+minibme_exec = os.path.join(joint_search_root, "build", "bin", "minibme")
 genetegrator_exec = os.path.join(joint_search_root, "build", "bin", "genetegrator")
 njrax_exec = os.path.join(joint_search_root, "build", "bin", "njrax")
 speciesrax_exec = os.path.join(joint_search_root, "build", "bin", "speciesrax")

@@ -77,6 +77,8 @@ class SpeciesRunFilter():
     self.speciesraxperfamily = True
     self.speciesraxbench = True
     self.speciessplit = True
+    self.minibme = True
+    self.minibmepruned = True
     self.genetegratorbench = True
     self.phyldog = True
     self.guenomu = False
@@ -111,6 +113,8 @@ class SpeciesRunFilter():
     self.speciesraxnofam = False
     self.speciesraxprune = False
     self.speciesraxperfamily = False
+    self.minibme = False
+    self.minibmepruned = False
     self.speciessplit = False
     self.genetegratorbench = False
     self.speciesraxbench = False
@@ -265,13 +269,13 @@ class SpeciesRunFilter():
     if (self.concatenation_min and subst_model != "true"):
       printFlush("Run concatenation-min")
       try:
-        run_concatenation.run_concatenation(datadir, subst_model,False,cores)
+        run_concatenation.run_concatenation(datadir, "min", subst_model, cores)
       except Exception as exc:
         printFlush("Failed running concatenation-min\n" + str(exc))
     if (self.concatenation_max):
       printFlush("Run concatenation-max"  and subst_model != "true")
       try:
-        run_concatenation.run_concatenation(datadir, subst_model,True,cores)
+        run_concatenation.run_concatenation(datadir, "max", subst_model,cores)
       except Exception as exc:
         printFlush("Failed running concatenation-min\n" + str(exc))
     for gene_tree in self.starting_gene_trees:
@@ -304,6 +308,35 @@ class SpeciesRunFilter():
         except Exception as exc:
           printFlush("Failed running speciesrax prune\n" + str(exc))
       print ("starting gene trees: " + str(self.starting_gene_trees))
+      if (self.minibme):
+        printFlush("Run MiniBME")
+        dataset = os.path.basename(datadir)
+        command = []
+        command.append(exp.python())
+        command.append("scripts/generax/launch_bme.py")
+        command.append(dataset)
+        command.append(subst_model)
+        command.append("MiniNJ")
+        command.append(gene_tree)
+        command.append("normald")
+        command.append("40")
+        print(command)
+        subprocess.check_call(command)
+      if (self.minibmepruned):
+        printFlush("Run MiniBME Pruned")
+        dataset = os.path.basename(datadir)
+        command = []
+        command.append(exp.python())
+        command.append("scripts/generax/launch_bme.py")
+        command.append(dataset)
+        command.append(subst_model)
+        command.append("MiniNJ")
+        command.append(gene_tree)
+        command.append("normald")
+        command.append("40")
+        command.append("--missing-data")
+        print(command)
+        subprocess.check_call(command)
       if (self.speciessplit):
         printFlush("Run SpeciesSplit search")
         dataset = os.path.basename(datadir)

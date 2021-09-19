@@ -43,6 +43,7 @@ def exec_astrid(gene_trees_file, mapping_file, output_species_tree_file):
   command.append(output_species_tree_file)
   FNULL = open(os.devnull, 'w')
   res = subprocess.check_output(command, stderr=FNULL)
+  os.remove(output_species_tree_file + ".1")
   print(res)
 
 def run_astrid(datadir, method, subst_model):

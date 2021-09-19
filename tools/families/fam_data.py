@@ -22,6 +22,8 @@ jsim_species_to_params[16] = (3, 6)
 
 
 def get_param_from_dataset_name(parameter, dataset):
+  print(dataset)
+  print(parameter)
   if (parameter == "tag"):
     return dataset.split("_")[1]
   elif (parameter == "species"):
@@ -46,9 +48,9 @@ def get_param_from_dataset_name(parameter, dataset):
     return dataset.split("_")[11][1:]
   elif (parameter == "population"):
     return dataset.split("_")[12][3:]
-  elif (parameter == "sample_mu"):
+  elif (parameter == "mu"):
     return dataset.split("_")[13][2:]
-  elif (parameter == "sample_theta"):
+  elif (parameter == "theta"):
     return dataset.split("_")[14][5:]
   elif (parameter == "seed"):
     return dataset.split("_")[15][4:]
@@ -104,8 +106,8 @@ def generate_dataset(dataset):
   elif (dataset.startswith("ssim")):
     seed = get_param_from_dataset_name("seed", dataset)
     population = get_param_from_dataset_name("population", dataset)
-    mu = get_param_from_dataset_name("sample_mu", dataset)
-    theta = get_param_from_dataset_name("sample_theta", dataset)
+    mu = get_param_from_dataset_name("mu", dataset)
+    theta = get_param_from_dataset_name("theta", dataset)
     model = "GTR"
     simphy.generate_simphy(tag, species, families, sites, model, bl_factor, d, l, t, gc, p, population, mu, theta, output,  seed) 
   else:
@@ -166,6 +168,7 @@ def get_dataset_variations(datasets, fixed_point, strings_to_replace):
     dataset = "_".join(split)
     if (dataset in datasets):
       print("duplicate: " + dataset)
+      print(fixed_point + " " + str(strings_to_replace) + " " + string_to_replace)
       exit(1)
     datasets.append(dataset)
 

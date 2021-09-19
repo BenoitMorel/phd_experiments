@@ -20,11 +20,14 @@ def get_gene_list(input_datadir, family):
     res.append(mapping)
   return res
 
-def get_sampled_gene_set(input_gene_list, gene_to_species, species_missing_ratio):
+# Remove genes from the gene list, using the species pruning probabilities:
+# If gene G belongs to species S, then we remove G with probability
+# species_sample_prob[S]
+def get_sampled_gene_set(input_gene_list, gene_to_species, species_sample_prob):
   res = []
   for gene in input_gene_list:
-    missing_ratio = species_missing_ratio[gene_to_species[gene]]
-    if (missing_ratio > random.uniform(0.0, 1.0)):
+    sample_prob = species_sample_prob[gene_to_species[gene]]
+    if (sample_prob > random.uniform(0.0, 1.0)):
       res.append(gene)
   return set(res)
 
@@ -57,30 +60,36 @@ def copy_sampled_genes(input_datadir, output_datadir, family, output_gene_set):
   copy_alignment(input_datadir, output_datadir, family, output_gene_set)
 
 
-def sample_family(input_datadir, output_datadir, family, species_missing_ratio):
+def sample_family(input_datadir, output_datadir, family, species_sample_prob):
   input_gene_list = get_gene_list(input_datadir, family)
   gene_to_species = get_dico.get_gene_to_species(input_datadir, family)
-  output_gene_set = get_sampled_gene_set(input_gene_list, gene_to_species, species_missing_ratio)
+  output_gene_set = get_sampled_gene_set(input_gene_list, gene_to_species, species_sample_prob)
   if (len(output_gene_set) > 3):
     copy_sampled_genes(input_datadir, output_datadir, family, output_gene_set)
 
-def get_species_missing_ratio(input_datadir, mu, theta):
+def beta_reparametrized(mean, shape):
+  print(mean)
+  alpha = mean * shape
+  beta = (1 - mean) * shape
+  return random.betavariate(alpha, beta)
+
+def get_species_sample_prob(input_datadir, mu, theta):
   species_tree = ete3.Tree(fam.get_species_tree(input_datadir))
-  species_missing_ratio = {}
+  species_sample_prob = {}
   for species in species_tree.get_leaf_names():
-    v = random.normalvariate(mu, theta)
-    species_missing_ratio[species] = max(0, min(1.0, v))
-  return species_missing_ratio
+    v = beta_reparametrized(mu, theta)
+    species_sample_prob[species] = max(0.05, v)
+  return species_sample_prob
   
-def export_missing_ratios(output_datadir, species_missing_ratio):
+def export_sample_probs(output_datadir, species_sample_prob):
   print("Missing data ratios:")
   with open(fam.get_missing_data_file(output_datadir), "w") as writer:
-    for k,v in sorted(species_missing_ratio.items(), key=lambda x: x[1]):
+    for k,v in sorted(species_sample_prob.items(), key=lambda x: x[1]):
       writer.write(k + " " + str(v) + "\n")
       print(k + " " + str(v))
       
 def sample_missing_data(input_datadir, output_datadir, mu, theta):
-  random.seed = 41
+  random.seed = 42
   if (os.path.exists(output_datadir)):
     print("PATH " + output_datadir + " already exists!!!")
     sys.exit(1)
@@ -88,10 +97,10 @@ def sample_missing_data(input_datadir, output_datadir, mu, theta):
   families = fam.get_families_list(input_datadir)
   cp(fam.get_species_tree(input_datadir), fam.get_species_tree(output_datadir))
   cp(fam.get_discordance_file(input_datadir), fam.get_discordance_file(output_datadir))
-  species_missing_ratio = get_species_missing_ratio(input_datadir, mu, theta)
+  species_sample_prob = get_species_sample_prob(input_datadir, mu, theta)
   for family in families:
-    sample_family(input_datadir, output_datadir, family, species_missing_ratio)
-  export_missing_ratios(output_datadir, species_missing_ratio)
+    sample_family(input_datadir, output_datadir, family, species_sample_prob)
+  export_sample_probs(output_datadir, species_sample_prob)
   fam.postprocess_datadir(output_datadir)
 
 if (__name__ == "__main__"): 

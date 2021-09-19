@@ -31,14 +31,14 @@ def get_split(tree):
 
 def get_split_score(sp1, sp2):
   if (len(sp1) != 2):
-    return 0.0
+    return 1.0
   if (len(sp2) != 2):
-    return 0.0
+    return 1.0
   if (sp1[0] == sp2[0]):
-    return 1.0
+    return 0.0
   if (sp1[0] == sp2[1]):
-    return 1.0
-  return 0.0
+    return 0.0
+  return 1.0
 
 def analyze(datadir):
   runs = get_runs(datadir)

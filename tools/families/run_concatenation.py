@@ -15,7 +15,7 @@ import species_analyze
 import time
 
 def build_supermatrix(datadir, subst_model, supermatrix_path, partition_path, concatenation_mode):
-  
+  print("build supermatrix")  
   all_species = ete3.Tree(fam.get_species_tree(datadir), 1).get_leaf_names()
   partition_writer = open(partition_path, "w")
   offset = 1
@@ -71,6 +71,7 @@ def build_supermatrix(datadir, subst_model, supermatrix_path, partition_path, co
   return offset
 
 def run_raxml(subst_model, cores, run_dir, supermatrix_path, partition_path):
+  print("un raxml")  
   command = []
   command.append("mpiexec")
   command.append("-np")
