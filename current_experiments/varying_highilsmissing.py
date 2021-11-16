@@ -64,9 +64,9 @@ def run_varying_experiment():
   run_filter.njst = True
   run_filter.cleanup = True
   run_filter.minibme = True
-  run_filter.minibmepruned = True
-  run_filter.disable_all()  
   run_filter.concatenation_max = True
+  run_filter.disable_all()  
+  run_filter.minibmepruned = True
   run_filter.analyse = True 
   
   for entry in varying_params:

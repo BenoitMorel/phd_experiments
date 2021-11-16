@@ -43,7 +43,9 @@ def build_supermatrix(datadir, subst_model, supermatrix_path, partition_path, co
         random.shuffle(species_to_genes[species])
     if (skip_family):
       continue
+    print("Start working on family " + family)
     while (len(species_to_genes) > 3):
+      print(family)
       for species in all_species:
         seq = gaps
         if (species in species_to_genes):
@@ -56,7 +58,9 @@ def build_supermatrix(datadir, subst_model, supermatrix_path, partition_path, co
       partition_writer.write(str(offset) + "-" + str(offset + seq_len - 1))
       partition_writer.write("\n")
       offset += seq_len
+      print(use_all_genes)
       if (not use_all_genes):
+        print("break")
         break
   partition_writer.close()
   print("Writing the supermatrix...")

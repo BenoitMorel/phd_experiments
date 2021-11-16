@@ -32,7 +32,7 @@ def init_mapping_file(datadir, output_dir):
       writer.write("\n")
   return res
 
-def exec_astrid(gene_trees_file, mapping_file, output_species_tree_file):
+def exec_astrid(gene_trees_file, mapping_file, output_species_tree_file, mode):
   command = []
   command.append(exp.astrid_exec)
   command.append("-i")
@@ -41,29 +41,42 @@ def exec_astrid(gene_trees_file, mapping_file, output_species_tree_file):
   command.append(mapping_file)
   command.append("-o")
   command.append(output_species_tree_file)
+  if (mode == "bionj"):
+    command.append("--bionj")
+  elif (mode == "fastme"):
+    command.append("-s")
+  elif(mode == "default"):
+    pass
   FNULL = open(os.devnull, 'w')
-  res = subprocess.check_output(command, stderr=FNULL)
-  os.remove(output_species_tree_file + ".1")
-  print(res)
+  res = subprocess.check_output(command)#, stderr=FNULL)
 
-def run_astrid(datadir, method, subst_model):
-  output_dir = fam.get_run_dir(datadir, subst_model, "astrid_run")
+def run_astrid(datadir, method, subst_model, mode):
+  name = "astrid-" + mode + "_" + method
+  output_dir = fam.get_run_dir(datadir, subst_model, name + "_run")
+  temp_species_tree = os.path.join(output_dir, "species_tree.newick")
   shutil.rmtree(output_dir, True)
   os.makedirs(output_dir)
   gene_trees_file = init_gene_trees_file(datadir, method, subst_model, output_dir)
   mapping_file = init_mapping_file(datadir, output_dir)
   print("Start executing astrid")
   start = time.time()
-  exec_astrid(gene_trees_file, mapping_file, fam.get_species_tree(datadir, subst_model, "astrid"))
+  exec_astrid(gene_trees_file, mapping_file, temp_species_tree, mode)
+  output_species_tree = fam.get_species_tree(datadir, subst_model, name)
+  shutil.move(temp_species_tree, output_species_tree)
   time1 = (time.time() - start)
-  saved_metrics.save_metrics(datadir, fam.get_run_name("astrid", subst_model), time1, "runtimes") 
+  saved_metrics.save_metrics(datadir, fam.get_run_name(name, subst_model), time1, "runtimes") 
 
 if (__name__ == "__main__"):
-  if (len(sys.argv) != 4):
-    print("Syntax python run_astrid.py datadir gene_trees subst_model")
+  if (len(sys.argv) < 4):
+    print("Syntax python run_astrid.py datadir gene_trees subst_model [mode=default,bionj,fastme]")
     sys.exit(1)
   datadir = sys.argv[1]
-  run_astrid(datadir, sys.argv[2], sys.argv[3])
+  method = sys.argv[2]
+  subst_model = sys.argv[3]
+  mode = "default"
+  if (len(sys.argv) == 5):
+    mode = sys.argv[4]
+  run_astrid(datadir, method, subst_model, mode)
   species_analyze.analyze(datadir) 
   
 

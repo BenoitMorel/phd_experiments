@@ -96,6 +96,8 @@ def extract_trees(datadir, results_family_dir, run_name, subst_model):
   shutil.copyfile(src, dest)
 
 def av_rf(rf_cell):
+  if (float(rf_cell[1]) == 0.0):
+    return 10000000.0
   return float(rf_cell[0]) / float(rf_cell[1])
 
 
@@ -103,8 +105,8 @@ def analyze_species_results(datadir, resultsdir):
   true_species_tree = Tree(fam.get_species_tree(datadir), format = 1)
   starting_species_tree = Tree(os.path.join(resultsdir, "minibme", "species_trees", "starting_species_tree.newick"), format = 1)
   inferred_species_tree = Tree(os.path.join(resultsdir, "minibme", "species_trees", "inferred_species_tree.newick"), format = 1)
-  starting_rooted_rf = -1
-  inferred_rooted_rf = -1
+  starting_rooted_rf = [10000000.0, 0.0]
+  inferred_rooted_rf = [10000000.0, 0.0]
   try:
     starting_rooted_rf = true_species_tree.robinson_foulds(starting_species_tree, unrooted_trees = False, correct_by_polytomy_size = True)
     inferred_rooted_rf = true_species_tree.robinson_foulds(inferred_species_tree, unrooted_trees = False, correct_by_polytomy_size = True)

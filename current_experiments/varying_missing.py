@@ -11,7 +11,7 @@ import plot_speciesrax
 import simulations_common
 import plot_simulations
 
-do_run = True 
+do_run = False #True 
 do_plot = not do_run
 datasets = []
 cores = 40
@@ -22,13 +22,12 @@ replicates = range(3000, 3100)
 varying_params = []
 
 
-
-varying_params.append((None, ["none"]))
-#varying_params.append(("mu", ["mu0.2", "mu0.7", "mu1.0"]))
-#varying_params.append(("families", ["f100", "f500", "f1000"]))
-#varying_params.append(("species", ["s15", "s35", "s50"]))
-#varying_params.append(("population", ["pop10000000", "pop100000000", "pop1000000000"]))
-#varying_params.append(("species", ["s50"]))
+if (do_run):
+  varying_params.append((None, ["none"]))
+varying_params.append(("mu", ["mu0.2", "mu0.7", "mu1.0"]))
+varying_params.append(("families", ["f100", "f500", "f1000"]))
+varying_params.append(("species", ["s15", "s35", "s50"]))
+varying_params.append(("population", ["pop10000000", "pop100000000", "pop1000000000"]))
 
 tag = "missingsim"
 fixed_point = "ssim_" + tag + "_s25_f200_sites100_GTR_bl1.0_d0.0_l0.0_t0.0_gc0.0_p0.0_pop10_mu0.5_theta5.0_seed20"
@@ -38,10 +37,13 @@ metric_names = ["species_unrooted_rf"]
 
 # methods to plot
 methods_tuples = []
-methods_tuples.append(("minibme-mininj_raxml-ng", "MiniBME"))
-methods_tuples.append(("minibmepruned-mininj_raxml-ng", "MiniBMEPruned"))
-methods_tuples.append(("njrax-mininj_raxml-ng", "MiniNJ"))
+#methods_tuples.append(("minibme-mininj_raxml-ng", "MiniBME"))
+methods_tuples.append(("minibmepruned-mininj_raxml-ng", "MissBME"))
+#methods_tuples.append(("njrax-mininj_raxml-ng", "MiniNJ"))
 methods_tuples.append(("astral", "Astral"))
+#methods_tuples.append(("astrid-default_raxml-ng", "Astrid-Default"))
+methods_tuples.append(("astrid-fastme_raxml-ng", "ASTRID"))
+#methods_tuples.append(("astrid-bionj_raxml-ng", "Astrid-BioNJ"))
 #methods_tuples.append(("fastmulrfs-single_raxml-ng", "FastMulRFS"))
 #methods_tuples.append(("duptree_raxml-ng", "DupTree"))
 #methods_tuples.append(("njrax-ustar_raxml-ng", "USTAR"))
@@ -55,20 +57,23 @@ def run_species_methods(datasets, subst_model, cores, run_filter, launch_mode):
 def run_varying_experiment():
   run_filter = SpeciesRunFilter()
   run_filter.disable_all()  
-  run_filter.generate = True
+  #run_filter.generate = True
   run_filter.pargenes = True
   run_filter.pargenes_starting_trees = 1
   run_filter.pargenes_bootstrap_trees = 0
   run_filter.starting_gene_trees = gene_trees
   run_filter.njrax = True
-  run_filter.astrid = True
   run_filter.astral = True
   run_filter.njst = True
   run_filter.cleanup = True
+  #run_filter.concatenation_max = True
   run_filter.disable_all()  
-  #run_filter.minibme = True
-  #run_filter.minibmepruned = True
-  run_filter.concatenation_max = True
+  run_filter.minibme = True
+  run_filter.minibmepruned = True
+  run_filter.astrid = True
+  
+  run_filter.disable_all()
+  run_filter.cherry = True
   run_filter.analyse = True 
   
   for entry in varying_params:
@@ -81,7 +86,7 @@ def plot_varying_experiment():
     print("Plotting parameter " + entry[0])
     for metric in metric_names:
       param = entry[0]
-      output = simulations_common.get_plot_name("varydl", param, subst_model, metric)  
+      output = simulations_common.get_plot_name("varymiss", param, subst_model, metric)  
       plot_simulations.plot_varying_params(datasets, param, metric, methods_tuples, subst_model, output)
 
 

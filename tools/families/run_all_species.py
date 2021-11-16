@@ -17,6 +17,7 @@ import run_stride
 import run_guenomu
 import run_astrid
 import run_astral_multi
+import run_astral
 import run_astral_pro
 import run_fastrfs
 import run_fastmulrfs
@@ -196,13 +197,6 @@ class SpeciesRunFilter():
           run_stride.run_stride(datadir, "generax-MiniNJ-fam", gene_tree, subst_model)
         except Exception as exc:
           printFlush("Failed running DupTree\n" + str(exc))
-    if (self.duptree):
-      printFlush("Run Duptree")
-      for gene_tree in self.starting_gene_trees:
-        try:
-          run_duptree.run_duptree(datadir, gene_tree, subst_model)
-        except Exception as exc:
-          printFlush("Failed running DupTree\n" + str(exc))
     if (self.fastmulrfs):
       printFlush("Run FastMulRFS")
       for gene_tree in self.starting_gene_trees:
@@ -249,14 +243,17 @@ class SpeciesRunFilter():
           printFlush("Failed running NJst with " + gene_tree + "\n" + str(exc))
     if (self.astrid):
       printFlush("Run Astrid")
-      try:
-        run_astrid.run_astrid(datadir, "raxml-ng", subst_model)
-      except Exception as exc:
-        printFlush("Failed running Astrid\n" + str(exc))
+      for gene_tree in self.starting_gene_trees:
+        try:
+          run_astrid.run_astrid(datadir, gene_tree, subst_model, "default")
+          run_astrid.run_astrid(datadir, gene_tree, subst_model, "fastme")
+          run_astrid.run_astrid(datadir, gene_tree, subst_model, "bionj")
+        except Exception as exc:
+          printFlush("Failed running Astrid\n" + str(exc))
     if (self.astral):
       printFlush("Run Astral")
       try:
-        run_astral_multi.run_astral(datadir, "raxml-ng", subst_model)
+        run_astral.run_astral(datadir, "raxml-ng", subst_model)
       except Exception as exc:
         printFlush("Failed running Astral\n" + str(exc))
     if (self.astralpro):
@@ -292,7 +289,7 @@ class SpeciesRunFilter():
           dataset = os.path.basename(datadir)
           run_speciesrax.run_speciesrax_instance(dataset, gene_tree, 2, "speciesrax-parsidl", subst_model, "HYBRID", cores)
         except Exception as exc:
-          printFlush("Failed running speciesrax prune\n" + str(exc))
+          printFlush("Failed running speciesrax \n" + str(exc))
       if (self.speciesraxnofam):
         printFlush("Run SpeciesRaxNoFam")
         try:
@@ -337,6 +334,18 @@ class SpeciesRunFilter():
         command.append("--missing-data")
         print(command)
         subprocess.check_call(command)
+        command = []
+        command.append(exp.python())
+        command.append("scripts/generax/launch_bme.py")
+        command.append(dataset)
+        command.append(subst_model)
+        command.append("Cherry")
+        command.append(gene_tree)
+        command.append("normald")
+        command.append("40")
+        command.append("--missing-data")
+        print(command)
+        subprocess.check_call(command)
       if (self.speciessplit):
         printFlush("Run SpeciesSplit search")
         dataset = os.path.basename(datadir)
@@ -375,6 +384,13 @@ class SpeciesRunFilter():
         except Exception as exc:
           printFlush("Failed running speciesrax per family\n" + str(exc))
 
+    if (self.duptree):
+      printFlush("Run Duptree")
+      for gene_tree in self.starting_gene_trees:
+        try:
+          run_duptree.run_duptree(datadir, gene_tree, subst_model)
+        except Exception as exc:
+          printFlush("Failed running DupTree\n" + str(exc))
     if (self.phyldog):
       printFlush("Run Phyldgo")
       try:

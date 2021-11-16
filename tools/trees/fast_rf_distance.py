@@ -27,15 +27,7 @@ if (__name__ == "__main__"):
   tree1 = sys.argv[1]
   tree2 = sys.argv[2]
   
-  if (False):
-    print("a")
-    for i in range(0, 500):
-      print(get_rf_pair(tree1, tree2))
-    print("a")
-  else: 
-    for i in range(0, 500):
-      print(rf_distance.get_rf_distance_tuple(tree1, tree2))
-    print("a")
+  print(get_rf_pair(tree1, tree2))
 
 
   

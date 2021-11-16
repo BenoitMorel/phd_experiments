@@ -14,7 +14,7 @@ import plot_speciesrax
 do_run = True
 do_plot = False
 launch_mode = "normald"
-cores = 36
+cores = 10
 
 
 run_inputs_aa = []
@@ -32,34 +32,37 @@ run_inputs_true = [("true", "true")]
 
 run_filter = SpeciesRunFilter()
 run_filter.disable_all()
-#run_filter.pargenes = True
-#run_filter.fasttree = True
-#run_filter.duptree = True
-#run_filter.njrax = True
-#run_filter.cherry = True
-#run_filter.njst = True
+run_filter.pargenes = True
+run_filter.concatenation_min = True
+run_filter.duptree = True
+run_filter.njrax = True
+run_filter.cherry = True
+run_filter.njst = True
+run_filter.astral = True
+run_filter.fastmulrfs = True
 #run_filter.astralpro = True
-#run_filter.fastmulrfs = True
 #run_filter.speciesraxbench = True
-#run_filter.stag = True
+run_filter.stag = True
 #run_filter.cleanup = False
-run_filter.speciesraxperfamily = True
+#run_filter.speciesraxprune = True
+run_filter.minibme = True
+run_filter.minibmepruned = True
+run_filter.astrid = True 
 datasets = []
-datasets.append(("aa_ensembl_98_ncrna_primates", run_inputs_dna))
-datasets.append(("pdb_vertebrates_ali", run_inputs_true))
-datasets.append(("pdb_fungi60", run_inputs_true))
-datasets.append(("pdb_insects", run_inputs_true))
-datasets.append(("pdb_melo", run_inputs_true))
-datasets.append(("pdb_mycoplasma", run_inputs_true))
+
+datasets.append(("stam_DNA_59", run_inputs_dna))
+#datasets.append(("grove_tree35458_noseed_rep0", run_inputs_dna))
+#datasets.append(("aa_ensembl_98_ncrna_primates", run_inputs_dna))
+#datasets.append(("pdb_fungi60", run_inputs_true))
+#datasets.append(("pdb_fungi62", run_inputs_true))
+#datasets.append(("pdb_plants28", run_inputs_true))
+#datasets.append(("pdb_insects", run_inputs_true))
+#datasets.append(("pdb_melo", run_inputs_true))
+#datasets.append(("pdb_mycoplasma", run_inputs_true))
 #datasets.append(("aa_ensembl_98_ncrna_mammals", run_inputs_dna))
 #datasets.append(("aa_ensembl_98_ncrna_vertebrates", run_inputs_dna))
 #datasets.append(("aa_ensembl_98_ncrna_lowprimates", run_inputs_dna))
 #datasets.append(("aa_ensembl_98_ncrna_allvertebrates", run_inputs_dna))
-#datasets.append(("ensembl_98_ncrna_primates", run_inputs_dna))
-#datasets.append(("ensembl_98_ncrna_lowprimates", run_inputs_dna))
-#datasets.append(("ensembl_98_ncrna_mammals", run_inputs_dna))
-#datasets.append(("ensembl_98_ncrna_vertebrates", run_inputs_dna))
-#datasets.append(("ensembl_98_ncrna_sauropsids", run_inputs_dna))
 #datasets.append(("cyano_empirical", run_inputs_aa))
 
 # methods to plot

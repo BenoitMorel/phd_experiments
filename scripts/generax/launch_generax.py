@@ -16,7 +16,7 @@ import extract_event_number
 import events
 
 def get_possible_strategies():
-  return ["SPR", "EVAL", "SKIP"]
+  return ["SPR", "EVAL", "SKIP", "RECONCILE"]
 
 def check_inputs(strategy):
   if (not (strategy in get_possible_strategies())):

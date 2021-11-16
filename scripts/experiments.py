@@ -97,6 +97,7 @@ mrbayes_exec = os.path.join(github_root, "MrBayes", "src", "mb")
 ale_observe_exec = os.path.join(github_root, "ALE", "build", "bin", "ALEobserve")
 ale_ml_exec = os.path.join(github_root, "ALE", "build", "bin", "ALEml_undated")
 ale_ml_dated_exec = os.path.join(github_root, "ALE", "build", "bin", "ALEml")
+raxmlgrove_exec = os.path.join(github_root, "RAxMLGroveScripts", "org_script.py")
 deco_exec = os.path.join(github_root, "DeCo", "DeCo")
 decostar_exec = os.path.join(github_root, "DeCoSTAR", "bin/DeCoSTAR")
 guenomu_exec = os.path.join(github_root, "guenomu", "src", "guenomu")
@@ -112,15 +113,18 @@ fastrfs_exec = os.path.join(github_root, "FastRFS", "build", "FastRFS")
 astral_jar = os.path.join(github_root, "ASTRAL", "Astral", "astral.jar")
 astralpro_root = os.path.join(github_root, "A-pro")
 astralpro_jar = os.path.join(github_root, "A-pro", "ASTRAL-MP", "astral.1.1.2.jar")
-astrid_exec = os.path.join(github_root, "ASTRID", "src", "build", "ASTRID")
+#astrid_exec = os.path.join(github_root, "ASTRID", "bazel-bin", "src", "ASTRID")
+astrid_exec = os.path.join(github_root, "ASTRID", "bazel-bin", "src", "ASTRID-phydstar")
 prepare_fastrfs_script = os.path.join(tools_root, "rfs", "prepareTrees.py")
 rangerdtl_exec = os.path.join(github_root, "RangerDTL", "ranger-dtl-U.linux")
 paul_exec = os.path.join(github_root, "MasterThesis", "njst", "main")
+stamatak_tests_dir = os.path.join(github_root, "test-Datasets")
 # constants
 mpi_scheduler_heuristic = "--split-scheduler"
 generax_selector_candidates = os.path.join(tools_root, "families", "candidates.txt")
 ensembl_plants_species_dict = os.path.join(tools_root, "families", "ensembl_plant_dict.txt")
 ensembl_plants_species_blacklist = os.path.join(tools_root, "families", "ensembl_plant_blacklist.txt")
+
 
 # utils
 def get_git_info(repo_path):

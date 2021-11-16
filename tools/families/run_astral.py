@@ -44,6 +44,8 @@ def init_gene_trees_file(datadir, gene_trees, subst_model, output_dir):
 def exec_astral(gene_trees_file, output_dir):
   command = []
   command.append("java")
+  command.append("-Xms700G")
+  command.append("-Xmx700G")
   command.append("-jar")
   command.append(exp.astral_jar)
   command.append("-i")

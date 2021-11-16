@@ -20,7 +20,16 @@ def create_random_tree(msa_file, output_file):
     index += 1
 
   tree.write(outfile=output_file, format=1)
-  
+
+def create_random_tree_from_species(species):
+  tree = ete3.Tree()
+  tree.populate(len(species))
+  leaves = tree.get_leaves()
+  index = 0
+  for s in species:
+    leaves[index].name = s
+    index += 1
+  return tree
 
 if (__name__ == "__main__"): 
   if (len(sys.argv) != 3):

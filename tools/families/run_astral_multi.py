@@ -34,6 +34,8 @@ def init_mapping_file(datadir, output_dir):
 def exec_astral(gene_trees_file, mapping_file, output_species_tree_file):
   command = []
   command.append("java")
+  command.append("-Xms700G")
+  command.append("-Xmx700G")
   command.append("-jar")
   command.append(exp.astral_jar)
   command.append("-i")
@@ -43,19 +45,22 @@ def exec_astral(gene_trees_file, mapping_file, output_species_tree_file):
   command.append("-o")
   command.append(output_species_tree_file)
   FNULL = open(os.devnull, 'w')
-  res = subprocess.check_output(command, stderr=FNULL)
-  print(res)
+  subprocess.check_call(command)
 
 def run_astral(datadir, method, subst_model):
-  output_dir = fam.get_run_dir(datadir, subst_model, "astral_run")
+  run_name = "astralmulti_" + method
+  output_dir = fam.get_run_dir(datadir, subst_model, run_name + "_run")
   shutil.rmtree(output_dir, True)
   os.makedirs(output_dir)
   gene_trees_file = init_gene_trees_file(datadir, method, subst_model, output_dir)
   mapping_file = init_mapping_file(datadir, output_dir)
   print("Start executing astral")
-  exec_astral(gene_trees_file, mapping_file, fam.get_species_tree(datadir, subst_model, "astral"))
+  start = time.time()
+  species_tree = fam.get_species_tree(datadir, subst_model, run_name)
+  exec_astral(gene_trees_file, mapping_file, species_tree)
   time1 = (time.time() - start)
-  saved_metrics.save_metrics(datadir, fam.get_run_name("astral", subst_model), time1, "runtimes") 
+  print("Output in " + species_tree)
+  saved_metrics.save_metrics(datadir, fam.get_run_name(run_name, subst_model), time1, "runtimes") 
 
 if (__name__ == "__main__"):
   if (len(sys.argv) != 4):

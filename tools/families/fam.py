@@ -88,7 +88,7 @@ def get_species_tree(datadir, subst_model= None, method = "true"):
     return os.path.join(get_species_dir(datadir), method + ".speciesTree.newick")
 
 def get_true_species_tree(datadir):
-  return os.path.join(get_species_dir(datadir), "trueSpeciesTree.newick")
+  return os.path.join(get_species_dir(datadir), "speciesTree.newick")
 
 def get_phyldog_species_tree(datadir):
   return os.path.join(get_species_dir(datadir), "phyldogSpeciesTree.newick")

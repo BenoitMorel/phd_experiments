@@ -50,7 +50,7 @@ def analyze(datadir):
       trees[run] = read_tree(get_species_tree(datadir, run))
     except:
       print("Cannot read " + get_species_tree(datadir, run))
-      raise
+      #raise
 
   root_distance_printer = AlignedPrinter()
   rooted_printer = AlignedPrinter()
@@ -74,16 +74,23 @@ def analyze(datadir):
       saved_metrics.save_metrics(datadir, run, str(split_score), "root_split") 
 
       # compute RF distances
-      rooted_rf = true_tree.robinson_foulds(tree, unrooted_trees=False, correct_by_polytomy_size = True)
+      rooted_rf = [0.0,0.0]
+      try:
+        rooted_rf = true_tree.robinson_foulds(tree, unrooted_trees=False, correct_by_polytomy_size = True)
+      except:
+        pass
       unrooted_rf = true_tree.robinson_foulds(tree, unrooted_trees= True, correct_by_polytomy_size = True)
       # relativee distances 
       rooted_arf = 10000000.0 
       unrooted_arf = 10000000.0 
       root_distance = 10000000.0
       if (len(tree) == len(true_tree)):
-        rooted_arf = float(rooted_rf[0]) / float(rooted_rf[1])
-        unrooted_arf = float(unrooted_rf[0]) / float(unrooted_rf[1])
-        root_distance = float(rooted_rf[0] - unrooted_rf[0]) / float(rooted_rf[1])
+        if (float(rooted_rf[1] != 0.0)):
+          rooted_arf = float(rooted_rf[0]) / float(rooted_rf[1])
+          root_distance = float(rooted_rf[0] - unrooted_rf[0]) / float(rooted_rf[1])
+          
+        if (float(unrooted_rf[1] != 0.0)):
+          unrooted_arf = float(unrooted_rf[0]) / float(unrooted_rf[1])
       # save metrics
       saved_metrics.save_metrics(datadir, run, str(rooted_arf), "species_rooted_rf") 
       saved_metrics.save_metrics(datadir, run, str(unrooted_arf), "species_unrooted_rf") 
