@@ -11,22 +11,23 @@ import plot_speciesrax
 import simulations_common
 import plot_simulations
 
-do_run = False #True
+do_run = True
 do_plot = not do_run
 datasets = []
-cores = 40
+cores = 30
 subst_model = "GTR+G"
-gene_trees = ["raxml-ng"]
+#gene_trees = ["raxml-ng"]
+gene_trees = ["mrbayes-r2-c2-g100K-f100-b100"]
 launch_mode = "normald"
 replicates = range(3000, 3100)
 varying_params = []
 
 
 
-#varying_params.append((None, ["none"]))
+varying_params.append((None, ["none"]))
 varying_params.append(("mu", ["mu0.2", "mu0.7", "mu1.0"]))
-varying_params.append(("families", ["f100", "f500", "f1000"]))
-varying_params.append(("species", ["s15", "s35", "s50"]))
+#varying_params.append(("families", ["f100", "f500", "f1000"]))
+#varying_params.append(("species", ["s15", "s35", "s50"]))
 
 tag = "ilsmissing"
 fixed_point = "ssim_" + tag + "_s25_f200_sites100_GTR_bl1.0_d0.0_l0.0_t0.0_gc0.0_p0.0_pop100000000_mu0.5_theta5.0_seed20"
@@ -56,7 +57,7 @@ def run_species_methods(datasets, subst_model, cores, run_filter, launch_mode):
 def run_varying_experiment():
   run_filter = SpeciesRunFilter()
   run_filter.disable_all()  
-  run_filter.generate = True
+  #run_filter.generate = True
   run_filter.pargenes = True
   run_filter.pargenes_starting_trees = 1
   run_filter.pargenes_bootstrap_trees = 0
@@ -66,10 +67,19 @@ def run_varying_experiment():
   run_filter.njst = True
   run_filter.cleanup = True
   #run_filter.concatenation_max = True
+  
   run_filter.disable_all()
   run_filter.minibme = True
   run_filter.minibmepruned = True
-  run_filter.astrid = True
+  #run_filter.astrid = True
+  #run_filter.astral = True 
+  run_filter.mrbayes = True
+  run_filter.mb_frequencies = 100
+  run_filter.mb_generations = 100000
+  run_filter.mb_runs = 2
+  run_filter.mb_chains = 2
+  run_filter.mb_burnin = 100
+  run_filter.rm_mrbayes = True
   run_filter.analyse = True 
   
   for entry in varying_params:

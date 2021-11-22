@@ -11,7 +11,7 @@ import plot_speciesrax
 import simulations_common
 import plot_simulations
 
-do_run = False 
+do_run = True 
 do_plot = not do_run
 datasets = []
 cores = 40
@@ -25,10 +25,10 @@ varying_params = []
 if (do_run):
   varying_params.append((None, ["none"]))
 varying_params.append(("mu", ["mu0.3", "mu0.7", "mu1.0"]))
-varying_params.append(("families", ["f200", "f500"]))
-varying_params.append(("species", ["s15", "s35", "s50"]))
-varying_params.append(("population", ["pop10000000", "pop100000000", "pop1000000000"]))
-varying_params.append(("dup_rate", ["d0.0_l0.0", "d0.5_l0.5", "d2.0_l2.0", "d3.0_l3.0"]))
+#varying_params.append(("families", ["f200", "f500"]))
+#varying_params.append(("species", ["s15", "s35", "s50"]))
+#varying_params.append(("population", ["pop10000000", "pop100000000", "pop1000000000"]))
+#varying_params.append(("dup_rate", ["d0.0_l0.0", "d0.5_l0.5", "d2.0_l2.0", "d3.0_l3.0"]))
 
 tag = "missdl"
 fixed_point = "ssim_" + tag + "_s25_f100_sites100_GTR_bl1.0_d1.0_l1.0_t0.0_gc0.0_p0.0_pop10_mu0.5_theta5.0_seed20"
@@ -76,8 +76,9 @@ def run_varying_experiment():
   run_filter.minibmepruned = True
   run_filter.astrid = True
   run_filter.cherry = True
-  run_filter.disable_all() 
   run_filter.astralpro = True
+  run_filter.disable_all() 
+  run_filter.minibmepruned = True
   run_filter.analyse = True 
 
 

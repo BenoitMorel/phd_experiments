@@ -18,9 +18,7 @@ cores = 10
 
 
 run_inputs_aa = []
-run_inputs_aa.append(("fasttree", "LG"))
-run_inputs_aa.append(("true", "true"))
-run_inputs_aa.append(("raxml-ng", "LG+G+I"))
+run_inputs_aa.append(("raxml-ng", "LG+G"))
 
 run_inputs_dna = []
 #run_inputs_dna.append(("fasttree", "GTR"))
@@ -32,7 +30,7 @@ run_inputs_true = [("true", "true")]
 
 run_filter = SpeciesRunFilter()
 run_filter.disable_all()
-run_filter.pargenes = True
+#run_filter.pargenes = True
 run_filter.concatenation_min = True
 run_filter.duptree = True
 run_filter.njrax = True
@@ -50,7 +48,8 @@ run_filter.minibmepruned = True
 run_filter.astrid = True 
 datasets = []
 
-datasets.append(("stam_DNA_59", run_inputs_dna))
+datasets.append(("eukariotes36", run_inputs_aa))
+#datasets.append(("stam_AA_94", run_inputs_aa))
 #datasets.append(("grove_tree35458_noseed_rep0", run_inputs_dna))
 #datasets.append(("aa_ensembl_98_ncrna_primates", run_inputs_dna))
 #datasets.append(("pdb_fungi60", run_inputs_true))

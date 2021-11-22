@@ -17,7 +17,6 @@ class Partition:
     bounds = split[3].split("-")
     self.start = int(bounds[0]) - 1
     self.width = int(bounds[1][:-1]) - self.start
-  
 
 class Sequence:
   def __init__(self, label, sequence):
@@ -35,11 +34,13 @@ class MSA:
 
   def load_phylip_sequential(self, file_name):
     lines = open(file_name).readlines()
+    print(lines)
     split = lines[0].split(" ")
     taxa = int(split[0])
     self.width = int(split[1][:-1])
     for line in lines[1:]:
       split = line.split(" ")
+      print(split[1])
       self.add_sequence(Sequence(split[0], split[1][:-1]))
 
   def save_phylip_sequential(self, file_name):

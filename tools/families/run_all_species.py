@@ -28,6 +28,7 @@ import run_orthogenerax
 import run_generax_selector
 import run_mrbayes
 import run_fasttree
+import fast_rf_cells
 import shutil
 import subprocess
 sys.path.insert(0, os.path.join("scripts"))
@@ -84,6 +85,7 @@ class SpeciesRunFilter():
     self.phyldog = True
     self.guenomu = False
     self.analyze = True
+    self.analyze_gene_trees = False
     self.cleanup = False
     self.verbose = False
 
@@ -122,6 +124,7 @@ class SpeciesRunFilter():
     self.guenomu = False
     self.cleanup = False
     #self.analyze = False
+    self.analyze_gene_trees = False
   
   def launch_reference_methods(self, datadir, subst_model, cores, launch_mode):
     misc_dir = fam.get_misc_dir(datadir)
@@ -179,7 +182,7 @@ class SpeciesRunFilter():
     if (self.mrbayes):
       printFlush("Run mrbayes...")
       try:
-        instance = run_mrbayes.MrbayesInstance(datadir, subst_model, self.mb_runs, self.mb_chains, self.mb_generations, self.mb_frequenciesfrequency, self.mb_burnin) 
+        instance = run_mrbayes.MrbayesInstance(datadir, subst_model, self.mb_runs, self.mb_chains, self.mb_generations, self.mb_frequencies, self.mb_burnin) 
         run_mrbayes.run_mrbayes_on_families(instance, cores, False)
       except Exception as exc:
         printFlush("Failed running mrbayes\n" + str(exc))
@@ -252,10 +255,11 @@ class SpeciesRunFilter():
           printFlush("Failed running Astrid\n" + str(exc))
     if (self.astral):
       printFlush("Run Astral")
-      try:
-        run_astral.run_astral(datadir, "raxml-ng", subst_model)
-      except Exception as exc:
-        printFlush("Failed running Astral\n" + str(exc))
+      for gene_tree in self.starting_gene_trees:
+        try:
+          run_astral.run_astral(datadir, gene_tree, subst_model)
+        except Exception as exc:
+          printFlush("Failed running Astral\n" + str(exc))
     if (self.astralpro):
       printFlush("Run Astral-pro")
       for gene_tree in self.starting_gene_trees:
@@ -432,6 +436,13 @@ class SpeciesRunFilter():
       sys.stdout.flush()
       try:
         species_analyze.analyze(datadir)
+      except Exception as exc:
+        printFlush("Run analyze gene trees...")
+    if (self.analyze_gene_trees):
+      try:
+        for gene_tree in self.starting_gene_trees:
+          run = gene_tree + "." + subst_model
+          fast_rf_cells.analyze(datadir, run, cores)
       except Exception as exc:
         printFlush("Failed running analyze\n" + str(exc))
     if (self.cleanup):

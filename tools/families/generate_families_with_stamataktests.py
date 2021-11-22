@@ -13,13 +13,16 @@ from ete3 import Tree
 from ete3 import SeqGroup
 import re
 
-def read_seqs(alignment):
-  seq = None
-  try:
-    seqs = SeqGroup(open(alignment).read(), format="phylip_relaxed")
-  except:
-    seqs = SeqGroup(open(alignment).read(), format="iphylip_relaxed")
-  return seqs
+def read_seqs(alignment_file):
+  msa = None
+  formats = ["fasta", "phylip_relaxed", "iphylip_relaxed", "phylip_interleaved"]
+  for f in formats:
+    try:
+      msa = SeqGroup(alignment_file, f)
+      return msa
+    except:
+      pass
+  return None
 
 def fullmatch(regex, string, flags=0):
   m = re.match("(?:" + regex + r")\Z", string, flags=flags)
@@ -29,7 +32,7 @@ def fullmatch(regex, string, flags=0):
     return False
 
 def only_gaps(s):
-  return fullmatch("-*", s)
+  return fullmatch("[-?]*", s)
 
 def prune_seqs(seqs):
   new_seqs = SeqGroup()
@@ -58,6 +61,7 @@ def generate(index, is_dna):
     print("Treating family " + family)
     fam.init_family_directories(output_dir, family)
     seqs = read_seqs(os.path.join(partition_dir, ali))
+    print(os.path.join(partition_dir, ali))
     output_alignment = fam.get_alignment(output_dir, family)
     pruned_seqs = prune_seqs(seqs)
     pruned_seqs.write("fasta", output_alignment) 

@@ -5,16 +5,18 @@ import functools
 sys.path.insert(0, 'scripts')
 sys.path.insert(0, 'tools/families')
 sys.path.insert(0, 'tools/trees')
+sys.path.insert(0, 'tools/msa_edition')
 import experiments as exp
 import fam
 import create_random_tree
 import ete3
+import read_msa
 
 
 def treat_alignment(input_file, authorized_species, datadir, family):
   #seq = ete3.SeqGroup(input_file, format="iphylip_relaxed")
   print(input_file)
-  seq = ete3.SeqGroup(input_file, format="fasta")
+  seq = read_msa.read_msa(input_file)
   filtered_seq = ete3.SeqGroup()
   species_to_genes = {}
   for entry in seq.iter_entries():
@@ -50,8 +52,19 @@ def generate_from_msas(msas_dir, species_tree, datadir):
   
   # species tree
   true_species_tree = fam.get_species_tree(datadir)
-  shutil.copy(species_tree, true_species_tree)
-  authorized_species = ete3.Tree(true_species_tree, format=1).get_leaf_names()
+  authorized_species = set()
+  try:
+    authorized_species = ete3.Tree(true_species_tree, format=1).get_leaf_names()
+    shutil.copy(species_tree, true_species_tree)
+  except:
+    print("Cannot read species tree... reading species from the msas")
+    for f in os.listdir(msas_dir):
+      msa = read_msa.read_msa(os.path.join(msas_dir, f))
+      for entry in msa.get_entries():
+        authorized_species.add(entry[0])
+    tree = create_random_tree.create_random_tree_from_species(authorized_species)
+    print(tree)
+    tree.write(outfile = true_species_tree)
 
   families = []
   for f in os.listdir(msas_dir):

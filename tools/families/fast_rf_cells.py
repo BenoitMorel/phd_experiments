@@ -79,6 +79,7 @@ def load_rf_cells(datadir, rooted = False):
 def print_metrics(datadir, metric_dict, metric_name, benched_run):
   printer = AlignedPrinter()
   saved_metrics.save_dico(datadir, metric_dict, metric_name)
+  print(metric_dict)
   for run_key in metric_dict:
     run = run_key.split(" - ")[1]
     suffix = ""
