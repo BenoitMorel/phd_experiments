@@ -31,6 +31,14 @@ def create_random_tree_from_species(species):
     index += 1
   return tree
 
+def create_random_tree_taxa_number(taxa_number):
+  species = []
+  for i in range(0, taxa_number):
+    species.append("hCoV-19/Australia/NSW14/2020|EPI_ISL_" + str(i) + "|2020-03-03")
+    #species.append("HCOV-19_CHINA_2020012" + str(i) + "_EPI_ISL_" + str(i) )
+  return create_random_tree_from_species(species)
+
+
 if (__name__ == "__main__"): 
   if (len(sys.argv) != 3):
     print("Syntax: python create_random_tree.py msa output_random_tree")

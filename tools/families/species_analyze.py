@@ -67,10 +67,6 @@ def analyze(datadir):
       # check that split is correct
       tree_split = get_split(tree)
       split_score = get_split_score(true_split, tree_split)
-      if ("generax-MiniNJ-fam_raxml-ng.GTR+G" in run):
-        print(true_split)
-        print(tree_split)
-        print(split_score)
       saved_metrics.save_metrics(datadir, run, str(split_score), "root_split") 
 
       # compute RF distances
