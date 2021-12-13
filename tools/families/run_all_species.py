@@ -16,6 +16,7 @@ import run_duptree
 import run_stride
 import run_guenomu
 import run_astrid
+import run_astrid_single
 import run_astral_multi
 import run_astral
 import run_astral_pro
@@ -68,6 +69,7 @@ class SpeciesRunFilter():
     self.cherry = True    
     self.cherrypro = True    
     self.astrid = True    
+    self.astrid_single = True    
     self.astral = True
     self.generaxselect = True
     self.generaxselectfam = True
@@ -107,6 +109,7 @@ class SpeciesRunFilter():
     self.cherrypro = False    
     self.njst = False    
     self.astrid = False
+    self.astrid_single = False
     self.astral = False
     self.generaxselect = False
     self.generaxselectfam = False
@@ -251,6 +254,15 @@ class SpeciesRunFilter():
           run_astrid.run_astrid(datadir, gene_tree, subst_model, "default")
           run_astrid.run_astrid(datadir, gene_tree, subst_model, "fastme")
           run_astrid.run_astrid(datadir, gene_tree, subst_model, "bionj")
+        except Exception as exc:
+          printFlush("Failed running Astrid\n" + str(exc))
+    if (self.astrid_single):
+      printFlush("Run Astrid")
+      for gene_tree in self.starting_gene_trees:
+        try:
+          run_astrid_single.run_astrid(datadir, gene_tree, subst_model, "default")
+          run_astrid_single.run_astrid(datadir, gene_tree, subst_model, "fastme")
+          run_astrid_single.run_astrid(datadir, gene_tree, subst_model, "bionj")
         except Exception as exc:
           printFlush("Failed running Astrid\n" + str(exc))
     if (self.astral):

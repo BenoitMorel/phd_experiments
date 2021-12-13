@@ -11,7 +11,7 @@ import plot_speciesrax
 import simulations_common
 import plot_simulations
 
-do_run = True 
+do_run = False 
 do_plot = not do_run
 datasets = []
 cores = 40
@@ -23,7 +23,7 @@ varying_params = []
 
 
 
-varying_params.append((None, ["none"]))
+#varying_params.append((None, ["none"]))
 varying_params.append(("mu", ["mu0.25", "mu0.75", "mu1.0"]))
 #varying_params.append(("families", ["f200", "f1000"]))
 #varying_params.append(("species", ["s15", "s35", "s50"]))
@@ -36,10 +36,12 @@ metric_names = ["species_unrooted_rf"]
 
 # methods to plot
 methods_tuples = []
-methods_tuples.append(("minibme-mininj_raxml-ng", "MiniBME"))
+#methods_tuples.append(("minibme-mininj_raxml-ng", "MiniBME"))
 methods_tuples.append(("minibmepruned-mininj_raxml-ng", "MiniBMEPruned"))
-methods_tuples.append(("njrax-mininj_raxml-ng", "MiniNJ"))
+#methods_tuples.append(("njrax-mininj_raxml-ng", "MiniNJ"))
 methods_tuples.append(("astral", "Astral"))
+#methods_tuples.append(("astrid-fastme_raxml-ng", "Astrid-FastMe"))
+#methods_tuples.append(("astrid-bionj_raxml-ng", "Astrid-BioNJ"))
 #methods_tuples.append(("fastmulrfs-single_raxml-ng", "FastMulRFS"))
 #methods_tuples.append(("duptree_raxml-ng", "DupTree"))
 #methods_tuples.append(("njrax-ustar_raxml-ng", "USTAR"))
@@ -79,7 +81,7 @@ def plot_varying_experiment():
     print("Plotting parameter " + entry[0])
     for metric in metric_names:
       param = entry[0]
-      output = simulations_common.get_plot_name("varydl", param, subst_model, metric)  
+      output = simulations_common.get_plot_name(tag, param, subst_model, metric)  
       plot_simulations.plot_varying_params(datasets, param, metric, methods_tuples, subst_model, output)
 
 

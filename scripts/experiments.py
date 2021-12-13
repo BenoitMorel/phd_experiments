@@ -38,7 +38,7 @@ installer_root = os.path.join(root, "installer")
 historic = os.path.join(root, "historic.txt")
 
 fast_github_root = "/hits/fast/cme/benoit/github"
-
+fast_dataset_archive = os.path.join(fast_github_root, "BenoitDatasets", "families")
 # externals
 github_root = os.path.join(root, "..")
 benoit_datasets_root = os.path.join(fast_github_root, "BenoitDatasets")

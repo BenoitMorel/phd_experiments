@@ -137,6 +137,8 @@ def run(dataset, subst_model, starting_species_tree, starting_gene_tree, cores, 
       run_name = "minibmepruned-" 
     else:
       run_name = "minibme-"
+    if ("-b" in sys.argv):
+      run_name += "minbl" + str(exp.getArg("-b", additional_arguments, "-1.0")) + "-"
     run_name += starting_species_tree
     if (starting_species_tree == "random"):
       run_name += exp.getArg("--seed", additional_arguments, "noseed")

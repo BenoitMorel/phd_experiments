@@ -115,6 +115,9 @@ def get_discordance_rate(datadir):
 def get_missing_data_file(datadir):
   return os.path.join(datadir, "missing_data.txt")
 
+def get_species_coverage(datadir):
+  return os.path.join(datadir, "metrics", "species_coverage.txt")
+
 def write_discordance_rate(datadir, rate):
   df = get_discordance_file(datadir)
   open(df, "w").write(str(rate))
@@ -327,7 +330,6 @@ def get_ran_methods(datadir):
   methods = []
   families_dir = os.path.join(datadir, "families")
   one_family_dir = os.path.join(families_dir, os.listdir(families_dir)[0])
-  print(one_family_dir)
   directories_to_check = []
   directories_to_check.append(os.path.join(one_family_dir, "gene_trees"))
 
@@ -336,7 +338,6 @@ def get_ran_methods(datadir):
       method = get_method_name(one_family_dir, os.path.join(directory, tree))
       if (method != None and method != "raxmls"):
         methods.append(method)
-  print(methods)
   return methods
 
 def get_family_genes_number(datadir, family):

@@ -7,8 +7,15 @@ import seaborn as sns
 import pandas as pd
 sns.set_style("darkgrid")
 
-def plot_histogram(xlabels, yvalues, title = None, xcaption = None, ycaption = None,start_at_min_y = False, reverse_bar = False, log_scale = False, output = "show"):
+def plot_histogram(xlabels, yvalues, title = None, xcaption = None, ycaption = None,start_at_min_y = False, reverse_bar = False, log_scale = False, sort_y = False, rotation = 45, output = "show"):
+    if (sort_y):
+      hey = sorted(zip(yvalues, xlabels), reverse = True)
+      tuples = zip(*hey)
+      yvalues, xlabels = [ list(tuple) for tuple in  tuples]
+    print(xlabels)
+    print(yvalues)
     y_pos = np.arange(len(xlabels))
+    print(y_pos)
     fig, ax = plt.subplots()
     bottom = 0
     yvaluesbar = yvalues[:]
@@ -19,7 +26,7 @@ def plot_histogram(xlabels, yvalues, title = None, xcaption = None, ycaption = N
         yvaluesbar[i] = plop - abs(yvalues[i])
     plt.bar(y_pos, yvaluesbar, align='center', bottom = bottom)
     plt.xticks(y_pos, xlabels)
-    plt.xticks(rotation=45)
+    plt.xticks(rotation=rotation)
     #plt.xticks(range(len(xlabels)), size='small')
     plt.xticks(range(len(xlabels)), size=14)
     if (xcaption != None):
