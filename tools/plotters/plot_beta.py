@@ -2,6 +2,7 @@ import os
 import sys
 sys.path.insert(0, 'tools/plotters')
 import plot_histogram
+import plot_line
 import random
 
 
@@ -18,7 +19,12 @@ def plot(mean, shape, points):
     #x.append(species)
     x.append(i)
     y.append(beta_reparametrized(mean, shape))
-  plot_histogram.plot_histogram(x, y, sort_y = True, rotation = 90, output = output)
+  title = "Beta"
+  xcaption = None
+  ycaption = None
+  lines_captions = None
+  plot_line.plot_line(x, [y], title, xcaption, ycaption, output, lines_captions, sort_y = True, marker = None)
+  #plot_histogram.plot_histogram(x, y, sort_y = True, rotation = 90, output = output)
   print("Output file: " + output)
 
 if (__name__ == "__main__"):
