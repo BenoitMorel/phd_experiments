@@ -23,11 +23,19 @@ def get_gene_list(input_datadir, family):
 # Remove genes from the gene list, using the species pruning probabilities:
 # If gene G belongs to species S, then we remove G with probability
 # species_sample_prob[S]
-def get_sampled_gene_set(input_gene_list, gene_to_species, species_sample_prob):
+def get_sampled_gene_set_perspecies(input_gene_list, gene_to_species, species_sample_prob):
   res = []
   for gene in input_gene_list:
     sample_prob = species_sample_prob[gene_to_species[gene]]
     if (sample_prob > random.uniform(0.0, 1.0)):
+      res.append(gene)
+  return set(res)
+
+
+def get_sampled_gene_set_perfam(input_gene_list, family_sample_prob):
+  res = []
+  for gene in input_gene_list:
+    if (family_sample_prob > random.uniform(0.0, 1.0)):
       res.append(gene)
   return set(res)
 
@@ -59,19 +67,31 @@ def copy_sampled_genes(input_datadir, output_datadir, family, output_gene_set):
   copy_gene_tree(input_datadir, output_datadir, family, output_gene_set)
   copy_alignment(input_datadir, output_datadir, family, output_gene_set)
 
+def beta_reparametrized(mean, shape):
+  if (shape == 0.0): #hack: uniform
+    return mean
+  alpha = mean * shape
+  beta = (1 - mean) * shape
+  return random.betavariate(alpha, beta)
+
 
 def sample_family(input_datadir, output_datadir, family, species_sample_prob):
   input_gene_list = get_gene_list(input_datadir, family)
   gene_to_species = get_dico.get_gene_to_species(input_datadir, family)
-  output_gene_set = get_sampled_gene_set(input_gene_list, gene_to_species, species_sample_prob)
+  #output_gene_set = get_sampled_gene_set_perspecies(input_gene_list, gene_to_species, species_sample_prob)
+  fam_sample_prob = beta_reparametrized(0.5, 5.0) 
+  output_gene_set = get_sampled_gene_set_perfam(input_gene_list, fam_sample_prob)
   if (len(output_gene_set) > 3):
     copy_sampled_genes(input_datadir, output_datadir, family, output_gene_set)
 
-def beta_reparametrized(mean, shape):
-  print(mean)
-  alpha = mean * shape
-  beta = (1 - mean) * shape
-  return random.betavariate(alpha, beta)
+def sample_family_fam(input_datadir, output_datadir, family, mu, theta):
+  input_gene_list = get_gene_list(input_datadir, family)
+  gene_to_species = get_dico.get_gene_to_species(input_datadir, family)
+  fam_sample_prob = beta_reparametrized(mu, theta) 
+  output_gene_set = get_sampled_gene_set_perfam(input_gene_list, fam_sample_prob)
+  if (len(output_gene_set) > 3):
+    copy_sampled_genes(input_datadir, output_datadir, family, output_gene_set)
+
 
 def get_species_sample_prob(input_datadir, mu, theta):
   species_tree = ete3.Tree(fam.get_species_tree(input_datadir))
@@ -99,7 +119,8 @@ def sample_missing_data(input_datadir, output_datadir, mu, theta):
   cp(fam.get_discordance_file(input_datadir), fam.get_discordance_file(output_datadir))
   species_sample_prob = get_species_sample_prob(input_datadir, mu, theta)
   for family in families:
-    sample_family(input_datadir, output_datadir, family, species_sample_prob)
+    sample_family_fam(input_datadir, output_datadir, family, mu, theta)
+    #sample_family(input_datadir, output_datadir, family, species_sample_prob)
   export_sample_probs(output_datadir, species_sample_prob)
   fam.postprocess_datadir(output_datadir)
 

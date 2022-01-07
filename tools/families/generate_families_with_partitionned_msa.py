@@ -11,21 +11,26 @@ import ete3
 import read_msa
 import split_partitionned_alignment as splitter 
 import remove_empty_sequences
+import create_random_tree
 
+
+is_dna = False
 
 def generate(msa_file, partition_file, species_tree_file, datadir):
   alignments = splitter.get_sub_alignments(msa_file, partition_file)
   fam.init_top_directories(datadir)
-  true_species_tree = fam.get_species_tree(datadir)
+  
   total = 0
-  mini = 98
+  mini = 11198
   maxi = 0
+  species = set()
   for family in alignments:
-    alignment = remove_empty_sequences.get_cleaned_msa_dna(alignments[family])
+    alignment = remove_empty_sequences.get_cleaned_msa(alignments[family], is_dna)
     
     genes = {}
     for seq in alignment.get_entries():
-      genes[seq[0]] = seq[0]
+      genes[seq[0]] = [seq[0]]
+      species.add(seq[0])
     if (len(genes) < 4):
       continue
     total += len(genes)
@@ -37,6 +42,14 @@ def generate(msa_file, partition_file, species_tree_file, datadir):
     output_alignment = fam.get_alignment(datadir, family)
     alignment.write(format = "fasta", outfile = output_alignment)
   fam.postprocess_datadir(datadir)
+  
+  true_species_tree = fam.get_species_tree(datadir)
+  try:
+    shutil.copy(species_tree_file, true_species_tree)
+  except:
+    print("Incorrect input species tree, creating a random tree")
+    tree = create_random_tree.create_random_tree_from_species(species)
+    tree.write(format= 1, outfile = true_species_tree)
   print(mini)
   print(maxi)
   print(float(total) / float(len(alignments)))

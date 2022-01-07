@@ -10,19 +10,27 @@ class Partition:
     self.name = ""
 
   def load_from_line(self, line):
+    print(line)
     line = line.replace(",", "")
     line = line.replace("DNA", "")
-    line = line.replace("=", "")
+    line = line.replace("charset", "")
+    line = line.replace("=", " ")
+    line = line.replace(" - ", "-")
+    line = line.replace(";", "")
     split = line.split()
+    print(split)
     self.name = split[0]
     bounds = split[1].split("-")
     self.start = int(bounds[0]) - 1
-    self.width = int(bounds[1][:-1]) - self.start
+    self.width = int(bounds[1]) - self.start
+    print(str(self.start) + " " + str(self.width))
 
 def load_partitions(file_name):
   partitions = []
   lines = open(file_name).readlines()
   for line in lines:
+    if (not "-" in line):
+      continue
     part = Partition()
     part.load_from_line(line)
     partitions.append(part)

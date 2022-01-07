@@ -7,7 +7,6 @@ def contract_rec(node, min_bl):
   if (len(children) == 0):
     return
   if (not node.is_root() and node.dist <= min_bl):
-    print("Contracting!")
     parent = node.get_ancestors()[0]
     assert(node in parent.get_children())
     for child in children:

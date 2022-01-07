@@ -12,16 +12,20 @@ import create_random_tree
 import ete3
 import read_msa
 
+gene_equals_species = False
+
 
 def treat_alignment(input_file, authorized_species, datadir, family):
   #seq = ete3.SeqGroup(input_file, format="iphylip_relaxed")
-  print(input_file)
   seq = read_msa.read_msa(input_file)
   filtered_seq = ete3.SeqGroup()
   species_to_genes = {}
   for entry in seq.iter_entries():
-    species = entry[0].split("_")[0]
+    species = entry[0]
+    if (not gene_equals_species):
+      species = entry[0].split("_")[0]
     if (not species in authorized_species):
+      print(species)
       continue
     if (not species in species_to_genes):
       species_to_genes[species] = []
@@ -54,7 +58,7 @@ def generate_from_msas(msas_dir, species_tree, datadir):
   true_species_tree = fam.get_species_tree(datadir)
   authorized_species = set()
   try:
-    authorized_species = ete3.Tree(true_species_tree, format=1).get_leaf_names()
+    authorized_species = ete3.Tree(species_tree, format=1).get_leaf_names()
     shutil.copy(species_tree, true_species_tree)
   except:
     print("Cannot read species tree... reading species from the msas")

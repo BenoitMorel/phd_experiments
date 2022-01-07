@@ -87,6 +87,8 @@ def analyze(datadir):
           
         if (float(unrooted_rf[1] != 0.0)):
           unrooted_arf = float(unrooted_rf[0]) / float(unrooted_rf[1])
+      else:
+        print("ERROR " + str(len(tree)) + " " + str(len(true_tree)))
       # save metrics
       saved_metrics.save_metrics(datadir, run, str(rooted_arf), "species_rooted_rf") 
       saved_metrics.save_metrics(datadir, run, str(unrooted_arf), "species_unrooted_rf") 

@@ -6,19 +6,22 @@ import ete3
 def fullmatch(regex, string, flags=0):
   return None != re.match("(?:" + regex + r")\Z", string, flags=flags)
 
-def is_empty_dna(sequence):
+def is_empty(sequence, is_dna):
   pattern = "[^AGTCagct]*"
-  return fullmatch(pattern, sequence)
+  if (not is_dna):
+    pattern = "[^ACDEFGHIKLMNPQRSTVWYabcdefghiklmnpqrstvwy]*"
+  res = fullmatch(pattern, sequence)
+  return res
 
 """
   return a new MSA with all empty sequences removed
   An empty sequence is a sequence that does not countain
   any ACGTacgt
 """
-def get_cleaned_msa_dna(msa):
+def get_cleaned_msa(msa, is_dna):
   new_msa = ete3.SeqGroup()
   for entry in msa.get_entries():
-    if (not is_empty_dna(entry[1])):
+    if (not is_empty(entry[1], is_dna)):
       new_msa.set_seq(entry[0], entry[1])
   return new_msa
 

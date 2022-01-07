@@ -94,11 +94,14 @@ def extract(name):
     sp = line.split()
     family = sp[0]
     tree = Tree(sp[3], format = 1)
-    if (extract_tree(datadir, family, tree)):
-      in_ali = os.path.join(rawdir,"all_algs", family + ".clean.fasta")
-      shutil.copy(in_ali, fam.get_alignment(datadir, family))
+    try:
+      if (extract_tree(datadir, family, tree)):
+        in_ali = os.path.join(rawdir,"all_algs", family + ".clean.fasta")
+        shutil.copy(in_ali, fam.get_alignment(datadir, family))
+    except:
+      print("Cannot extract tree for family " + family)
   fam.postprocess_datadir(datadir)
- 
+  print("Output in " + datadir) 
   
 def extract_species_dict(name):
   

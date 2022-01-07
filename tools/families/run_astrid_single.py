@@ -16,7 +16,7 @@ import species_analyze
 
 def init_gene_trees_file(datadir, gene_trees, subst_model, output_dir):
   filepath = os.path.join(output_dir, "gene_trees.txt")
- 
+  print(filepath) 
   with open(filepath, "w") as writer:
     for family in fam.get_families_list(datadir):
       skip_family = False
@@ -37,7 +37,7 @@ def init_gene_trees_file(datadir, gene_trees, subst_model, output_dir):
       for tree in trees:
         for leaf in tree:
           leaf.name = m[leaf.name]
-        writer.write(tree.write().replace("e-", ""))
+        writer.write(tree.write().replace("[0123456789]e-", ""))
         writer.write("\n")
   return filepath
 
@@ -51,9 +51,9 @@ def exec_astrid(gene_trees_file, output_species_tree_file, mode):
   command.append(output_species_tree_file)
   command.append("-o")
   command.append(output_species_tree_file)
-  if (mode == "bionj"):
-    command.append("--bionj")
-  elif (mode == "fastme"):
+  #if (mode == "bionj"):
+  #  command.append("--bionj")
+  if (mode == "fastme"):
     command.append("-s")
   elif(mode == "default"):
     pass
@@ -77,12 +77,12 @@ def run_astrid(datadir, method, subst_model, mode):
 
 if (__name__ == "__main__"):
   if (len(sys.argv) < 4):
-    print("Syntax python run_astrid.py datadir gene_trees subst_model [mode=default,bionj,fastme]")
+    print("Syntax python run_astrid.py datadir gene_trees subst_model [mode=default,,fastme]")
     sys.exit(1)
   datadir = sys.argv[1]
   method = sys.argv[2]
   subst_model = sys.argv[3]
-  mode = "default"
+  mode = "fastme"
   if (len(sys.argv) == 5):
     mode = sys.argv[4]
   run_astrid(datadir, method, subst_model, mode)

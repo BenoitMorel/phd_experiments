@@ -32,6 +32,8 @@ import run_fasttree
 import fast_rf_cells
 import shutil
 import subprocess
+import run_bootstrap_trees
+
 sys.path.insert(0, os.path.join("scripts"))
 sys.path.insert(0, os.path.join("tools", "families"))
 import experiments as exp
@@ -49,6 +51,7 @@ class SpeciesRunFilter():
     self.pargenes = True
     self.pargenes_starting_trees = 1
     self.pargenes_bootstrap_trees = 0
+    self.bootstrap_trees = 0
     self.fasttree = False
     self.mrbayes = False
     self.mb_runs = 1  
@@ -93,6 +96,7 @@ class SpeciesRunFilter():
 
   def disable_all(self):
     self.pargenes = False
+    self.bootstrap_trees = 0
     self.fasttree = False
     self.mrbayes = False
     self.orthogenerax = False
@@ -182,6 +186,8 @@ class SpeciesRunFilter():
       sys.stdout.flush()
       run_fasttree.run_fasttree_on_families(datadir, subst_model, cores)
       sys.stdout.flush()
+    if (self.bootstrap_trees != 0):
+      run_bootstrap_trees.run_pargenes_and_extract_trees(datadir, subst_model, self.bootstrap_trees, cores)
     if (self.mrbayes):
       printFlush("Run mrbayes...")
       try:
@@ -251,18 +257,18 @@ class SpeciesRunFilter():
       printFlush("Run Astrid")
       for gene_tree in self.starting_gene_trees:
         try:
-          run_astrid.run_astrid(datadir, gene_tree, subst_model, "default")
+          #run_astrid.run_astrid(datadir, gene_tree, subst_model, "default")
           run_astrid.run_astrid(datadir, gene_tree, subst_model, "fastme")
-          run_astrid.run_astrid(datadir, gene_tree, subst_model, "bionj")
+          #run_astrid.run_astrid(datadir, gene_tree, subst_model, "bionj")
         except Exception as exc:
           printFlush("Failed running Astrid\n" + str(exc))
     if (self.astrid_single):
       printFlush("Run Astrid")
       for gene_tree in self.starting_gene_trees:
         try:
-          run_astrid_single.run_astrid(datadir, gene_tree, subst_model, "default")
+          #run_astrid_single.run_astrid(datadir, gene_tree, subst_model, "default")
           run_astrid_single.run_astrid(datadir, gene_tree, subst_model, "fastme")
-          run_astrid_single.run_astrid(datadir, gene_tree, subst_model, "bionj")
+          #run_astrid_single.run_astrid(datadir, gene_tree, subst_model, "bionj")
         except Exception as exc:
           printFlush("Failed running Astrid\n" + str(exc))
     if (self.astral):

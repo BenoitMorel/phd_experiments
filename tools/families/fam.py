@@ -35,6 +35,9 @@ def get_first_dataset_starting_with(dataset):
 def get_species_dir(datadir):
   return os.path.join(datadir, "species_trees")
 
+def get_metrics_dir(datadir):
+  return os.path.join(datadir, "metrics")
+
 def get_adjacencies_dir(datadir):
   return os.path.join(datadir, "adjacencies")
 
@@ -397,6 +400,7 @@ def init_top_directories(datadir):
   mkdir(get_alignments_dir(datadir))
   mkdir(get_misc_dir(datadir))
   mkdir(get_run_dir(datadir))
+  mkdir(get_metrics_dir(datadir))
 
 def init_family_directories(datadir, family):
   mkdir(get_gene_tree_dir(datadir, family))

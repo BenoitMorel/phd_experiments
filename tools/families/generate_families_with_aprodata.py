@@ -60,7 +60,7 @@ def extract_plants(inputdir, datadir):
   extract(gene_trees_path, astral_species_tree, datadir)
 
 def extract_tom(datadir):
-  inputdir = os.path.join(exp.benoit_datasets_root, "raw_data", "tom")
+  inputdir = os.path.join(exp.benoit_datasets_root, "raw_data", "life92")
   gene_trees_path = os.path.join(inputdir, "gene_trees.txt")
   species_tree = None
   extract(gene_trees_path, species_tree, datadir)
@@ -88,4 +88,4 @@ if (__name__ == "__main__"):
     print("Syntax: python " + os.path.basename(__file__) + " astralprodata_repository_path")
     exit(1)
   #extract_aprodata(sys.argv[1])
-  extract_bigcyano36(sys.argv[1])
+  extract_tom(sys.argv[1])

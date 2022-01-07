@@ -15,7 +15,7 @@ do_run = True
 do_plot = False
 launch_mode = "normald"
 cores = 40
-
+single = False
 
 run_inputs_aa = []
 run_inputs_aa.append(("raxml-ng", "LG+G"))
@@ -24,38 +24,43 @@ run_inputs_dna = []
 #run_inputs_dna.append(("fasttree", "GTR"))
 #run_inputs_dna.append(("true", "true"))
 run_inputs_dna.append(("raxml-ng", "GTR+G"))
+#run_inputs_dna.append(("raxml-ng-minbl0.0000011", "GTR+G"))
 
 
 run_inputs_true = [("true", "true")]
 
 run_filter = SpeciesRunFilter()
 run_filter.disable_all()
-run_filter.pargenes = True
+#run_filter.pargenes = True
 #run_filter.concatenation_min = True
-#run_filter.duptree = True
-run_filter.njrax = True
-#run_filter.cherry = True
-#run_filter.njst = True
-#run_filter.astral = True
-#run_filter.fastmulrfs = True
-run_filter.astralpro = True
-#run_filter.speciesraxbench = True
-#run_filter.stag = True
-#run_filter.cleanup = False
-#run_filter.speciesraxprune = True
+
 run_filter.minibme = True
 run_filter.minibmepruned = True
-run_filter.astrid_single = True 
+run_filter.njrax = True
+if (single):
+  run_filter.fastmulrfs = True
+  run_filter.astral = True
+  run_filter.astrid_single = True 
+else:
+  run_filter.speciesraxbench = True
+  #run_filter.fastmulrfs = True
+  run_filter.astralpro = True
+  run_filter.speciesraxprune = True
+run_filter.analyze = True
+
 datasets = []
 
-datasets.append(("lampyridae98", run_inputs_dna))
+
+#datasets.append(("pdb_fungi60_single", run_inputs_aa))
+#datasets.append(("alternative_life92", run_inputs_aa))
+datasets.append(("coleman", run_inputs_aa))
+#datasets.append(("lampyridae98", run_inputs_dna))
 #datasets.append(("eukariotes36", run_inputs_aa))
 #datasets.append(("gallimissing", run_inputs_dna))
 #datasets.append(("stam_AA_94", run_inputs_aa))
 #datasets.append(("grove_tree35458_noseed_rep0", run_inputs_dna))
 #datasets.append(("aa_ensembl_98_ncrna_primates", run_inputs_dna))
 #datasets.append(("pdb_fungi60", run_inputs_true))
-#datasets.append(("pdb_fungi62", run_inputs_true))
 #datasets.append(("pdb_plants28", run_inputs_true))
 #datasets.append(("pdb_insects", run_inputs_true))
 #datasets.append(("pdb_melo", run_inputs_true))

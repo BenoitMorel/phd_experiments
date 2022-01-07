@@ -9,6 +9,7 @@ import fam
 import get_dico
 sys.path.insert(0, 'scripts')
 import experiments as exp
+import shutil
 
 def is_single_copy(input_datadir, family):
   d = get_dico.get_species_to_genes_family(input_datadir, family)
@@ -35,7 +36,7 @@ def generate(input_datadir, output_datadir):
   
   fam.init_top_directories(output_datadir)   
   species_tree = fam.get_species_tree(input_datadir)
-  exp.relative_symlink(species_tree, fam.get_species_tree(output_datadir))
+  shutil.copyfile(species_tree, fam.get_species_tree(output_datadir))
   families = get_single_copy_families(input_datadir)
   for family in families:
     fam_data.duplicate_families_symlink(input_datadir, output_datadir, family)
