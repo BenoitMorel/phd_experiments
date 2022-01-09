@@ -27,7 +27,8 @@ datasets = get_minibme_datasets()
 
 
 def get_starting_gene_tree_path(datadir, subst_model, family, starting_gene_tree):
-  return fam.build_gene_tree_path(datadir, subst_model, family, starting_gene_tree)
+  return fam.get_gene_tree(datadir, subst_model, family, starting_gene_tree)
+  #return fam.build_gene_tree_path(datadir, subst_model, family, starting_gene_tree)
 
 def do_not_opt_rates(additional_arguments):
   arg = "--dtl-rates-opt"
@@ -48,8 +49,8 @@ def build_minibme_families_file(datadir, starting_gene_tree, subst_model, output
       family_path = os.path.join(families_dir, family)
       writer.write("- " + family + "\n")
       gene_tree = get_starting_gene_tree_path(datadir, subst_model, family, starting_gene_tree)
-      if (starting_gene_tree == "random"):
-        gene_tree = "__random__"
+      #if (starting_gene_tree == "random"):
+      #  gene_tree = "__random__"
       writer.write("starting_gene_tree = " + gene_tree + "\n")
       writer.write("alignment = " + fam.get_alignment_file(family_path) + "\n")
       mapping_file = fam.get_mappings(datadir, family)

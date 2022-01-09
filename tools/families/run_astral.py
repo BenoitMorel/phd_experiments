@@ -19,7 +19,7 @@ def init_gene_trees_file(datadir, gene_trees, subst_model, output_dir):
   with open(filepath, "w") as writer:
     for family in fam.get_families_list(datadir):
       skip_family = False
-      gene_tree_path = fam.build_gene_tree_path(datadir, subst_model, family, gene_trees)
+      gene_tree_path = fam.get_gene_tree(datadir, subst_model, family, gene_trees)
       mapping_path = fam.get_mappings(datadir, family)
       m = get_dico.get_gene_to_species(datadir, family)
       for line in open(mapping_path).readlines():

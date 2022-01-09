@@ -2,6 +2,7 @@ import sys
 import os
 import ete3
 import math 
+import shutil
 sys.path.insert(0, 'tools/families')
 sys.path.insert(0, 'tools/mappings')
 import fam_data
@@ -49,6 +50,10 @@ def generate(input_datadir, min_coverage_ratio, max_coverage_ratio, min_sites):
     if (filter_ok(input_datadir, family, min_species, max_species, min_sites)):
       fam_data.duplicate_families_symlink(input_datadir, output_datadir, family)
   fam.postprocess_datadir(output_datadir)
+  try:
+    shutil.copyfile(fam.get_species_dict(input_datadir), fam.get_species_dict(output_datadir))
+  except:
+    pass
   output_families = fam.get_families_list(output_datadir)
   print("Min families " + str(min_species))
   print("Input families: \t" + str(len(families)))

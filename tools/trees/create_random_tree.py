@@ -1,13 +1,14 @@
 import ete3
 import sys
-
+import os
+sys.path.insert(0, os.path.join("tools", "msa_edition"))
+import read_msa
   
 random_alignment_format = "fasta"
 
 def create_random_tree(msa_file, output_file):
   global random_alignment_format
-  msa = None
-  msa = ete3.SeqGroup(msa_file, format="phylip_relaxed")
+  msa = read_msa.read_msa(msa_file)
 
   tree = ete3.Tree()
   tree.populate(len(msa.get_entries()))

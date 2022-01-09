@@ -182,6 +182,9 @@ def get_alignment(datadir, family):
 def get_true_tree(datadir, family):
   return build_gene_tree_path(datadir, "true", family, "true")
 
+def get_random_tree(datadir, family):
+  return os.path.join(get_gene_tree_dir(datadir, family), "randomGeneTree.newick") 
+
 def get_raxml_tree(datadir, subst_model, family):
   return build_gene_tree_path(datadir, subst_model, family, "raxml-ng")
 
@@ -205,6 +208,7 @@ def get_parsimony_trees(datadir, samples, subst_model, family):
 
 def get_fasttree_tree(datadir, subst_model, family):
   return build_gene_tree_path(datadir, subst_model, family, "fasttree")
+
 
 def get_fasttreepoly_tree(datadir, subst_model, family):
   return build_gene_tree_path(datadir, subst_model, family, "fasttreepoly")
@@ -272,7 +276,7 @@ def get_gene_tree(datadir, subst_model, family, tree):
   elif (lower_tree == "random"):
     res = os.path.join(gene_trees_dir, "randomGeneTree.newick")
     if (os.path.isfile(res)):
-        return res
+      return res
     else:
       return "__random__";
   else:

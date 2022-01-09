@@ -15,6 +15,17 @@ def get_gene_to_species(datadir, family):
       res[gene] = species
   return res
 
+def get_genes(datadir, family):
+  mapping_path = fam.get_mappings(datadir, family)
+  res = set()
+  for line in open(mapping_path).readlines():
+    split = line.replace("\n", "").split(":")
+    genes = split[1].split(";")
+    for gene in genes:
+      res.add(gene)
+  return res
+
+
 def export_species_to_genes(species_to_genes, datadir, family):
   with open(fam.get_mappings(datadir, family), "w") as writer: 
     for species in species_to_genes:

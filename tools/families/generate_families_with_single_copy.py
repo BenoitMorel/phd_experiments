@@ -41,6 +41,10 @@ def generate(input_datadir, output_datadir):
   for family in families:
     fam_data.duplicate_families_symlink(input_datadir, output_datadir, family)
   fam.postprocess_datadir(output_datadir)
+  try:
+    shutil.copyfile(fam.get_species_dict(input_datadir), fam.get_species_dict(output_datadir))
+  except:
+    pass
   output_families = fam.get_families_list(output_datadir)
   print("Result datadir in " + output_datadir)
 

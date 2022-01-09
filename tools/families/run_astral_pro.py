@@ -17,7 +17,7 @@ def init_gene_trees_file(datadir, method, subst_model, output_dir):
   safe = False
   with open(filepath, "w") as writer:
     for family in fam.get_families_list(datadir):
-      gene_tree_path = fam.build_gene_tree_path(datadir, subst_model, family, method)
+      gene_tree_path = fam.get_gene_tree(datadir, subst_model, family, method)
       try:
         lines = open(gene_tree_path).readlines()
         for line in lines:

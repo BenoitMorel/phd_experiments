@@ -278,13 +278,6 @@ class SpeciesRunFilter():
           run_astral.run_astral(datadir, gene_tree, subst_model)
         except Exception as exc:
           printFlush("Failed running Astral\n" + str(exc))
-    if (self.astralpro):
-      printFlush("Run Astral-pro")
-      for gene_tree in self.starting_gene_trees:
-        try:
-          run_astral_pro.run_astralpro(datadir, gene_tree, subst_model)
-        except Exception as exc:
-          printFlush("Failed running Astral-pro with " + gene_tree + "\n" + str(exc))
     if (self.concatenation_min and subst_model != "true"):
       printFlush("Run concatenation-min")
       try:
@@ -382,6 +375,13 @@ class SpeciesRunFilter():
         command.append("1")
         print(command)
         subprocess.check_call(command)
+    if (self.astralpro):
+      printFlush("Run Astral-pro")
+      for gene_tree in self.starting_gene_trees:
+        try:
+          run_astral_pro.run_astralpro(datadir, gene_tree, subst_model)
+        except Exception as exc:
+          printFlush("Failed running Astral-pro with " + gene_tree + "\n" + str(exc))
       if (self.genetegratorbench):
         printFlush("Run genetegrator bench")
         dl_args = ["--rec-model", "UndatedDL"]

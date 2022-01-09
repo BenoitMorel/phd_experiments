@@ -38,14 +38,14 @@ run_filter.minibme = True
 run_filter.minibmepruned = True
 run_filter.njrax = True
 if (single):
-  run_filter.fastmulrfs = True
+  #run_filter.fastmulrfs = True
   run_filter.astral = True
   run_filter.astrid_single = True 
 else:
   run_filter.speciesraxbench = True
   #run_filter.fastmulrfs = True
-  run_filter.astralpro = True
-  run_filter.speciesraxprune = True
+  #run_filter.astralpro = True
+  #run_filter.speciesraxprune = True
 run_filter.analyze = True
 
 datasets = []
@@ -53,23 +53,7 @@ datasets = []
 
 #datasets.append(("pdb_fungi60_single", run_inputs_aa))
 #datasets.append(("alternative_life92", run_inputs_aa))
-datasets.append(("coleman", run_inputs_aa))
-#datasets.append(("lampyridae98", run_inputs_dna))
-#datasets.append(("eukariotes36", run_inputs_aa))
-#datasets.append(("gallimissing", run_inputs_dna))
-#datasets.append(("stam_AA_94", run_inputs_aa))
-#datasets.append(("grove_tree35458_noseed_rep0", run_inputs_dna))
-#datasets.append(("aa_ensembl_98_ncrna_primates", run_inputs_dna))
-#datasets.append(("pdb_fungi60", run_inputs_true))
-#datasets.append(("pdb_plants28", run_inputs_true))
-#datasets.append(("pdb_insects", run_inputs_true))
-#datasets.append(("pdb_melo", run_inputs_true))
-#datasets.append(("pdb_mycoplasma", run_inputs_true))
-#datasets.append(("aa_ensembl_98_ncrna_mammals", run_inputs_dna))
-#datasets.append(("aa_ensembl_98_ncrna_vertebrates", run_inputs_dna))
-#datasets.append(("aa_ensembl_98_ncrna_lowprimates", run_inputs_dna))
-#datasets.append(("aa_ensembl_98_ncrna_allvertebrates", run_inputs_dna))
-#datasets.append(("cyano_empirical", run_inputs_aa))
+datasets.append(("coleman_mincov0.0_maxcov1.0_minsites100", run_inputs_aa))
 
 # methods to plot
 methods_tuples = []
