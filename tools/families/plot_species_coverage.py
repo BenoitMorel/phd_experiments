@@ -2,6 +2,7 @@ import os
 import sys
 sys.path.insert(0, 'tools/plotters')
 sys.path.insert(0, 'tools/families')
+import plot_line
 import plot_histogram
 import saved_metrics
 import missing_data_estimation
@@ -19,15 +20,22 @@ def get_metrics(datadir):
   return None
 
 def plot(datadir):
-  output = os.path.basename(os.path.normpath(datadir)) + "_coverage.svg"
+  output = os.path.basename(os.path.normpath(datadir)) + "_species_coverage.svg"
   metrics = get_metrics(datadir)
   x = []
   y = []
+  i = 0
   for species in metrics:
     #x.append(species)
-    x.append("")
+    x.append(i)
+    i += 1
     y.append(float(metrics[species]))
-  plot_histogram.plot_histogram(x, y, sort_y = True, rotation = 90, output = output)
+  title = None
+  xcaption = None
+  ycaption = None
+  line_captions = None
+  plot_line.plot_line(x, [y], title, xcaption, ycaption, output, line_captions, sort_y = True)# marker = None)
+  #plot_histogram.plot_histogram(x, y, sort_y = True, rotation = 90, output = output)
   print("Output file: " + output)
 
 if (__name__ == "__main__"):

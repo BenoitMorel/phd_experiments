@@ -26,15 +26,18 @@ def get_genes(datadir, family):
   return res
 
 
-def export_species_to_genes(species_to_genes, datadir, family):
-  with open(fam.get_mappings(datadir, family), "w") as writer: 
+def export_species_to_genes_to_file(species_to_genes, output):
+  with open(output, "w") as writer: 
     for species in species_to_genes:
-      genes = species_to_genes[species]  
+      genes = list(species_to_genes[species])
       if (len(genes) > 0):
           writer.write(species)
           writer.write(":")
           writer.write(";".join(genes))
           writer.write("\n")
+
+def export_species_to_genes(species_to_genes, datadir, family):
+  export_species_to_genes_to_file(species_to_genes, fam.get_mappings(datadir, family))
 
 
 def get_species_to_genes(datadir):
@@ -46,9 +49,11 @@ def get_species_to_genes(datadir):
       species = split[0]
       genes = split[1].split(";")
       if (not species in res):
-        res[species] = {}
+        #res[species] = {}
+        res[species] = set()
       for gene in genes:
-        res[species][gene] = True
+        #res[species][gene] = True
+        res[species].add(gene)
   return res
 
 def get_species_to_genes_family(datadir, family):

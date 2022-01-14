@@ -97,15 +97,18 @@ def run_raxml(subst_model, cores, run_dir, supermatrix_path, partition_path):
   process = subprocess.Popen(command, stdout=subprocess.PIPE, stdin=subprocess.PIPE)
   stdout, stderr = process.communicate()
 
-def run_concatenation(datadir, concatenation_mode,  subst_model, cores):
+def run_concatenation(datadir, concatenation_mode,  subst_model, cores, additional_arguments):
+  from_scratch = not ("--continue" in additional_arguments)
   run_name = "concatenation-" + concatenation_mode
   run_dir = fam.get_run_dir(datadir, subst_model,  run_name)
-  shutil.rmtree(run_dir, True)
-  os.makedirs(run_dir)
   supermatrix_path = os.path.join(run_dir, "supermatrix.fasta")
   partition_path = os.path.join(run_dir, "supermatrix.part")
-  sites = build_supermatrix(datadir, subst_model, supermatrix_path, partition_path, concatenation_mode)
-  cores = min(cores, int(sites / 500))
+  if (from_scratch):
+    shutil.rmtree(run_dir, True)
+    os.makedirs(run_dir)
+    sites = build_supermatrix(datadir, subst_model, supermatrix_path, partition_path, concatenation_mode)
+    cores = min(cores, int(sites / 500))
+  
   start = time.time()
   
   run_raxml(subst_model, cores, run_dir, supermatrix_path, partition_path)
@@ -116,7 +119,8 @@ def run_concatenation(datadir, concatenation_mode,  subst_model, cores):
   shutil.copy(raxml_tree, dest)
 
 if __name__ == "__main__":
-  if (len(sys.argv) != 5):
+  min_args_number = 5
+  if (len(sys.argv) < min_args_number):
     print("syntax: python run_concatenation.py datadir concatenation_mode subst_model cores")
     print("concatenation modes can be: ")
     print("- min: randomly take ONE gene from each family and each species")
@@ -127,6 +131,7 @@ if __name__ == "__main__":
   concatenation_mode = sys.argv[2]
   subst_model = sys.argv[3]
   cores = int(sys.argv[4])
+  additional_arguments = sys.argv[min_args_number:]
   assert(concatenation_mode in ["min", "max", "single"])
-  run_concatenation(datadir, concatenation_mode, subst_model, cores)
+  run_concatenation(datadir, concatenation_mode, subst_model, cores ,additional_arguments)
   species_analyze.analyze(datadir)

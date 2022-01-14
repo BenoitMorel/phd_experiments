@@ -355,6 +355,7 @@ def extract_from_ensembl(database, nhx_emf_file, fasta_file, species_tree, datad
   species_dict = get_species_dict(species_tree)
   print(species_dict)
   alignments_dico = parse_fasta(fasta_file)
+  sys.exit(1)
   seq_entries_dict, trees_dict = parse_nhx_emf(nhx_emf_file, species_dict, max_families, alignments_dico)
   
   export(species_tree, seq_entries_dict, trees_dict, alignments_dico, datadir)

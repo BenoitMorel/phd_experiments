@@ -15,10 +15,11 @@ do_run = True
 do_plot = False
 launch_mode = "normald"
 cores = 40
-single = False
+single = True
 
 run_inputs_aa = []
 run_inputs_aa.append(("raxml-ng", "LG+G"))
+#run_inputs_aa.append(("raxml-ng", "bestAA"))
 
 run_inputs_dna = []
 #run_inputs_dna.append(("fasttree", "GTR"))
@@ -31,14 +32,14 @@ run_inputs_true = [("true", "true")]
 
 run_filter = SpeciesRunFilter()
 run_filter.disable_all()
-#run_filter.pargenes = True
+run_filter.pargenes = True
 #run_filter.concatenation_min = True
 
 run_filter.minibme = True
 run_filter.minibmepruned = True
 run_filter.njrax = True
 if (single):
-  #run_filter.fastmulrfs = True
+  run_filter.fastmulrfs = True
   run_filter.astral = True
   run_filter.astrid_single = True 
 else:
@@ -53,7 +54,9 @@ datasets = []
 
 #datasets.append(("pdb_fungi60_single", run_inputs_aa))
 #datasets.append(("alternative_life92", run_inputs_aa))
-datasets.append(("coleman_mincov0.0_maxcov1.0_minsites100", run_inputs_aa))
+datasets.append(("aa_plants_single", run_inputs_aa))
+datasets.append(("aa_plants_single_maxgapratio0.5", run_inputs_aa))
+datasets.append(("aa_plants_single_maxgapratio0.66", run_inputs_aa))
 
 # methods to plot
 methods_tuples = []
