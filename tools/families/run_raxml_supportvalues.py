@@ -73,11 +73,14 @@ def export_pargenes_trees(pargenes_dir, subst_model, starting_trees, bs_trees, d
     # support trees
     support_trees_dir = os.path.join(pargenes_dir, "supports_run", "results")
     for support_tree in os.listdir(support_trees_dir):
-      if (not support_tree.endswith("support.raxml.support")):
+      if (not support_tree.endswith("support")):
         continue
+      tbe = False
+      if ("support.tbe" in support_tree):
+        tbe = True
       family = "_".join(support_tree.split("_")[:-1]) # remove everything after the last _
       old_raxml_tree = os.path.join(support_trees_dir, support_tree)
-      new_raxml_tree = fam.get_raxml_tree(datadir, subst_model, family, starting = starting_trees, bstrees = bs_trees)
+      new_raxml_tree = fam.get_raxml_tree(datadir, subst_model, family, starting = starting_trees, bstrees = bs_trees, tbe = tbe)
       shutil.copyfile(old_raxml_tree, new_raxml_tree)
 
   # ml trees
