@@ -73,7 +73,7 @@ def export_pargenes_trees(pargenes_dir, subst_model, starting_trees, bs_trees, d
     # support trees
     support_trees_dir = os.path.join(pargenes_dir, "supports_run", "results")
     for support_tree in os.listdir(support_trees_dir):
-      if (not support_tree.endswith("support")):
+      if (not support_tree.endswith("support.raxml.support")):
         continue
       family = "_".join(support_tree.split("_")[:-1]) # remove everything after the last _
       old_raxml_tree = os.path.join(support_trees_dir, support_tree)
