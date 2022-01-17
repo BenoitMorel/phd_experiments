@@ -11,22 +11,35 @@ import fam
 from read_tree import read_tree
 import saved_metrics
 import get_dico
+from read_tree import read_trees_list
 import run_astral_multi as astral
 
 def init_gene_trees_file(datadir, gene_trees, subst_model, output_dir):
-  astral_gene_trees = astral.init_gene_trees_file(datadir, gene_trees, subst_model, output_dir)
-  print("astral_gene_trees: " + astral_gene_trees)
-  astral_mappings = astral.init_mapping_file(datadir, output_dir)
-  command = []
-  command.append("python")
-  command.append(exp.prepare_fastrfs_script)
-  command.append("-i")
-  command.append(astral_gene_trees)
-  command.append("-a")
-  command.append(astral_mappings)
-  subprocess.check_call(command)
-  res = astral_gene_trees[:-4] + "-for-fastrfs.txt"
-  return res
+  filepath = os.path.join(output_dir, "gene_trees.txt")
+  with open(filepath, "w") as writer:
+    for family in fam.get_families_list(datadir):
+      skip_family = False
+      gene_tree_path = fam.get_gene_tree(datadir, subst_model, family, gene_trees)
+      mapping_path = fam.get_mappings(datadir, family)
+      m = get_dico.get_gene_to_species(datadir, family)
+      for line in open(mapping_path).readlines():
+        split = line.replace("\n", "").split(":")
+        species = split[0]
+        genes = split[1].split(";")
+        if (len(genes) > 1):
+          skip_family = True
+        for gene in genes:
+          m[gene] = species
+      if (skip_family):
+        continue
+      trees = read_trees_list(gene_tree_path)
+      for tree in trees:
+        for leaf in tree:
+          leaf.name = m[leaf.name]
+        writer.write(tree.write().replace("e-", ""))
+        writer.write("\n")
+  return filepath
+
 
 
 def exec_fastrfs(gene_trees_file, output_prefix):
@@ -36,6 +49,8 @@ def exec_fastrfs(gene_trees_file, output_prefix):
   command.append(gene_trees_file)
   command.append("-o")
   command.append(output_prefix)
+  command.append("--nostrict")
+  command.append("--nomajority")
   FNULL = open(os.devnull, 'w')
   subprocess.check_call(command, stdout=FNULL, stderr=FNULL)
 
@@ -55,7 +70,7 @@ def run_fastrfs(datadir, gene_trees, subst_model):
   start = time.time()
   exec_fastrfs(gene_trees_file, prefix)
   time1 = (time.time() - start)
-  for method in ["greedy", "single", "strict", "majority"]:
+  for method in ["greedy", "single"]:
     saved_metrics.save_metrics(datadir, fam.get_run_name("fastrfs_" + method, subst_model), time1, "runtimes") 
     extract_species_trees(datadir, gene_trees, subst_model, prefix, method)
 

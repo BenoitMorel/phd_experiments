@@ -41,7 +41,7 @@ def init_gene_trees_file(datadir, gene_trees, subst_model, output_dir):
   return filepath
 
 
-def exec_astral(gene_trees_file, output_dir):
+def exec_astral(gene_trees_file, output_dir, addition_species_tree):
   command = []
   command.append("java")
   command.append("-Xms700G")
@@ -53,29 +53,43 @@ def exec_astral(gene_trees_file, output_dir):
   command.append("-o")
   out = os.path.join(output_dir, "out.txt")
   command.append(os.path.join(output_dir, "out.txt"))
+  if (addition_species_tree != None):
+    command.append("-e")
+    command.append(addition_species_tree)
   #command.append("-r")
   #command.append("all")
+  print(" ".join(command))
   FNULL = open(os.devnull, 'w')
-  res = subprocess.check_output(command, stderr=FNULL)
+  res = subprocess.check_output(command)
+  #res = subprocess.check_output(command, stderr=FNULL)
+  print(res)
   return out
 
-def run_astral(datadir, gene_trees, subst_model):
+def run_astral(datadir, gene_trees, subst_model, addition_species_tree):
   run_name = "astral_" + gene_trees
+  if (addition_species_tree != None):
+    run_name += "-additional"
   output_dir = fam.get_run_dir(datadir, subst_model, run_name + "_run")
   shutil.rmtree(output_dir, True)
   os.makedirs(output_dir)
   gene_trees_file = init_gene_trees_file(datadir, gene_trees, subst_model, output_dir)
   start = time.time()
-  astral_tree = exec_astral(gene_trees_file, output_dir)
+  astral_tree = exec_astral(gene_trees_file, output_dir, addition_species_tree)
   time1 = (time.time() - start)
   saved_metrics.save_metrics(datadir, fam.get_run_name(run_name, subst_model), time1, "runtimes") 
   shutil.copy(astral_tree, fam.get_species_tree(datadir, subst_model, run_name))
 
 if (__name__ == "__main__"):
-  if (len(sys.argv) != 4):
+  if (len(sys.argv) < 4):
     print("Syntax python " + os.path.basename(__file__) + " datadir gene_trees subst_model")
     sys.exit(1)
-  run_astral(sys.argv[1], sys.argv[2], sys.argv[3])
+  datadir = sys.argv[1]
+  gene_trees = sys.argv[2]
+  subst_model = sys.argv[3]
+  addition_species_tree = None
+  if (len(sys.argv) > 4):
+      addition_species_tree = sys.argv[4]
+  run_astral(datadir, gene_trees, subst_model, addition_species_tree)
   species_analyze.analyze(sys.argv[1])
   
 

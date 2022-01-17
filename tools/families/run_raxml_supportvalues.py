@@ -52,7 +52,7 @@ def run_pargenes(datadir, pargenes_dir, subst_model, starting_trees, bs_trees, c
     subprocess.check_call(command, stdout = sys.stdout)
 
 
-def export_pargenes_trees(pargenes_dir, subst_model, light, datadir):
+def export_pargenes_trees(pargenes_dir, subst_model, starting_trees, bs_trees, datadir):
   families_dir = os.path.join(datadir, "families")
   # tca scores
   concatenated_dir = os.path.join(pargenes_dir, "concatenated_bootstraps")
@@ -77,7 +77,7 @@ def export_pargenes_trees(pargenes_dir, subst_model, light, datadir):
         continue
       family = "_".join(support_tree.split("_")[:-1]) # remove everything after the last _
       old_raxml_tree = os.path.join(support_trees_dir, support_tree)
-      new_raxml_tree = fam.get_raxml_tree(datadir, subst_model, family)
+      new_raxml_tree = fam.get_raxml_tree(datadir, subst_model, family, starting = starting_trees, bstrees = bs_trees)
       shutil.copyfile(old_raxml_tree, new_raxml_tree)
 
   # ml trees
@@ -90,9 +90,8 @@ def export_pargenes_trees(pargenes_dir, subst_model, light, datadir):
       trees_file = ml_tree_file
     family = "_".join(family.split("_")[:-1]) # remove everything after the last _
     new_raxml_trees = fam.get_raxml_multiple_trees(datadir, subst_model, family)
-    new_raxml_tree = fam.get_raxml_tree(datadir, subst_model, family)
-    # if there were no supported tree, copy the ML one
-    if (not os.path.isfile(new_raxml_tree)):
+    new_raxml_tree = fam.get_raxml_tree(datadir, subst_model, family, starting = starting_trees)
+    if (bs_trees == 0):
       shutil.copyfile(ml_tree_file, new_raxml_tree)
     try:
       shutil.copyfile(trees_file, new_raxml_trees)
@@ -153,9 +152,8 @@ def run_pargenes_and_extract_trees(datadir, subst_model, starting_trees, bs_tree
   saved_metrics.save_metrics(datadir, fam.get_run_name(saved_metrics_key, subst_model), (time.time() - start), "runtimes") 
   lb = fam.get_lb_from_run(os.path.join(pargenes_dir, "mlsearch_run"))
   saved_metrics.save_metrics(datadir, fam.get_run_name(saved_metrics_key, subst_model), (time.time() - start) * lb, "seqtimes") 
-  light = (starting_trees == 1)
   if (extract_trees):
-    export_pargenes_trees(pargenes_dir, subst_model, light, datadir)
+    export_pargenes_trees(pargenes_dir, subst_model, starting_trees, bs_trees, datadir)
 
 if __name__ == "__main__":
   if (len(sys.argv) < 7):

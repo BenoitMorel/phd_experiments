@@ -185,8 +185,13 @@ def get_true_tree(datadir, family):
 def get_random_tree(datadir, family):
   return os.path.join(get_gene_tree_dir(datadir, family), "randomGeneTree.newick") 
 
-def get_raxml_tree(datadir, subst_model, family):
-  return build_gene_tree_path(datadir, subst_model, family, "raxml-ng")
+def get_raxml_tree(datadir, subst_model, family, starting = 1, bstrees = 0):
+  base = "raxml-ng"
+  if (starting != 1):
+    base = base + "-s" + str(starting)
+  if (bstrees != 0):
+    base = base + "-bstrees" + str(bstrees)
+  return build_gene_tree_path(datadir, subst_model, family, base)
 
 def get_raxml_trees(datadir, samples, subst_model, family):
   return build_gene_tree_path(datadir, subst_model, family, "raxml-ng" + str(samples))
