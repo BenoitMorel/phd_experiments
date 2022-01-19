@@ -19,7 +19,6 @@ def init_gene_trees_file(datadir, gene_trees, subst_model, output_dir):
   print(filepath) 
   with open(filepath, "w") as writer:
     for family in fam.get_families_list(datadir):
-      skip_family = False
       gene_tree_path = fam.build_gene_tree_path(datadir, subst_model, family, gene_trees)
       mapping_path = fam.get_mappings(datadir, family)
       m = get_dico.get_gene_to_species(datadir, family)
@@ -27,12 +26,8 @@ def init_gene_trees_file(datadir, gene_trees, subst_model, output_dir):
         split = line.replace("\n", "").split(":")
         species = split[0]
         genes = split[1].split(";")
-        if (len(genes) > 1):
-          skip_family = True
         for gene in genes:
           m[gene] = species
-      if (skip_family):
-        continue
       trees = read_trees_list(gene_tree_path)
       for tree in trees:
         for leaf in tree:

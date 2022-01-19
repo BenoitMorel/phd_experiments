@@ -14,6 +14,9 @@ root = get_parent_path(get_parent_path(os.path.realpath(__file__)))
 def python():
   return "python"
 
+def python3():
+  return "python3"
+
 # scripts
 scripts_root = os.path.join(root, "scripts")
 
@@ -112,7 +115,9 @@ duptree_exec = os.path.join(github_root, "duptree", "duptree")
 stride_script = os.path.join(github_root, "STRIDE", "stride", "stride.py")
 fastmulrfs_preprocess = os.path.join(github_root, "fastmulrfs", "python-tools", "preprocess_multrees_v3.py")
 fastrfs_exec = os.path.join(github_root, "FastRFS", "build", "FastRFS")
+disco_script = os.path.join(github_root, "DISCO", "disco.py")
 astral_jar = os.path.join(github_root, "ASTRAL", "Astral", "astral.jar")
+astralmp_jar = os.path.join(github_root, "ASTRAL-MP", "Astral", "astral.jar")
 astralpro_root = os.path.join(github_root, "A-pro")
 astralpro_jar = os.path.join(github_root, "A-pro", "ASTRAL-MP", "astral.1.1.2.jar")
 astrid_exec = os.path.join(github_root, "ASTRID", "bazel-bin", "src", "ASTRID")

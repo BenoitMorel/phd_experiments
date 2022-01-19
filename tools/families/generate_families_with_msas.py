@@ -12,7 +12,7 @@ import create_random_tree
 import ete3
 import read_msa
 
-gene_equals_species = False
+gene_equals_species = True
 
 
 def treat_alignment(input_file, authorized_species, datadir, family):

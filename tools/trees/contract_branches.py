@@ -9,7 +9,6 @@ def contract_rec(node, min_bl, min_support):
   bl = node.dist
   support = node.support
   is_polytomy = False
-  print(node.name)
   is_polytomy  = node.dist <= min_bl or node.support < min_support
   is_polytomy = is_polytomy and not node.is_root()
   if (is_polytomy):
@@ -24,9 +23,7 @@ def contract_rec(node, min_bl, min_support):
     
 
 def contract_branches(input_tree, output_tree, min_bl, min_support):
-  print(input_tree)
-  tree = Tree(input_tree, format = 1)
-  print("ok read")
+  tree = Tree(input_tree, format = 0)
   contract_rec(tree, min_bl, min_support)  
   tree.write(outfile = output_tree)
 

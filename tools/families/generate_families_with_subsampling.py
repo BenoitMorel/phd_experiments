@@ -33,6 +33,7 @@ def get_families_list(input_datadir, sampling_ratio):
 
 def generate_replicate(input_datadir, sampling_ratio, replicate):
   random.seed(replicate + 42)
+  input_datadir = os.path.normpath(input_datadir)
   output_datadir = input_datadir + "_subsample" + str(sampling_ratio)
   output_datadir += "_rep" + str(replicate) 
   if (os.path.exists(output_datadir)):
