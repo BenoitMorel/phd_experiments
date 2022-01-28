@@ -56,6 +56,7 @@ def export_pargenes_trees(pargenes_dir, subst_model, starting_trees, bs_trees, d
   families_dir = os.path.join(datadir, "families")
   # tca scores
   concatenated_dir = os.path.join(pargenes_dir, "concatenated_bootstraps")
+  fixed_subst_model = subst_model.replace(".", "")
   if (os.path.isdir(concatenated_dir)):
     for concatenation in os.listdir(concatenated_dir):
       family = "_".join(concatenation.split("_")[:-1]) # remove everything after the last
@@ -80,7 +81,9 @@ def export_pargenes_trees(pargenes_dir, subst_model, starting_trees, bs_trees, d
         tbe = True
       family = "_".join(support_tree.split("_")[:-1]) # remove everything after the last _
       old_raxml_tree = os.path.join(support_trees_dir, support_tree)
-      new_raxml_tree = fam.get_raxml_tree(datadir, subst_model, family, starting = starting_trees, bstrees = bs_trees, tbe = tbe)
+      new_raxml_tree = fam.get_raxml_tree(datadir, fixed_subst_model, family, starting = starting_trees, bstrees = bs_trees, tbe = tbe)
+      print(old_raxml_tree)
+      print(new_raxml_tree)
       shutil.copyfile(old_raxml_tree, new_raxml_tree)
 
   # ml trees
@@ -92,8 +95,8 @@ def export_pargenes_trees(pargenes_dir, subst_model, starting_trees, bs_trees, d
     if (not os.path.isfile(trees_file)):
       trees_file = ml_tree_file
     family = "_".join(family.split("_")[:-1]) # remove everything after the last _
-    new_raxml_trees = fam.get_raxml_multiple_trees(datadir, subst_model, family)
-    new_raxml_tree = fam.get_raxml_tree(datadir, subst_model, family, starting = starting_trees)
+    new_raxml_trees = fam.get_raxml_multiple_trees(datadir, fixed_subst_model, family)
+    new_raxml_tree = fam.get_raxml_tree(datadir, fixed_subst_model, family, starting = starting_trees)
     if (bs_trees == 0):
       shutil.copyfile(ml_tree_file, new_raxml_tree)
     try:
@@ -101,7 +104,7 @@ def export_pargenes_trees(pargenes_dir, subst_model, starting_trees, bs_trees, d
     except:
       print("Cannot copy " + trees_file + " to " + new_raxml_trees)
       pass
-    new_best_model = fam.get_raxml_best_model(datadir, subst_model, family)
+    new_best_model = fam.get_raxml_best_model(datadir, fixed_subst_model, family)
     shutil.copyfile(best_model, new_best_model)
   # clean
   garbage_dir = os.path.join(datadir, "garbage")
@@ -110,7 +113,7 @@ def export_pargenes_trees(pargenes_dir, subst_model, starting_trees, bs_trees, d
   except:
     pass
   for family in os.listdir(families_dir):
-    if (not os.path.isfile(fam.get_raxml_tree(datadir, subst_model, family)) and not os.path.isfile(fam.get_raxml_light_tree(datadir, subst_model, family))): 
+    if (not os.path.isfile(fam.get_raxml_tree(datadir, fixed_subst_model, family)) and not os.path.isfile(fam.get_raxml_light_tree(datadir, fixed_subst_model, family))): 
       print("Cleaning family " + family)
       shutil.move(os.path.join(families_dir, family), garbage_dir)
 

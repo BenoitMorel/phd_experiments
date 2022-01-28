@@ -15,10 +15,12 @@ import run_phyldog
 import run_duptree
 import run_stride
 import run_guenomu
+import run_asteroid
 import run_astrid
 import run_astrid_single
 import run_astral_multi
 import run_astral
+import run_mp_astral
 import run_astral_pro
 import run_fastrfs
 import run_fastmulrfs
@@ -33,6 +35,8 @@ import fast_rf_cells
 import shutil
 import subprocess
 import run_bootstrap_trees
+import contract_branches
+import numpy as np
 
 sys.path.insert(0, os.path.join("scripts"))
 sys.path.insert(0, os.path.join("tools", "families"))
@@ -43,6 +47,9 @@ import fam_data
 def printFlush(msg):
   print(msg)
   sys.stdout.flush()
+
+def floatstr(my_float):
+  return np.format_float_positional(my_float, trim='-')
 
 class SpeciesRunFilter():
   
@@ -60,6 +67,7 @@ class SpeciesRunFilter():
     self.mb_generations = 10000
     self.mb_burnin = 1
     self.starting_gene_trees = ["raxml-ng"]
+    self.minbl = -1.0
     self.orthogenerax = True
     self.concatenation_min = True
     self.concatenation_max = True
@@ -73,7 +81,9 @@ class SpeciesRunFilter():
     self.cherrypro = True    
     self.astrid = True    
     self.astrid_single = True    
+    self.asteroid = True    
     self.astral = True
+    self.astral_mp = True
     self.generaxselect = True
     self.generaxselectfam = True
     self.astralpro = True
@@ -113,8 +123,10 @@ class SpeciesRunFilter():
     self.cherrypro = False    
     self.njst = False    
     self.astrid = False
+    self.asteroid = False
     self.astrid_single = False
     self.astral = False
+    self.astral_mp = False
     self.generaxselect = False
     self.generaxselectfam = False
     self.astralpro = False
@@ -195,6 +207,13 @@ class SpeciesRunFilter():
         run_mrbayes.run_mrbayes_on_families(instance, cores, False)
       except Exception as exc:
         printFlush("Failed running mrbayes\n" + str(exc))
+    if (self.minbl > 0.0):
+      for gene_tree in self.starting_gene_trees:
+        print("Coucou " + gene_tree)
+        gene_tree = gene_tree.split("-minbl")[0]
+        print("Coucou " + gene_tree)
+        printFlush("Contracting bl < " + floatstr(self.minbl))
+        contract_branches.contract(datadir, gene_tree, subst_model, self.minbl, -1.0)
     if (self.stag):
       for gene_tree in self.starting_gene_trees:
         printFlush("Run Stag")
@@ -253,13 +272,19 @@ class SpeciesRunFilter():
           run_njrax.run_njrax(datadir, "Ustar", gene_tree, subst_model)
         except Exception as exc:
           printFlush("Failed running NJst with " + gene_tree + "\n" + str(exc))
+    if (self.asteroid):
+      printFlush("Run Asteroid")
+      for gene_tree in self.starting_gene_trees:
+        try:
+          run_asteroid.run_asteroid(datadir, gene_tree, subst_model, cores)
+          run_asteroid.run_asteroid(datadir, gene_tree, subst_model, cores, ["-n"])
+        except Exception as exc:
+          printFlush("Failed running Asteroid\n" + str(exc))
     if (self.astrid):
       printFlush("Run Astrid")
       for gene_tree in self.starting_gene_trees:
         try:
-          #run_astrid.run_astrid(datadir, gene_tree, subst_model, "default")
           run_astrid.run_astrid(datadir, gene_tree, subst_model, "fastme")
-          #run_astrid.run_astrid(datadir, gene_tree, subst_model, "bionj")
         except Exception as exc:
           printFlush("Failed running Astrid\n" + str(exc))
     if (self.astrid_single):
@@ -271,6 +296,13 @@ class SpeciesRunFilter():
           #run_astrid_single.run_astrid(datadir, gene_tree, subst_model, "bionj")
         except Exception as exc:
           printFlush("Failed running Astrid\n" + str(exc))
+    if (self.astral_mp):
+      printFlush("Run Astral")
+      for gene_tree in self.starting_gene_trees:
+        try:
+          run_mp_astral.run_astral(datadir, gene_tree, subst_model)
+        except Exception as exc:
+          printFlush("Failed running Astral\n" + str(exc))
     if (self.astral):
       printFlush("Run Astral")
       for gene_tree in self.starting_gene_trees:

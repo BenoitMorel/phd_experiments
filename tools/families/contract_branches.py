@@ -5,7 +5,7 @@ sys.path.insert(0, os.path.join("tools", "trees"))
 sys.path.insert(0, 'scripts')
 import experiments as exp
 import fam
-import contract_branches
+import contract_tree_branches
 import numpy as np
 
 def floatstr(my_float):
@@ -22,7 +22,7 @@ def contract(datadir, gene_tree_method, subst_model, min_bl, min_support):
   for family in fam.get_families_list(datadir):
     src = fam.build_gene_tree_path(datadir, subst_model, family, method)
     dest = fam.build_gene_tree_path(datadir, subst_model, family, new_method)
-    contract_branches.contract_branches(src, dest, min_bl, min_support)    
+    contract_tree_branches.contract_branches(src, dest, min_bl, min_support)    
 
 if (__name__ == "__main__"):
   if (len(sys.argv) != 6):

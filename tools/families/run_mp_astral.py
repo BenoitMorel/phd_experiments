@@ -60,7 +60,7 @@ def exec_astral(gene_trees_file, output_dir, addition_species_tree):
   print(res)
   return out
 
-def run_astral(datadir, gene_trees, subst_model, addition_species_tree):
+def run_astral(datadir, gene_trees, subst_model, addition_species_tree = None):
   run_name = "astralmp_" + gene_trees
   if (addition_species_tree != None):
     run_name += "-additional"

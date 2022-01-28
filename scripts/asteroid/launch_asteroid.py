@@ -72,9 +72,15 @@ def run_asteroid(datadir, cores, additional_arguments, output_dir):
   command = get_asteroid_command(gene_tree_file, mapping_file, additional_arguments, output_dir, cores)
   print("Running:")
   print(command)
-  subprocess.check_call(command.split(" "), stdout = sys.stdout)
-
-
+  try:
+    subprocess.check_call(command.split(" "), stdout = sys.stdout)
+  except:
+    print("Command: ")
+    print(command)
+    print("failed!")
+    sys.exit(0)
+  #print("I abort, remove this line!")
+  #sys.exit(0)
 
 def extract_trees(datadir, output_dir, run_name, subst_model):
   src = get_inferred_tree(output_dir)
@@ -107,6 +113,9 @@ def run(datadir, gene_tree_method, subst_model, cores, additional_arguments, out
     if ("-r" in additional_arguments):
       random_starting_trees = exp.getArg("-r", additional_arguments, "1")
       run_name += "r" + str(random_starting_trees) + str("-")
+    if ("--min-bl" in additional_arguments):
+      minbl = exp.getArg("--min-bl", additional_arguments, "1")
+      run_name += "minbl" + str(minbl) + str("-")
     if ("--seed" in additional_arguments):
       seed = exp.getArg("--seed", additional_arguments, "1")
       run_name += "seed" + str(seed) + str("-")

@@ -12,6 +12,7 @@ class Partition:
   def load_from_line(self, line):
     print(line)
     line = line.replace(",", "")
+    line = line.replace("GTR+G", "")
     line = line.replace("DNA", "")
     line = line.replace("charset", "")
     line = line.replace("=", " ")
@@ -20,6 +21,9 @@ class Partition:
     split = line.split()
     print(split)
     self.name = split[0]
+    self.name = self.name.replace("'", "")
+    self.name = self.name.replace("\"", "")
+    self.name = self.name.replace(".", "-")
     bounds = split[1].split("-")
     self.start = int(bounds[0]) - 1
     self.width = int(bounds[1]) - self.start

@@ -10,22 +10,24 @@ import run_all_species
 import generate_families_with_subsampling
 from run_all_species import SpeciesRunFilter
 import plot_speciesrax
+import numpy as np
+
+def floatstr(my_float):
+  return np.format_float_positional(my_float, trim='-')
 
 do_run = True
 do_plot = False
 launch_mode = "normald"
 cores = 40
 single = True
+minbl = -0.0000011
 
 run_inputs_aa = []
 run_inputs_aa.append(("raxml-ng", "LG+G"))
 #run_inputs_aa.append(("raxml-ng", "bestAA"))
 
 run_inputs_dna = []
-#run_inputs_dna.append(("fasttree", "GTR"))
-#run_inputs_dna.append(("true", "true"))
 run_inputs_dna.append(("raxml-ng", "GTR+G"))
-#run_inputs_dna.append(("raxml-ng-minbl0.0000011", "GTR+G"))
 
 
 run_inputs_true = [("true", "true")]
@@ -35,13 +37,14 @@ run_filter.disable_all()
 run_filter.pargenes = True
 #run_filter.concatenation_min = True
 
-run_filter.minibme = True
-run_filter.minibmepruned = True
-run_filter.njrax = True
+run_filter.minbl = minbl
+run_filter.asteroid = True
+#run_filter.njrax = True
 if (single):
-  run_filter.fastmulrfs = True
-  run_filter.astral = True
-  run_filter.astrid_single = True 
+  #run_filter.fastmulrfs = True
+  #run_filter.astral_mp = True
+  #run_filter.astrid_single = True
+  pass
 else:
   run_filter.speciesraxbench = True
   #run_filter.fastmulrfs = True
@@ -51,12 +54,11 @@ run_filter.analyze = True
 
 datasets = []
 
+hey = ['22166_0', '10069_0', '10069_1', '14446_0', '10124_0', '10124_1', '10245_0', '12595_0', '12267', '18985_0', '16150_0', '10301_0', '10301_1', '16203_30', '26956_0', '18165_0', '2218_0', '2218_1', '13318_1', '27888_0', '2177_0', '23063_0']
 
-#datasets.append(("pdb_fungi60_single", run_inputs_aa))
-#datasets.append(("alternative_life92", run_inputs_aa))
-datasets.append(("aa_plants_single", run_inputs_aa))
-datasets.append(("aa_plants_single_maxgapratio0.5", run_inputs_aa))
-datasets.append(("aa_plants_single_maxgapratio0.66", run_inputs_aa))
+#for h in hey:
+#  datasets.append(("treebase_" + h, run_inputs_dna))
+datasets.append(("treebase_12267_0" , run_inputs_dna))
 
 # methods to plot
 methods_tuples = []
@@ -70,13 +72,18 @@ methods_tuples.append(("duptree-raxml-ng", "DupTree"))
 
 if (do_run):
   for dataset in datasets:
-    datadir = fam.get_datadir(dataset[0])
-    run_inputs = dataset[1]
-    for run_input in run_inputs:
-      run_filter.starting_gene_trees = [run_input[0]]
-      subst_model = run_input[1]
-      run_filter.run_reference_methods(datadir, subst_model, cores, launch_mode)
-    
+    try:
+      datadir = fam.get_datadir(dataset[0])
+      run_inputs = dataset[1]
+      for run_input in run_inputs:
+        run_filter.starting_gene_trees = [run_input[0]]
+        if (minbl > 0.0):
+          run_filter.starting_gene_trees = []
+          run_filter.starting_gene_trees.append(run_input[0] + "-minbl" + floatstr(minbl))
+        subst_model = run_input[1]
+        run_filter.run_reference_methods(datadir, subst_model, cores, launch_mode)
+    except:
+      print("failed to treat " + dataset[0])
 methods = []
 methods_dict = {}
 for t in methods_tuples:

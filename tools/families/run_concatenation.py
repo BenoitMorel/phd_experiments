@@ -97,7 +97,7 @@ def run_raxml(subst_model, cores, run_dir, supermatrix_path, partition_path):
   process = subprocess.Popen(command, stdout=subprocess.PIPE, stdin=subprocess.PIPE)
   stdout, stderr = process.communicate()
 
-def run_concatenation(datadir, concatenation_mode,  subst_model, cores, additional_arguments):
+def run_concatenation(datadir, concatenation_mode,  subst_model, cores, additional_arguments = []):
   from_scratch = not ("--continue" in additional_arguments)
   run_name = "concatenation-" + concatenation_mode
   run_dir = fam.get_run_dir(datadir, subst_model,  run_name)

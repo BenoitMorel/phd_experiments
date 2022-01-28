@@ -3,12 +3,14 @@ import sys
 
 def generate(tsv_file, output):
   lines = open(tsv_file).readlines()[1:]
+  offset = 1
   with open(output, "w") as writer:
     for line in lines:
       sp = line.split()
+      sp = [sp[0], " ".join(sp[1:])]
       print(sp)
       taxa = sp[0 ]
-      sp2 = sp[2].split(";")
+      sp2 = sp[offset].split(";")
       long_name = taxa + "_" + sp2[1] + "_" + sp2[2]
       writer.write(taxa + ":")
       writer.write(long_name)
