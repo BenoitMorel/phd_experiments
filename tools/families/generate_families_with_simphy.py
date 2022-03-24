@@ -247,8 +247,8 @@ def get_output_dir(parameters, root_output):
   res += "_gc" + str(parameters.gene_conversion_rate)
   res += "_p0.0"
   res += "_pop" + str(parameters.population)
-  res += "_mu" + str(parameters.mu)
-  res += "_theta" + str(parameters.theta)
+  res += "_ms" + str(parameters.miss_species)
+  res += "_mf" + str(parameters.miss_fam)
   """
   res += "_hgt" 
   if (parameters.distance_hgt):
@@ -292,7 +292,7 @@ def generate_from_parameters(parameters, root_output):
   print("Done! output in " + output_dir) 
   return output_dir
 
-def generate_simphy(tag, species, families, sites, model, bl_factor, dup_rate, loss_rate, transfer_rate, gene_conversion_rate, perturbation, population, mu, theta, root_output, seed):
+def generate_simphy(tag, species, families, sites, model, bl_factor, dup_rate, loss_rate, transfer_rate, gene_conversion_rate, perturbation, population, miss_species, miss_fam, root_output, seed):
   p = SimphyParameters()
   p.tag = tag
   p.species_taxa = int(species)
@@ -306,17 +306,18 @@ def generate_simphy(tag, species, families, sites, model, bl_factor, dup_rate, l
   p.gene_conversion_rate = float(gene_conversion_rate)
   p.seed = int(seed)
   p.population = population
-  p.mu = float(mu)
-  p.theta = float(theta)
+  p.miss_species = float(miss_species)
+  print(miss_fam)
+  p.miss_fam = float(miss_fam)
   print(perturbation)
   assert(float(perturbation) == 0.0)
-  if (p.mu != 1.0):
+  if (p.miss_species != 1.0 or p.miss_fam != 1.0):
     p.prefix = p.prefix + "temp"
     temp_output_dir = generate_from_parameters(p, root_output)
     p.prefix = p.prefix[:-4]
     output_dir = get_output_dir(p, root_output) 
     print("Now move " + temp_output_dir + " to " + output_dir)
-    sample_missing_data.sample_missing_data(temp_output_dir, output_dir, p.mu, p.theta)
+    sample_missing_data.sample_missing_data(temp_output_dir, output_dir, p.miss_species, p.miss_fam)
     shutil.rmtree(temp_output_dir)
   else:
     generate_from_parameters(p, root_output)
@@ -328,4 +329,4 @@ if (__name__ == "__main__"):
 
 
 
-
+#

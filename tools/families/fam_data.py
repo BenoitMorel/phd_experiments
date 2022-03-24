@@ -46,10 +46,16 @@ def get_param_from_dataset_name(parameter, dataset):
     return dataset.split("_")[11][1:]
   elif (parameter == "population"):
     return dataset.split("_")[12][3:]
-  elif (parameter == "mu"):
+  elif (parameter == "ms"):
     return dataset.split("_")[13][2:]
-  elif (parameter == "theta"):
-    return dataset.split("_")[14][5:]
+  elif (parameter == "msmf"):
+    return dataset.split("_")[13][2:]
+  elif (parameter == "mf"):
+    return dataset.split("_")[14][2:]
+  elif (parameter == "av_miss"):
+    ms = float(get_param_from_dataset_name("ms", dataset))
+    mf = float(get_param_from_dataset_name("mf", dataset))
+    return str(round(ms * mf, 2))
   elif (parameter == "seed"):
     return dataset.split("_")[15][4:]
   elif (parameter == "tl_ratio"):
@@ -104,10 +110,10 @@ def generate_dataset(dataset):
   elif (dataset.startswith("ssim")):
     seed = get_param_from_dataset_name("seed", dataset)
     population = get_param_from_dataset_name("population", dataset)
-    mu = get_param_from_dataset_name("mu", dataset)
-    theta = get_param_from_dataset_name("theta", dataset)
+    miss_species = get_param_from_dataset_name("ms", dataset)
+    miss_fam = get_param_from_dataset_name("mf", dataset)
     model = "GTR"
-    simphy.generate_simphy(tag, species, families, sites, model, bl_factor, d, l, t, gc, p, population, mu, theta, output,  seed) 
+    simphy.generate_simphy(tag, species, families, sites, model, bl_factor, d, l, t, gc, p, population, miss_species, miss_fam, output,  seed) 
   else:
     print("Unknown simulator for dataset " + dataset)
     sys.exit(1)
@@ -135,7 +141,7 @@ def get_param_position(fixed_point, param_name):
     if (param_name ==  re.sub("[0-9]*[\.]*[0-9]*", "", split[i])):
       return i
   print("ERROR: unknown parameter " + param_name)
-  exit(1)
+  raise
 
 def change_param_in_dataset_name(dataset, param_name, new_value):
   split = dataset.split("_")
@@ -159,14 +165,10 @@ def get_dataset_variations(datasets, fixed_point, strings_to_replace):
       param_name =  re.sub("[0-9]*[\.]*[0-9]*", "", elem)
       param_name = re.sub("e-", "", param_name)
       param_value =  elem[len(param_name):]
-      if (param_name == "bl"):
-        print(param_value)
       param_position = get_param_position(fixed_point, param_name)
       split[param_position] = param_name + str(param_value)
     dataset = "_".join(split)
     if (dataset in datasets):
-      print("duplicate: " + dataset)
-      print(fixed_point + " " + str(strings_to_replace) + " " + string_to_replace)
       exit(1)
     datasets.append(dataset)
 

@@ -63,7 +63,7 @@ def dendropy_rf_distance(tree1_file, tree2_file):
 
 if (__name__ == "__main__"):
   if (len(sys.argv) < 3):
-    print("Syntax python rf_distance.py tree1 tree2 [rooted]")
+    print("Syntax python " + os.path.basename(__file__) + " tree1 tree2 [rooted]")
     sys.exit(1)
   tree1 = Tree(sys.argv[1], format=1)
   tree2 = Tree(sys.argv[2], format=1)

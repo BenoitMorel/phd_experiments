@@ -13,7 +13,7 @@ class AlignedPrinter:
   def sort_right_float(self):
     floating_array = []
     for elem in self._rights:
-      floating_array.append(elem.split()[0])
+      floating_array.append(float(elem.split()[0]))
     self._lefts = [x for _,x in sorted(zip(floating_array, self._lefts))]
     self._rights = [x for _,x in sorted(zip(floating_array, self._rights))]
 

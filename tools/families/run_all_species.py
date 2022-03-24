@@ -9,6 +9,7 @@ import fam
 import run_generax
 import run_stag
 import species_analyze
+import grf_species_analyze
 import run_speciesrax
 import run_tegrator
 import run_phyldog
@@ -16,12 +17,15 @@ import run_duptree
 import run_stride
 import run_guenomu
 import run_asteroid
+import run_concasteroid
+import run_superfastme
 import run_astrid
 import run_astrid_single
 import run_astral_multi
 import run_astral
 import run_mp_astral
 import run_astral_pro
+import run_stells
 import run_fastrfs
 import run_fastmulrfs
 import run_njst  
@@ -54,6 +58,7 @@ def floatstr(my_float):
 class SpeciesRunFilter():
   
   def __init__(self):
+    self.is_dna = True # only for concasteroid
     self.generate = False
     self.pargenes = True
     self.pargenes_starting_trees = 1
@@ -74,6 +79,7 @@ class SpeciesRunFilter():
     self.stag = True
     self.duptree = True
     self.stride = True
+    self.stells = True
     self.fastrfs = True
     self.fastmulrfs = True
     self.njrax = True    
@@ -82,6 +88,7 @@ class SpeciesRunFilter():
     self.astrid = True    
     self.astrid_single = True    
     self.asteroid = True    
+    self.concasteroid = True    
     self.astral = True
     self.astral_mp = True
     self.generaxselect = True
@@ -100,11 +107,13 @@ class SpeciesRunFilter():
     self.phyldog = True
     self.guenomu = False
     self.analyze = True
+    self.grf_analyze = True
     self.analyze_gene_trees = False
     self.cleanup = False
     self.verbose = False
 
   def disable_all(self):
+    self.generate = False
     self.pargenes = False
     self.bootstrap_trees = 0
     self.fasttree = False
@@ -113,6 +122,7 @@ class SpeciesRunFilter():
     self.concatenation_min = False
     self.concatenation_max = False
     self.stag = False
+    self.stells = False
     self.fastrfs = False
     self.fastmulrfs = False
     self.phyldog = False
@@ -124,6 +134,8 @@ class SpeciesRunFilter():
     self.njst = False    
     self.astrid = False
     self.asteroid = False
+    self.concasteroid = False
+    self.superfastme = False    
     self.astrid_single = False
     self.astral = False
     self.astral_mp = False
@@ -142,7 +154,8 @@ class SpeciesRunFilter():
     self.speciesraxbench = False
     self.guenomu = False
     self.cleanup = False
-    #self.analyze = False
+    self.analyze = False
+    self.grf_analyze = False
     self.analyze_gene_trees = False
   
   def launch_reference_methods(self, datadir, subst_model, cores, launch_mode):
@@ -242,6 +255,13 @@ class SpeciesRunFilter():
           run_fastrfs.run_fastrfs(datadir, gene_tree, subst_model)
         except Exception as exc:
           printFlush("Failed running FastRFS\n" + str(exc))
+    if (self.stells):
+      printFlush("Run FastRFS")
+      for gene_tree in self.starting_gene_trees:
+        try:
+          run_stells.run_stells(datadir, gene_tree, subst_model)
+        except Exception as exc:
+          printFlush("Failed running STELLS\n" + str(exc))
     if (self.njrax):
       printFlush("Run NJrax")
       for gene_tree in self.starting_gene_trees:
@@ -280,6 +300,18 @@ class SpeciesRunFilter():
           run_asteroid.run_asteroid(datadir, gene_tree, subst_model, cores, ["-n"])
         except Exception as exc:
           printFlush("Failed running Asteroid\n" + str(exc))
+    if (self.concasteroid):
+      printFlush("Run ConcAteroid")
+      try:
+        run_concasteroid.run_concasteroid(datadir, subst_model, self.is_dna, cores)
+      except Exception as exc:
+        printFlush("Failed running ConcAsteroid\n" + str(exc))
+    if (self.superfastme):
+      printFlush("Run SuperFastMe")
+      try:
+        run_superfastme.run_superfastme(datadir, "single", subst_model, self.is_dna, cores)
+      except Exception as exc:
+        printFlush("Failed running ConcAsteroid\n" + str(exc))
     if (self.astrid):
       printFlush("Run Astrid")
       for gene_tree in self.starting_gene_trees:
@@ -488,6 +520,13 @@ class SpeciesRunFilter():
         species_analyze.analyze(datadir)
       except Exception as exc:
         printFlush("Run analyze gene trees...")
+    if (self.grf_analyze):
+      printFlush("Run grf analyze...")
+      sys.stdout.flush()
+      try:
+        grf_species_analyze.analyze(datadir)
+      except Exception as exc:
+        printFlush("Run grf analyze failed...")
     if (self.analyze_gene_trees):
       try:
         for gene_tree in self.starting_gene_trees:

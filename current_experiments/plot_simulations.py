@@ -34,19 +34,18 @@ def _get_average_methods_values(param_name, datasets, metric, methods, subst_mod
   values = {}
   for method in methods:
     values[method] = 0.0
+    key = (method + "." + subst_model).lower()
+    average = 0.0
     for dataset in datasets:
-      key = (method + "." + subst_model).lower()
-      average = 0.0
-      for dataset in datasets:
-        dataset_dir = os.path.join(exp.families_datasets_root, dataset)
-        metrics = saved_metrics.get_metrics(dataset_dir, metric)
-        if (metrics != None and key in metrics):
-          average += float(metrics[key])
-        else:
-          print("WARNING: missing value for run " + key + " and dataset " + dataset)
-          average += float(get_default_value(metric_name))
-      average /= float(len(datasets))
-      values[method] = average
+      dataset_dir = os.path.join(exp.families_datasets_root, dataset)
+      metrics = saved_metrics.get_metrics(dataset_dir, metric)
+      if (metrics != None and key in metrics):
+        average += float(metrics[key])
+      else:
+        print("WARNING: missing value for run " + key + " and dataset " + dataset)
+        average += float(get_default_value(metric_name))
+    average /= float(len(datasets))
+    values[method] = average
   return values
 
 # values[param][method] = value

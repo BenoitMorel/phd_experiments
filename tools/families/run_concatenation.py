@@ -14,7 +14,7 @@ import random
 import species_analyze
 import time
 
-def build_supermatrix(datadir, subst_model, supermatrix_path, partition_path, concatenation_mode):
+def build_supermatrix(datadir, subst_model, supermatrix_path, partition_path, concatenation_mode, msa_format = "phylip_relaxed"):
   print("build supermatrix")  
   all_species = ete3.Tree(fam.get_species_tree(datadir), 1).get_leaf_names()
   partition_writer = open(partition_path, "w")
@@ -45,7 +45,6 @@ def build_supermatrix(datadir, subst_model, supermatrix_path, partition_path, co
       continue
     print("Start working on family " + family)
     while (len(species_to_genes) > 3):
-      print(family)
       for species in all_species:
         seq = gaps
         if (species in species_to_genes):
@@ -58,9 +57,7 @@ def build_supermatrix(datadir, subst_model, supermatrix_path, partition_path, co
       partition_writer.write(str(offset) + "-" + str(offset + seq_len - 1))
       partition_writer.write("\n")
       offset += seq_len
-      print(use_all_genes)
       if (not use_all_genes):
-        print("break")
         break
   partition_writer.close()
   print("Writing the supermatrix...")
@@ -70,7 +67,7 @@ def build_supermatrix(datadir, subst_model, supermatrix_path, partition_path, co
   for species in all_species:
     print("Add " + species + " to supermatrix...")
     supermatrix.set_seq(species, "".join(columns[species]))
-  supermatrix.write("phylip_relaxed", supermatrix_path)
+  supermatrix.write(msa_format, supermatrix_path)
   print("End of writing the supermatrix")
   return offset
 

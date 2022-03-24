@@ -8,7 +8,6 @@ sys.path.insert(0, 'scripts')
 sys.path.insert(0, os.path.join("tools", "families"))
 import experiments as exp
 import fam
-import run_raxml_supportvalues as run_pargenes
 import sequence_model
 import ete3
 
@@ -76,7 +75,7 @@ def run_fasttree_on_families(datadir, subst_model, cores):
 if (__name__== "__main__"):
   max_args_number = 4
   if len(sys.argv) < max_args_number:
-    print("Syntax error: python run_fasttree datadir subst_model cores.")
+    print("Syntax error: python " + os.path.basename(__file__) + " datadir subst_model cores.")
     print("Cluster can be either normal, haswell or magny")
     sys.exit(0)
 

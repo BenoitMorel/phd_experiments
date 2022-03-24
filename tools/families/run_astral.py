@@ -31,7 +31,7 @@ def init_gene_trees_file(datadir, gene_trees, subst_model, output_dir):
       for tree in trees:
         for leaf in tree:
           leaf.name = m[leaf.name]
-        writer.write(tree.write().replace("e-", ""))
+        writer.write(tree.write().replace("e-", "").replace("e+",""))
         writer.write("\n")
   return filepath
 
@@ -39,8 +39,8 @@ def init_gene_trees_file(datadir, gene_trees, subst_model, output_dir):
 def exec_astral(gene_trees_file, output_dir, addition_species_tree):
   command = []
   command.append("java")
-  command.append("-Xms700G")
-  command.append("-Xmx700G")
+  #command.append("-Xms700G")
+  #command.append("-Xmx700G")
   command.append("-jar")
   command.append(exp.astral_jar)
   command.append("-i")
@@ -60,7 +60,7 @@ def exec_astral(gene_trees_file, output_dir, addition_species_tree):
   print(res)
   return out
 
-def run_astral(datadir, gene_trees, subst_model, addition_species_tree):
+def run_astral(datadir, gene_trees, subst_model, addition_species_tree = None):
   run_name = "astral_" + gene_trees
   if (addition_species_tree != None):
     run_name += "-additional"

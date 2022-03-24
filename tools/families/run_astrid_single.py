@@ -65,9 +65,9 @@ def run_astrid(datadir, method, subst_model, mode):
   print("Start executing astrid")
   start = time.time()
   exec_astrid(gene_trees_file, temp_species_tree, mode)
+  time1 = (time.time() - start)
   output_species_tree = fam.get_species_tree(datadir, subst_model, name)
   shutil.move(temp_species_tree, output_species_tree)
-  time1 = (time.time() - start)
   saved_metrics.save_metrics(datadir, fam.get_run_name(name, subst_model), time1, "runtimes") 
 
 if (__name__ == "__main__"):

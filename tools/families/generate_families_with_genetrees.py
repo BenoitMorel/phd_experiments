@@ -44,7 +44,7 @@ def generate(gene_trees_dir, species_tree_path, datadir):
 
 if (__name__ == "__main__"): 
   if (len(sys.argv) != 4): 
-    print("Syntax: python " + os.path.basename(__file__) + " gene_trees_dict species_tree  output_dir")
+    print("Syntax: python " + os.path.basename(__file__) + " gene_trees_dir species_tree  output_dir")
     exit(1)
   gene_trees_dir = sys.argv[1]
   species_tree_path = sys.argv[2]

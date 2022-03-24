@@ -44,7 +44,6 @@ def run_rfdistance(families_file, trees_file, output_dir, cores):
   command.append("mpiexec")
   command.append("-np")
   command.append(str(cores))
-
   command.append(exp.rfdistance_exec)
   command.append(families_file)
   command.append(trees_file)
@@ -79,7 +78,6 @@ def load_rf_cells(datadir, rooted = False):
 def print_metrics(datadir, metric_dict, metric_name, benched_run):
   printer = AlignedPrinter()
   saved_metrics.save_dico(datadir, metric_dict, metric_name)
-  print(metric_dict)
   for run_key in metric_dict:
     run = run_key.split(" - ")[1]
     suffix = ""
@@ -93,19 +91,29 @@ def print_metrics(datadir, metric_dict, metric_name, benched_run):
 
 def export_metrics(datadir, benched_run, rf_cells, runs):
   total_rrf = {}
+  valid_trees = {}
   families_number = len(rf_cells)
   run_keys = []
   for run in runs:
     run_keys.append("true.true - " + run)
   for run_key in run_keys:
     total_rrf[run_key] = 0.0
+    valid_trees[run_key] = 0.0
   for family in rf_cells:
     family_rf_cells = rf_cells[family]
     for key in family_rf_cells:
-      total_rrf[key] += (family_rf_cells[key][0] / family_rf_cells[key][1]) 
+      is_valid = family_rf_cells[key][0] >= 0.0
+      if (is_valid):
+        total_rrf[key] += (family_rf_cells[key][0] / family_rf_cells[key][1])
+        valid_trees[key] += 1.0
   average_rrf = {}
+  
   for key in run_keys:
-    average_rrf[key] = total_rrf[key] / families_number
+    invalid = families_number - valid_trees[key]
+    if (invalid > 0):
+      print("Warning: found " + str(invalid) + " invalid trees for method " + key)
+    average_rrf[key] = total_rrf[key] / valid_trees[key]
+  
   print("Average relative RF:")
   print_metrics(datadir, average_rrf, "average_rrf", benched_run)
 

@@ -26,17 +26,13 @@ def init_gene_trees_file(datadir, gene_trees, subst_model, output_dir):
         split = line.replace("\n", "").split(":")
         species = split[0]
         genes = split[1].split(";")
-        if (len(genes) > 1):
-          skip_family = True
         for gene in genes:
           m[gene] = species
-      if (skip_family):
-        continue
       trees = read_trees_list(gene_tree_path)
       for tree in trees:
         for leaf in tree:
           leaf.name = m[leaf.name]
-        writer.write(tree.write().replace("e-", ""))
+        writer.write(tree.write().replace("e-", "").replace("e+", ""))
         writer.write("\n")
   return filepath
 
@@ -71,7 +67,7 @@ def run_fastrfs(datadir, gene_trees, subst_model):
   exec_fastrfs(gene_trees_file, prefix)
   time1 = (time.time() - start)
   for method in ["greedy", "single"]:
-    saved_metrics.save_metrics(datadir, fam.get_run_name("fastrfs_" + method, subst_model), time1, "runtimes") 
+    saved_metrics.save_metrics(datadir, fam.get_run_name(run_name + "_" + method, subst_model), time1, "runtimes") 
     extract_species_trees(datadir, gene_trees, subst_model, prefix, method)
 
 if (__name__ == "__main__"):

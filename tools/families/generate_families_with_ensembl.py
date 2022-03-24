@@ -19,6 +19,8 @@ except:
 
 
 species_to_remove = set()
+# I removed those species because I don't know how
+# to map them with the genes... 
 species_to_remove.add("Oryzias_latipes_ASM223467v1")
 species_to_remove.add("Oryzias_latipes_ASM223471v1")
 species_to_remove.add("Oryzias_latipes_ASM223469v1")

@@ -18,7 +18,7 @@ def floatstr(my_float):
 do_run = True
 do_plot = False
 launch_mode = "normald"
-cores = 40
+cores = 39
 single = True
 minbl = -0.0000011
 
@@ -41,9 +41,8 @@ run_filter.minbl = minbl
 run_filter.asteroid = True
 #run_filter.njrax = True
 if (single):
-  #run_filter.fastmulrfs = True
-  #run_filter.astral_mp = True
-  #run_filter.astrid_single = True
+  run_filter.fastmulrfs = True
+  run_filter.astral_mp = True
   pass
 else:
   run_filter.speciesraxbench = True
@@ -54,11 +53,12 @@ run_filter.analyze = True
 
 datasets = []
 
-hey = ['22166_0', '10069_0', '10069_1', '14446_0', '10124_0', '10124_1', '10245_0', '12595_0', '12267', '18985_0', '16150_0', '10301_0', '10301_1', '16203_30', '26956_0', '18165_0', '2218_0', '2218_1', '13318_1', '27888_0', '2177_0', '23063_0']
+#hey = ['22166_0', '10069_0', '10069_1', '14446_0', '10124_0', '10124_1', '10245_0', '12595_0', '12267', '18985_0', '16150_0', '10301_0', '10301_1', '16203_30', '26956_0', '18165_0', '2218_0', '2218_1', '13318_1', '27888_0', '2177_0', '23063_0']
 
 #for h in hey:
 #  datasets.append(("treebase_" + h, run_inputs_dna))
-datasets.append(("treebase_12267_0" , run_inputs_dna))
+#datasets.append(("treebase_12267_0" , run_inputs_dna))
+datasets.append(("ensembl105_single_maxgapratio0.8", run_inputs_dna))
 
 # methods to plot
 methods_tuples = []

@@ -20,10 +20,11 @@ def plot_line(xvalues, yvalues_list, title, xcaption, ycaption, output, line_cap
           plt.plot(xvalues, yvalues, marker=marker, label = line_captions[i])
         else:
           plt.plot(xvalues, yvalues, marker=marker)
+    fontsize = 20
     if (xcaption != None):
-      plt.xlabel(xcaption)
+      plt.xlabel(xcaption, fontsize=fontsize)
     if (ycaption != None):
-      plt.ylabel(ycaption)
+      plt.ylabel(ycaption, fontsize=fontsize)
     if (title != None):
       plt.title(title)
     plt.legend()

@@ -32,11 +32,18 @@ def get_mapping_file(datadir, additional_arguments):
 
 def get_gene_tree_file(datadir,gene_tree_method, subst_model):
   gene_tree_file = os.path.join(output_dir, "gene_trees.txt")
+  failures = 0
   with open(gene_tree_file, "w") as writer:
     for family in fam.get_families_list(datadir):
-      gene_tree = fam.build_gene_tree_path(datadir, subst_model, family, gene_tree_method)
-      writer.write(open(gene_tree).read())
-      writer.write("\n")
+      try:
+        gene_tree = fam.build_gene_tree_path(datadir, subst_model, family, gene_tree_method)
+        writer.write(open(gene_tree).read())
+        writer.write("\n")
+      except:
+        #print("Can't load gene tree for family " + family)
+        failures = failures + 1
+  if (failures > 9):
+    print("Failed to load " + str(failures) + " gene trees")
   return gene_tree_file
 
 def get_prefix(output_dir):
@@ -64,11 +71,7 @@ def get_asteroid_command(gene_tree_file, mapping_file, additional_arguments, out
     return " ".join(command)
 
 
-def run_asteroid(datadir, cores, additional_arguments, output_dir):
-  # gene tree file
-  gene_tree_file = get_gene_tree_file(datadir,gene_tree_method, subst_model)
-  # mapping file
-  mapping_file = get_mapping_file(datadir, additional_arguments)
+def run_asteroid(datadir, cores, gene_tree_file, mapping_file, additional_arguments, output_dir):
   command = get_asteroid_command(gene_tree_file, mapping_file, additional_arguments, output_dir, cores)
   print("Running:")
   print(command)
@@ -110,20 +113,27 @@ def run(datadir, gene_tree_method, subst_model, cores, additional_arguments, out
     run_name = "asteroid-"
     if (noCorrection):
       run_name = "asteroidastrid-"
+    if (int(cores) > 1):
+      run_name += "cores" + str(cores) + "-"
     if ("-r" in additional_arguments):
       random_starting_trees = exp.getArg("-r", additional_arguments, "1")
       run_name += "r" + str(random_starting_trees) + str("-")
     if ("--min-bl" in additional_arguments):
       minbl = exp.getArg("--min-bl", additional_arguments, "1")
-      run_name += "minbl" + str(minbl) + str("-")
+      run_name += "minbl" + str(minbl) + "-"
     if ("--seed" in additional_arguments):
       seed = exp.getArg("--seed", additional_arguments, "1")
-      run_name += "seed" + str(seed) + str("-")
+      run_name += "seed" + str(seed) + "-"
+    if ("-b" in additional_arguments):
+      bs = exp.getArg("-b", additional_arguments, "1")
+      run_name += "b" + str(bs) + "-"
     run_name += gene_tree_method
     run_name += "." + subst_model
    
   start = time.time()
-  run_asteroid(datadir, cores, additional_arguments, output_dir)
+  gene_tree_file = get_gene_tree_file(datadir,gene_tree_method, subst_model)
+  mapping_file = get_mapping_file(datadir, additional_arguments)
+  run_asteroid(datadir, cores, gene_tree_file, mapping_file, additional_arguments, output_dir)
   saved_metrics.save_metrics(datadir, run_name, (time.time() - start), "runtimes") 
   extract_trees(datadir, output_dir, run_name, subst_model)
   analyze_species_results(datadir, output_dir)
@@ -150,7 +160,7 @@ if (__name__ == "__main__"):
     
   min_args_number = 6
   if (len(sys.argv) < min_args_number):
-    print("Syntax error: python " + os.path.basename(__file__) + "  datadir subst_model gene_tree_method subst_model cluster cores [additional paremeters].\n")
+    print("Syntax error: python " + os.path.basename(__file__) + "  datadir gene_tree_method subst_model cluster cores [additional paremeters].\n")
     sys.exit(1)
 
   datadir = sys.argv[1]

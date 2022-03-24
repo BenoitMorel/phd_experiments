@@ -32,6 +32,14 @@ def create_random_tree_from_species(species):
     index += 1
   return tree
 
+def create_random_tree_from_tree(tree_file, output_file = None):
+  tree = ete3.Tree(tree_file)
+  species = tree.get_leaf_names()
+  random_tree = create_random_tree_from_species(species)
+  if (None != output_file):
+    random_tree.write(outfile = output_file)
+  return random_tree
+
 def create_random_tree_taxa_number(taxa_number):
   species = []
   for i in range(0, taxa_number):

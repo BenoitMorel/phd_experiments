@@ -22,31 +22,27 @@ replicates = range(3000, 3100)
 varying_params = []
 
 
+if (do_run):
+  varying_params.append((None, ["none"]))
+varying_params.append(("mu", ["mu0.2", "mu0.7", "mu1.0"]))
 
-varying_params.append((None, ["none"]))
-#varying_params.append(("mu", ["mu0.7", "mu1.0"]))
-varying_params.append(("mu", ["mu0.3"]))
-varying_params.append(("families", ["f50", "f200", "f500"]))
-varying_params.append(("species", ["s15", "s35", "s50"]))
-varying_params.append(("population", ["pop10000000", "pop100000000", "pop1000000000"]))
-varying_params.append(("dup_rate", ["d0.0_l0.0", "d0.5_l0.5", "d2.0_l2.0", "d3.0_l3.0"]))
-
-tag = "missdl"
-fixed_point = "ssim_" + tag + "_s25_f100_sites100_GTR_bl1.0_d1.0_l1.0_t0.0_gc0.0_p0.0_pop10_mu0.5_theta5.0_seed20"
+tag = "fammodel"
+fixed_point = "ssim_" + tag + "_s25_f200_sites100_GTR_bl1.0_d0.0_l0.0_t0.0_gc0.0_p0.0_pop10_mu0.5_theta5.0_seed20"
 
 # metric to plot
 metric_names = ["species_unrooted_rf"]
 
 # methods to plot
 methods_tuples = []
-methods_tuples.append(("minibmepruned-mininj_raxml-ng", "MiniBMEPruned"))
-methods_tuples.append(("njrax-mininj_raxml-ng", "MiniNJ"))
-methods_tuples.append(("njrax-cherry_raxml-ng", "MiniNJ"))
+#methods_tuples.append(("minibme-mininj_raxml-ng", "MiniBME"))
+methods_tuples.append(("minibmepruned-mininj_raxml-ng", "MissBME"))
+#methods_tuples.append(("njrax-mininj_raxml-ng", "MiniNJ"))
+methods_tuples.append(("astral", "Astral"))
 #methods_tuples.append(("astrid-default_raxml-ng", "Astrid-Default"))
-methods_tuples.append(("astrid-fastme_raxml-ng", "Astrid-FastMe"))
-methods_tuples.append(("astrid-bionj_raxml-ng", "Astrid-BioNJ"))
-methods_tuples.append(("fastmulrfs-single_raxml-ng", "FastMulRFS"))
-methods_tuples.append(("duptree_raxml-ng", "DupTree"))
+methods_tuples.append(("astrid-fastme_raxml-ng", "ASTRID"))
+#methods_tuples.append(("astrid-bionj_raxml-ng", "Astrid-BioNJ"))
+#methods_tuples.append(("fastmulrfs-single_raxml-ng", "FastMulRFS"))
+#methods_tuples.append(("duptree_raxml-ng", "DupTree"))
 #methods_tuples.append(("njrax-ustar_raxml-ng", "USTAR"))
 
 # run run_filter on all datasets in dataset
@@ -64,20 +60,15 @@ def run_varying_experiment():
   run_filter.pargenes_bootstrap_trees = 0
   run_filter.starting_gene_trees = gene_trees
   run_filter.njrax = True
+  run_filter.astral = True
   run_filter.njst = True
   run_filter.cleanup = True
-  run_filter.speciesraxbench = True
-  run_filter.speciesraxprune = True
-  run_filter.duptree = True
-  run_filter.fastmulrfs = True 
+  #run_filter.concatenation_max = True
   run_filter.minibme = True
   run_filter.minibmepruned = True
   run_filter.astrid = True
-  run_filter.cherry = True
-  run_filter.astralpro = True
+  #run_filter.cherry = True
   run_filter.analyse = True 
-
-
   
   for entry in varying_params:
     datasets = simulations_common.get_dataset_list(fixed_point, entry[1], replicates)
@@ -89,7 +80,7 @@ def plot_varying_experiment():
     print("Plotting parameter " + entry[0])
     for metric in metric_names:
       param = entry[0]
-      output = simulations_common.get_plot_name("varymissdl", param, subst_model, metric)  
+      output = simulations_common.get_plot_name("varymiss", param, subst_model, metric)  
       plot_simulations.plot_varying_params(datasets, param, metric, methods_tuples, subst_model, output)
 
 
@@ -97,4 +88,5 @@ if (do_run):
   run_varying_experiment()
 if (do_plot):
   plot_varying_experiment()
+
 

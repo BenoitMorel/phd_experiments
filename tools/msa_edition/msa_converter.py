@@ -1,6 +1,7 @@
 import sys
 import os
 import ete3
+import read_msa
 
 def write_nexus(msa, output):
   with open(output, "w") as writer:
@@ -31,7 +32,11 @@ def msa_convert(input_file, output_file, input_format, output_format, prefixes_d
       input_str += (line[:-1] + " \n")
     else:
       input_str += line 
-  msa = ete3.SeqGroup(input_str, format=input_format) 
+  msa = None
+  if (input_format == None):
+    msa = read_msa.read_msa(input_str)
+  else:
+    msa = ete3.SeqGroup(input_str, format=input_format) 
   if (prefixes_dictionnary != None):
     new_msa = ete3.SeqGroup()
     for seq in msa.get_entries():

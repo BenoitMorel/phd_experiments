@@ -179,6 +179,9 @@ def get_results(datadir, family):
 def get_alignment(datadir, family):
   return os.path.join(get_family_path(datadir, family), "alignment.msa")
 
+def get_alignment_phylip(datadir, family):
+  return os.path.join(get_family_path(datadir, family), "alignment.phy")
+
 def get_true_tree(datadir, family):
   return build_gene_tree_path(datadir, "true", family, "true")
 
@@ -246,6 +249,11 @@ def get_mappings(datadir, family):
 
 def get_treerecs_mappings(datadir, family):
   return os.path.join(get_mappings_dir(datadir, family), "treerecs_mapping.link")
+
+def get_fastme_distances(datadir, family, subst_model):
+  
+  return os.path.join(get_family_misc_dir(datadir, family), "fastme_matrix." + subst_model + ".txt")
+
 
 def get_alignment_file(datadir):
   return os.path.join(datadir, "alignment.msa")
