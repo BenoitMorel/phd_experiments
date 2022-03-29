@@ -60,9 +60,9 @@ def run_parsi_on_families(datadir, samples, subst_model, cores):
   extract_parsimony_trees(datadir, samples, subst_model, output_dir)
 
 if (__name__== "__main__"):
-  max_args_number = 4
+  max_args_number = 5
   if len(sys.argv) < max_args_number:
-    print("Syntax error: python run_parsimony datadir subst_model cores.")
+    print("Syntax error: python run_parsimony datadir samples subst_model cores.")
     print("Cluster can be either normal, haswell or magny")
     sys.exit(0)
   datadir = sys.argv[1]

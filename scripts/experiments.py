@@ -75,6 +75,7 @@ joint_search_scalasca_exec = os.path.join(joint_search_root, "scalasca_build", "
 joint_search_lib = os.path.join(joint_search_root, "build_lib", "src", "JointSearch", "libJointSearch.so")
 pargenes_root = os.path.join(github_root, "pargenes")
 pargenes_script = os.path.join(pargenes_root, "pargenes", "pargenes-hpc.py")
+dicotree_script = os.path.join(github_root, "DiCoTree", "dicotree", "dicotree.py")
 pargenes_script_debug = os.path.join(pargenes_root, "pargenes", "pargenes-hpc-debug.py")
 mpischeduler_root = os.path.join(github_root, "MPIScheduler")
 mpischeduler_exec = os.path.join(mpischeduler_root, "build", "mpi-scheduler")

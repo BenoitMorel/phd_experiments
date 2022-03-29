@@ -216,6 +216,9 @@ def get_raxml_multiple_trees(datadir, subst_model, family):
 def get_parsimony_trees(datadir, samples, subst_model, family):
   return build_gene_tree_path(datadir, subst_model, family, "parsimony" + str(samples))
 
+def get_dicotree_tree(datadir, subst_model, family):
+  return build_gene_tree_path(datadir, subst_model, family, "dicotree")
+
 def get_fasttree_tree(datadir, subst_model, family):
   return build_gene_tree_path(datadir, subst_model, family, "fasttree")
 

@@ -19,6 +19,7 @@ import species_analyze
 import run_speciesrax
 import run_parsi_raxmlng as parsimony
 import run_multiple_raxml_trees
+import fam_data
 
 def printFlush(msg):
   print(msg)
@@ -88,6 +89,11 @@ class RunFilter():
     self.analyze_species = False
 
   def run_reference_methods(self, datadir, subst_model, cores):
+    if (self.generate):
+      if (not os.path.isdir(datadir)):
+        print("Generating " + datadir)
+        dataset = os.path.basename(datadir)
+        fam_data.generate_dataset(dataset)
     print("*************************************")
     print("Run tested gene tree inference tools for dataset " + datadir)
     print("*************************************")

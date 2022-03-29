@@ -35,6 +35,7 @@ import run_orthogenerax
 import run_generax_selector
 import run_mrbayes
 import run_fasttree
+import run_dicotree
 import fast_rf_cells
 import shutil
 import subprocess
@@ -65,6 +66,7 @@ class SpeciesRunFilter():
     self.pargenes_bootstrap_trees = 0
     self.bootstrap_trees = 0
     self.fasttree = False
+    self.dicotree = False
     self.mrbayes = False
     self.mb_runs = 1  
     self.mb_chains = 4 
@@ -117,6 +119,7 @@ class SpeciesRunFilter():
     self.pargenes = False
     self.bootstrap_trees = 0
     self.fasttree = False
+    self.dicotree = False
     self.mrbayes = False
     self.orthogenerax = False
     self.concatenation_min = False
@@ -192,10 +195,13 @@ class SpeciesRunFilter():
     if (len(datadir.split("/")) == 1):
       datadir = fam.get_datadir(datadir) 
     save_sdtout = sys.stdout
+    printFlush("HEY " + os.path.join(datadir, "runs", subst_model))
     try:
-      os.makedirs(os.path.join(datadir, "runs"))
+      os.makedirs(os.path.join(datadir, "runs", subst_model))
     except:
+      printFlush("Cannot build " + os.path.join(datadir, "runs", subst_model))
       pass
+    printFlush("ok, built!")
     if (not self.verbose):
       redirected_file = os.path.join(datadir, "runs", "logs_run_all_species." + subst_model + ".txt")
       print("Redirected logs to " + redirected_file)
@@ -209,7 +215,14 @@ class SpeciesRunFilter():
     if (self.fasttree and subst_model != "true"):
       printFlush("Run FastTree...")
       sys.stdout.flush()
+      assert(os.path.isdir((os.path.join(datadir, "runs", subst_model))))
       run_fasttree.run_fasttree_on_families(datadir, subst_model, cores)
+      sys.stdout.flush()
+    if (self.dicotree):
+      printFlush("Run DiCoTree...")
+      sys.stdout.flush()
+      assert(os.path.isdir((os.path.join(datadir, "runs", subst_model))))
+      run_dicotree.run_dicotree_on_families(datadir, subst_model, cores)
       sys.stdout.flush()
     if (self.bootstrap_trees != 0):
       run_bootstrap_trees.run_pargenes_and_extract_trees(datadir, subst_model, self.bootstrap_trees, cores)

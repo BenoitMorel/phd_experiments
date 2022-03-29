@@ -20,7 +20,7 @@ def get_runs(datadir, run_tag):
   if (run_tag == "all"):
     successful_runs = fam.get_successful_runs(datadir)
     for run in successful_runs:
-      if (not "ultiple" in run and not "true.true" in run):
+      if (not "poly" in run and not "ultiple" in run and not "true.true" in run):
         runs.append(run)
   else:
     runs.append(run_tag)
