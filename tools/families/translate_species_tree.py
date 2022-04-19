@@ -14,7 +14,6 @@ def get_dict(datadir, species_tree_path, dictionary_path):
     d[leaf.name] = leaf.name
   if (dictionary_path == None):
     dictionary_path = fam.get_species_dict(datadir)
-  print(dictionary_path)
   for line in open(dictionary_path).readlines():
     sp = line.replace("\n", "").split(":")
     d[sp[0]] = sp[1]

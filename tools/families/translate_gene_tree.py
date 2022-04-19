@@ -15,7 +15,6 @@ def get_species_dict(datadir, species_tree_path, dictionary_path):
     d[leaf.name] = leaf.name
   if (dictionary_path == None):
     dictionary_path = fam.get_species_dict(datadir)
-  print(dictionary_path)
   if (not os.path.isfile(dictionary_path)):
     print("No datadir dict found")
     return d
@@ -46,7 +45,8 @@ def translate(gene_tree_path, dictionary_path):
   for leaf in tree.get_leaves():
     species = gene_to_species[leaf.name]
     trans_species = species_dict[species]
-    leaf.name = get_unique(trans_species, existing_names)
+    leaf.name = trans_species
+    #leaf.name = get_unique(trans_species, existing_names)
   return tree.write(format = 1)
 
 def dump_into(gene_tree_path, output_path):

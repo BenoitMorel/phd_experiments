@@ -91,12 +91,13 @@ def get_generax_command(generax_families_file, starting_species_tree, additional
     command.append(starting_species_tree)
     command.append("--si-strategy")
     command.append("HYBRID")
-    command.append("--strategy")
-    command.append("SKIP")
+    #command.append("--strategy")
+    #command.append("RECONCILE")
+    #command.append("--do-not-reconcile")
     #command.append("--si-estimate-bl")
-    command.append("--si-quartet-support")
-    command.append("--si-eqpic-radius")
-    command.append("3")
+    #command.append("--si-quartet-support")
+    #command.append("--si-eqpic-radius")
+    #command.append("3")
     command.append("-p")
     command.append(generax_output)
     command.extend(additional_arguments)
@@ -249,17 +250,16 @@ if (__name__ == "__main__"):
     
   min_args_number = 7
   if (len(sys.argv) < min_args_number):
-    for dataset in datasets:
-      print("\t" + dataset)
-    print("Syntax error: python " + os.path.basename(__file__) + "  dataset subst_model starting_species_tree starting_gene_tree cluster cores [additional paremeters].\n Suggestions of datasets: ")
+    print("Syntax error: python " + os.path.basename(__file__) + "  dataset gene_tree subst_model starting_species_tree cluster cores [additional paremeters].\n Suggestions of datasets: ")
     sys.exit(1)
 
   dataset = sys.argv[1]
-  subst_model = sys.argv[2]
-  starting_species_tree = sys.argv[3]
-  starting_gene_tree = sys.argv[4]
+  starting_gene_tree = sys.argv[2]
+  subst_model = sys.argv[3]
+  starting_species_tree = sys.argv[4]
   cluster = sys.argv[5]
   cores = int(sys.argv[6])
+  dataset = os.path.basename(os.path.normpath(dataset))
   additional_arguments = sys.argv[min_args_number:]
 
   if (starting_gene_tree == "raxml"):

@@ -113,6 +113,8 @@ def run(datadir, gene_tree_method, subst_model, cores, additional_arguments, out
     run_name = "asteroid-"
     if (noCorrection):
       run_name = "asteroidastrid-"
+    if ("--stepwise" in additional_arguments):
+      run_name += "stepwise"
     if (int(cores) > 1):
       run_name += "cores" + str(cores) + "-"
     if ("-r" in additional_arguments):

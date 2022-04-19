@@ -175,6 +175,7 @@ def launch(dataset, subst_model, strategy, species_tree, starting_tree, cluster,
   resultsdir = exp.create_result_dir(resultsdir, additional_arguments)
   submit_path = os.path.join(resultsdir, "submit.sh")
   command.append(resultsdir)
+  print(" ".join(command))
   exp.submit(submit_path, " ".join(command), cores, cluster) 
   
 

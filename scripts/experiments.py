@@ -63,6 +63,7 @@ splitsearch_exec = os.path.join(joint_search_root, "build", "bin", "speciessplit
 minibme_exec = os.path.join(joint_search_root, "build", "bin", "asteroid")
 asteroid_root = os.path.join(github_root, "Asteroid")
 asteroid_exec = os.path.join(asteroid_root, "build", "bin", "asteroid")
+bipstep_exec = os.path.join(asteroid_root, "build", "bin", "bipstep")
 concasteroid_exec = os.path.join(asteroid_root, "build", "bin", "concasteroid")
 genetegrator_exec = os.path.join(joint_search_root, "build", "bin", "genetegrator")
 njrax_exec = os.path.join(joint_search_root, "build", "bin", "njrax")

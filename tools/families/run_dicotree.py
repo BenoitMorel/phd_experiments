@@ -1,6 +1,5 @@
 import os
 import sys
-import subprocess
 import shutil
 import time
 import saved_metrics
@@ -26,7 +25,7 @@ def generate_scheduler_commands_file(datadir, subst_model, cores, output_dir):
       command.append(fam.get_alignment(datadir, family))
       command.append(subst_model)
       command.append(dicotree_dir)
-      command.append("1")
+      command.append("20")
       writer.write(" ".join(command) + "\n")
   return scheduler_commands_file
      
@@ -37,8 +36,10 @@ def extract_dicotree_trees(datadir, output_dir, subst_model):
     dicoasteroid = fam.build_gene_tree_path(datadir, subst_model, family, "dicotree-asteroid-nobl")
     dicoasteroidbl = fam.build_gene_tree_path(datadir, subst_model, family, "dicotree-asteroid-bl")
     dicoastral = fam.build_gene_tree_path(datadir, subst_model, family, "dicotree-astral")
+    dicomrptnt = fam.build_gene_tree_path(datadir, subst_model, family, "dicotree-mrp-tnt")
     shutil.copyfile(os.path.join(dicotree_dir, "final_asteroid.newick"), dicoasteroid)
     shutil.copyfile(os.path.join(dicotree_dir, "final_asteroid-bl.newick"), dicoasteroidbl)
+    shutil.copyfile(os.path.join(dicotree_dir, "final_mrp_tnt.newick"), dicomrptnt)
     #shutil.copyfile(os.path.join(dicotree_dir, "final_astral.newick"), dicoastral)
 
 
