@@ -80,7 +80,7 @@ def _get_methods(methods_tuples):
   - method_tuples: list of tuple (method_key, name_to_display)
   - output: plot filename
 """
-def plot_varying_params(datasets, param_name, metric, method_tuples, subst_model, output):
+def plot_varying_params(datasets, param_name, metric, method_tuples, subst_model, output, xlabel = None, ylabel = None):
   param_to_datasets = _get_param_to_datasets(datasets, param_name)
   methods = _get_methods(method_tuples)
   values = {}  
@@ -96,6 +96,10 @@ def plot_varying_params(datasets, param_name, metric, method_tuples, subst_model
     markersize = 12
     plt.plot(param_name, method, data=df, marker=method_marker, linewidth=2, label = method_alias, markersize=markersize, linestyle = linestyle, color = color)
   plt.legend()
+  if (xlabel != None):
+    plt.xlabel(xlabel)
+  if (ylabel != None):
+    plt.ylabel(ylabel)
   plt.savefig(output)
   print("Saving result in " + output)
   plt.close()

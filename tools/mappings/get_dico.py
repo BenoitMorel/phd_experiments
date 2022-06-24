@@ -70,3 +70,11 @@ def get_species_to_genes_family(datadir, family):
   return res
 
 
+def get_gene_to_family(datadir):
+  res = {}
+  for family in fam.get_families_list(datadir):
+    genes = get_genes(datadir, family)
+    for gene in genes:
+      res[gene] = family
+  return res
+

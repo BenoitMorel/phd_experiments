@@ -196,7 +196,8 @@ if (__name__ == "__main__"):
     print("Syntax error: python " + os.path.basename(__file__) + "  dataset subst_model strategy species_tree starting_tree cluster cores [additional paremeters].\n Suggestions of datasets: ")
     sys.exit(1)
 
-  dataset = os.path.basename(sys.argv[1])
+  dataset = os.path.basename(os.path.normpath(sys.argv[1]))
+  print(dataset)
   subst_model = sys.argv[2]
   strategy = sys.argv[3]
   species_tree = sys.argv[4]
