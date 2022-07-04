@@ -172,6 +172,11 @@ def get_dataset_variations(datasets, fixed_point, strings_to_replace):
       exit(1)
     datasets.append(dataset)
 
+def duplicate_families(input_datadir, output_datadir, family):
+  src = fam.get_family_path(input_datadir, family)
+  dest = fam.get_family_path(output_datadir, family)
+  shutil.copytree(src, dest)
+  
 def duplicate_families_symlink(input_datadir, output_datadir, family):
   fam.init_family_directories(output_datadir, family)
   exp.relative_symlink(fam.get_alignment(input_datadir, family), fam.get_alignment(output_datadir, family))

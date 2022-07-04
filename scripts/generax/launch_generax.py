@@ -76,10 +76,13 @@ def build_generax_families_file(datadir, starting_tree, subst_model, output):
 
 def get_generax_command(generax_families_file, species_tree, strategy, additional_arguments, output_dir, mode, cores):
     executable = exp.generax_exec
+    old = exp.checkAndDelete("--old", additional_arguments) 
     if (mode == "gprof"):
       executable = exp.generax_gprof_exec
     elif (mode == "scalasca"):
       executable = exp.generax_scalasca_exec
+    if (old):
+      executable += "old"
     generax_output = os.path.join(output_dir, "generax")
     command = []
     command.append("mpirun")

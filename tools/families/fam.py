@@ -257,6 +257,11 @@ def get_fastme_distances(datadir, family, subst_model):
   
   return os.path.join(get_family_misc_dir(datadir, family), "fastme_matrix." + subst_model + ".txt")
 
+def get_pythia_score_path(datadir, family):
+  return os.path.join(get_family_misc_dir(datadir, family), "pythia_score.txt")
+
+def get_pythia_score(datadir, family):
+  return float(open(get_pythia_score_path(datadir, family)).read())
 
 def get_alignment_file(datadir):
   return os.path.join(datadir, "alignment.msa")
@@ -396,6 +401,7 @@ def write_phyldog_mapping(species_to_genes_dict, output_file):
   with open(output_file, "w") as writer:
     for species in species_to_genes_dict:
       writer.write(species + ":" + ";".join(species_to_genes_dict[species]) + "\n")
+
 
 ######################
 #  Misc

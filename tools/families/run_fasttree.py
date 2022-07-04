@@ -76,7 +76,6 @@ if (__name__== "__main__"):
   max_args_number = 4
   if len(sys.argv) < max_args_number:
     print("Syntax error: python " + os.path.basename(__file__) + " datadir subst_model cores.")
-    print("Cluster can be either normal, haswell or magny")
     sys.exit(0)
 
 

@@ -18,37 +18,55 @@ def get_induced_gene_tree(datadir, family, method, subst_model, leaf_set):
 def get_translator(neighbors):
   translator = {}
   for n in neighbors:
-    translator[n[1]] = n[0]
+    translator[n[0]] = n[1]
   return translator
+
+def get_filtered_neighbors(neighbors):
+  labels = set()
+  dup_labels = set()
+  for n in neighbors:
+    if (n[1] in labels):
+      dup_labels.add(n[1])
+    labels.add(n[1])
+  res = set()
+  for n in neighbors:
+    if (not n[1] in dup_labels):
+      res.add(n)
+  return res
+
 
 def assess_gene_tree(emf, datadir, method, subst_model, families):
   if (len(families) == 1 and families[0] == "all"):
     families = fam.get_families_list(datadir)
-  all_neighbors = find_neighbors_to_fam.find_neighbors(emf, datadir, families)
+  per_family_hom_neighbors = find_neighbors_to_fam.get_per_family_homolog_neighbors(emf, datadir, families)
   total = 0
   for family in families:
-    for direction in [0, 1]:
-      neighbor_families = all_neighbors[family][direction]
-      for neighbor_family in neighbor_families:
-        if (neighbor_family == family):
-          continue
-        neighbors = neighbor_families[neighbor_family]
-        if (len(neighbors) < 4):
-          continue
-        
-        leaf_set1 = set()
-        leaf_set2 = set()
-        for neighbor in neighbors:
-          leaf_set1.add(neighbor[0])
-          leaf_set2.add(neighbor[1])
-        tree1 = get_induced_gene_tree(datadir, family, method, subst_model, leaf_set1)
-        tree2 = get_induced_gene_tree(datadir, neighbor_family, method, subst_model, leaf_set2)
-        translator = get_translator(neighbors)
-        for leaf in tree2.get_leaves():
+    hom_neighbors = per_family_hom_neighbors[family]
+    for neighbor_family in hom_neighbors:
+      if (neighbor_family == family):
+        continue
+      neighbors = hom_neighbors[neighbor_family]
+      neighbors = get_filtered_neighbors(neighbors)
+      if (len(neighbors) < 4):
+        continue
+      leaf_set1 = set()
+      leaf_set2 = set()
+      for neighbor in neighbors:
+        leaf_set1.add(neighbor[0])
+        leaf_set2.add(neighbor[1])
+      tree1 = get_induced_gene_tree(datadir, family, method, subst_model, leaf_set1)
+      tree2 = get_induced_gene_tree(datadir, neighbor_family, method, subst_model, leaf_set2)
+      translator = get_translator(neighbors)
+      try:
+        for leaf in tree1.get_leaves():
           leaf.name = translator[leaf.name]
-        distance_cell = rf_distance.ete3_rf(tree1, tree2)
-        print("absolute rf = " + str(distance_cell[0]))
-        total += distance_cell[0]
+      except:
+        print("ERROR in family " + family + " and neighbor_family " + neighbor_family)
+        print("Tree1 : " + tree1.write())
+        print("Tree1 2 " + tree2.write())
+        continue
+      distance_cell = rf_distance.ete3_rf(tree1, tree2)
+      total += distance_cell[0]
   print("Total: " + str(total))
 
 

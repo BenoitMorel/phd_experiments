@@ -9,11 +9,12 @@ import get_dico
 
 
 """
-  return all the neighbors (as gene names) of the genes in the given family
+  return all the neighbors of the genes in the given family,
+  as a set of tuples (gene name, its neighbor name)
 """
 def get_neighbors(info, gene_to_family, datadir, family, before = True, after = True):
   gene_names = get_dico.get_genes(datadir, family)
-  neighbors = []
+  neighbors = set()
   for name in gene_names:
     if (not name in info.allgenes):
       continue
@@ -21,9 +22,41 @@ def get_neighbors(info, gene_to_family, datadir, family, before = True, after = 
     if (after):
       neighbor = emf_gene.after
       if (neighbor != None and neighbor in gene_to_family):
-        neighbors.append(gene_to_family[neighbor])
+        neighbors.add((emf_gene.gene, neighbor))
+    if (before):
+      neighbor = emf_gene.before
+      if (neighbor != None and neighbor in gene_to_family):
+        neighbors.add((emf_gene.gene, neighbor))
   return neighbors
 
+
+"""
+  returns homolog_neighbors such that homolog_neighbors[f]
+  is the set of tuples (gene, neighbor_gene) such that gene belongs
+  to family "family" and neighbor_gene is a neighbor of gene and
+  belongs to family "f"
+"""
+def get_homolog_neighbors(info, gene_to_family, datadir, family, before = True, after = True):
+  neighbors = get_neighbors(info, gene_to_family, datadir, family, before, after)
+  homolog_neighbors = {}
+  
+  for neighbor in neighbors:
+    neighbor_fam = gene_to_family[neighbor[1]]
+    if (not neighbor_fam in homolog_neighbors):
+      homolog_neighbors[neighbor_fam] = []
+    homolog_neighbors[gene_to_family[neighbor[1]]].append(neighbor)
+  return homolog_neighbors
+
+def get_per_family_homolog_neighbors(emf, datadir, families, before = True, after = True):
+  print("Reading emf...")
+  info = emf_reader.read(emf)
+  print("Reading gene to family dict")
+  gene_to_family = get_dico.get_gene_to_family(datadir)
+  print("Filling the per-family homolog neighbors...")
+  res = {}
+  for family in families:
+    res[family] = get_homolog_neighbors(info, gene_to_family, datadir, family, before, after)  
+  return res
 
 
 def find_neighbors_fam(info, gene_to_family, datadir, family, after = True, verbose = False):
