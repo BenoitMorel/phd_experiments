@@ -35,8 +35,12 @@ def generate_scheduler_commands_file(datadir, cores, output_dir):
       command.append(family)
       command.append("1")
       command.append("1")
-      command.append("--msa")
+      command.append("-m")
       command.append(ali)
+      command.append("-o")
+      command.append(fam.get_pythia_score_path(datadir, family))
+      command.append("-prec")
+      command.append("5")
       command.append("--raxmlng")
       command.append(exp.raxml_exec_no_mpi)
       writer.write(" ".join(command) + "\n")
@@ -53,7 +57,7 @@ def run_pythia(datadir, cores):
   #exp.run_with_scheduler(exp.pythia_exec, scheduler_commands_file, "onecore", cores, output_dir, "logs.txt")   
   exp.run_with_scheduler(p, scheduler_commands_file, "onecore", cores, output_dir, "logs.txt")   
   saved_metrics.save_metrics(datadir, "pythia", (time.time() - start), "runtimes") 
-  extract(datadir, output_dir)
+  #extract(datadir, output_dir)
 
 
 if (__name__== "__main__"):

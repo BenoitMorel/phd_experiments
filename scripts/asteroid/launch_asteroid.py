@@ -30,7 +30,17 @@ def get_mapping_file(datadir, additional_arguments):
   get_dico.export_species_to_genes_to_file(m, mapping_file)
   return mapping_file
 
-def get_gene_tree_file(datadir,gene_tree_method, subst_model):
+def get_weights_file(datadir, output_dir):
+  f = os.path.join(output_dir, "weights.txt")
+  with open(f, "w") as writer:
+    for family in fam.get_families_list(datadir):
+      weight = 1.0 - fam.get_pythia_score(datadir, family)
+      weight = weight * weight 
+      writer.write(str(weight))
+      writer.write("\n")
+  return f
+
+def get_gene_tree_file(datadir, output_dir, gene_tree_method, subst_model):
   gene_tree_file = os.path.join(output_dir, "gene_trees.txt")
   failures = 0
   with open(gene_tree_file, "w") as writer:
@@ -52,7 +62,7 @@ def get_prefix(output_dir):
 def get_inferred_tree(output_dir):
   return  get_prefix(output_dir) + ".bestTree.newick"
 
-def get_asteroid_command(gene_tree_file, mapping_file, additional_arguments, output_dir, cores):
+def get_asteroid_command(gene_tree_file, mapping_file, weights_file, additional_arguments, output_dir, cores):
     executable = exp.asteroid_exec
     prefix = get_prefix(output_dir)
     command = []
@@ -62,6 +72,9 @@ def get_asteroid_command(gene_tree_file, mapping_file, additional_arguments, out
     command.append(executable)
     command.append("-p")
     command.append(prefix)
+    if (weights_file != None):
+      command.append("-w")
+      command.append(weights_file)
     command.append("-i")
     command.append(gene_tree_file)
     if (mapping_file != None):
@@ -71,8 +84,8 @@ def get_asteroid_command(gene_tree_file, mapping_file, additional_arguments, out
     return " ".join(command)
 
 
-def run_asteroid(datadir, cores, gene_tree_file, mapping_file, additional_arguments, output_dir):
-  command = get_asteroid_command(gene_tree_file, mapping_file, additional_arguments, output_dir, cores)
+def run_asteroid(datadir, cores, gene_tree_file, mapping_file, weights_file, additional_arguments, output_dir):
+  command = get_asteroid_command(gene_tree_file, mapping_file, weights_file, additional_arguments, output_dir, cores)
   print("Running:")
   print(command)
   try:
@@ -107,6 +120,7 @@ def analyze_species_results(datadir, output_dir):
 
 def run(datadir, gene_tree_method, subst_model, cores, additional_arguments, output_dir):
   run_name = exp.getAndDelete("--run", additional_arguments, None) 
+  apply_weights = exp.checkAndDelete("--weights", additional_arguments)
   if (run_name == None):
     noCorrection = "-n" in additional_arguments 
     noCorrection = noCorrection or "--no-correction" in additional_arguments
@@ -117,6 +131,8 @@ def run(datadir, gene_tree_method, subst_model, cores, additional_arguments, out
       run_name += "stepwise"
     if (int(cores) > 1):
       run_name += "cores" + str(cores) + "-"
+    if (apply_weights):
+      run_name += "weights-"
     if ("-r" in additional_arguments):
       random_starting_trees = exp.getArg("-r", additional_arguments, "1")
       run_name += "r" + str(random_starting_trees) + str("-")
@@ -133,9 +149,12 @@ def run(datadir, gene_tree_method, subst_model, cores, additional_arguments, out
     run_name += "." + subst_model
    
   start = time.time()
-  gene_tree_file = get_gene_tree_file(datadir,gene_tree_method, subst_model)
+  gene_tree_file = get_gene_tree_file(datadir, output_dir, gene_tree_method, subst_model)
   mapping_file = get_mapping_file(datadir, additional_arguments)
-  run_asteroid(datadir, cores, gene_tree_file, mapping_file, additional_arguments, output_dir)
+  weights_file = None
+  if (apply_weights):
+    weights_file = get_weights_file(datadir, output_dir)
+  run_asteroid(datadir, cores, gene_tree_file, mapping_file, weights_file,  additional_arguments, output_dir)
   saved_metrics.save_metrics(datadir, run_name, (time.time() - start), "runtimes") 
   extract_trees(datadir, output_dir, run_name, subst_model)
   analyze_species_results(datadir, output_dir)

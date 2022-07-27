@@ -19,7 +19,7 @@ gene_trees = ["raxml-ng"]
 launch_mode = "normald"
 replicates = range(3000, 3001)
 tag = "test"
-fixed_point = "ssim_" + tag + "_s4_f10_sites100_GTR_bl1.0_d0.0_l0.0_t0.0_gc0.0_p0.0_pop10_ms0.0_mf0.0_seed20"
+fixed_point = "ssim_" + tag + "_s50000_f1_sites200_GTR_bl1.0_d0.0_l0.0_t0.0_gc0.0_p0.0_pop10_ms0.0_mf0.0_seed20"
 
 
 varying_params = []
@@ -42,15 +42,16 @@ def run_varying_experiment():
   run_filter = SpeciesRunFilter()
   run_filter.disable_all()  
   run_filter.generate = True
-  run_filter.pargenes = True
-  run_filter.starting_gene_trees = gene_trees
-  run_filter.cleanup = True
-  run_filter.asteroid = True
-  run_filter.astral_mp = True
-  run_filter.fastrfs = True
-  run_filter.astrid_single = True
-  run_filter.stells = True
-  run_filter.analyze = True 
+  if (False):
+    run_filter.pargenes = True
+    run_filter.starting_gene_trees = gene_trees
+    run_filter.cleanup = True
+    run_filter.asteroid = True
+    run_filter.astral_mp = True
+    run_filter.fastrfs = True
+    run_filter.astrid_single = True
+    run_filter.stells = True
+    run_filter.analyze = True 
   
   for entry in varying_params:
     datasets = simulations_common.get_dataset_list(fixed_point, entry[1], replicates)
