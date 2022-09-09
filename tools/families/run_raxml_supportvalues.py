@@ -12,16 +12,14 @@ import saved_metrics
 import run_raxml_supportvalues as raxml
 import sequence_model
 
-def run_pargenes(datadir, pargenes_dir, subst_model, starting_trees, bs_trees, cores):
-  parsimony_trees = int(starting_trees) // 2
-  random_trees = starting_trees - parsimony_trees
+def run_pargenes(datadir, pargenes_dir, subst_model, rand_trees, parsi_trees, bs_trees, cores, arguments):
   raxml_command = ""
   run_modeltest = (subst_model == "bestAA" or subst_model == "bestNT")
   if (not run_modeltest):
     raxml_command +="--model " + sequence_model.get_raxml_model(subst_model) + " --blopt nr_safe"
   command = []
   command.append(exp.python())
-  command.append(exp.pargenes_script_debug)
+  command.append(exp.pargenes_script)
   command.append("-a")
   command.append(os.path.join(datadir, "alignments"))
   command.append("-b")
@@ -31,10 +29,10 @@ def run_pargenes(datadir, pargenes_dir, subst_model, starting_trees, bs_trees, c
   command.append("-c")
   command.append(str(cores))
   command.append("-s")
-  command.append(str(random_trees))
-  if (parsimony_trees > 0):
+  command.append(str(rand_trees))
+  if (parsi_trees > 0):
     command.append("-p")
-    command.append(str(parsimony_trees))
+    command.append(str(parsi_trees))
   if (len(raxml_command) > 0):
     command.append("-R")
     command.append(raxml_command)
@@ -44,6 +42,7 @@ def run_pargenes(datadir, pargenes_dir, subst_model, starting_trees, bs_trees, c
       command.append("-d")
       command.append("aa")
   command.append("--continue")
+  command.extend(arguments)
   try:
     subprocess.check_call(command, stdout = sys.stdout)
   except:
@@ -51,6 +50,23 @@ def run_pargenes(datadir, pargenes_dir, subst_model, starting_trees, bs_trees, c
     print(" ".join(command))
     subprocess.check_call(command, stdout = sys.stdout)
 
+
+def gather_likelihoods(pargenes_dir, output_file):
+  results = os.path.join(pargenes_dir, "mlsearch_run", "results")
+  writer = open(output_file, "w")
+  total = 0.0
+  for family in sorted(os.listdir(results)):
+    logs = os.path.join(results, family, family + ".raxml.log")
+    try:
+      for line in open(logs).readlines():
+        if (line.startswith("Final LogLikelihood:")):
+          ll = float(line.split()[2][:-1])
+          total += ll
+          writer.write(str(ll) + "\n")
+    except:
+      print("Failed to extract ll for famiy " + family)
+  writer.write("\n" + str(total))
+  print("Total ll=" + str(total))    
 
 def export_pargenes_trees(pargenes_dir, subst_model, starting_trees, bs_trees, datadir):
   families_dir = os.path.join(datadir, "families")
@@ -95,7 +111,7 @@ def export_pargenes_trees(pargenes_dir, subst_model, starting_trees, bs_trees, d
     if (not os.path.isfile(trees_file)):
       trees_file = ml_tree_file
     family = "_".join(family.split("_")[:-1]) # remove everything after the last _
-    new_raxml_trees = fam.get_raxml_multiple_trees(datadir, fixed_subst_model, family)
+    new_raxml_trees = fam.get_raxml_multiple_trees(datadir, fixed_subst_model, family, starting_trees)
     new_raxml_tree = fam.get_raxml_tree(datadir, fixed_subst_model, family, starting = starting_trees)
     if (bs_trees == 0):
       shutil.copyfile(ml_tree_file, new_raxml_tree)
@@ -106,6 +122,9 @@ def export_pargenes_trees(pargenes_dir, subst_model, starting_trees, bs_trees, d
       pass
     new_best_model = fam.get_raxml_best_model(datadir, fixed_subst_model, family)
     shutil.copyfile(best_model, new_best_model)
+  out_likelihood = os.path.join(pargenes_dir, "likelihoods.txt")
+  gather_likelihoods(pargenes_dir, out_likelihood)
+  print("Likelihoods stored into " + out_likelihood)
   # clean
   garbage_dir = os.path.join(datadir, "garbage")
   try:
@@ -113,7 +132,7 @@ def export_pargenes_trees(pargenes_dir, subst_model, starting_trees, bs_trees, d
   except:
     pass
   for family in os.listdir(families_dir):
-    if (not os.path.isfile(fam.get_raxml_tree(datadir, fixed_subst_model, family)) and not os.path.isfile(fam.get_raxml_light_tree(datadir, fixed_subst_model, family))): 
+    if (not os.path.isfile(fam.get_raxml_tree(datadir, fixed_subst_model, family, starting_trees)) and not os.path.isfile(fam.get_raxml_light_tree(datadir, fixed_subst_model, family))): 
       print("Cleaning family " + family)
       shutil.move(os.path.join(families_dir, family), garbage_dir)
 
@@ -146,31 +165,42 @@ def get_family_dimensions(datadir, subst_model, pargenes_dir = "pargenes", defau
 
   
 
-def run_pargenes_and_extract_trees(datadir, subst_model, starting_trees, bs_trees, cores, pargenes_dir = "pargenes", extract_trees = True, restart = False):
-  saved_metrics_key = "RAxML-NG"
-  if (pargenes_dir != "pargenes"):
-    saved_metrics_key = pargenes_dir
+def run_pargenes_and_extract_trees(datadir, subst_model, rand_trees, parsi_trees, bs_trees, cores, pargenes_dir = "pargenes", extract_trees = True, restart = False, arguments = []):
+  saved_metrics_key = "raxml-ng"
+  suffix = ""
+  if (rand_trees > 0):
+    suffix += "-rand" + str(rand_trees)
+  if (parsi_trees > 0):
+    suffix += "-parsi" + str(parsi_trees)
+  if ("--constrain-search" in arguments):
+    suffix += "-constrained"
+  saved_metrics_key += suffix
+  pargenes_dir += suffix
+  #if (pargenes_dir != "pargenes"):
+  #  saved_metrics_key = pargenes_dir
   pargenes_dir = fam.get_run_dir(datadir, subst_model, pargenes_dir)
   if (not restart):
     shutil.rmtree(pargenes_dir, True)
   start = time.time()
-  run_pargenes(datadir, pargenes_dir, subst_model, starting_trees, bs_trees, cores)
+  run_pargenes(datadir, pargenes_dir, subst_model, rand_trees, parsi_trees, bs_trees, cores, arguments)
   saved_metrics.save_metrics(datadir, fam.get_run_name(saved_metrics_key, subst_model), (time.time() - start), "runtimes") 
   lb = fam.get_lb_from_run(os.path.join(pargenes_dir, "mlsearch_run"))
   saved_metrics.save_metrics(datadir, fam.get_run_name(saved_metrics_key, subst_model), (time.time() - start) * lb, "seqtimes") 
   if (extract_trees):
-    export_pargenes_trees(pargenes_dir, subst_model, starting_trees, bs_trees, datadir)
+    export_pargenes_trees(pargenes_dir, subst_model, rand_trees + parsi_trees, bs_trees, datadir)
 
 if __name__ == "__main__":
-  if (len(sys.argv) < 7):
-    print("syntax: python " + os.path.basename(__file__) + " datadir subst_model starting_trees bs_trees cores restart")
+  if (len(sys.argv) < 8):
+    print("syntax: python " + os.path.basename(__file__) + " datadir subst_model rand_trees parsi_trees bs_trees cores restart")
     sys.exit(1)
   dataset = sys.argv[1]
   subst_model = sys.argv[2]
-  starting_trees = int(sys.argv[3])
-  bs_trees = int(sys.argv[4])
-  cores = int(sys.argv[5])
-  restart = int(sys.argv[6]) == 1
-  run_pargenes_and_extract_trees(dataset, subst_model, starting_trees, bs_trees, cores, restart = restart)
+  rand_trees= int(sys.argv[3])
+  parsi_trees = int(sys.argv[4])
+  bs_trees = int(sys.argv[5])
+  cores = int(sys.argv[6])
+  restart = int(sys.argv[7]) == 1
+  arguments = sys.argv[8:]
+  run_pargenes_and_extract_trees(dataset, subst_model, rand_trees, parsi_trees, bs_trees, cores, "pargenes", True, restart, arguments)
 
   

@@ -49,6 +49,7 @@ def plot():
   max_gaps = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.8, 1.0]
   method_tuples = []
   method_tuples.append(("astrid-fastme_raxml-ng", "ASTRID"))
+  method_tuples.append(("aster_raxml-ng", "ASTER"))
   method_tuples.append(("astral_raxml-ng", "ASTRAL-III"))
   method_tuples.append(("fastrfs-raxml-ng_single", "FastRFS"))
   method_tuples.append(("asteroid-raxml-ng", "Asteroid"))

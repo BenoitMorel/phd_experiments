@@ -23,6 +23,7 @@ import run_astrid
 import run_astrid_single
 import run_astral_multi
 import run_astral
+import run_aster
 import run_mp_astral
 import run_astral_pro
 import run_stells
@@ -92,6 +93,7 @@ class SpeciesRunFilter():
     self.asteroid = True    
     self.concasteroid = True    
     self.astral = True
+    self.aster = True
     self.astral_mp = True
     self.generaxselect = True
     self.generaxselectfam = True
@@ -140,6 +142,7 @@ class SpeciesRunFilter():
     self.concasteroid = False
     self.superfastme = False    
     self.astrid_single = False
+    self.aster = False
     self.astral = False
     self.astral_mp = False
     self.generaxselect = False
@@ -210,7 +213,7 @@ class SpeciesRunFilter():
     if (self.pargenes and subst_model != "true"):
       printFlush("Run pargenes...")
       sys.stdout.flush()
-      raxml.run_pargenes_and_extract_trees(datadir, subst_model, self.pargenes_starting_trees, self.pargenes_bootstrap_trees, cores, "pargenes", True)
+      raxml.run_pargenes_and_extract_trees(datadir, subst_model, 0, self.pargenes_starting_trees, self.pargenes_bootstrap_trees, cores, "pargenes", True)
       sys.stdout.flush()
     if (self.fasttree and subst_model != "true"):
       printFlush("Run FastTree...")
@@ -309,8 +312,9 @@ class SpeciesRunFilter():
       printFlush("Run Asteroid")
       for gene_tree in self.starting_gene_trees:
         try:
-          run_asteroid.run_asteroid(datadir, gene_tree, subst_model, cores)
-          run_asteroid.run_asteroid(datadir, gene_tree, subst_model, cores, ["-n"])
+          #run_asteroid.run_asteroid(datadir, gene_tree, subst_model, cores)
+          run_asteroid.run_asteroid(datadir, gene_tree, subst_model, cores, ["-r", "1"])
+          #run_asteroid.run_asteroid(datadir, gene_tree, subst_model, cores, ["-n"])
         except Exception as exc:
           printFlush("Failed running Asteroid\n" + str(exc))
     if (self.concasteroid):
@@ -353,6 +357,13 @@ class SpeciesRunFilter():
       for gene_tree in self.starting_gene_trees:
         try:
           run_astral.run_astral(datadir, gene_tree, subst_model)
+        except Exception as exc:
+          printFlush("Failed running Astral\n" + str(exc))
+    if (self.aster):
+      printFlush("Run Aster")
+      for gene_tree in self.starting_gene_trees:
+        try:
+          run_aster.run_aster(datadir, gene_tree, subst_model)
         except Exception as exc:
           printFlush("Failed running Astral\n" + str(exc))
     if (self.concatenation_min and subst_model != "true"):

@@ -48,6 +48,7 @@ metric_names = ["species_unrooted_rf"]
 # methods to plot
 methods_tuples = []
 methods_tuples.append(("astrid-fastme_raxml-ng", "ASTRID"))
+methods_tuples.append(("aster_raxml-ng", "Aster"))
 methods_tuples.append(("astralmp_raxml-ng", "Astral"))
 methods_tuples.append(("fastrfs-raxml-ng_single", "FastRFS"))
 methods_tuples.append(("asteroid-raxml-ng", "Asteroid"))
@@ -70,8 +71,7 @@ def run_varying_experiment():
   run_filter.astral_mp = True
   run_filter.disable_all()  
   run_filter.analyze = True 
-  run_filter.superfastme = True 
-  run_filter.concasteroid = True 
+  run_filter.asteroid = True 
   
   for entry in varying_params:
     datasets = simulations_common.get_dataset_list(fixed_point, entry[1], replicates)

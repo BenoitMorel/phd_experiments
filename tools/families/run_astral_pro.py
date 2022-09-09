@@ -36,6 +36,7 @@ def init_gene_trees_file(datadir, method, subst_model, output_dir):
               writer.write(line[:-1])
             else:
               writer.write(line)
+            writer.write("\n")
       except:
         print("Cannot read " + gene_tree_path)
         sys.exit(1)

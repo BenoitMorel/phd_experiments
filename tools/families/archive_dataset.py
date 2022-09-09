@@ -51,10 +51,12 @@ def archive(datadir):
 
 
 if (__name__ == "__main__"):
-  if (len(sys.argv) != 2):
-    print("Syntax python " + os.path.basename(__file__) + " datadir")
+  if (len(sys.argv) < 2):
+    print("Syntax python " + os.path.basename(__file__) + " datadir_list")
     sys.exit(1)
-  archive(sys.argv[1])
+  datadir_list = sys.argv[1:]
+  for datadir in datadir_list:
+    archive(datadir)
 
 
 

@@ -210,8 +210,11 @@ def get_plausible_trees(datadir, samples, subst_model, family):
 def get_raxml_light_tree(datadir, subst_model, family):
   return build_gene_tree_path(datadir, subst_model, family, "raxml-light")
 
-def get_raxml_multiple_trees(datadir, subst_model, family):
-  return build_gene_tree_path(datadir, subst_model, family, "raxmlMultiple")
+def get_raxml_multiple_trees(datadir, subst_model, family, starting = 1):
+  base = "raxmlMultiple"
+  if (starting != 1):
+    base = base + "-s" + str(starting)
+  return build_gene_tree_path(datadir, subst_model, family, base)
 
 def get_parsimony_trees(datadir, samples, subst_model, family):
   return build_gene_tree_path(datadir, subst_model, family, "parsimony" + str(samples))

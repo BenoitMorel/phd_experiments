@@ -5,9 +5,15 @@ from read_tree import read_tree
 
 def analyze_dimensions(tree):
   print("Taxa number: " + str(len(tree.get_leaves())))
+  internal = 0
+  for t in tree.iter_prepostorder():
+    if (t[0] and not t[1].is_leaf()):
+      internal += 1
+  print("Internal nodes number: " + str(internal))
 
 def get_nodes_number(tree_file):
   return len(read_tree(tree_file).get_leaves())
+
 
 def analyze_polytomies(tree):
   print("Polytomies:")

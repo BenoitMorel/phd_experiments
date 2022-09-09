@@ -53,11 +53,9 @@ def run_pythia(datadir, cores):
   scheduler_commands_file = generate_scheduler_commands_file(datadir, cores, output_dir)
   start = time.time()
   p = get_pythia_path(exp.pythia_exec)
-#"/home/morelbt/.local/bin/pythia"
-  #exp.run_with_scheduler(exp.pythia_exec, scheduler_commands_file, "onecore", cores, output_dir, "logs.txt")   
   exp.run_with_scheduler(p, scheduler_commands_file, "onecore", cores, output_dir, "logs.txt")   
   saved_metrics.save_metrics(datadir, "pythia", (time.time() - start), "runtimes") 
-  #extract(datadir, output_dir)
+  extract(datadir, output_dir)
 
 
 if (__name__== "__main__"):
