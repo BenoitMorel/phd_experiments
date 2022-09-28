@@ -17,12 +17,24 @@ import seaborn as sns
 sns.set_style("darkgrid")
 
 def _get_param_to_datasets(datasets, param_name):
+  
   param_to_datasets_dict = {}
-  for dataset in datasets:
-    p = str(fam_data.get_param_from_dataset_name(param_name, dataset))
-    if (not p in param_to_datasets_dict):
-      param_to_datasets_dict[p] = []
-    param_to_datasets_dict[p].append(dataset)
+  if (param_name != "discordance"):
+    for dataset_list in datasets:
+      for dataset in dataset_list:
+        p = str(fam_data.get_param_from_dataset_name(param_name, dataset))
+        if (not p in param_to_datasets_dict):
+          param_to_datasets_dict[p] = []
+        param_to_datasets_dict[p].append(dataset)
+  else:
+    for dataset_list in datasets:
+      sum_val = 0.0
+      for dataset in dataset_list:
+        sum_val += float(fam_data.get_param_from_dataset_name(param_name, dataset))
+      average = sum_val / float(len(dataset_list))
+      average_str = "{:.2f}".format(average)
+      param_to_datasets_dict[average_str] = dataset_list
+  
   param_to_datasets = []
   for key in param_to_datasets_dict:
     pair = (key, param_to_datasets_dict[key])
@@ -80,7 +92,7 @@ def _get_methods(methods_tuples):
   - method_tuples: list of tuple (method_key, name_to_display)
   - output: plot filename
 """
-def plot_varying_params(datasets, param_name, metric, method_tuples, subst_model, output, xlabel = None, ylabel = None):
+def plot_varying_params(datasets, param_name, metric, method_tuples, subst_model, output, xlabel = None, ylabel = None, maxy = None):
   param_to_datasets = _get_param_to_datasets(datasets, param_name)
   methods = _get_methods(method_tuples)
   values = {}  
@@ -94,7 +106,7 @@ def plot_varying_params(datasets, param_name, metric, method_tuples, subst_model
     color = None
     method_marker = "."
     markersize = 12
-    plt.plot(param_name, method, data=df, marker=method_marker, linewidth=2, label = method_alias, markersize=markersize, linestyle = linestyle, color = color)
+    plt.plot(param_name, method, data=df, marker=method_marker, linewidth=2, label = method_alias, markersize=markersize, linestyle = linestyle, color = color, scaley = False)
   plt.legend()
   if (xlabel != None):
     plt.xlabel(xlabel)

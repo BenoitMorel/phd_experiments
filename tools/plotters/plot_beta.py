@@ -17,7 +17,7 @@ def plot(mean, shape, points):
   y = []
   for i in range(0, points):
     #x.append(species)
-    x.append(i)
+    x.append(float(i) / float(points))
     y.append(beta_reparametrized(mean, shape))
   title = "Beta"
   xcaption = None

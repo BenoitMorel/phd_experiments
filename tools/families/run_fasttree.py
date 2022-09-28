@@ -14,6 +14,11 @@ import ete3
 def generate_scheduler_commands_file(datadir, subst_model, cores, output_dir):
   results_dir = os.path.join(output_dir, "results")
   scheduler_commands_file = os.path.join(output_dir, "commands.txt")
+  gamma = False
+  base_model = subst_model
+  if ("+G" in subst_model):
+    gamma = True
+    base_model = subst_model.replace("+G", "")
   with open(scheduler_commands_file, "w") as writer:
     for family in fam.get_families_list(datadir):
       family_dir = fam.get_family_path(datadir, family)
@@ -35,7 +40,9 @@ def generate_scheduler_commands_file(datadir, subst_model, cores, output_dir):
         command.append("-lg")
       else:
         command.append("-nt")
-      command.append("-" + subst_model.lower())
+      if (gamma):
+        command.append("-gamma")
+      command.append("-" + base_model.lower())
       command.append("-out")
       command.append(fasttree_output)
       command.append(fam.get_alignment(datadir, family))

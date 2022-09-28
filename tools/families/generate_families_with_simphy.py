@@ -96,6 +96,8 @@ def build_config_file(parameters, output_dir):
     writer.write("-O " + str(output_dir) + " // output directory\n")
     writer.write("-OM 1 // output the mappings\n")
     writer.write("-OC 1 // log the configuration file\n")
+    writer.write("-OD 1 // log the configuration file\n")
+    writer.write("-OP 1 // log the configuration file\n")
 
   return config_file
 
@@ -318,7 +320,7 @@ def generate_simphy(tag, species, families, sites, model, bl_factor, dup_rate, l
     output_dir = get_output_dir(p, root_output) 
     print("Now move " + temp_output_dir + " to " + output_dir)
     sample_missing_data.sample_missing_data(temp_output_dir, output_dir, p.miss_species, p.miss_fam)
-    shutil.rmtree(temp_output_dir)
+    #shutil.rmtree(temp_output_dir)
   else:
     generate_from_parameters(p, root_output)
    

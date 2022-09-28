@@ -363,7 +363,7 @@ class SpeciesRunFilter():
       printFlush("Run Aster")
       for gene_tree in self.starting_gene_trees:
         try:
-          run_aster.run_aster(datadir, gene_tree, subst_model)
+          run_aster.run_aster(datadir, gene_tree, subst_model, cores)
         except Exception as exc:
           printFlush("Failed running Astral\n" + str(exc))
     if (self.concatenation_min and subst_model != "true"):
@@ -383,7 +383,8 @@ class SpeciesRunFilter():
         printFlush("Run SpeciesRaxFast")
         try:
           dataset = os.path.basename(datadir)
-          run_speciesrax.run_speciesrax_on_families(dataset, gene_tree, subst_model, cores, transfers = True, strategy = "HYBRID", rates_per_family = False)
+          #run_speciesrax.run_speciesrax_on_families(dataset, gene_tree, subst_model, cores, transfers = True, strategy = "HYBRID", rates_per_family = False)
+          run_speciesrax.run_speciesrax_on_families(dataset, gene_tree, subst_model, cores, transfers = True, strategy = "HYBRID", rates_per_family = True)
         except Exception as exc:
           printFlush("Failed running speciesrax\n" + str(exc))
       if (self.speciesraxparsidl):
@@ -463,19 +464,20 @@ class SpeciesRunFilter():
         command.append("1")
         print(command)
         subprocess.check_call(command)
-    if (self.astralpro):
-      printFlush("Run Astral-pro")
-      for gene_tree in self.starting_gene_trees:
-        try:
-          run_astral_pro.run_astralpro(datadir, gene_tree, subst_model)
-        except Exception as exc:
-          printFlush("Failed running Astral-pro with " + gene_tree + "\n" + str(exc))
+      if (self.astralpro):
+        printFlush("Run Astral-pro")
+      #for gene_tree in self.starting_gene_trees:
+       # try:
+        run_astral_pro.run_astralpro(datadir, gene_tree, subst_model)
+        #except Exception as exc:
+        printFlush("Failed running Astral-pro with " + gene_tree + "\n" + str(exc))
       if (self.genetegratorbench):
         printFlush("Run genetegrator bench")
         dl_args = ["--rec-model", "UndatedDL"]
         dataset = os.path.basename(datadir)
-        #run_tegrator.run_genetegrator_bench(dataset, "MiniNJ", gene_tree, subst_model, cores)
-        run_tegrator.run_genetegrator_bench(dataset, "MiniNJ", gene_tree, subst_model, cores, dl_args)
+        run_tegrator.run_genetegrator_bench(dataset, "MiniNJ", gene_tree, subst_model, cores)
+        run_tegrator.run_genetegrator_bench(dataset, "MiniNJ", gene_tree, subst_model, cores, ["--per-family-rates"])
+        #run_tegrator.run_genetegrator_bench(dataset, "MiniNJ", gene_tree, subst_model, cores, dl_args)
       if (self.speciesraxbench):
         printFlush("Run speciesRaxBench")
         dataset = os.path.basename(datadir)

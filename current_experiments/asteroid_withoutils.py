@@ -1,3 +1,5 @@
+# -*- coding: iso-8859-15 -*-
+
 import subprocess
 import os
 import sys
@@ -10,7 +12,7 @@ import plot_speciesrax
 import simulations_common
 import plot_simulations
 
-do_run = True
+do_run = False
 do_plot = not do_run
 datasets = []
 cores = 40
@@ -24,9 +26,9 @@ fixed_point = "ssim_" + tag + "_s50_f100_sites100_GTR_bl1.0_d0.0_l0.0_t0.0_gc0.0
 
 
 xlabeldict = {}
-xlabeldict["msmf"] = "Per species and per gene missing data"
-xlabeldict["ms"] = "Per species missing data"
-xlabeldict["mf"] = "Per gene missing data"
+xlabeldict["msmf"] = "$\mu_s = \mu_f$"
+xlabeldict["ms"] = "$\mu_s$"
+xlabeldict["mf"] = "$\mu_f$"
 ylabel = "Average RF distance"
 
 varying_params = []
@@ -51,8 +53,8 @@ metric_names = ["species_unrooted_rf"]
 # methods to plot
 methods_tuples = []
 methods_tuples.append(("astrid-fastme_raxml-ng", "ASTRID"))
-methods_tuples.append(("astralmp_raxml-ng", "Astral"))
-methods_tuples.append(("aster_raxml-ng", "Aster"))
+methods_tuples.append(("astralmp_raxml-ng", "ASTRAL-III"))
+methods_tuples.append(("aster_raxml-ng", "ASTER"))
 methods_tuples.append(("fastrfs-raxml-ng_single", "FastRFS"))
 methods_tuples.append(("asteroid-raxml-ng", "Asteroid"))
 

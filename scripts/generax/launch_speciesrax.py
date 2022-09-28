@@ -91,8 +91,8 @@ def get_generax_command(generax_families_file, starting_species_tree, additional
     command.append(starting_species_tree)
     command.append("--si-strategy")
     command.append("HYBRID")
-    #command.append("--strategy")
-    #command.append("RECONCILE")
+    command.append("--strategy")
+    command.append("SKIP")
     #command.append("--do-not-reconcile")
     #command.append("--si-estimate-bl")
     #command.append("--si-quartet-support")
@@ -101,10 +101,10 @@ def get_generax_command(generax_families_file, starting_species_tree, additional
     command.append("-p")
     command.append(generax_output)
     command.extend(additional_arguments)
+    print("COmmand " + " ".join(command))
     return " ".join(command)
 
 def run_generax(datadir, starting_species_tree, generax_families_file, mode, cores, additional_arguments, resultsdir):
-  species_tree = fam.get_species_tree(datadir)
   command = get_generax_command(generax_families_file, starting_species_tree, additional_arguments, resultsdir, mode, cores)
   subprocess.check_call(command.split(" "), stdout = sys.stdout)
 
@@ -215,6 +215,10 @@ def run(dataset, subst_model, starting_species_tree, starting_gene_tree, cores, 
   build_generax_families_file(datadir, starting_gene_tree, subst_model, generax_families_file)
   start = time.time()
   species_tree = fam.get_species_tree(datadir, subst_model, starting_species_tree)  
+  if (starting_species_tree == "MiniNJ"):
+    species_tree = "MiniNJ"
+  print("coucou")
+  print(species_tree)
   run_generax(datadir, species_tree, generax_families_file, mode, cores, additional_arguments, resultsdir)
   saved_metrics.save_metrics(datadir, run_name, (time.time() - start), "runtimes") 
   saved_metrics.save_metrics(datadir, run_name, (time.time() - start), "seqtimes") 
@@ -227,7 +231,7 @@ def run(dataset, subst_model, starting_species_tree, starting_gene_tree, cores, 
       fast_rf_cells.analyze(datadir, "all", cores, run_name)
   except:
     print("Analyze failed!!!!")
-  cleanup(resultsdir)
+  #cleanup(resultsdir)
   print("Output in " + resultsdir)
 
 def launch(dataset, subst_model, starting_species_tree, starting_gene_tree, cluster, cores, additional_arguments):

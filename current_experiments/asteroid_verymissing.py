@@ -22,19 +22,30 @@ tag = "veryhighmiss"
 fixed_point = "ssim_" + tag + "_s50_f1000_sites100_GTR_bl1.0_d0.0_l0.0_t0.0_gc0.0_p0.0_pop50000000_ms0.6_mf0.6_seed20"
 
 
+
+# pop10         0
+# pop50000000  0.22
+# pop100000000 0.33
+# pop500000000  0.68
+# pop1000000000 0.82
+#
+#
+
 varying_params = []
 if (do_run):
   varying_params.append((None, ["none"]))
-varying_params.append(("msmf", ["ms0.5_mf0.5", "ms0.55_mf0.55",  "ms0.65_mf0.65", "ms0.7_mf0.7", "ms0.75_mf0.75"]))
+#varying_params.append(("msmf", ["ms0.5_mf0.5", "ms0.55_mf0.55",  "ms0.65_mf0.65", "ms0.7_mf0.7", "ms0.75_mf0.75"]))
 varying_params.append(("population", ["pop10", "pop100000000", "pop500000000", "pop1000000000"]))
-varying_params.append(("families", ["f250", "f500", "f2000"]))
-varying_params.append(("bl", ["bl0.05", "bl0.1",  "bl10.0", "bl100.0", "bl200.0"]))
-varying_params.append(("sites", ["sites50", "sites200", "sites500"]))
-varying_params.append(("species", ["s25", "s75", "s100", "s125", "s150"]))
+varying_params.append(("discordance", ["pop10", "pop100000000", "pop500000000", "pop1000000000"]))
+#varying_params.append(("families", ["f250", "f500", "f2000"]))
+#varying_params.append(("bl", ["bl0.05", "bl0.1",  "bl10.0", "bl100.0", "bl200.0"]))
+#varying_params.append(("sites", ["sites50", "sites200", "sites500"]))
+#varying_params.append(("species", ["s25", "s75", "s100", "s125", "s150"]))
 
 xlabeldict = {}
 xlabeldict["msmf"] = "Per species and per gene missing data"
 xlabeldict["population"] = "Population size"
+xlabeldict["discordance"] = "Level of discordance"
 xlabeldict["families"] = "Gene number"
 xlabeldict["bl"] = "Branch length scaler"
 xlabeldict["sites"] = "Average sequence length"
@@ -48,8 +59,8 @@ metric_names = ["species_unrooted_rf"]
 # methods to plot
 methods_tuples = []
 methods_tuples.append(("astrid-fastme_raxml-ng", "ASTRID"))
-methods_tuples.append(("aster_raxml-ng", "Aster"))
-methods_tuples.append(("astralmp_raxml-ng", "Astral"))
+methods_tuples.append(("astralmp_raxml-ng", "ASTRAL-III"))
+methods_tuples.append(("aster_raxml-ng", "ASTER"))
 methods_tuples.append(("fastrfs-raxml-ng_single", "FastRFS"))
 methods_tuples.append(("asteroid-raxml-ng", "Asteroid"))
 

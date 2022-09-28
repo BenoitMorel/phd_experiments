@@ -25,7 +25,7 @@ def generate_scheduler_commands_file(datadir, subst_model, tree_number, cores, o
     for family in fam.get_families_list(datadir):
       prefix = os.path.join(results_dir, family)
       alignment = fam.get_alignment(datadir, family) 
-      tree_path = fam.get_raxml_multiple_trees(datadir, subst_model, family, starting = tree_number)
+      tree_path = fam.get_raxml_multiple_trees(datadir, "GTR+G", family, starting = tree_number)
       if (tree_number != samples):
         lines = open(tree_path).readlines()
         random.shuffle(lines)
@@ -65,8 +65,7 @@ def extract_trees(datadir, output_dir, subst_model, tree_number, samples):
 
 def run_treecombination(datadir, subst_model, tree_number, cores, samples):
   key = "treecombination" + str(tree_number) 
-  if (samples != tree_number):
-    key = key + "_s" + str(samples)
+  key = key + "_s" + str(samples)
   output_dir = fam.get_run_dir(datadir, subst_model, key)
   do_run = True
   if (do_run):
@@ -89,6 +88,7 @@ if __name__ == "__main__":
   tree_number= int(sys.argv[3])
   cores = int(sys.argv[4])
   samples = tree_number
+  random.seed(42)
   if (len(sys.argv) > 5):
     samples = int(sys.argv[5])
 
