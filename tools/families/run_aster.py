@@ -36,8 +36,8 @@ def exec_aster(gene_trees_file, mapping_file, output_species_tree_file, cores):
 
 def run_aster(datadir, method, subst_model, cores = 1):
   run_name = "aster_"
-  if (cores > 1):
-    run_name = run_name + "t" + str(cores) + "_"
+  #if (cores > 1):
+  #  run_name = run_name + "t" + str(cores) + "_"
   run_name = run_name +  method
   output_dir = fam.get_run_dir(datadir, subst_model, run_name + "_run")
   shutil.rmtree(output_dir, True)

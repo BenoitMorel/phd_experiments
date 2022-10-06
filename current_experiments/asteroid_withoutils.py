@@ -35,8 +35,8 @@ varying_params = []
 if (do_run):
   varying_params.append((None, ["none"]))
 varying_params.append(("msmf", ["ms0.2_mf0.2", "ms0.3_mf0.3", "ms0.4_mf0.4", "ms0.5_mf0.5", "ms0.6_mf0.6"]))
-varying_params.append(("ms", ["ms0.4", "ms0.5", "ms0.6", "ms0.7", "ms0.8"]))
-varying_params.append(("mf", ["mf0.4", "mf0.5", "mf0.6", "mf0.7", "mf0.8"])) 
+varying_params.append(("ms", ["ms0.2", "ms0.4", "ms0.5", "ms0.6", "ms0.7", "ms0.8"]))
+varying_params.append(("mf", ["mf0.2", "mf0.4", "mf0.5", "mf0.6", "mf0.7", "mf0.8"])) 
 #varying_params.append(("mf", ["mf0.9"]))
 
 # NOT USED IN THE PAPER:
@@ -56,7 +56,8 @@ methods_tuples.append(("astrid-fastme_raxml-ng", "ASTRID"))
 methods_tuples.append(("astralmp_raxml-ng", "ASTRAL-III"))
 methods_tuples.append(("aster_raxml-ng", "ASTER"))
 methods_tuples.append(("fastrfs-raxml-ng_single", "FastRFS"))
-methods_tuples.append(("asteroid-raxml-ng", "Asteroid"))
+#methods_tuples.append(("asteroid-raxml-ng", "Asteroid"))
+methods_tuples.append(("asteroid-cores40-r1-raxml-ng", "Asteroid"))
 
 # run run_filter on all datasets in dataset
 def run_species_methods(datasets, subst_model, cores, run_filter, launch_mode):
@@ -67,7 +68,7 @@ def run_species_methods(datasets, subst_model, cores, run_filter, launch_mode):
 def run_varying_experiment():
   run_filter = SpeciesRunFilter()
   run_filter.disable_all()  
-#  run_filter.generate = True
+  #run_filter.generate = True
   run_filter.pargenes = True
   run_filter.starting_gene_trees = gene_trees
   run_filter.cleanup = True
@@ -75,8 +76,8 @@ def run_varying_experiment():
   run_filter.astral_mp = True
   run_filter.fastrfs = True
   run_filter.astrid_single = True
-  run_filter.disable_all()  
-  run_filter.asteroid = True 
+  run_filter.disable_all()
+  run_filter.aster = True 
   run_filter.analyze = True 
   
   for entry in varying_params:
@@ -85,7 +86,9 @@ def run_varying_experiment():
 
 def plot_varying_experiment():
   for entry in varying_params:
+    print(entry)
     datasets = simulations_common.get_dataset_list(fixed_point, entry[1], replicates, True)
+    datasets = [datasets]
     print("Plotting parameter " + entry[0])
     for metric in metric_names:
       param = entry[0]

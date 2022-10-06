@@ -10,7 +10,7 @@ import ete3
 import get_dico
 import rf_distance
 
-def get_discordance_rate(datadir, method, model):
+def get_discordance_rate(datadir, method = "true", model = "true"):
   species_tree = ete3.Tree(fam.get_species_tree(datadir), 1)
   sum_average_rf = 0.0
   for family in fam.get_families_list(datadir):

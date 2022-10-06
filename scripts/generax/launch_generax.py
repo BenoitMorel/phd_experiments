@@ -136,7 +136,7 @@ def extract_events(datadir, results_family_dir, additional_arguments):
     event_counts = extract_event_number.extract(results_family_dir)
     events.update_event_counts(datadir, rec_model, radius, event_counts)
 
-def run(dataset, subst_model, strategy, species_tree, starting_tree, cores, additional_arguments, resultsdir, do_analyze = True, do_extract = True):
+def run(dataset, subst_model, strategy, species_tree, starting_tree, cores, additional_arguments, resultsdir, do_analyze = False, do_extract = True):
   run_name = exp.getAndDelete("--run", additional_arguments, "generax-last." +subst_model) 
   arg_analyze = exp.getAndDelete("--analyze", additional_arguments, "yes")
   do_analyze = do_analyze and (arg_analyze == "yes") and (strategy != "EVAL")

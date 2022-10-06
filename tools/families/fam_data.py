@@ -22,6 +22,8 @@ jsim_species_to_params[16] = (3, 6)
 
 
 def get_param_from_dataset_name(parameter, dataset):
+  print(parameter)
+  print(dataset)
   if (parameter == "tag"):
     return dataset.split("_")[1]
   elif (parameter == "species"):
