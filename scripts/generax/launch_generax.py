@@ -129,6 +129,18 @@ def extract_trees(datadir, results_family_dir, run_name, subst_model):
     except:
       pass
 
+def get_run_name(species_tree, gene_trees, subst_model, strategy, additional_arguments):
+    rec_model = exp.getArg("--rec-model", additional_arguments, "UndatedDTL") 
+    radius = exp.getArg("--max-spr-radius", additional_arguments, "5") 
+    per_fam_rates = "--per-family-rates" in additional_arguments
+    per_species_rates = "--per-species-rates" in additional_arguments
+    run_name = "generax-" + strategy + "-" + rec_model + "-r" + radius
+    if (per_fam_rates):
+        run_name += "-famrates"
+    if (per_species_rates):
+        run_name += "-speciesrates"
+    return run_name
+
 def extract_events(datadir, results_family_dir, additional_arguments):
   #try:
     rec_model = exp.getArg("--rec-model", additional_arguments, "UndatedDTL")
@@ -137,7 +149,9 @@ def extract_events(datadir, results_family_dir, additional_arguments):
     events.update_event_counts(datadir, rec_model, radius, event_counts)
 
 def run(dataset, subst_model, strategy, species_tree, starting_tree, cores, additional_arguments, resultsdir, do_analyze = False, do_extract = True):
-  run_name = exp.getAndDelete("--run", additional_arguments, "generax-last." +subst_model) 
+  run_name = exp.getAndDelete("--run", additional_arguments, None) 
+  if (None == run_name):
+      run_name = get_run_name(species_tree, starting_tree, subst_model, strategy, additional_arguments)
   arg_analyze = exp.getAndDelete("--analyze", additional_arguments, "yes")
   do_analyze = do_analyze and (arg_analyze == "yes") and (strategy != "EVAL")
   print("Run name " + run_name)
@@ -196,15 +210,14 @@ if (__name__ == "__main__"):
     for dataset in datasets:
       print("\t" + dataset)
     print("strategy: " + ",".join(get_possible_strategies()))
-    print("Syntax error: python " + os.path.basename(__file__) + "  dataset subst_model strategy species_tree starting_tree cluster cores [additional paremeters].\n Suggestions of datasets: ")
+    print("Syntax error: python " + os.path.basename(__file__) + "  dataset species_tree gene_trees subst_model strategy cluster cores [additional paremeters].\n Suggestions of datasets: ")
     sys.exit(1)
 
   dataset = os.path.basename(os.path.normpath(sys.argv[1]))
-  print(dataset)
-  subst_model = sys.argv[2]
-  strategy = sys.argv[3]
-  species_tree = sys.argv[4]
-  starting_tree = sys.argv[5]
+  species_tree = sys.argv[2]
+  starting_tree = sys.argv[3]
+  subst_model = sys.argv[4]
+  strategy = sys.argv[5]
   cluster = sys.argv[6]
   cores = int(sys.argv[7])
   additional_arguments = sys.argv[min_args_number:]
