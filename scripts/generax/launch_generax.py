@@ -139,6 +139,7 @@ def get_run_name(species_tree, gene_trees, subst_model, strategy, additional_arg
         run_name += "-famrates"
     if (per_species_rates):
         run_name += "-speciesrates"
+    run_name += "." + subst_model
     return run_name
 
 def extract_events(datadir, results_family_dir, additional_arguments):
