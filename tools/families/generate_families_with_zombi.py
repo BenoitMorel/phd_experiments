@@ -42,6 +42,7 @@ def generate_zombi_genome(families, dup_rate, loss_rate, transfer_rate, output):
   parameters_dir = os.path.join(output, "parameters")
   genome_parameters_file = os.path.join(output, "GenomeTreeParameters.tsv")
   seed = 1
+  transfer_rate *= 0.01
   with open(genome_parameters_file, "w") as writer:
     writer.write("DUPLICATION f:" + str(float(dup_rate) * float(families)) + "\n")
     writer.write("TRANSFER f:" + str(float(transfer_rate) * float(families)) + "\n")

@@ -79,7 +79,7 @@ def print_metrics(datadir, metric_dict, metric_name, benched_run):
   printer = AlignedPrinter()
   saved_metrics.save_dico(datadir, metric_dict, metric_name)
   for run_key in metric_dict:
-    run = run_key.split(" - ")[1]
+    run = run_key #.split(" - ")[1]
     suffix = ""
     if (benched_run == run):
       suffix += "\t <-- "
@@ -112,7 +112,7 @@ def export_metrics(datadir, benched_run, rf_cells, runs):
     invalid = families_number - valid_trees[key]
     if (invalid > 0):
       print("Warning: found " + str(invalid) + " invalid trees for method " + key)
-    average_rrf[key] = total_rrf[key] / valid_trees[key]
+    average_rrf[key.split(" - ")[1]] = total_rrf[key] / valid_trees[key]
   
   print("Average relative RF:")
   print_metrics(datadir, average_rrf, "average_rrf", benched_run)

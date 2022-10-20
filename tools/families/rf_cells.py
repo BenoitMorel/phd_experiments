@@ -143,7 +143,10 @@ def compute_and_export_metrics(datadir, benched_run, rooted):
     average_rrf[key] = total_rrf[key] / families_number
     relative_arf[key] = total_rf[key] / total_nodes[key]
   print("Average relative RF:")
-  export_metric(datadir, average_rrf, "average_rrf", benched_run)
+  if (rooted):
+    export_metric(datadir, average_rrf, "average_rooted_rrf", benched_run)
+  else:
+    export_metric(datadir, average_rrf, "average_rrf", benched_run)
   
   #print("Relative average RF:")
   #export_metric(datadir, relative_arf, "relative_arf")

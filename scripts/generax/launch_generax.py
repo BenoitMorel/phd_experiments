@@ -139,6 +139,14 @@ def get_run_name(species_tree, gene_trees, subst_model, strategy, additional_arg
         run_name += "-famrates"
     if (per_species_rates):
         run_name += "-speciesrates"
+    tc = exp.getArg("--transfer-constraint", additional_arguments, "NONE")
+    if (tc == "PARENTS"):
+      run_name += "-tcparent"
+    if (tc == "SOFTDATED"):
+      run_name += "-tcsoft"
+    seed = exp.getArg("--seed", additional_arguments, None)
+    if (seed != None):
+      run_name += "-seed" + str(seed)
     run_name += "." + subst_model
     return run_name
 
@@ -149,7 +157,7 @@ def extract_events(datadir, results_family_dir, additional_arguments):
     event_counts = extract_event_number.extract(results_family_dir)
     events.update_event_counts(datadir, rec_model, radius, event_counts)
 
-def run(dataset, subst_model, strategy, species_tree, starting_tree, cores, additional_arguments, resultsdir, do_analyze = False, do_extract = True):
+def run(dataset, subst_model, strategy, species_tree, starting_tree, cores, additional_arguments, resultsdir, do_analyze = True, do_extract = True):
   run_name = exp.getAndDelete("--run", additional_arguments, None) 
   if (None == run_name):
       run_name = get_run_name(species_tree, starting_tree, subst_model, strategy, additional_arguments)

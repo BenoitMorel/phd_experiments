@@ -16,18 +16,10 @@ import re
 import  run_mrbayes
 
 # ALE
-ALE_SAMPLES = 100
-
-# EXABAYES
-EXA_TREES = 1000000
-EXA_FREQ = 1000
-NUM_RUNS = 2
-NUM_CHAINS = 4
-PER_RUN_BURN_IN = 100
-EXA_GEN = EXA_TREES * EXA_FREQ
+ALE_SAMPLES = 1
 
 
-def get_method_name(with_transfers, dated):
+def get_run_name(gene_trees, with_transfers, dated):
   res = ""
   if (dated):
     res += "dated_"
@@ -35,13 +27,9 @@ def get_method_name(with_transfers, dated):
     res +=  "ale-dtl"
   else:
     res += "ale-dl"
+  res += "-"
+  res += gene_trees
   return res
-
-def get_observe_run_dir(datadir, subst_model, with_transfers, dated):
-  return fam.get_run_dir(datadir, subst_model, get_method_name(with_transfers, dated) + "_observe_run")
-
-def get_ml_run_dir(datadir, subst_model, with_transfers, dated):
-  return fam.get_run_dir(datadir, subst_model, get_method_name(with_transfers, dated) + "_ml_run")
 
 
 def clean_ALE(datadir, subst_model, dated):
@@ -54,29 +42,34 @@ def clean_ALE(datadir, subst_model, dated):
   except:
     pass
 
-def generate_ALE_observe_commands_file(datadir, subst_model, cores, output_dir):
+def generate_ALE_observe_commands_file(datadir, gene_trees, subst_model, cores, output_dir):
   results_dir = os.path.join(output_dir, "results")
   scheduler_commands_file = os.path.join(output_dir, "commands.txt")
   os.makedirs(results_dir)
   with open(scheduler_commands_file, "w") as writer:
     for family in fam.get_families_list(datadir):
-      tree_list = run_mrbayes.get_treelist(datadir, subst_model, family)
+      tree_list = fam.build_gene_tree_path(datadir, subst_model, family, gene_trees)
+      ale_tree_list = os.path.join(results_dir, family + ".newick")
+      exp.relative_symlink(tree_list, ale_tree_list)
       command = []
       command.append(family)
       command.append("1")
       command.append("1")
-      command.append(tree_list)
+      command.append(ale_tree_list)
       writer.write(" ".join(command) + "\n")
   return scheduler_commands_file
 
-def generate_ALE_ml_commands_file(datadir, subst_model, with_transfers, cores, output_dir):
+def generate_ALE_ml_commands_file(datadir, subst_model, with_transfers, cores, observe_output_dir, output_dir):
+  obs_results_dir = os.path.join(observe_output_dir, "results")
   results_dir = os.path.join(output_dir, "results")
   scheduler_commands_file = os.path.join(output_dir, "commands.txt")
   os.makedirs(results_dir)
   speciesTree = fam.get_phyldog_species_tree(datadir)
   with open(scheduler_commands_file, "w") as writer:
     for family in fam.get_families_list(datadir):
-      ale_object = run_mrbayes.get_treelist(datadir, subst_model, family) + ".ale"
+      ale_tree_list = os.path.join(obs_results_dir, family + ".newick")
+      ale_object = ale_tree_list + ".ale"
+      
       command = []
       command.append(family)
       command.append("1")
@@ -110,21 +103,32 @@ def extract_trees_from_ale_output(ale_output, output_trees):
       new_lines = re.sub("\.[0-9\.]*:", ":", new_lines)
       writer.write(new_lines)
 
-def extract_ALE_results(datadir, subst_model, ALE_run_dir, with_transfers, families_dir, dated):
-  method_name = get_method_name(with_transfers, dated)
+def extract_ALE_results(datadir, gene_trees, subst_model, ALE_run_dir, with_transfers, families_dir, dated):
+  run_name = get_run_name(gene_trees, with_transfers, dated)
+  print(ALE_run_dir)
   mlstring = "uml"
   if (dated):
     mlstring = "ml"
   for family in fam.get_families_list(datadir):
     family_misc_dir = fam.get_family_misc_dir(datadir, family)
     family_trees_dir = fam.get_gene_tree_dir(datadir, family)
-    prefix =  "phyldogSpeciesTree.newick_" + family + ".treelist.ale"
-    prefixed_output_trees = os.path.join(family_misc_dir, method_name + "_samples_prefixed.newick")
-    output_trees = fam.get_ale_tree(datadir, subst_model, family, method_name)
-    extract_trees_from_ale_output(prefix +"." + mlstring + "_rec", prefixed_output_trees) 
-    cut_node_names.remove_prefix_from_trees(prefixed_output_trees, output_trees) 
-    if (dated):
-      cut_node_names.cut_keep_first_elems(output_trees, output_trees, "@", 1) 
+    prefix =  "phyldogSpeciesTree.newick_" + family + ".newick.ale"
+    prefix = os.path.join(ALE_run_dir, prefix)
+    prefixed_output_trees = os.path.join(family_misc_dir, run_name + "_samples_prefixed.newick")
+    output_trees = fam.get_ale_tree(datadir, subst_model, family, run_name)
+    ale_output = prefix +"." + mlstring + "_rec"
+    are_prefixed = False
+    if (are_prefixed):
+      extract_trees_from_ale_output(ale_output, prefixed_output_trees) 
+    
+      cut_node_names.remove_prefix_from_trees(prefixed_output_trees, output_trees) 
+      if (dated):
+        cut_node_names.cut_keep_first_elems(output_trees, output_trees, "@", 1) 
+    else:
+      extract_trees_from_ale_output(ale_output, output_trees) 
+      if (dated):
+        cut_node_names.cut_keep_first_elems(output_trees, output_trees, "@", 1) 
+
 # clean files
     #if (dated):
     #  force_move(prefix + ".Ts", family_misc_dir)
@@ -133,69 +137,64 @@ def extract_ALE_results(datadir, subst_model, ALE_run_dir, with_transfers, famil
     #force_move(prefix + ".ucons_tree", family_misc_dir)
     #force_move(prefix + "." + mlstring + "_rec", family_misc_dir)
 
-def run_ALE_on_families(datadir, subst_model, with_transfers, cores, dated = False):
-  try:
-    cwd = os.getcwd()
-    method_name = get_method_name(with_transfers, dated)
-    observe_output_dir = get_observe_run_dir(datadir, subst_model, with_transfers, dated)
-    ml_output_dir = get_ml_run_dir(datadir, subst_model, with_transfers, dated)
-    shutil.rmtree(observe_output_dir, True)
-    shutil.rmtree(ml_output_dir, True)
-    os.makedirs(observe_output_dir)
-    os.makedirs(ml_output_dir)
-    commands_observe = generate_ALE_observe_commands_file(datadir, subst_model, cores, observe_output_dir)
-    commands_ml = generate_ALE_ml_commands_file(datadir, subst_model, with_transfers, cores, ml_output_dir)
-    os.chdir(observe_output_dir)
+def run_ALE_on_families(datadir, gene_trees, subst_model, with_transfers, cores, dated = False):
+  cwd = os.getcwd()
+  #try:
+  run_name = get_run_name(gene_trees, with_transfers, dated)
+  output_dir = fam.get_run_dir(datadir, subst_model, run_name)
+  observe_output_dir = os.path.join(output_dir, "observe")
+  ml_output_dir = os.path.join(output_dir, "ml")
+  do_run = True
+  if (do_run):
+    exp.reset_dir(observe_output_dir)
+    exp.reset_dir(ml_output_dir)
+    commands_observe = generate_ALE_observe_commands_file(datadir, gene_trees, subst_model, cores, observe_output_dir)
+    commands_ml = generate_ALE_ml_commands_file(datadir, subst_model, with_transfers, cores, observe_output_dir,  ml_output_dir)
+    #os.chdir(observe_output_dir)
     start = time.time()
-    exp.run_with_scheduler(exp.ale_observe_exec, commands_observe, "onecore", cores, observe_output_dir, method_name + "_ml_run.logs")
+    exp.run_with_scheduler(exp.ale_observe_exec, commands_observe, "onecore", cores, observe_output_dir, run_name + "_ml_run.logs")
     time1 = (time.time() - start)
     os.chdir(ml_output_dir)
     start = time.time()
     if (not dated):
-      exp.run_with_scheduler(exp.ale_ml_exec, commands_ml, "onecore", cores, ml_output_dir, method_name + "_ml_run.logs")
+      exp.run_with_scheduler(exp.ale_ml_exec, commands_ml, "onecore", cores, ml_output_dir, run_name + "_ml_run.logs")
     else:
-      exp.run_with_scheduler(exp.ale_ml_dated_exec, commands_ml, "onecore", cores, ml_output_dir, method_name + "_ml_run.logs")
+      exp.run_with_scheduler(exp.ale_ml_dated_exec, commands_ml, "onecore", cores, ml_output_dir, run_name + "_ml_run.logs")
     time2 = (time.time() - start)
-    cwd = os.getcwd()
+    os.chdir(cwd)
     lb1 = fam.get_lb_from_run(observe_output_dir)
     lb2 = fam.get_lb_from_run(ml_output_dir)
-    saved_metrics.save_metrics(datadir, fam.get_run_name(method_name, subst_model), time1 + time2, "runtimes") 
-    saved_metrics.save_metrics(datadir, fam.get_run_name(method_name, subst_model), time1 * lb1 + time2 * lb2, "seqtimes") 
-    extract_ALE_results(datadir, subst_model, ml_output_dir, with_transfers, os.path.join(datadir, "families"), dated)
-  finally:
-    cwd = os.getcwd()
+    saved_metrics.save_metrics(datadir, fam.get_run_name(run_name, subst_model), time1 + time2, "runtimes") 
+    saved_metrics.save_metrics(datadir, fam.get_run_name(run_name, subst_model), time1 * lb1 + time2 * lb2, "seqtimes") 
+  
+  extract_ALE_results(datadir, gene_trees, subst_model, ml_output_dir, with_transfers, os.path.join(datadir, "families"), dated)
+  #finally:
+  #  cwd = os.getcwd()
 
-def run_ALE(datadir, subst_model, cores, dated = False):
+def run_ALE(datadir, gene_trees, subst_model, cores, dated = False):
   cwd = os.getcwd()
   try:
-    run_dir = os.path.join(datadir, "runs")
-    parameters = os.path.join(run_dir, "parameters.txt")
     datadir = os.path.abspath(datadir)
-    os.chdir(run_dir)
-    print(run_dir)
-    run_ALE_on_families(datadir, subst_model, True, cores, dated)
-    run_ALE_on_families(datadir, subst_model, False, cores, dated)
-    ml_output_dir = get_ml_run_dir(datadir, subst_model, True, dated)
-    os.chdir(ml_output_dir)
-    extract_ALE_results(datadir, subst_model, ml_output_dir, True,  os.path.join(datadir, "families"), dated)
+    run_ALE_on_families(datadir, gene_trees, subst_model, True, cores, dated)
     #clean_ALE(datadir, subst_model, dated)
   finally:
     os.chdir(cwd)
 
 
 if (__name__== "__main__"):
-  max_args_number = 4
-  if len(sys.argv) < max_args_number:
-    print("Syntax error: python run_ALE.py datadir subst_model cores [dated].")
+  min_args_number = 5
+  if len(sys.argv) < min_args_number:
+    print("Syntax error: python run_ALE.py datadir gene_trees subst_model cores [dated].")
     sys.exit(0)
 
   datadir = sys.argv[1]
-  subst_model = sys.argv[2]
-  cores = int(sys.argv[3])
+  gene_trees = sys.argv[2]
+  subst_model = sys.argv[3]
+  cores = int(sys.argv[4])
   dated = False
-  if (len(sys.argv) > 4):
-      dated = (int(sys.argv[4]) != 0)
-  run_ALE(datadir, subst_model, cores, dated)
+  if (len(sys.argv) > 5):
+      dated = (int(sys.argv[5]) != 0)
+  run_ALE(datadir, gene_trees, subst_model, cores, dated)
 
 #
 

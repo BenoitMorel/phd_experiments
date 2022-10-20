@@ -7,6 +7,8 @@ import time
 import run_raxml_supportvalues as raxml
 import fam
 import run_generax
+import run_alegenerax
+import run_ALE
 import run_stag
 import species_analyze
 import grf_species_analyze
@@ -32,8 +34,6 @@ import run_fastmulrfs
 import run_njst  
 import run_njrax
 import run_concatenation
-import run_orthogenerax
-import run_generax_selector
 import run_mrbayes
 import run_fasttree
 import run_dicotree
@@ -62,6 +62,9 @@ class SpeciesRunFilter():
   def __init__(self):
     self.is_dna = True # only for concasteroid
     self.generate = False
+    self.starting_gene_trees = ["raxml-ng"]
+    
+    # gene trees
     self.pargenes = True
     self.pargenes_starting_trees = 1
     self.pargenes_bootstrap_trees = 0
@@ -74,9 +77,14 @@ class SpeciesRunFilter():
     self.mb_frequencies = 1000
     self.mb_generations = 10000
     self.mb_burnin = 1
-    self.starting_gene_trees = ["raxml-ng"]
+    self.generax_undated = False
+    self.generax_softdated = False
+    self.alegenerax_undated = []
+    self.alegenerax_softdated = []
+    self.ale_undated = []
+    self.ale_dated = []
+
     self.minbl = -1.0
-    self.orthogenerax = True
     self.concatenation_min = True
     self.concatenation_max = True
     self.stag = True
@@ -95,8 +103,6 @@ class SpeciesRunFilter():
     self.astral = True
     self.aster = True
     self.astral_mp = True
-    self.generaxselect = True
-    self.generaxselectfam = True
     self.astralpro = True
     self.speciesrax = True
     self.speciesraxparsidl = True
@@ -112,6 +118,8 @@ class SpeciesRunFilter():
     self.guenomu = False
     self.analyze = True
     self.grf_analyze = True
+
+
     self.analyze_gene_trees = False
     self.cleanup = False
     self.verbose = False
@@ -123,7 +131,12 @@ class SpeciesRunFilter():
     self.fasttree = False
     self.dicotree = False
     self.mrbayes = False
-    self.orthogenerax = False
+    self.generax_undated = False
+    self.generax_softdated = False
+    self.ale_undated = []
+    self.ale_dated = []
+    self.alegenerax_undated = []
+    self.alegenerax_softdated = []
     self.concatenation_min = False
     self.concatenation_max = False
     self.stag = False
@@ -145,8 +158,6 @@ class SpeciesRunFilter():
     self.aster = False
     self.astral = False
     self.astral_mp = False
-    self.generaxselect = False
-    self.generaxselectfam = False
     self.astralpro = False
     self.speciesrax = False
     self.speciesraxparsidl = False
@@ -236,6 +247,26 @@ class SpeciesRunFilter():
         run_mrbayes.run_mrbayes_on_families(instance, cores, False)
       except Exception as exc:
         printFlush("Failed running mrbayes\n" + str(exc))
+    if (self.generax_undated):
+      printFlush("Run generax undated")
+      run_generax.run(datadir, subst_model, "PARENTS", cores, [])
+    if (self.generax_softdated):
+      printFlush("Run generax softdated")
+      run_generax.run(datadir, subst_model, "SOFTDATED", cores, [])
+    for gene_tree in self.alegenerax_undated:
+      printFlush("Run alegenerax Undated from  " + gene_tree )
+      run_alegenerax.run(datadir, gene_tree, subst_model, "PARENTS", cores, [])
+    for gene_tree in self.alegenerax_softdated:
+      printFlush("Run alegenerax SoftDated from  " + gene_tree )
+      run_alegenerax.run(datadir, gene_tree, subst_model, "SOFTDATED", cores, [])
+    for gene_tree in self.ale_undated:
+      printFlush("Run ALE Undated from  " + gene_tree )
+      run_ALE.run_ALE(datadir, gene_tree, subst_model, cores, dated = False)
+    for gene_tree in self.ale_dated:
+      printFlush("Run ALE Dated from  " + gene_tree )
+      run_ALE.run_ALE(datadir, gene_tree, subst_model, cores, dated = True)
+
+      run_generax.run(datadir, subst_model, "SOFTDATED", cores, [])
     if (self.minbl > 0.0):
       for gene_tree in self.starting_gene_trees:
         print("Coucou " + gene_tree)
@@ -515,30 +546,7 @@ class SpeciesRunFilter():
         run_guenomu.run_guenomu(datadir, subst_model, cores)
       except Exception as exc:
         printFlush("Failed running Guenomu\n" + str(exc))
-    if (self.orthogenerax  and subst_model != "true"):
-      printFlush("Run OrthoGeneRax")
-      try:
-        #run_orthogenerax.run_orthogenerax(datadir, subst_model, "true", False, cores)
-        #run_orthogenerax.run_orthogenerax(datadir, subst_model, "njrax-NJst", False, cores)
-        run_orthogenerax.run_orthogenerax(datadir, subst_model, "astralpro-raxml-ng", False, cores)
-        #run_orthogenerax.run_orthogenerax(datadir, subst_model, "speciesrax-dtl-raxml-HYBRID", False, cores)
-      except Exception as exc:
-        printFlush("Failed running orthogenerax\n" + str(exc))
 
-    if (self.generaxselect  and subst_model != "true"):
-      printFlush("Run GeneRaxSelect")
-      try:
-        candidates = exp.generax_selector_candidates
-        run_generax_selector.select(datadir, subst_model, candidates, True, cores)
-      except Exception as exc:
-        printFlush("Failed running GeneRaxSelect\n" + str(exc))
-    if (self.generaxselectfam  and subst_model != "true"):
-      printFlush("Run GeneRaxSelectFam")
-      try:
-        candidates = exp.generax_selector_candidates
-        run_generax_selector.select(datadir, subst_model, candidates, True, cores)
-      except Exception as exc:
-        printFlush("Failed running GeneRaxSelect\n" + str(exc))
     if (self.analyze):
       printFlush("Run analyze...")
       sys.stdout.flush()
@@ -555,9 +563,8 @@ class SpeciesRunFilter():
         printFlush("Run grf analyze failed...")
     if (self.analyze_gene_trees):
       try:
-        for gene_tree in self.starting_gene_trees:
-          run = gene_tree + "." + subst_model
-          fast_rf_cells.analyze(datadir, run, cores)
+        run = "all"
+        fast_rf_cells.analyze(datadir, run, cores)
       except Exception as exc:
         printFlush("Failed running analyze\n" + str(exc))
     if (self.cleanup):

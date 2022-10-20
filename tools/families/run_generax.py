@@ -2,8 +2,24 @@ import sys
 import os
 import subprocess
 sys.path.insert(0, 'scripts')
+sys.path.insert(0, 'scripts/generax')
 import experiments as exp
+import launch_generax
 import fam
+
+def run(datadir, subst_model, transfer_constraint, cores, additional_arguments):
+  strategy = "SPR"
+  species_tree = "true"
+  starting_tree = "raxml-ng"
+  base = "generax_" + transfer_constraint.lower() + "_run"
+  dataset = os.path.basename(os.path.normpath(datadir))
+  resultsdir = fam.get_run_dir(datadir, subst_model, base)
+  #additional_arguments.append("--transfer-constraint")
+  #additional_arguments.append(transfer_constraint)
+  exp.reset_dir(resultsdir)
+  launch_generax.run(dataset, subst_model, strategy, species_tree, starting_tree, cores, additional_arguments, resultsdir, do_analyze = False, do_extract = True)
+
+
 
 def run_generax_instance(dataset, starting_tree, with_transfers, method, subst_model, per_sp_rates, optimize_species, cores = 40):
   command = []
@@ -70,6 +86,7 @@ if (__name__== "__main__"):
   subst_model = int(sys.argv[2]) != 0
   cores = int(sys.argv[3])
   run_generax_on_families(dataset_dir, subst_model, cores)
+
 
 
 

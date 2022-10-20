@@ -106,10 +106,10 @@ def analyze(datadir):
   #root_distance_printer.sort_right_float()
   #root_distance_printer.display()
 
-  #print("")
-  #print("Rooted average RF:")
-  #rooted_printer.sort_right_float()
-  #rooted_printer.display()
+  print("")
+  print("Rooted average RF:")
+  rooted_printer.sort_right_float()
+  rooted_printer.display()
 
   print("")
   print("Unrooted average RF:")

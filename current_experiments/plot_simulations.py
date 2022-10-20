@@ -92,13 +92,15 @@ def _get_methods(methods_tuples):
   - method_tuples: list of tuple (method_key, name_to_display)
   - output: plot filename
 """
-def plot_varying_params(datasets, param_name, metric, method_tuples, subst_model, output, xlabel = None, ylabel = None, maxy = None):
+def plot_varying_params(datasets, param_name, metric, method_tuples, subst_model, output, xlabel = None, ylabel = None, maxy = None, logscale = False):
   param_to_datasets = _get_param_to_datasets(datasets, param_name)
   methods = _get_methods(method_tuples)
   values = {}  
   for xvalue,xdatasets in param_to_datasets:
     values[xvalue] = _get_average_methods_values(param_name, xdatasets, metric, methods, subst_model)
   df = _get_df(values, methods, param_name)
+  if (logscale):
+    plt.yscale("log")
   for method_tuple in method_tuples:
     method = method_tuple[0]
     method_alias = method_tuple[1]
@@ -106,7 +108,7 @@ def plot_varying_params(datasets, param_name, metric, method_tuples, subst_model
     color = None
     method_marker = "."
     markersize = 12
-    plt.plot(param_name, method, data=df, marker=method_marker, linewidth=2, label = method_alias, markersize=markersize, linestyle = linestyle, color = color, scaley = False)
+    plt.plot(param_name, method, data=df, marker=method_marker, linewidth=2, label = method_alias, markersize=markersize, linestyle = linestyle, color = color)
   plt.legend()
   if (xlabel != None):
     plt.xlabel(xlabel)

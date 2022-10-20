@@ -107,10 +107,10 @@ def sample_missing_data(input_datadir, output_datadir, miss_species, miss_fam):
   for family in families:
     sample_family_fam(input_datadir, output_datadir, family, species_sample_prob, miss_fam, sampled_species)
   export_sample_probs(output_datadir, species_sample_prob)
-  fam.postprocess_datadir(output_datadir)
   species_tree = ete3.Tree(fam.get_species_tree(input_datadir), format = 1)
   species_tree.prune(sampled_species)
   species_tree.write(format = 1, outfile = fam.get_species_tree(output_datadir), dist_formatter="%0.8f")
+  fam.postprocess_datadir(output_datadir)
 
 if (__name__ == "__main__"): 
   if (len(sys.argv) < 5): 

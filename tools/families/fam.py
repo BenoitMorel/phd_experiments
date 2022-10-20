@@ -346,7 +346,7 @@ def get_successful_runs(datadir):
   for directory in directories_to_check:
     for tree in os.listdir(directory):
       run_name = get_run_name_from_tree(tree)
-      if (not "raxmlMultiple" in run_name):
+      if (not "raxmlMultiple" in run_name and not run_name.startswith("mrbayes")):
         runs.append(run_name)
   return runs
 
