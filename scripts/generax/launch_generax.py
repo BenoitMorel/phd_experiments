@@ -35,9 +35,9 @@ def has_multiple_sample(starting_tree):
   return "ale" in starting_tree.lower() or "multiple" in starting_tree.lower()
 
 def get_starting_tree_path(datadir, subst_model, family, starting_tree):
-  if (has_multiple_sample(starting_tree)):
-    return os.path.join(fam.get_family_misc_dir(datadir, family), starting_tree + "." + subst_model + "_onesample.geneTree")
-  else:
+  #if (has_multiple_sample(starting_tree)):
+  #  return os.path.join(fam.get_family_misc_dir(datadir, family), starting_tree + "." + subst_model + "_onesample.geneTree")
+  #else:
     return fam.build_gene_tree_path(datadir, subst_model, family, starting_tree)
 
 # GeneRax does not accept tree files with multiple trees

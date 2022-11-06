@@ -70,6 +70,8 @@ def extract_rfdistance(rf_output_dir, families, runs):
 
 def save_rf_cells(datadir, rf_cells, rooted):
   output = fam.get_raw_rf_cells_file(datadir, rooted)
+  misc = fam.get_misc_dir(datadir)
+  exp.mkdir(misc) 
   pickle.dump(rf_cells, open(output, "wb"))
 
 def load_rf_cells(datadir, rooted = False):

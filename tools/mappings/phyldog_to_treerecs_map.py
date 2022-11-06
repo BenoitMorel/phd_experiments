@@ -13,7 +13,7 @@ def convert(phyldog_filename, treerecs_filename):
 if (__name__ == "__main__"):
 
   if (3 != len(sys.argv)):
-    print("Syntax: python phyldogToTreerecsMap.py phyldog_filename treerecs_filename")
+    print("Syntax: python " + os.path.basename(__file__) + " phyldog_filename treerecs_filename")
     sys.exit()
   convert(sys.argv[1], sys.argv[2])
 

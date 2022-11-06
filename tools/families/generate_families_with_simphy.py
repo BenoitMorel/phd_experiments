@@ -98,7 +98,6 @@ def build_config_file(parameters, output_dir):
     writer.write("-OC 1 // log the configuration file\n")
     writer.write("-OD 1 // log the configuration file\n")
     writer.write("-OP 1 // log the configuration file\n")
-    writer.write("-OL 1 // log the configuration file\n")
 
   return config_file
 
@@ -314,7 +313,7 @@ def generate_simphy(tag, species, families, sites, model, bl_factor, dup_rate, l
   p.miss_fam = float(miss_fam)
   print(perturbation)
   assert(float(perturbation) == 0.0)
-  if (p.miss_species != 1.0 or p.miss_fam != 1.0):
+  if (p.miss_species != 0.0 or p.miss_fam != 0.0):
     p.prefix = p.prefix + "temp"
     temp_output_dir = generate_from_parameters(p, root_output)
     p.prefix = p.prefix[:-4]

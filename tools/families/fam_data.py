@@ -92,25 +92,26 @@ def get_param_from_dataset_name(parameter, dataset):
 
 def generate_dataset(dataset):
   tag = get_param_from_dataset_name("tag", dataset)
-  species = get_param_from_dataset_name("species", dataset)
+  species = int(get_param_from_dataset_name("species", dataset))
   families = int(get_param_from_dataset_name("families", dataset))
-  sites = get_param_from_dataset_name("sites", dataset)
+  sites = int(get_param_from_dataset_name("sites", dataset))
   model = get_param_from_dataset_name("model", dataset)
   bl_factor = float(get_param_from_dataset_name("bl", dataset))
-  d = get_param_from_dataset_name("dup_rate", dataset)
-  l = get_param_from_dataset_name("loss_rate", dataset)
-  t = get_param_from_dataset_name("transfer_rate", dataset)
-  gc = get_param_from_dataset_name("gene_conversion_rate", dataset)
-  p = get_param_from_dataset_name("perturbation", dataset)
+  d = float(get_param_from_dataset_name("dup_rate", dataset))
+  l = float(get_param_from_dataset_name("loss_rate", dataset))
+  t = float(get_param_from_dataset_name("transfer_rate", dataset))
+  gc = float(get_param_from_dataset_name("gene_conversion_rate", dataset))
+  p = float(get_param_from_dataset_name("perturbation", dataset))
+  seed = int(get_param_from_dataset_name("seed", dataset))
+  print("TRANSFERS " + str(t))
    
   output = exp.families_datasets_root
   if (dataset.startswith("jsim")):
     species_internal, seed = jsim_species_to_params[int(species)]
     jprime.generate_jprime(tag, species_internal, families, sites, model, bl_factor, d, l, t, p, output, seed) 
   elif (dataset.startswith("zsim")):
-    zombi.generate_zombi(tag, species, families, sites, model, bl_factor, d, l, t, output) 
+    zombi.generate_zombi(tag, species, families, sites, model, bl_factor, d, l, t, seed, output) 
   elif (dataset.startswith("ssim")):
-    seed = get_param_from_dataset_name("seed", dataset)
     population = get_param_from_dataset_name("population", dataset)
     miss_species = get_param_from_dataset_name("ms", dataset)
     miss_fam = get_param_from_dataset_name("mf", dataset)

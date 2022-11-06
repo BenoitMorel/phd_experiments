@@ -501,7 +501,7 @@ class SpeciesRunFilter():
        # try:
         run_astral_pro.run_astralpro(datadir, gene_tree, subst_model)
         #except Exception as exc:
-        printFlush("Failed running Astral-pro with " + gene_tree + "\n" + str(exc))
+        #printFlush("Failed running Astral-pro with " + gene_tree + "\n" + str(exc))
       if (self.genetegratorbench):
         printFlush("Run genetegrator bench")
         dl_args = ["--rec-model", "UndatedDL"]
