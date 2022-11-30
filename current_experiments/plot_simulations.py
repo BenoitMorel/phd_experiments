@@ -49,7 +49,7 @@ def _get_average_methods_values(param_name, datasets, metric, methods, subst_mod
     key = (method + "." + subst_model).lower()
     average = 0.0
     for dataset in datasets:
-      dataset_dir = os.path.join(exp.families_datasets_root, dataset)
+      dataset_dir = fam.get_datadir(dataset)
       metrics = saved_metrics.get_metrics(dataset_dir, metric)
       if (metrics != None and key in metrics):
         average += float(metrics[key])

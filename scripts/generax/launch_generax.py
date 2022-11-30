@@ -24,12 +24,6 @@ def check_inputs(strategy):
     exit(1)
 
 
-def get_generax_datasets():
-  root_datadir = os.path.join(exp.benoit_datasets_root, "families")
-  datasets = {}
-  for dataset in os.listdir(root_datadir):
-    datasets[dataset] = os.path.join(root_datadir, dataset)
-  return datasets
 
 def has_multiple_sample(starting_tree):
   return "ale" in starting_tree.lower() or "multiple" in starting_tree.lower()
@@ -75,7 +69,7 @@ def build_generax_families_file(datadir, starting_tree, subst_model, output):
         writer.write("subst_model = " + sequence_model.get_raxml_model(subst_model) + "\n")
 
 def get_generax_command(generax_families_file, species_tree, strategy, additional_arguments, output_dir, mode, cores):
-    executable = exp.generax_exec
+    executable = exp.generaxclone_exec
     old = exp.checkAndDelete("--old", additional_arguments) 
     if (mode == "gprof"):
       executable = exp.generax_gprof_exec
@@ -166,11 +160,7 @@ def run(dataset, subst_model, strategy, species_tree, starting_tree, cores, addi
   print("Run name " + run_name)
   sys.stdout.flush()
   mode = get_mode_from_additional_arguments(additional_arguments)
-  datasets = get_generax_datasets()
-  if (not dataset in datasets):
-    print("Error: " + dataset + " is not in " + str(datasets))
-    exit(1)
-  datadir = datasets[dataset]
+  datadir = fam.get_datadir(dataset)
   generax_families_file = os.path.join(resultsdir, "families.txt")
   build_generax_families_file(datadir, starting_tree, subst_model, generax_families_file)
   start = time.time()
@@ -215,11 +205,7 @@ if (__name__ == "__main__"):
     
   min_args_number = 8
   if (len(sys.argv) < min_args_number):
-    datasets = get_generax_datasets()
-    for dataset in datasets:
-      print("\t" + dataset)
-    print("strategy: " + ",".join(get_possible_strategies()))
-    print("Syntax error: python " + os.path.basename(__file__) + "  dataset species_tree gene_trees subst_model strategy cluster cores [additional paremeters].\n Suggestions of datasets: ")
+    print("Syntax error: python " + os.path.basename(__file__) + "  dataset species_tree gene_trees subst_model strategy cluster cores [additional paremeters].\n  ")
     sys.exit(1)
 
   dataset = os.path.basename(os.path.normpath(sys.argv[1]))

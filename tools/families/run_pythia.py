@@ -5,9 +5,11 @@ import shutil
 import time
 sys.path.insert(0, 'scripts')
 sys.path.insert(0, os.path.join("tools", "families"))
+sys.path.insert(0, os.path.join("tools", "mappings"))
 import experiments as exp
 import fam
 import saved_metrics
+import get_dico
 
 def get_pythia_path(pythia_command):
   d = subprocess.check_output(["which", pythia_command])
@@ -22,8 +24,10 @@ def extract(datadir, run_dir):
     s =open(log).read()
     score = s.split()[-1][:-1]
     open(fam.get_pythia_score_path(datadir, family), "w").write(score)
-    print(fam.get_pythia_score(datadir, family))
-
+    genes = len(get_dico.get_genes(datadir, family))
+    score = fam.get_pythia_score(datadir, family)
+    print(family + "," + str(genes) + "," + str(score))
+    
 def generate_scheduler_commands_file(datadir, cores, output_dir):
   results_dir = os.path.join(output_dir, "results")
   scheduler_commands_file = os.path.join(output_dir, "commands.txt")

@@ -32,6 +32,9 @@ class SimphyParameters():
     self.model = "GTR"
     self.seed = 42
     self.distance_hgt = False
+    self.population = 10
+    self.miss_species = 0.0
+    self.miss_fam = 0.0
 
 def build_config_file(parameters, output_dir):
   config_file = os.path.join(output_dir, "simphy_config.txt")
@@ -327,6 +330,7 @@ def generate_simphy(tag, species, families, sites, model, bl_factor, dup_rate, l
 
 if (__name__ == "__main__"): 
   parameters = SimphyParameters()
+  #parameters.prefix = "/hits/fast/cme/benoit/github/BenoitDatasets/coucou"
   generate_from_parameters(parameters, exp.families_datasets_root)
 
 

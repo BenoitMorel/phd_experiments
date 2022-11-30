@@ -19,8 +19,6 @@ import run_duptree
 import run_stride
 import run_guenomu
 import run_asteroid
-import run_concasteroid
-import run_superfastme
 import run_astrid
 import run_astrid_single
 import run_astral_multi
@@ -28,6 +26,7 @@ import run_astral
 import run_aster
 import run_mp_astral
 import run_astral_pro
+import run_aster
 import run_stells
 import run_fastrfs
 import run_fastmulrfs
@@ -60,66 +59,20 @@ def floatstr(my_float):
 class SpeciesRunFilter():
   
   def __init__(self):
-    self.is_dna = True # only for concasteroid
     self.generate = False
+    self.disable_all()
     self.starting_gene_trees = ["raxml-ng"]
     
     # gene trees
-    self.pargenes = True
     self.pargenes_starting_trees = 1
     self.pargenes_bootstrap_trees = 0
     self.bootstrap_trees = 0
-    self.fasttree = False
-    self.dicotree = False
-    self.mrbayes = False
     self.mb_runs = 1  
     self.mb_chains = 4 
     self.mb_frequencies = 1000
     self.mb_generations = 10000
     self.mb_burnin = 1
-    self.generax_undated = False
-    self.generax_softdated = False
-    self.alegenerax_undated = []
-    self.alegenerax_softdated = []
-    self.ale_undated = []
-    self.ale_dated = []
-
     self.minbl = -1.0
-    self.concatenation_min = True
-    self.concatenation_max = True
-    self.stag = True
-    self.duptree = True
-    self.stride = True
-    self.stells = True
-    self.fastrfs = True
-    self.fastmulrfs = True
-    self.njrax = True    
-    self.cherry = True    
-    self.cherrypro = True    
-    self.astrid = True    
-    self.astrid_single = True    
-    self.asteroid = True    
-    self.concasteroid = True    
-    self.astral = True
-    self.aster = True
-    self.astral_mp = True
-    self.astralpro = True
-    self.speciesrax = True
-    self.speciesraxparsidl = True
-    self.speciesraxprune = True
-    self.speciesraxnofam = True
-    self.speciesraxperfamily = True
-    self.speciesraxbench = True
-    self.speciessplit = True
-    self.minibme = True
-    self.minibmepruned = True
-    self.genetegratorbench = True
-    self.phyldog = True
-    self.guenomu = False
-    self.analyze = True
-    self.grf_analyze = True
-
-
     self.analyze_gene_trees = False
     self.cleanup = False
     self.verbose = False
@@ -137,6 +90,7 @@ class SpeciesRunFilter():
     self.ale_dated = []
     self.alegenerax_undated = []
     self.alegenerax_softdated = []
+    self.alegenerax_softdated_gamma = []
     self.concatenation_min = False
     self.concatenation_max = False
     self.stag = False
@@ -150,25 +104,17 @@ class SpeciesRunFilter():
     self.cherry = False    
     self.cherrypro = False    
     self.njst = False    
-    self.astrid = False
-    self.asteroid = False
-    self.concasteroid = False
-    self.superfastme = False    
-    self.astrid_single = False
-    self.aster = False
-    self.astral = False
-    self.astral_mp = False
-    self.astralpro = False
-    self.speciesrax = False
-    self.speciesraxparsidl = False
-    self.speciesraxnofam = False
-    self.speciesraxprune = False
-    self.speciesraxperfamily = False
-    self.minibme = False
-    self.minibmepruned = False
-    self.speciessplit = False
-    self.genetegratorbench = False
-    self.speciesraxbench = False
+    self.astrid = []
+    self.asteroid = []
+    self.astrid_single = []
+    self.aster = []
+    self.astral = []
+    self.astral_mp = []
+    self.astralpro = []
+    self.astralpro2 = []
+    self.speciesrax = []
+    self.genetegratorbench = []
+    self.speciesraxbench = []
     self.guenomu = False
     self.cleanup = False
     self.analyze = False
@@ -245,6 +191,7 @@ class SpeciesRunFilter():
       try:
         instance = run_mrbayes.MrbayesInstance(datadir, subst_model, self.mb_runs, self.mb_chains, self.mb_generations, self.mb_frequencies, self.mb_burnin) 
         run_mrbayes.run_mrbayes_on_families(instance, cores, False)
+        instance.remove_mrbayes_run()
       except Exception as exc:
         printFlush("Failed running mrbayes\n" + str(exc))
     if (self.generax_undated):
@@ -259,6 +206,9 @@ class SpeciesRunFilter():
     for gene_tree in self.alegenerax_softdated:
       printFlush("Run alegenerax SoftDated from  " + gene_tree )
       run_alegenerax.run(datadir, gene_tree, subst_model, "SOFTDATED", cores, [])
+    for gene_tree in self.alegenerax_softdated_gamma:
+      printFlush("Run alegenerax SoftDated from  " + gene_tree )
+      run_alegenerax.run(datadir, gene_tree, subst_model, "SOFTDATED", cores, ["--gamma-categories", "4"])
     for gene_tree in self.ale_undated:
       printFlush("Run ALE Undated from  " + gene_tree )
       run_ALE.run_ALE(datadir, gene_tree, subst_model, cores, dated = False)
@@ -339,64 +289,29 @@ class SpeciesRunFilter():
           run_njrax.run_njrax(datadir, "Ustar", gene_tree, subst_model)
         except Exception as exc:
           printFlush("Failed running NJst with " + gene_tree + "\n" + str(exc))
-    if (self.asteroid):
-      printFlush("Run Asteroid")
-      for gene_tree in self.starting_gene_trees:
-        try:
-          #run_asteroid.run_asteroid(datadir, gene_tree, subst_model, cores)
-          run_asteroid.run_asteroid(datadir, gene_tree, subst_model, cores, ["-r", "1"])
-          #run_asteroid.run_asteroid(datadir, gene_tree, subst_model, cores, ["-n"])
-        except Exception as exc:
-          printFlush("Failed running Asteroid\n" + str(exc))
-    if (self.concasteroid):
-      printFlush("Run ConcAteroid")
-      try:
-        run_concasteroid.run_concasteroid(datadir, subst_model, self.is_dna, cores)
-      except Exception as exc:
-        printFlush("Failed running ConcAsteroid\n" + str(exc))
-    if (self.superfastme):
-      printFlush("Run SuperFastMe")
-      try:
-        run_superfastme.run_superfastme(datadir, "single", subst_model, self.is_dna, cores)
-      except Exception as exc:
-        printFlush("Failed running ConcAsteroid\n" + str(exc))
-    if (self.astrid):
-      printFlush("Run Astrid")
+    for gene_tree in self.asteroid:
+      printFlush("Run Asteroid " + gene_tree)
+      run_asteroid.run_asteroid(datadir, gene_tree, subst_model, cores, ["-r", "1"])
+    for gene_tree in self.astrid:
+      printFlush("Run Astrid " + gene_tree)
       for gene_tree in self.starting_gene_trees:
         try:
           run_astrid.run_astrid(datadir, gene_tree, subst_model, "fastme")
         except Exception as exc:
           printFlush("Failed running Astrid\n" + str(exc))
-    if (self.astrid_single):
+    for gene_tree in self.astrid_single:
       printFlush("Run Astrid")
       for gene_tree in self.starting_gene_trees:
-        try:
-          #run_astrid_single.run_astrid(datadir, gene_tree, subst_model, "default")
-          run_astrid_single.run_astrid(datadir, gene_tree, subst_model, "fastme")
-          #run_astrid_single.run_astrid(datadir, gene_tree, subst_model, "bionj")
-        except Exception as exc:
-          printFlush("Failed running Astrid\n" + str(exc))
-    if (self.astral_mp):
+        run_astrid_single.run_astrid(datadir, gene_tree, subst_model, "fastme")
+    for gene_tree in self.astral_mp:
       printFlush("Run Astral")
-      for gene_tree in self.starting_gene_trees:
-        try:
-          run_mp_astral.run_astral(datadir, gene_tree, subst_model)
-        except Exception as exc:
-          printFlush("Failed running Astral\n" + str(exc))
-    if (self.astral):
+      run_mp_astral.run_astral(datadir, gene_tree, subst_model)
+    for gene_tree in self.astral:
       printFlush("Run Astral")
-      for gene_tree in self.starting_gene_trees:
-        try:
-          run_astral.run_astral(datadir, gene_tree, subst_model)
-        except Exception as exc:
-          printFlush("Failed running Astral\n" + str(exc))
-    if (self.aster):
+      run_astral.run_astral(datadir, gene_tree, subst_model)
+    for gene_tree in self.aster:
       printFlush("Run Aster")
-      for gene_tree in self.starting_gene_trees:
-        try:
-          run_aster.run_aster(datadir, gene_tree, subst_model, cores)
-        except Exception as exc:
-          printFlush("Failed running Astral\n" + str(exc))
+      run_aster.run_aster(datadir, gene_tree, subst_model, cores)
     if (self.concatenation_min and subst_model != "true"):
       printFlush("Run concatenation-min")
       try:
@@ -409,124 +324,23 @@ class SpeciesRunFilter():
         run_concatenation.run_concatenation(datadir, "max", subst_model,cores)
       except Exception as exc:
         printFlush("Failed running concatenation-min\n" + str(exc))
-    for gene_tree in self.starting_gene_trees:
-      if (self.speciesrax):
-        printFlush("Run SpeciesRaxFast")
-        try:
-          dataset = os.path.basename(datadir)
-          #run_speciesrax.run_speciesrax_on_families(dataset, gene_tree, subst_model, cores, transfers = True, strategy = "HYBRID", rates_per_family = False)
-          run_speciesrax.run_speciesrax_on_families(dataset, gene_tree, subst_model, cores, transfers = True, strategy = "HYBRID", rates_per_family = True)
-        except Exception as exc:
-          printFlush("Failed running speciesrax\n" + str(exc))
-      if (self.speciesraxparsidl):
-        printFlush("Run SpeciesRaxParsi")
-        try:
-          dataset = os.path.basename(datadir)
-          run_speciesrax.run_speciesrax_instance(dataset, gene_tree, 2, "speciesrax-parsidl", subst_model, "HYBRID", cores)
-        except Exception as exc:
-          printFlush("Failed running speciesrax \n" + str(exc))
-      if (self.speciesraxnofam):
-        printFlush("Run SpeciesRaxNoFam")
-        try:
-          dataset = os.path.basename(datadir)
-          run_speciesrax.run_speciesrax_instance(dataset, gene_tree, True, "speciesrax-prune", subst_model, "HYBRID", cores, ["--prune-species-tree"])
-        except Exception as exc:
-          printFlush("Failed running speciesrax prune\n" + str(exc))
-      if (self.speciesraxprune):
-        printFlush("Run SpeciesRaxPrune")
-        try:
-          dataset = os.path.basename(datadir)
-          run_speciesrax.run_speciesrax_instance(dataset, gene_tree, True, "speciesrax-prune", subst_model, "HYBRID", cores, ["--prune-species-tree", "--per-family-rates"])
-        except Exception as exc:
-          printFlush("Failed running speciesrax prune\n" + str(exc))
-      print ("starting gene trees: " + str(self.starting_gene_trees))
-      if (self.minibme):
-        printFlush("Run MiniBME")
-        dataset = os.path.basename(datadir)
-        command = []
-        command.append(exp.python())
-        command.append("scripts/generax/launch_bme.py")
-        command.append(dataset)
-        command.append(subst_model)
-        command.append("MiniNJ")
-        command.append(gene_tree)
-        command.append("normald")
-        command.append("40")
-        print(command)
-        subprocess.check_call(command)
-      if (self.minibmepruned):
-        printFlush("Run MiniBME Pruned")
-        dataset = os.path.basename(datadir)
-        command = []
-        command.append(exp.python())
-        command.append("scripts/generax/launch_bme.py")
-        command.append(dataset)
-        command.append(subst_model)
-        command.append("MiniNJ")
-        command.append(gene_tree)
-        command.append("normald")
-        command.append("40")
-        command.append("--missing-data")
-        print(command)
-        subprocess.check_call(command)
-        command = []
-        command.append(exp.python())
-        command.append("scripts/generax/launch_bme.py")
-        command.append(dataset)
-        command.append(subst_model)
-        command.append("Cherry")
-        command.append(gene_tree)
-        command.append("normald")
-        command.append("40")
-        command.append("--missing-data")
-        print(command)
-        subprocess.check_call(command)
-      if (self.speciessplit):
-        printFlush("Run SpeciesSplit search")
-        dataset = os.path.basename(datadir)
-        command = []
-        command.append(exp.python())
-        command.append("scripts/generax/launch_split.py")
-        command.append(dataset)
-        command.append(subst_model)
-        command.append("MiniNJ")
-        command.append(gene_tree)
-        command.append("normald")
-        command.append("1")
-        print(command)
-        subprocess.check_call(command)
-      if (self.astralpro):
-        printFlush("Run Astral-pro")
-      #for gene_tree in self.starting_gene_trees:
-       # try:
-        run_astral_pro.run_astralpro(datadir, gene_tree, subst_model)
-        #except Exception as exc:
-        #printFlush("Failed running Astral-pro with " + gene_tree + "\n" + str(exc))
-      if (self.genetegratorbench):
-        printFlush("Run genetegrator bench")
-        dl_args = ["--rec-model", "UndatedDL"]
-        dataset = os.path.basename(datadir)
-        run_tegrator.run_genetegrator_bench(dataset, "MiniNJ", gene_tree, subst_model, cores)
-        run_tegrator.run_genetegrator_bench(dataset, "MiniNJ", gene_tree, subst_model, cores, ["--per-family-rates"])
-        #run_tegrator.run_genetegrator_bench(dataset, "MiniNJ", gene_tree, subst_model, cores, dl_args)
-      if (self.speciesraxbench):
-        printFlush("Run speciesRaxBench")
-        dataset = os.path.basename(datadir)
-        try:
-          no_opt_args = [] #"--dtl-rates-opt", "NONE"]
-          run_speciesrax.run_speciesrax_bench(dataset, "UndatedDTL", False, "MiniNJ", gene_tree, subst_model, cores, no_opt_args)
-          #run_speciesrax.run_speciesrax_bench(dataset, "UndatedDTL", False, "random", gene_tree, subst_model, cores, ["--seed", "1"] + no_opt_args)
-        except Exception as exc:
-          printFlush("Failed running speciesrax bench\n" + str(exc))
-
-      if(self.speciesraxperfamily):
-        printFlush("Run SpeciesRaxPerFamily")
-        try:
-          dataset = os.path.basename(datadir)
-          run_speciesrax.run_speciesrax_on_families(datadir, gene_tree, subst_model, cores, transfers = True, strategy = "HYBRID", rates_per_family = True)
-        except Exception as exc:
-          printFlush("Failed running speciesrax per family\n" + str(exc))
-
+    for gene_tree in self.speciesrax:
+      dataset = os.path.basename(datadir)
+      run_speciesrax.run_speciesrax_on_families(dataset, gene_tree, subst_model, cores, transfers = True, strategy = "HYBRID", rates_per_family = True)
+    for gene_tree in self.astralpro:
+      printFlush("Run Astral-pro")
+      run_astral_pro.run_astralpro(datadir, gene_tree, subst_model)
+    for gene_tree in self.astralpro2:
+      printFlush("Run Astral-pro 2")
+      run_aster.run_aster(datadir, gene_tree, subst_model, True, cores)
+    for gene_tree in self.genetegratorbench:
+      printFlush("Run genetegrator bench")
+      run_tegrator.run_genetegrator_bench(datadir, "MiniNJ", gene_tree, subst_model, cores)
+      #run_tegrator.run_genetegrator_bench(datadir, "MiniNJ", gene_tree, subst_model, cores, ["--rec-model", "UndatedDL"])
+    for gene_tree in self.speciesraxbench:
+      printFlush("Run speciesRaxBench")
+      dataset = os.path.basename(datadir)
+      run_speciesrax.run_speciesrax_bench(dataset, "UndatedDTL", False, "MiniNJ", gene_tree, subst_model, cores, [])
     if (self.duptree):
       printFlush("Run Duptree")
       for gene_tree in self.starting_gene_trees:
@@ -569,6 +383,7 @@ class SpeciesRunFilter():
         printFlush("Failed running analyze\n" + str(exc))
     if (self.cleanup):
       try:
+        print("REMOVE TREE " + fam.get_run_dir(datadir, subst_model))
         shutil.rmtree(fam.get_run_dir(datadir, subst_model))
       except Exception as exc:
         print("Failed to remove run directory: \n" + str(exc))

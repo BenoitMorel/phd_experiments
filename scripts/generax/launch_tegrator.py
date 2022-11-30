@@ -16,14 +16,6 @@ from ete3 import Tree
 
 
 
-def get_genetegrator_datasets():
-  root_datadir = os.path.join(exp.benoit_datasets_root, "families")
-  datasets = {}
-  for dataset in os.listdir(root_datadir):
-    datasets[dataset] = os.path.join(root_datadir, dataset)
-  return datasets
-
-datasets = get_genetegrator_datasets()
 
 
 def get_starting_gene_tree_path(datadir, subst_model, family, starting_gene_tree):
@@ -132,12 +124,13 @@ def analyze_species_results(datadir, resultsdir):
 def cleanup(resultsdir):
   reconciliations = os.path.join(resultsdir, "genetegrator", "reconciliations")
   try:
+    print("REMOVE CLEANUP " + reconciliations)
     shutil.rmtree(reconciliations)
   except:
     pass
 
 
-def run(dataset, subst_model, starting_species_tree, starting_gene_tree, cores, additional_arguments, resultsdir, do_analyze = False, do_extract = True):
+def run(datadir, subst_model, starting_species_tree, starting_gene_tree, cores, additional_arguments, resultsdir, do_analyze = False, do_extract = True):
   run_name = exp.getAndDelete("--run", additional_arguments, None) 
   
   if (run_name == None):
@@ -145,18 +138,25 @@ def run(dataset, subst_model, starting_species_tree, starting_gene_tree, cores, 
     rec_model = exp.getArg("--rec-model", additional_arguments, "UndatedDTL")
     if (starting_species_tree == "random"):
       run_name += exp.getArg("--seed", additional_arguments, "noseed")
-    if (rec_model != "UndatedDTL"):
-      run_name += rec_model
+    if (rec_model == "UndatedDL"):
+      run_name += "-dl"
     if ("--prune-species-tree" in additional_arguments):
       run_name += "-prune"
+    tc = exp.getArg("--transfer-constraint", additional_arguments, "PARENTS")
+    if (tc == "NONE"):
+      run_name += "-tcnone"
+    if (tc == "SOFTDATED"):
+      run_name += "-tcsoft"
+    origin = exp.getArg("--origination", additional_arguments, "UNIFORM")
+    run_name += "-or" + origin.lower()[:4]
+    gamma = exp.getArg("--gamma-categories", additional_arguments, "1")
+    if (gamma != "1"):
+      run_name += "_cat" + gamma
     if ("--per-family-rates" in additional_arguments):
       run_name += "-fam"
-    if (do_not_opt_rates(additional_arguments)):
-      run_name += "-fixed"
-    if ("--si-constrained-search" in additional_arguments):
-      run_name += "-constr"
-    if ("--unrooted-gene-tree" in additional_arguments):
-      run_name += "-unrooted"
+    trim_ratio = exp.getArg("--trim-ratio", additional_arguments, None)
+    if (trim_ratio != None):
+      run_name += "-trim" + trim_ratio
     run_name += "_" + starting_gene_tree
     run_name += "." + subst_model
    
@@ -166,10 +166,6 @@ def run(dataset, subst_model, starting_species_tree, starting_gene_tree, cores, 
   print("Run name " + run_name)
   sys.stdout.flush()
   mode = get_mode_from_additional_arguments(additional_arguments)
-  if (not dataset in datasets):
-    print("Error: " + dataset + " is not in " + str(datasets))
-    exit(1)
-  datadir = datasets[dataset]
   genetegrator_families_file = os.path.join(resultsdir, "families.txt")
   build_genetegrator_families_file(datadir, starting_gene_tree, subst_model, genetegrator_families_file)
   start = time.time()
@@ -189,11 +185,11 @@ def run(dataset, subst_model, starting_species_tree, starting_gene_tree, cores, 
   cleanup(resultsdir)
   print("Output in " + resultsdir)
 
-def launch(dataset, subst_model, starting_species_tree, starting_gene_tree, cluster, cores, additional_arguments):
+def launch(datadir, subst_model, starting_species_tree, starting_gene_tree, cluster, cores, additional_arguments):
   command = [exp.python()]
   command.extend(sys.argv)
   command.append("--exprun")
-  resultsdir = os.path.join("GeneRax", dataset, starting_species_tree + "_start_" + starting_gene_tree, "run")
+  resultsdir = os.path.join("GeneRax", datadir, starting_species_tree + "_start_" + starting_gene_tree, "run")
   resultsdir = exp.create_result_dir(resultsdir, additional_arguments)
   submit_path = os.path.join(resultsdir, "submit.sh")
   command.append(resultsdir)
@@ -209,15 +205,13 @@ if (__name__ == "__main__"):
     
   min_args_number = 7
   if (len(sys.argv) < min_args_number):
-    for dataset in datasets:
-      print("\t" + dataset)
-    print("Syntax error: python " + os.path.basename(__file__) + "  dataset gene_trees subst_model starting_species_tree cluster cores [additional paremeters].\n Suggestions of datasets: ")
+    print("Syntax error: python " + os.path.basename(__file__) + "  datadir species_tree gene_trees subst_model cluster cores [additional paremeters]")
     sys.exit(1)
 
-  dataset = os.path.basename(os.path.normpath(sys.argv[1]))
-  starting_gene_tree = sys.argv[2]
-  subst_model = sys.argv[3]
-  starting_species_tree = sys.argv[4]
+  datadir = os.path.normpath(sys.argv[1])
+  starting_species_tree = sys.argv[2]
+  starting_gene_tree = sys.argv[3]
+  subst_model = sys.argv[4]
   cluster = sys.argv[5]
   cores = int(sys.argv[6])
   additional_arguments = sys.argv[min_args_number:]
@@ -227,9 +221,9 @@ if (__name__ == "__main__"):
     exit(1)
 
   if (is_run):
-    run(dataset, subst_model, starting_species_tree, starting_gene_tree, cores, additional_arguments, resultsdir)
+    run(datadir, subst_model, starting_species_tree, starting_gene_tree, cores, additional_arguments, resultsdir)
   else:
-    launch(dataset, subst_model, starting_species_tree, starting_gene_tree, cluster, cores, additional_arguments)
+    launch(datadir, subst_model, starting_species_tree, starting_gene_tree, cluster, cores, additional_arguments)
 
 
 

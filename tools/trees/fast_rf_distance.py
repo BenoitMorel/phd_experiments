@@ -27,7 +27,6 @@ if (__name__ == "__main__"):
   tree1 = sys.argv[1]
   tree2 = sys.argv[2]
   
-  print(get_rf_pair(tree1, tree2))
 
 
   

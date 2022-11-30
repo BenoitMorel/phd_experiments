@@ -11,9 +11,9 @@ def run_genetegrator_bench(dataset, starting_species_tree, gene_trees, subst_mod
   command.append(exp.python())
   command.append(os.path.join(exp.scripts_root, "generax/launch_tegrator.py"))
   command.append(dataset)
-  command.append(subst_model)
   command.append(starting_species_tree)
   command.append(gene_trees)
+  command.append(subst_model)
   command.append("normald")
   command.append(str(cores))
   for arg in additional_args:

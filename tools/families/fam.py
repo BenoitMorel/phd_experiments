@@ -4,8 +4,11 @@ import subprocess
 import shutil
 sys.path.insert(0, 'scripts')
 sys.path.insert(0, 'tools/trees')
+sys.path.insert(0, 'tools/mappings')
 import experiments as exp
 import perturbate
+import phyldog_to_treerecs_map
+import treerecs_to_phyldog_map
 
 def mkdir(directory):
   try:
@@ -22,6 +25,9 @@ def get_datasets_family_path():
 
 def get_datadir(dataset):
   return os.path.abspath(os.path.join(exp.benoit_datasets_root, "families", dataset))
+
+def get_datadir_from_fast(dataset):
+  return os.path.abspath(os.path.join(exp.fast_github_root, "BenoitDatasets", "families", dataset))
 
 def get_first_dataset_starting_with(dataset):
   datadir = get_datadir(dataset)

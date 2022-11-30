@@ -35,6 +35,7 @@ def get_trees(runs):
 def write_rfdistance_input_files(datadir, families, trees, families_file, trees_file):
   with open(trees_file, "w") as writer:
     writer.write("\n".join(trees))
+  print("family file " + families_file)
   with open(families_file, "w") as writer:
     for family in families:
       writer.write(family + " " + fam.get_gene_tree_dir(datadir, family) + "\n")

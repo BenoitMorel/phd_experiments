@@ -18,14 +18,6 @@ def get_possible_strategies():
 
 
 
-def get_generax_datasets():
-  root_datadir = os.path.join(exp.benoit_datasets_root, "families")
-  datasets = {}
-  for dataset in os.listdir(root_datadir):
-    datasets[dataset] = os.path.join(root_datadir, dataset)
-  return datasets
-
-datasets = get_generax_datasets()
 
 
 def has_multiple_sample(starting_gene_tree):
@@ -207,10 +199,7 @@ def run(dataset, subst_model, starting_species_tree, starting_gene_tree, cores, 
   print("Run name " + run_name)
   sys.stdout.flush()
   mode = get_mode_from_additional_arguments(additional_arguments)
-  if (not dataset in datasets):
-    print("Error: " + dataset + " is not in " + str(datasets))
-    exit(1)
-  datadir = datasets[dataset]
+  datadir = fam.get_datadir(dataset)
   generax_families_file = os.path.join(resultsdir, "families.txt")
   build_generax_families_file(datadir, starting_gene_tree, subst_model, generax_families_file)
   start = time.time()
@@ -254,7 +243,7 @@ if (__name__ == "__main__"):
     
   min_args_number = 7
   if (len(sys.argv) < min_args_number):
-    print("Syntax error: python " + os.path.basename(__file__) + "  dataset gene_tree subst_model starting_species_tree cluster cores [additional paremeters].\n Suggestions of datasets: ")
+    print("Syntax error: python " + os.path.basename(__file__) + "  dataset gene_tree subst_model starting_species_tree cluster cores [additional paremeters]. ")
     sys.exit(1)
 
   dataset = sys.argv[1]

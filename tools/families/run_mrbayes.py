@@ -42,10 +42,17 @@ class MrbayesInstance():
     self.chains = chains
     self.generations = generations
     self.frequency = frequency
-    self.burnin = burnin
+    self.raxml = (burnin == "raxml")
+    if (burnin == "raxml"):
+      self.burnin = 0
+    else:
+      self.burnin = int(burnin)
+
+    
     basename = self.get_tag("mrbayes_run")
     self.output_dir = fam.get_run_dir(self.datadir, self.subst_model, basename)
     self.output_dir = os.path.abspath(self.output_dir)
+    print("init " + self.output_dir)
 
   def get_tag(self, prefix = "mrbayes"):
     tag = prefix
@@ -53,7 +60,10 @@ class MrbayesInstance():
     tag += "-c" + short_str(self.chains)
     tag += "-g" + short_str(self.generations)
     tag += "-f" + short_str(self.frequency)
-    tag += "-b" + short_str(self.burnin)
+    if (self.raxml):
+      tag += "-braxml"
+    else:
+      tag += "-b" + short_str(self.burnin)
     return tag
 
   @staticmethod
@@ -87,7 +97,7 @@ class MrbayesInstance():
   def get_treelist(self, family):
     return os.path.join(self.output_dir, "results", family, family + ".treelist")
 
-  def generate_config_file(self, output_config_file, nexus_alignment, subst_model, seed, output_prefix):
+  def generate_config_file(self, output_config_file, nexus_alignment, subst_model, treepath, seed, output_prefix):
     append = "no"
     ckp = output_prefix + r".ckp~"
     parsi_mode = False
@@ -107,12 +117,17 @@ class MrbayesInstance():
         writer.write("\tpropset ExtTBR(Tau,V)$prob=0;\n")
         writer.write("\tpropset ParsSPR1(Tau,V)$prob=12;\n")
         writer.write("\tpropset ParsTBR1(Tau,V)$prob=6;\n")
+      if (self.raxml):
+        treestr = open(treepath).read()
+        writer.write("begin trees;tree mytree = " + treestr + " end;\n")
+        writer.write("startvals tau=mytree;\n")
       writer.write("\tmcmc nruns=1" + " nchains=" + str(self.chains) + " ngen=" + str(self.generations) + " samplefreq=" + str(self.frequency) + " file=" + output_prefix + " append=" + append + ";\n")
       writer.write("end;")
 
   def remove_mrbayes_run(self):
     output_dir = os.path.abspath(self.output_dir)
-    shutil.rmtree(os.path.join(output_dir, "results"), True)
+    to_rm = os.path.join(output_dir, "results")
+    shutil.rmtree(to_rm, True)
 
 def get_mapping_dictionnary(mapping_file):
   res = {}
@@ -143,6 +158,7 @@ def generate_commands_file(instance, cores, prefix_species):
       exp.mkdir(mrbayes_family_dir)
       nexus_alignment = os.path.join(family_dir, "species_prefixed_alignment.nex")
       fasta_alignment = os.path.join(family_dir, "alignment.msa")
+      treepath = fam.get_raxml_tree(datadir, instance.subst_model, family)
       mapping_dictionnary = None
       if (prefix_species):
         mapping_dictionnary = get_mapping_dictionnary(fam.get_mappings(datadir, family))
@@ -151,7 +167,7 @@ def generate_commands_file(instance, cores, prefix_species):
         mrbayes_config = os.path.join(mrbayes_family_dir, "mrbayes_config_run" + str(run) + "." + instance.subst_model + ".nex")
         output_prefix = os.path.join(mrbayes_family_dir, family) + str(run)
         seed = run + 42
-        instance.generate_config_file(mrbayes_config, nexus_alignment, instance.subst_model, seed, output_prefix)
+        instance.generate_config_file(mrbayes_config, nexus_alignment, instance.subst_model, treepath, seed, output_prefix)
         command = []
         command.append(family + "__" + str(run))
         command.append("1")
@@ -220,6 +236,7 @@ def extract_mrbayes_results(instance):
 
 def run_mrbayes_on_families(instance, cores, do_continue = False, prefix_species = False):
   cwd = os.getcwd()
+  save_output_dir = instance.output_dir
   try:
     if (not do_continue):
       shutil.rmtree(instance.output_dir, True)
@@ -244,6 +261,7 @@ def run_mrbayes_on_families(instance, cores, do_continue = False, prefix_species
     extract_mrbayes_results(instance)
   finally:
     os.chdir(cwd)
+    instance.output_dir = save_output_dir
 
 if (__name__== "__main__"):
   if len(sys.argv) != 10:
@@ -257,7 +275,7 @@ if (__name__== "__main__"):
   chains = int(sys.argv[4])
   generations = int(sys.argv[5])
   frequency = int(sys.argv[6])
-  burnin = int(sys.argv[7])
+  burnin = sys.argv[7]
   cores = int(sys.argv[8])
   do_continue = int(sys.argv[9]) > 0
   instance = MrbayesInstance(datadir, subst_model, runs, chains, generations, frequency, burnin) 

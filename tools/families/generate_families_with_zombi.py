@@ -5,13 +5,15 @@ import shutil
 sys.path.insert(0, 'scripts')
 sys.path.insert(0, os.path.join("tools", "phyldog"))
 sys.path.insert(0, os.path.join("tools", "trees"))
+sys.path.insert(0, os.path.join("tools", "substmodels"))
 import experiments as exp
 import link_file_from_gene_tree as phyldog_link
 import fam
 from ete3 import Tree
 from ete3 import SeqGroup
 from read_tree import read_tree
-
+import model_sampler
+import random
 
 def is_ok_species_tree(output):
   species_tree = os.path.join(output, "T", "ExtantTree.nwk")
@@ -26,8 +28,8 @@ def generate_zombi_species(species, seed, output):
   parameters_dir = os.path.join(output, "parameters")
   species_parameters_file = os.path.join(output, "SpeciesTreeParameters.tsv")
   with open(species_parameters_file, "w") as writer:
-    writer.write("SPECIATION f:0.09\n")
-    writer.write("EXTINCTION f:0.085\n")
+    writer.write("SPECIATION f:0.05\n")
+    writer.write("EXTINCTION f:0.00\n")
     writer.write("STOPPING_RULE 1\n")
     writer.write("TOTAL_LINEAGES " + str(species) + "\n")
     writer.write("TOTAL_TIME 100\n")
@@ -35,9 +37,7 @@ def generate_zombi_species(species, seed, output):
     writer.write("MAX_LINEAGES 10000\n")
     writer.write("VERBOSE 1\n")
     writer.write("SCALE_TREE 1\n")
-    writer.write("TURNOVER F:0.0002\n")
     writer.write("SEED " + str(seed) + "\n")
-    writer.write("LINEAGE_PROFILE 100-100;300-15000;500-50\n")
   command = []
   command.append(exp.python3())
   command.append(exp.zombi_script)
@@ -53,6 +53,7 @@ def generate_zombi_species(species, seed, output):
   
 def get_random_var_str(mean):
   return "u:0;" + str(2.0 * mean)
+  #return "e:" + str(mean)
 
 def generate_zombi_genome(families, dup_rate, loss_rate, transfer_rate, seed, output):
   parameters_dir = os.path.join(output, "parameters")
@@ -77,7 +78,7 @@ def generate_zombi_genome(families, dup_rate, loss_rate, transfer_rate, seed, ou
     writer.write("MIN_GENOME_SIZE 5\n")
     writer.write("GENE_LENGTH f:100\n")
     writer.write("INTERGENE_LENGTH 100\n")
-    writer.write("PSEUDOGENIZATION 0.5\n")
+    writer.write("PSEUDOGENIZATION 0.0\n")
     writer.write("SEED " + str(seed) + "\n")
     writer.write("SCALE_TREE 1\n")
     writer.write("####OUTPUT\n")
@@ -107,23 +108,35 @@ def generate_zombi_sequence(sites, seed, output):
     writer.write("SCALING 0.005\n") 
     
     writer.write("SEQUENCE_SIZE " + str(sites) + "\n")
-    writer.write("SEQUENCE nucleotide\n")
-    for s1 in states:
-      for s2 in states:
-        if (s1 != s2):
-          writer.write(s1 +  s2 + " 1.0\n")
-    for s in states:
-      writer.write(s + " 0.25\n")
-    writer.write("CODON_MODEL MG\n")
-    writer.write("ALPHA 1.0\n")
-    writer.write("BETA 0.5\n")
-    writer.write("KAPPA 1.0\n")
+    is_dna = True
+    if (is_dna):
+      writer.write("SEQUENCE nucleotide\n")
+      tu = model_sampler.sample_from_grove("gtr", 100)
+      qmatrix, symrates, freqs = tu
+      for s1 in states:
+        for s2 in states:
+          if (s1 != s2):
+            writer.write(s1 +  s2 + " " + str(qmatrix[s1 + s2]) + "\n")
+      for s in states:
+        writer.write(s + " " + str(freqs[s]) + "\n")
+    else:
+      writer.write("SEQUENCE amino-acid\n")
+      writer.write("AA_MODEL LG\n")
+    writer.write("ST_RATE_MULTIPLIERS n:1.0;0.2\n")
+    writer.write("GF_RATE_MULTIPLIERS n:1.0;0.2\n")
     writer.write("VERBOSE 1\n")
     writer.write("SEED " + str(seed) + "\n") 
   command = []
   command.append(exp.python3())
-  command.append(exp.zombi_script)
+  command.append(exp.zombi_ratecusto_script)
   command.append("S")
+  command.append(sequence_parameters_file)
+  command.append(output)
+  subprocess.check_call(command)
+  command = []
+  command.append(exp.python3())
+  command.append(exp.zombi_script)
+  command.append("Su")
   command.append(sequence_parameters_file)
   command.append(output)
   subprocess.check_call(command)
@@ -251,7 +264,7 @@ def generate_datadir(tag, species, families, sites, model, bl_factor, dup_rate, 
   dirname += "_sites" + str(sites)
   dirname += "_" + model
   dirname += "_bl" + str(bl_factor)
-  dirname += "_d" + str(dup_rate) + "_l" + str(loss_rate) + "_t" + str(transfer_rate) + "_p0.0_pop1_mu1.0_theta0.0_seed" + str(seed)
+  dirname += "_d" + str(dup_rate) + "_l" + str(loss_rate) + "_t" + str(transfer_rate) + "_gc0.0_p0.0_pop10_ms0.0_mf0.0_seed" + str(seed)
   datadir = os.path.join(output, dirname)
   os.makedirs(datadir)
   with open(os.path.join(datadir, "zombi_script_params.txt"), "w") as writer:
@@ -266,6 +279,7 @@ def generate_zombi(tag, species, families, sites, model, bl_factor, dup_rate, lo
   zombi_output = os.path.join(datadir, "zombi")
   parameters_dir = os.path.join(zombi_output, "parameters")
   os.makedirs(parameters_dir)
+  random.seed(seed)
   species_seed = 0
   if (not is_ok_species_tree(zombi_output)):
     generate_zombi_species(species, species_seed, zombi_output) 
@@ -280,7 +294,7 @@ def generate_zombi(tag, species, families, sites, model, bl_factor, dup_rate, lo
 
 if (__name__ == "__main__"): 
   if (len(sys.argv) != 12):
-    print("Syntax: python3 generate_zombi.py tag species families sites model bl_factor dup_rate loss_rate transfer_rate seed output")
+    print("Syntax: python3 " + os.path.basename(__file__) + " tag species families sites model bl_factor dup_rate loss_rate transfer_rate seed output")
     sys.exit(1)
   tag = sys.argv[1]
   species = int(sys.argv[2])

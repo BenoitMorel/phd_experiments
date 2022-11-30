@@ -106,13 +106,20 @@ def extract_family(family, inputdir, outputdir, gene_method, subst_model, specie
         new_msa.set_seq(entry[0], entry[1])
     new_msa.write(outfile = fam.get_alignment(outputdir, family))
 
-def generate(inputdir, outputdir, gene_method, subst_model, species_to_prune):
+def generate(inputdir, outputdir, gene_method, subst_model, keep, species_to_prune):
   print("Species to prune: " + " ".join(species_to_prune))
   fam.init_top_directories(outputdir)   
   with open(os.path.join(fam.get_misc_dir(outputdir), "info.txt"), "w") as writer:
     writer.write("Extracted from " + os.path.basename(inputdir))
-    writer.write(" by removing the species:\n" + "\n".join(species_to_prune))
-  species_to_keep = get_species_to_keep(inputdir, species_to_prune)
+    if (keep):
+      writer.write(" by keeping the species:\n" + "\n".join(species_to_prune))
+    else:
+      writer.write(" by removing the species:\n" + "\n".join(species_to_prune))
+  species_to_keep = None
+  if (keep):
+    species_to_keep = species_to_prune
+  else:
+    species_to_keep = get_species_to_keep(inputdir, species_to_prune)
   print("Species to keep: " + " ".join(species_to_keep))
   extract_species_tree(inputdir, outputdir, species_to_keep)
   families = fam.get_families_list(inputdir)
@@ -125,15 +132,17 @@ def generate(inputdir, outputdir, gene_method, subst_model, species_to_prune):
   
 
 if (__name__ == "__main__"): 
-  if (len(sys.argv) < 5): 
-    print("Syntax: python " + os.path.basename(__file__) + " input output gene_method subst_model species1 [species2 species3 ...]")
+  if (len(sys.argv) < 6): 
+    print("Syntax: python " + os.path.basename(__file__) + " input output gene_method subst_model keep species1 [species2 species3 ...]")
+    print("Set keep to 0 for pruning the species, and to 1 for keeping the species")
     exit(1)
   inputdir = sys.argv[1]
   outputdir = sys.argv[2]
   gene_method = sys.argv[3]
   subst_model = sys.argv[4]
-  species_to_prune = sys.argv[5:]
-  generate(inputdir, outputdir, gene_method, subst_model, species_to_prune)
+  keep = int(sys.argv[5]) != 0
+  species_to_prune = sys.argv[6:]
+  generate(inputdir, outputdir, gene_method, subst_model, keep, species_to_prune)
 
 
 
