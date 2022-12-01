@@ -69,7 +69,7 @@ def build_generax_families_file(datadir, starting_tree, subst_model, output):
         writer.write("subst_model = " + sequence_model.get_raxml_model(subst_model) + "\n")
 
 def get_generax_command(generax_families_file, species_tree, strategy, additional_arguments, output_dir, mode, cores):
-    executable = exp.generaxclone_exec
+    executable = exp.generax_exec
     old = exp.checkAndDelete("--old", additional_arguments) 
     if (mode == "gprof"):
       executable = exp.generax_gprof_exec
@@ -151,7 +151,7 @@ def extract_events(datadir, results_family_dir, additional_arguments):
     event_counts = extract_event_number.extract(results_family_dir)
     events.update_event_counts(datadir, rec_model, radius, event_counts)
 
-def run(dataset, subst_model, strategy, species_tree, starting_tree, cores, additional_arguments, resultsdir, do_analyze = True, do_extract = True):
+def run(datadir, subst_model, strategy, species_tree, starting_tree, cores, additional_arguments, resultsdir, do_analyze = True, do_extract = True):
   run_name = exp.getAndDelete("--run", additional_arguments, None) 
   if (None == run_name):
       run_name = get_run_name(species_tree, starting_tree, subst_model, strategy, additional_arguments)
@@ -160,7 +160,6 @@ def run(dataset, subst_model, strategy, species_tree, starting_tree, cores, addi
   print("Run name " + run_name)
   sys.stdout.flush()
   mode = get_mode_from_additional_arguments(additional_arguments)
-  datadir = fam.get_datadir(dataset)
   generax_families_file = os.path.join(resultsdir, "families.txt")
   build_generax_families_file(datadir, starting_tree, subst_model, generax_families_file)
   start = time.time()
@@ -183,10 +182,11 @@ def run(dataset, subst_model, strategy, species_tree, starting_tree, cores, addi
   print("Output in " + resultsdir)
   return resultsdir
 
-def launch(dataset, subst_model, strategy, species_tree, starting_tree, cluster, cores, additional_arguments):
+def launch(datadir, subst_model, strategy, species_tree, starting_tree, cluster, cores, additional_arguments):
   command = ["python3"]
   command.extend(sys.argv)
   command.append("--exprun")
+  dataset = os.path.basename(datadir)
   resultsdir = os.path.join("GeneRax", dataset, strategy + "_" + species_tree +  "_start_" + starting_tree, "run")
   resultsdir = exp.create_result_dir(resultsdir, additional_arguments)
   submit_path = os.path.join(resultsdir, "submit.sh")
@@ -208,7 +208,7 @@ if (__name__ == "__main__"):
     print("Syntax error: python " + os.path.basename(__file__) + "  dataset species_tree gene_trees subst_model strategy cluster cores [additional paremeters].\n  ")
     sys.exit(1)
 
-  dataset = os.path.basename(os.path.normpath(sys.argv[1]))
+  datadir = os.path.normpath(sys.argv[1])
   species_tree = sys.argv[2]
   starting_tree = sys.argv[3]
   subst_model = sys.argv[4]
@@ -223,9 +223,9 @@ if (__name__ == "__main__"):
     exit(1)
 
   if (is_run):
-    run(dataset, subst_model, strategy, species_tree, starting_tree, cores, additional_arguments, resultsdir)
+    run(datadir, subst_model, strategy, species_tree, starting_tree, cores, additional_arguments, resultsdir)
   else:
-    launch(dataset, subst_model, strategy, species_tree, starting_tree, cluster, cores, additional_arguments)
+    launch(datadir, subst_model, strategy, species_tree, starting_tree, cluster, cores, additional_arguments)
 
 
 
