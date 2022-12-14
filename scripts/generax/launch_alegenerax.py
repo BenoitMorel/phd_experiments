@@ -50,7 +50,7 @@ def do_not_opt_rates(additional_arguments):
   return (additional_arguments[pos + 1] == "NONE")
 
 def export_gene_trees(datadir, output_dir, run_name):
-  reconciliations = os.path.join(output_dir, "alegenerax", "reconciliations")
+  reconciliations = os.path.join(output_dir, "alegenerax", "reconciliations", "all")
   for family in fam.get_families_list(datadir):
     source = os.path.join(reconciliations, family + ".newick")
     dest = fam.build_gene_tree_path_from_run(datadir, family, run_name)

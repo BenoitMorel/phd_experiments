@@ -10,6 +10,7 @@ def plot_line(xvalues, yvalues_list, title, xcaption, ycaption, output, line_cap
     fig, ax = plt.subplots()
     lines_number = len(yvalues_list)
     assert(line_captions == None or len(line_captions) == lines_number)
+    ax.tick_params(axis='both', which='major', labelsize=15)
     for i in range(0, lines_number):
         yvalues = yvalues_list[i]
         if (sort_y):
@@ -26,7 +27,7 @@ def plot_line(xvalues, yvalues_list, title, xcaption, ycaption, output, line_cap
     if (ycaption != None):
       plt.ylabel(ycaption, fontsize=fontsize)
     if (title != None):
-      plt.title(title)
+      plt.title(title, fontsize=fontsize)
     plt.legend()
     fig.tight_layout()
     if (output == "show"):

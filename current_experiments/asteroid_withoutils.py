@@ -87,8 +87,7 @@ def run_varying_experiment():
 def plot_varying_experiment():
   for entry in varying_params:
     print(entry)
-    datasets = simulations_common.get_dataset_list(fixed_point, entry[1], replicates, True)
-    datasets = [datasets]
+    datasets = simulations_common.get_dataset_list_list(fixed_point, entry[1], replicates, True)
     print("Plotting parameter " + entry[0])
     for metric in metric_names:
       param = entry[0]

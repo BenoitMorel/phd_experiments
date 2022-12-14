@@ -96,6 +96,8 @@ def plot_varying_params(datasets, param_name, metric, method_tuples, subst_model
   param_to_datasets = _get_param_to_datasets(datasets, param_name)
   methods = _get_methods(method_tuples)
   values = {}  
+  fig, ax = plt.subplots()
+  ax.tick_params(axis='both', which='major', labelsize=13)
   for xvalue,xdatasets in param_to_datasets:
     values[xvalue] = _get_average_methods_values(param_name, xdatasets, metric, methods, subst_model)
   df = _get_df(values, methods, param_name)
@@ -110,10 +112,11 @@ def plot_varying_params(datasets, param_name, metric, method_tuples, subst_model
     markersize = 12
     plt.plot(param_name, method, data=df, marker=method_marker, linewidth=2, label = method_alias, markersize=markersize, linestyle = linestyle, color = color)
   plt.legend()
+  fontsize=15
   if (xlabel != None):
-    plt.xlabel(xlabel)
+    plt.xlabel(xlabel, fontsize=fontsize)
   if (ylabel != None):
-    plt.ylabel(ylabel)
+    plt.ylabel(ylabel, fontsize=fontsize)
   plt.savefig(output)
   print("Saving result in " + output)
   plt.close()

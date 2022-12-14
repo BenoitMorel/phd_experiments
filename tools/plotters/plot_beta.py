@@ -9,6 +9,7 @@ import random
 def beta_reparametrized(mean, shape):
   alpha = mean * shape
   beta = (1 - mean) * shape
+  
   return random.betavariate(alpha, beta)
 
 def plot(mean, shape, points):
@@ -17,9 +18,10 @@ def plot(mean, shape, points):
   y = []
   for i in range(0, points):
     #x.append(species)
-    x.append(float(i) / float(points))
+    #x.append(float(i) / float(points))
+    x.append(float(i))
     y.append(beta_reparametrized(mean, shape))
-  title = "Beta"
+  title = None
   xcaption = None
   ycaption = None
   lines_captions = None

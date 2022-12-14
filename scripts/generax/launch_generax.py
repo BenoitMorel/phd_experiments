@@ -114,9 +114,10 @@ def get_mode_from_additional_arguments(additional_arguments):
 
 
 def extract_trees(datadir, results_family_dir, run_name, subst_model):
-  results_dir = os.path.join(results_family_dir, "results")
+  results_dir = os.path.join(results_family_dir, "reconciliations")
   for family in fam.get_families_list(datadir):
-    source = os.path.join(results_dir, family, "geneTree.newick")
+    #source = os.path.join(results_dir, family, "geneTree.newick")
+    source = os.path.join(results_dir, family + "_events.newick")
     dest = fam.build_gene_tree_path_from_run(datadir, family, run_name)
     try:
       shutil.copy(source, dest)
@@ -167,10 +168,10 @@ def run(datadir, subst_model, strategy, species_tree, starting_tree, cores, addi
   saved_metrics.save_metrics(datadir, run_name, (time.time() - start), "runtimes") 
   saved_metrics.save_metrics(datadir, run_name, (time.time() - start), "seqtimes") 
   radius = int(exp.getArg("--max-spr-radius", additional_arguments, "5"))
-  if (radius == 0):
-    print("Warning, not extracting trees when --max-spr-radius 0 is set")
-    do_extract = False
-    do_analyze = False
+  #if (radius == 0):
+  #  print("Warning, not extracting trees when --max-spr-radius 0 is set")
+  #  do_extract = False
+  #  do_analyze = False
   if (do_extract):
     extract_trees(datadir, os.path.join(resultsdir, "generax"), run_name, subst_model)
   try:
