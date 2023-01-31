@@ -84,7 +84,7 @@ def build_alegenerax_families_file(datadir, starting_gene_tree, subst_model, out
         writer.write("subst_model = " + sequence_model.get_raxml_model(subst_model) + "\n")
 
 def get_alegenerax_command(alegenerax_families_file, starting_species_tree, additional_arguments, output_dir, mode, cores):
-    executable = exp.genetegrator_exec
+    executable = exp.alegenerax_exec
     alegenerax_output = os.path.join(output_dir, "alegenerax")
     command = []
     command.append("mpirun")

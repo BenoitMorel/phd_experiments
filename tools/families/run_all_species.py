@@ -35,6 +35,8 @@ import run_njrax
 import run_concatenation
 import run_mrbayes
 import run_fasttree
+import run_ufboot
+import run_plausiblerax
 import run_dicotree
 import fast_rf_cells
 import shutil
@@ -82,6 +84,8 @@ class SpeciesRunFilter():
     self.pargenes = False
     self.bootstrap_trees = 0
     self.fasttree = False
+    self.ufboot = []
+    self.plausiblerax = False
     self.dicotree = False
     self.mrbayes = False
     self.generax_undated = False
@@ -177,6 +181,17 @@ class SpeciesRunFilter():
       sys.stdout.flush()
       assert(os.path.isdir((os.path.join(datadir, "runs", subst_model))))
       run_fasttree.run_fasttree_on_families(datadir, subst_model, cores)
+      sys.stdout.flush()
+    for samples in self.ufboot:
+      printFlush("Run UFBoot...")
+      sys.stdout.flush()
+      assert(os.path.isdir((os.path.join(datadir, "runs", subst_model))))
+      run_fasttree.run_ufboot(datadir, subst_model, samples, cores)
+      sys.stdout.flush()
+    if (self.plausiblerax and subst_model != "true"):
+      printFlush("Run PlausibleRax...")
+      sys.stdout.flush()
+      run_plausiblerax.run_plausiblerax_on_families(datadir, subst_model, cores)
       sys.stdout.flush()
     if (self.dicotree):
       printFlush("Run DiCoTree...")

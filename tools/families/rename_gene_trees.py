@@ -11,7 +11,7 @@ def rename(datadir, src, dest):
     p = fam.get_gene_tree_dir(datadir, family)
     s = os.path.join(p, src)
     d = os.path.join(p, dest)
-    os.rename(s, d)
+    shutil.copyfile(s, d)
 
 if (__name__ == "__main__"):
   if (len(sys.argv) != 4):

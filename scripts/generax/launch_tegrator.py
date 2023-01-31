@@ -56,7 +56,7 @@ def build_genetegrator_families_file(datadir, starting_gene_tree, subst_model, o
         writer.write("subst_model = " + sequence_model.get_raxml_model(subst_model) + "\n")
 
 def get_genetegrator_command(genetegrator_families_file, starting_species_tree, additional_arguments, output_dir, mode, cores):
-    executable = exp.genetegrator_exec
+    executable = exp.alegenerax_exec
     genetegrator_output = os.path.join(output_dir, "genetegrator")
     command = []
     command.append("mpirun")

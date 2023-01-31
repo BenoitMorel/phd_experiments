@@ -11,11 +11,10 @@ def run(datadir, gene_trees, subst_model, transfer_constraint, cores, additional
   strategy = "SPR"
   species_tree = "true"
   base = "alegenerax_" + transfer_constraint.lower() + "_" + gene_trees + "_run"
-  dataset = os.path.basename(os.path.normpath(datadir))
   resultsdir = fam.get_run_dir(datadir, subst_model, base)
   additional_arguments.append("--transfer-constraint")
   additional_arguments.append(transfer_constraint)
   exp.reset_dir(resultsdir)
-  launch_alegenerax.run(dataset, subst_model, species_tree, gene_trees, cores, additional_arguments, resultsdir)
+  launch_alegenerax.run(datadir, subst_model, species_tree, gene_trees, cores, additional_arguments, resultsdir)
 
 
