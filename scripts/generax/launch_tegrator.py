@@ -29,7 +29,7 @@ def do_not_opt_rates(additional_arguments):
   return (additional_arguments[pos + 1] == "NONE")
 
 
-def build_genetegrator_families_file(datadir, starting_gene_tree, subst_model, output):
+def build_genetegrator_families_file(datadir, starting_gene_tree, subst_model, with_likelihoods, output):
   families_dir = os.path.join(datadir, "families")
   with open(output, "w") as writer:
     writer.write("[FAMILIES]\n")
@@ -54,6 +54,9 @@ def build_genetegrator_families_file(datadir, starting_gene_tree, subst_model, o
         writer.write("subst_model = " + raxml_model + "\n")
       else:
         writer.write("subst_model = " + sequence_model.get_raxml_model(subst_model) + "\n")
+      if (with_likelihoods):
+        likelihoods = fam.build_likelihood_path(datadir, subst_model, family, starting_gene_tree)
+        writer.write("likelihoods = " + likelihoods + "\n")
 
 def get_genetegrator_command(genetegrator_families_file, starting_species_tree, additional_arguments, output_dir, mode, cores):
     executable = exp.alegenerax_exec
@@ -133,6 +136,7 @@ def cleanup(resultsdir):
 def run(datadir, subst_model, starting_species_tree, starting_gene_tree, cores, additional_arguments, resultsdir, do_analyze = False, do_extract = True):
   run_name = exp.getAndDelete("--run", additional_arguments, None) 
   
+  with_likelihoods = exp.checkAndDelete("--likelihoods", additional_arguments)
   if (run_name == None):
     run_name = "genetegrator-" + starting_species_tree
     rec_model = exp.getArg("--rec-model", additional_arguments, "UndatedDTL")
@@ -157,6 +161,8 @@ def run(datadir, subst_model, starting_species_tree, starting_gene_tree, cores, 
     trim_ratio = exp.getArg("--trim-ratio", additional_arguments, None)
     if (trim_ratio != None):
       run_name += "-trim" + trim_ratio
+    if (with_likelihoods):
+      run_name += "-like"
     run_name += "_" + starting_gene_tree
     run_name += "." + subst_model
    
@@ -167,7 +173,7 @@ def run(datadir, subst_model, starting_species_tree, starting_gene_tree, cores, 
   sys.stdout.flush()
   mode = get_mode_from_additional_arguments(additional_arguments)
   genetegrator_families_file = os.path.join(resultsdir, "families.txt")
-  build_genetegrator_families_file(datadir, starting_gene_tree, subst_model, genetegrator_families_file)
+  build_genetegrator_families_file(datadir, starting_gene_tree, subst_model, with_likelihoods, genetegrator_families_file)
   start = time.time()
   species_tree = fam.get_species_tree(datadir, subst_model, starting_species_tree)  
   run_genetegrator(datadir, species_tree, genetegrator_families_file, mode, cores, additional_arguments, resultsdir)

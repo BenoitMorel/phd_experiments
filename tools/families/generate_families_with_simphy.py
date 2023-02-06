@@ -16,18 +16,18 @@ import sample_missing_data
 
 class SimphyParameters():
   def __init__(self):
-    self.tag = "plausible"
+    self.tag = "dtl"
     self.prefix = "ssim"
     self.speciations_per_year = 0.000000005
     self.extinction_per_year = 0.0000000049
-    self.species_taxa = 30 
+    self.species_taxa = 20 
     self.families_number = 200
     self.bl = 1.0    
     self.loss_rate = 0.0
     self.dup_rate = 0.0
-    self.transfer_rate = 0.0
+    self.transfer_rate = 1.0
     self.gene_conversion_rate = 0.0
-    self.sites = 100
+    self.sites = 200
     self.model = "GTR"
     self.seed = 42
     self.distance_hgt = False

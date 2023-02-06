@@ -93,6 +93,7 @@ class SpeciesRunFilter():
     self.ale_undated = []
     self.ale_dated = []
     self.alegenerax_undated = []
+    self.alegenerax_undated_ll = []
     self.alegenerax_softdated = []
     self.alegenerax_softdated_gamma = []
     self.concatenation_min = False
@@ -218,6 +219,9 @@ class SpeciesRunFilter():
     for gene_tree in self.alegenerax_undated:
       printFlush("Run alegenerax Undated from  " + gene_tree )
       run_alegenerax.run(datadir, gene_tree, subst_model, "PARENTS", cores, [])
+    for gene_tree in self.alegenerax_undated_ll:
+      printFlush("Run alegenerax Undated from  " + gene_tree )
+      run_alegenerax.run(datadir, gene_tree, subst_model, "PARENTS", cores, ["--likelihoods"])
     for gene_tree in self.alegenerax_softdated:
       printFlush("Run alegenerax SoftDated from  " + gene_tree )
       run_alegenerax.run(datadir, gene_tree, subst_model, "SOFTDATED", cores, [])

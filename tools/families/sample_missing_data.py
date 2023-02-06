@@ -81,7 +81,7 @@ def sample_family_fam(input_datadir, output_datadir, family, species_sample_prob
 
 
 def get_species_sample_prob(input_datadir, mu, theta = 5.0):
-  species_tree = ete3.Tree(fam.get_species_tree(input_datadir))
+  species_tree = ete3.Tree(fam.get_species_tree(input_datadir), format = 1)
   species_sample_prob = {}
   for species in species_tree.get_leaf_names():
     v = beta_reparametrized(mu, theta)
@@ -101,7 +101,10 @@ def sample_missing_data(input_datadir, output_datadir, miss_species, miss_fam):
     sys.exit(1)
   fam.init_top_directories(output_datadir)
   families = fam.get_families_list(input_datadir)
-  cp(fam.get_discordance_file(input_datadir), fam.get_discordance_file(output_datadir))
+  try:
+    os.copy(fam.get_discordance_file(input_datadir), fam.get_discordance_file(output_datadir))
+  except:
+    pass
   species_sample_prob = get_species_sample_prob(input_datadir, miss_species)
   sampled_species = set()
   for family in families:
@@ -115,6 +118,7 @@ def sample_missing_data(input_datadir, output_datadir, miss_species, miss_fam):
 if (__name__ == "__main__"): 
   if (len(sys.argv) < 5): 
     print("Syntax: python " + os.path.basename(__file__) + " input_datadir output_datadir miss_species miss_fam")
+    sys.exit(1)
   input_datadir = sys.argv[1]
   output_datadir = sys.argv[2]
   miss_species = float(sys.argv[3])

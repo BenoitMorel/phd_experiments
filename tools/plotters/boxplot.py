@@ -12,25 +12,39 @@ import pandas as pd
 
 
 class BoxPlot:
-  def __init__(self, title = None, ylabel = None, order = None, max_y = -1.0):
-    self._dict = {}
+  def __init__(self, title = None, xlabel = None, ylabel = None, order = None, max_x = -1.0, max_y = -1.0):
     self._title = title
+    self._xlabel = xlabel
     self._ylabel = ylabel
     self._order = order
+    self._max_x = max_x
     self._max_y = max_y
-
+    self._df = None
+    self._plop = 0 
+  
   def add_elem(self, xlabel, values):
-    self._dict[xlabel] = values
-
-  def plot(self, output):
+    if (self._plop == 0):
+      self._df = pd.Series(values, name=xlabel).to_frame()
+    else:
+      self._df = self._df.join(pd.Series(values, name=xlabel))
+    self._plop += 1
+  
+  def plot(self, output, boxen = False):
     plt.clf()
-    df = pd.DataFrame(data = self._dict)
-    ax = sns.violinplot(data = df, order = self._order)
+    df = self._df
+    if (boxen):
+      ax = sns.boxenplot(data = df, order = self._order, orient = "h")
+    else:
+      ax = sns.violinplot(data = df, order = self._order)
+    if (self._max_x > 0.0):
+      ax.set_xlim(0, self._max_x)
     if (self._max_y > 0.0):
       ax.set_ylim(0, self._max_y)
     plt.xticks(rotation = 45) 
     if (self._title != None):
       ax.set_title(self._title)
+    if (self._xlabel != None):
+      ax.set_xlabel(self._xlabel)
     if (self._ylabel != None):
       ax.set_ylabel(self._ylabel)
     ax.get_figure().tight_layout()
@@ -95,13 +109,14 @@ if (__name__ == "__main__"):
   center = np.ones(s) * 50
   flier_high = np.random.rand(s) * 100 + 100
   flier_low = np.random.rand(s) * -100
+  print(spread)
   bp = BoxPlot(title = "Example", ylabel = "ylabel")
   bp.add_elem("spread", spread)
   bp.add_elem("center", center)
   bp.add_elem("flier_high", flier_high)
   bp.add_elem("flier_low", flier_low)
-  bp.plot("show")
-
+  #bp.plot("show")
+  bp.plot("plop.svg", True)
 
 
 

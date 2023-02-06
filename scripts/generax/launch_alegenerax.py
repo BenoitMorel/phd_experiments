@@ -57,7 +57,7 @@ def export_gene_trees(datadir, output_dir, run_name):
     shutil.copy(source, dest)
 
 
-def build_alegenerax_families_file(datadir, starting_gene_tree, subst_model, output):
+def build_alegenerax_families_file(datadir, starting_gene_tree, subst_model, with_likelihoods, output):
   families_dir = os.path.join(datadir, "families")
   with open(output, "w") as writer:
     writer.write("[FAMILIES]\n")
@@ -68,6 +68,9 @@ def build_alegenerax_families_file(datadir, starting_gene_tree, subst_model, out
       family_path = os.path.join(families_dir, family)
       writer.write("- " + family + "\n")
       gene_tree = get_starting_gene_tree_path(datadir, subst_model, family, starting_gene_tree)
+      if (with_likelihoods):
+        likelihoods = fam.build_likelihood_path(datadir, subst_model, family, starting_gene_tree)
+        writer.write("likelihoods = " + likelihoods + "\n")
       if (starting_gene_tree == "random"):
         gene_tree = "__random__"
       writer.write("starting_gene_tree = " + gene_tree + "\n")
@@ -122,6 +125,7 @@ def extract_species_tree(datadir, results_family_dir, run_name, subst_model):
 def run(datadir, subst_model, starting_species_tree, starting_gene_tree, cores, additional_arguments, resultsdir, do_analyze = True, do_extract = True):
   run_name = exp.getAndDelete("--run", additional_arguments, None) 
   
+  with_likelihoods = exp.checkAndDelete("--likelihoods", additional_arguments)
   if (run_name == None):
     run_name = "alegenerax" 
     tc = exp.getArg("--transfer-constraint", additional_arguments, "NONE")
@@ -135,6 +139,8 @@ def run(datadir, subst_model, starting_species_tree, starting_gene_tree, cores, 
     gamma = exp.getArg("--gamma-categories", additional_arguments, "1")
     if (gamma != "1"):
       run_name += "_cat" + gamma
+    if (with_likelihoods):
+      run_name += "-like"
     run_name += "_" + starting_gene_tree
     run_name += "." + subst_model
     
@@ -143,7 +149,7 @@ def run(datadir, subst_model, starting_species_tree, starting_gene_tree, cores, 
   print("Run name " + run_name)
   sys.stdout.flush()
   alegenerax_families_file = os.path.join(resultsdir, "families.txt")
-  build_alegenerax_families_file(datadir, starting_gene_tree, subst_model, alegenerax_families_file)
+  build_alegenerax_families_file(datadir, starting_gene_tree, subst_model, with_likelihoods, alegenerax_families_file)
   start = time.time()
   species_tree = fam.get_species_tree(datadir, subst_model, starting_species_tree) 
   mode = ""

@@ -154,6 +154,9 @@ def get_family_path(datadir, family):
 def get_gene_tree_dir(datadir, family):
   return os.path.join(get_family_path(datadir, family), "gene_trees")
 
+def get_likelihoods_dir(datadir, family):
+  return os.path.join(get_family_path(datadir, family), "likelihoods")
+
 def get_family_misc_dir(datadir, family):
   return os.path.join(get_family_path(datadir, family), "misc")
 
@@ -175,6 +178,9 @@ def build_gene_tree_path(datadir, subst_model, family, method):
     return os.path.join(get_gene_tree_dir(datadir, family), "true.true.geneTree.newick")
   else:
     return os.path.join(get_gene_tree_dir(datadir, family), method + "." + subst_model + ".geneTree.newick")
+
+def build_likelihood_path(datadir, subst_model, family, method):
+  return os.path.join(get_likelihoods_dir(datadir, family), method + "." + subst_model + ".geneTree.newick")
 
 def build_misc_file_path(datadir, subst_model, family, method):
   return os.path.join(get_family_misc_dir(datadir, family), method + "." + subst_model + ".txt")

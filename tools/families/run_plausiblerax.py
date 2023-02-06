@@ -11,17 +11,15 @@ import fam
 import sequence_model
 import ete3
 
-def generate_scheduler_commands_file(datadir, subst_model, cores, output_dir):
+def generate_scheduler_commands_file(datadir, subst_model, cores, output_dir, likelihoods):
   results_dir = os.path.join(output_dir, "results")
   scheduler_commands_file = os.path.join(output_dir, "commands.txt")
   with open(scheduler_commands_file, "w") as writer:
     for family in fam.get_families_list(datadir):
       family_dir = fam.get_family_path(datadir, family)
       plausiblerax_dir = fam.get_family_misc_dir(datadir, family)
-      try:
-        os.mkdir(plausiblerax_dir)
-      except:
-        pass
+      exp.mkdir(plausiblerax_dir)
+      exp.mkdir(fam.get_likelihoods_dir(datadir, family))
       plausiblerax_output = os.path.join(plausiblerax_dir, "plausiblerax_output." + subst_model + ".newick")
       command = []
       command.append(family)
@@ -34,14 +32,17 @@ def generate_scheduler_commands_file(datadir, subst_model, cores, output_dir):
       command.append(fam.get_alignment(datadir, family))
       command.append(subst_model)
       command.append(fam.build_gene_tree_path(datadir, subst_model, family, "plausiblerax"))
+      command.append(fam.build_likelihood_path(datadir, subst_model, family, "plausiblerax"))
+      if (likelihoods):
+        command.append("--likelihoods")
       writer.write(" ".join(command) + "\n")
   return scheduler_commands_file
      
-def run_plausiblerax_on_families(datadir, subst_model, cores):
+def run_plausiblerax_on_families(datadir, subst_model, cores, likelihoods = False):
   output_dir = fam.get_run_dir(datadir, subst_model, "plausiblerax_run")
   shutil.rmtree(output_dir, True)
   os.makedirs(output_dir)
-  scheduler_commands_file = generate_scheduler_commands_file(datadir, subst_model, cores, output_dir)
+  scheduler_commands_file = generate_scheduler_commands_file(datadir, subst_model, cores, output_dir, likelihoods)
   start = time.time()
   exp.run_with_scheduler(exp.plausiblerax_exec, scheduler_commands_file, "onecore", cores, output_dir, "logs.txt")   
   saved_metrics.save_metrics(datadir, fam.get_run_name("plausiblerax", subst_model), (time.time() - start), "runtimes") 
