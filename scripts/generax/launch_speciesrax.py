@@ -227,7 +227,7 @@ def launch(dataset, subst_model, starting_species_tree, starting_gene_tree, clus
   command = [exp.python()]
   command.extend(sys.argv)
   command.append("--exprun")
-  resultsdir = os.path.join("GeneRax", dataset, starting_species_tree + "_start_" + starting_gene_tree, "run")
+  resultsdir = os.path.join("SpeciesRax", dataset, starting_species_tree + "_start_" + starting_gene_tree, "run")
   resultsdir = exp.create_result_dir(resultsdir, additional_arguments)
   submit_path = os.path.join(resultsdir, "submit.sh")
   command.append(resultsdir)
@@ -243,13 +243,13 @@ if (__name__ == "__main__"):
     
   min_args_number = 7
   if (len(sys.argv) < min_args_number):
-    print("Syntax error: python " + os.path.basename(__file__) + "  dataset gene_tree subst_model starting_species_tree cluster cores [additional paremeters]. ")
+    print("Syntax error: python " + os.path.basename(__file__) + "  dataset  species_tree gene_tree subst_model cluster cores [additional paremeters]. ")
     sys.exit(1)
 
   dataset = sys.argv[1]
-  starting_gene_tree = sys.argv[2]
-  subst_model = sys.argv[3]
-  starting_species_tree = sys.argv[4]
+  starting_species_tree = sys.argv[2]
+  starting_gene_tree = sys.argv[3]
+  subst_model = sys.argv[4]
   cluster = sys.argv[5]
   cores = int(sys.argv[6])
   dataset = os.path.basename(os.path.normpath(dataset))

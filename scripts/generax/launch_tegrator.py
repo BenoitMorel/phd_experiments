@@ -29,7 +29,7 @@ def do_not_opt_rates(additional_arguments):
   return (additional_arguments[pos + 1] == "NONE")
 
 
-def build_genetegrator_families_file(datadir, starting_gene_tree, subst_model, with_likelihoods, output):
+def build_genetegrator_families_file(datadir, starting_gene_tree, subst_model, with_likelihoods, amalgamations, output):
   families_dir = os.path.join(datadir, "families")
   with open(output, "w") as writer:
     writer.write("[FAMILIES]\n")
@@ -40,6 +40,8 @@ def build_genetegrator_families_file(datadir, starting_gene_tree, subst_model, w
       family_path = os.path.join(families_dir, family)
       writer.write("- " + family + "\n")
       gene_tree = get_starting_gene_tree_path(datadir, subst_model, family, starting_gene_tree)
+      if (amalgamations):
+        gene_tree = fam.get_amalgamation(datadir, family, starting_gene_tree, subst_model)
       if (starting_gene_tree == "random"):
         gene_tree = "__random__"
       writer.write("starting_gene_tree = " + gene_tree + "\n")
@@ -47,13 +49,6 @@ def build_genetegrator_families_file(datadir, starting_gene_tree, subst_model, w
       mapping_file = fam.get_mappings(datadir, family)
       if (os.path.isfile(mapping_file)):
         writer.write("mapping = " + fam.get_mappings(datadir, family) + "\n")
-      raxml_model = ""
-      if (starting_gene_tree != "random" and starting_gene_tree != "true"):
-        raxml_model = fam.get_raxml_best_model(datadir, subst_model, family)
-      if (os.path.isfile(raxml_model)):
-        writer.write("subst_model = " + raxml_model + "\n")
-      else:
-        writer.write("subst_model = " + sequence_model.get_raxml_model(subst_model) + "\n")
       if (with_likelihoods):
         likelihoods = fam.build_likelihood_path(datadir, subst_model, family, starting_gene_tree)
         writer.write("likelihoods = " + likelihoods + "\n")
@@ -169,11 +164,12 @@ def run(datadir, subst_model, starting_species_tree, starting_gene_tree, cores, 
   print(run_name)
   arg_analyze = exp.getAndDelete("--analyze", additional_arguments, "yes")
   do_analyze = do_analyze and (arg_analyze == "no")
+  amalgamations = exp.checkAndDelete("--amalgamations", additional_arguments)
   print("Run name " + run_name)
   sys.stdout.flush()
   mode = get_mode_from_additional_arguments(additional_arguments)
   genetegrator_families_file = os.path.join(resultsdir, "families.txt")
-  build_genetegrator_families_file(datadir, starting_gene_tree, subst_model, with_likelihoods, genetegrator_families_file)
+  build_genetegrator_families_file(datadir, starting_gene_tree, subst_model, with_likelihoods, amalgamations, genetegrator_families_file)
   start = time.time()
   species_tree = fam.get_species_tree(datadir, subst_model, starting_species_tree)  
   run_genetegrator(datadir, species_tree, genetegrator_families_file, mode, cores, additional_arguments, resultsdir)
@@ -195,8 +191,10 @@ def launch(datadir, subst_model, starting_species_tree, starting_gene_tree, clus
   command = [exp.python()]
   command.extend(sys.argv)
   command.append("--exprun")
-  resultsdir = os.path.join("GeneRax", datadir, starting_species_tree + "_start_" + starting_gene_tree, "run")
+  dataset = os.path.basename(datadir)
+  resultsdir = os.path.join("GeneTegrator", dataset, starting_species_tree + "_start_" + starting_gene_tree, "run")
   resultsdir = exp.create_result_dir(resultsdir, additional_arguments)
+  print("resultsdir: " + resultsdir)
   submit_path = os.path.join(resultsdir, "submit.sh")
   command.append(resultsdir)
   exp.submit(submit_path, " ".join(command), cores, cluster) 

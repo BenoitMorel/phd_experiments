@@ -154,6 +154,9 @@ def get_family_path(datadir, family):
 def get_gene_tree_dir(datadir, family):
   return os.path.join(get_family_path(datadir, family), "gene_trees")
 
+def get_amalgamation_dir(datadir, family):
+  return os.path.join(get_family_path(datadir, family), "amalgamation")
+
 def get_likelihoods_dir(datadir, family):
   return os.path.join(get_family_path(datadir, family), "likelihoods")
 
@@ -178,6 +181,9 @@ def build_gene_tree_path(datadir, subst_model, family, method):
     return os.path.join(get_gene_tree_dir(datadir, family), "true.true.geneTree.newick")
   else:
     return os.path.join(get_gene_tree_dir(datadir, family), method + "." + subst_model + ".geneTree.newick")
+
+def get_amalgamation(datadir, family, method, subst_model):
+  return os.path.join(get_amalgamation_dir(datadir, family), method + "." + subst_model + ".ale")
 
 def build_likelihood_path(datadir, subst_model, family, method):
   return os.path.join(get_likelihoods_dir(datadir, family), method + "." + subst_model + ".geneTree.newick")
@@ -450,6 +456,7 @@ def init_family_directories(datadir, family):
   mkdir(get_family_misc_dir(datadir, family))
   mkdir(get_mappings_dir(datadir, family))
   mkdir(get_reconciliations_dir(datadir, family))
+  mkdir(get_amalgamation_dir(datadir, family))
 
 def init_families_directories(datadir, families):
   for family in families:

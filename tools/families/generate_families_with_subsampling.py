@@ -26,8 +26,12 @@ def get_families_list(input_datadir, sampling_ratio):
     output_families = random.sample(input_families, output_families_number)
     if (check_families_coverage(input_datadir, output_families)):
       return output_families
+  require_full_coverage = False
   print("Failed to find a sample of families covering all species")
-  sys.exit(1)
+  if (require_full_coverage):
+    sys.exit(1)
+  else:
+    return random.sample(input_families, output_families_number)
 
 
 

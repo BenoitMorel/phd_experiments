@@ -57,7 +57,7 @@ def export_gene_trees(datadir, output_dir, run_name):
     shutil.copy(source, dest)
 
 
-def build_alegenerax_families_file(datadir, starting_gene_tree, subst_model, with_likelihoods, output):
+def build_alegenerax_families_file(datadir, starting_gene_tree, subst_model, with_likelihoods, amalgamations, output):
   families_dir = os.path.join(datadir, "families")
   with open(output, "w") as writer:
     writer.write("[FAMILIES]\n")
@@ -68,6 +68,8 @@ def build_alegenerax_families_file(datadir, starting_gene_tree, subst_model, wit
       family_path = os.path.join(families_dir, family)
       writer.write("- " + family + "\n")
       gene_tree = get_starting_gene_tree_path(datadir, subst_model, family, starting_gene_tree)
+      if (amalgamations):
+        gene_tree = fam.get_amalgamation(datadir, family, starting_gene_tree, subst_model)
       if (with_likelihoods):
         likelihoods = fam.build_likelihood_path(datadir, subst_model, family, starting_gene_tree)
         writer.write("likelihoods = " + likelihoods + "\n")
@@ -146,10 +148,16 @@ def run(datadir, subst_model, starting_species_tree, starting_gene_tree, cores, 
     
   arg_analyze = exp.getAndDelete("--analyze", additional_arguments, "yes")
   do_analyze = do_analyze and (arg_analyze == "yes")
+  any_family = fam.get_families_list(datadir)[0]
+  if (not os.path.isfile(fam.get_true_tree(datadir, any_family))):
+    print("no ground truth gene tree, skipping gene tree analysis")
+    do_analyze = False
+
   print("Run name " + run_name)
+  amalgamations = exp.checkAndDelete("--amalgamations", additional_arguments)
   sys.stdout.flush()
   alegenerax_families_file = os.path.join(resultsdir, "families.txt")
-  build_alegenerax_families_file(datadir, starting_gene_tree, subst_model, with_likelihoods, alegenerax_families_file)
+  build_alegenerax_families_file(datadir, starting_gene_tree, subst_model, with_likelihoods, amalgamations, alegenerax_families_file)
   start = time.time()
   species_tree = fam.get_species_tree(datadir, subst_model, starting_species_tree) 
   mode = ""
@@ -170,7 +178,7 @@ def launch(datadir, subst_model, starting_species_tree, starting_gene_tree, clus
   command.extend(sys.argv)
   command.append("--exprun")
   dataset = os.path.basename(datadir)
-  resultsdir = os.path.join("GeneRax", dataset, starting_species_tree + "_start_" + starting_gene_tree, "run")
+  resultsdir = os.path.join("AleGeneRax", dataset, starting_species_tree + "_start_" + starting_gene_tree, "run")
   resultsdir = exp.create_result_dir(resultsdir, additional_arguments)
   submit_path = os.path.join(resultsdir, "submit.sh")
   command.append(resultsdir)

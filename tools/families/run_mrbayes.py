@@ -15,7 +15,7 @@ import msa_converter
 import rename_leaves
 import sequence_model
 import run_raxml_supportvalues as run_pargenes
-
+import read_tree
 
 def short_str(num):
   if (num >= 1000000):
@@ -42,17 +42,14 @@ class MrbayesInstance():
     self.chains = chains
     self.generations = generations
     self.frequency = frequency
-    self.raxml = (burnin == "raxml")
-    if (burnin == "raxml"):
+    self.burninmode = burnin
+    if (burnin == "raxml" or burnin == "fasttree"):
       self.burnin = 0
     else:
       self.burnin = int(burnin)
-
-    
     basename = self.get_tag("mrbayes_run")
     self.output_dir = fam.get_run_dir(self.datadir, self.subst_model, basename)
     self.output_dir = os.path.abspath(self.output_dir)
-    print("init " + self.output_dir)
 
   def get_tag(self, prefix = "mrbayes"):
     tag = prefix
@@ -60,8 +57,10 @@ class MrbayesInstance():
     tag += "-c" + short_str(self.chains)
     tag += "-g" + short_str(self.generations)
     tag += "-f" + short_str(self.frequency)
-    if (self.raxml):
+    if (self.burninmode == "raxml"):
       tag += "-braxml"
+    elif (self.burninmode == "fasttree"):
+      tag += "-bfasttree"
     else:
       tag += "-b" + short_str(self.burnin)
     return tag
@@ -117,8 +116,11 @@ class MrbayesInstance():
         writer.write("\tpropset ExtTBR(Tau,V)$prob=0;\n")
         writer.write("\tpropset ParsSPR1(Tau,V)$prob=12;\n")
         writer.write("\tpropset ParsTBR1(Tau,V)$prob=6;\n")
-      if (self.raxml):
-        treestr = open(treepath).read()
+      if (self.burninmode == "raxml" or self.burninmode == "fasttree"):
+        treestr = read_tree.read_tree(treepath).write(format = 5)
+        #treestr = open(treepath).read()
+        
+        #treestr = treestr.replace(":0.0;", ";")
         writer.write("begin trees;tree mytree = " + treestr + " end;\n")
         writer.write("startvals tau=mytree;\n")
       writer.write("\tmcmc nruns=1" + " nchains=" + str(self.chains) + " ngen=" + str(self.generations) + " samplefreq=" + str(self.frequency) + " file=" + output_prefix + " append=" + append + ";\n")
@@ -158,7 +160,11 @@ def generate_commands_file(instance, cores, prefix_species):
       exp.mkdir(mrbayes_family_dir)
       nexus_alignment = os.path.join(family_dir, "species_prefixed_alignment.nex")
       fasta_alignment = os.path.join(family_dir, "alignment.msa")
-      treepath = fam.get_raxml_tree(datadir, instance.subst_model, family)
+      treepath = ""
+      if (instance.burninmode == "raxml"):
+        treepath = os.path.abspath(fam.get_raxml_tree(datadir, instance.subst_model, family))
+      if (instance.burninmode == "fasttree"):
+        treepath = os.path.abspath(fam.get_fasttree_tree(datadir, instance.subst_model, family))
       mapping_dictionnary = None
       if (prefix_species):
         mapping_dictionnary = get_mapping_dictionnary(fam.get_mappings(datadir, family))
