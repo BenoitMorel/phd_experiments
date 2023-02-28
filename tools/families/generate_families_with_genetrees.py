@@ -13,8 +13,9 @@ from ete3 import Tree
 import re
 
 def  treat_gene_tree(gene_tree, datadir, family, authorized_species):
-  tree = Tree(gene_tree)
-  print(gene_tree)
+  line = open(gene_tree).readline()
+  tree = Tree(line)
+  print(family) 
   if (len(tree.get_leaf_names()) < 4):
     return
   fam.init_family_directories(datadir, family)
@@ -23,8 +24,9 @@ def  treat_gene_tree(gene_tree, datadir, family, authorized_species):
   shutil.copy(gene_tree, output_gene_tree)
   with open(output_mapping_file, "w") as writer:
     for gene in tree.get_leaf_names():
-      assert(gene in authorized_species)
-      writer.write(gene + ":" + gene + "\n")
+      #assert(gene in authorized_species)
+      species = gene.split("_")[0]
+      writer.write(species + ":" + gene + "\n")
   
 
 def generate(gene_trees_dir, species_tree_path, datadir):
