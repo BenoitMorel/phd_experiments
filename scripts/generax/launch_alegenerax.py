@@ -104,6 +104,8 @@ def get_alegenerax_command(alegenerax_families_file, starting_species_tree, addi
     command.append(alegenerax_output)
     command.append("--species-search")
     command.append("EVAL")
+    command.append("--min-covered-species")
+    command.append("1")
     command.append("--gene-tree-samples")
     command.append("1")
     command.extend(additional_arguments)
