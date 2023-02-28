@@ -162,7 +162,10 @@ def run(datadir, subst_model, starting_species_tree, starting_gene_tree, cores, 
   analyze_species_results(datadir, resultsdir)
   if (do_analyze):
     print("Analyzing gene trees...")
-    fast_rf_cells.analyze(datadir, "all", cores, run_name)
+    try:
+      fast_rf_cells.analyze(datadir, "all", cores, run_name)
+    except:
+      print("Failed to analyze the gene trees")
   print("Output in " + resultsdir)
 
 def launch(datadir, subst_model, starting_species_tree, starting_gene_tree, cluster, cores, additional_arguments):

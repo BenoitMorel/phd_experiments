@@ -12,6 +12,7 @@ def rename(datadir, src, dest):
     s = os.path.join(p, src)
     d = os.path.join(p, dest)
     shutil.copyfile(s, d)
+    #shutil.move(s, d)
 
 if (__name__ == "__main__"):
   if (len(sys.argv) != 4):

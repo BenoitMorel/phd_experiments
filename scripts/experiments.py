@@ -44,8 +44,8 @@ fast_github_root = "/hits/fast/cme/benoit/github"
 fast_dataset_archive = os.path.join(fast_github_root, "BenoitDatasets", "families")
 # externals
 github_root = os.path.join(root, "..")
-#benoit_datasets_root = os.path.join(fast_github_root, "BenoitDatasets")
-benoit_datasets_root = os.path.join(github_root, "BenoitDatasets")
+benoit_datasets_root = os.path.join(fast_github_root, "BenoitDatasets")
+#benoit_datasets_root = os.path.join(github_root, "BenoitDatasets")
 families_datasets_root  = os.path.join(benoit_datasets_root, "families")
 raw_datasets_root  = os.path.join(benoit_datasets_root, "raw_data")
 dna4_model_samples  = os.path.join(benoit_datasets_root, "DNA_models_sample")
