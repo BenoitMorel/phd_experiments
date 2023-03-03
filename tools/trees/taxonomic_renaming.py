@@ -9,7 +9,7 @@ def get_dict(species_tree_path, dictionary_path):
   for leaf in tree.get_leaves():
     d[leaf.name] = leaf.name
   if (dictionary_path == None):
-    return
+    return d
   for line in open(dictionary_path).readlines():
     sp = line.replace("\n", "").split(":")
     d[sp[0]] = sp[1]
