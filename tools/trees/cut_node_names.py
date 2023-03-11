@@ -36,13 +36,20 @@ def remove_prefix_from_trees(input_trees, output_trees, separator = "_"):
       leaf.name = separator.join(leaf.name.split(separator)[1:])
   save_trees(trees, output_trees)
 
+def keep_last_elem(input_tree, output_tree, separator):
+  tree = read_tree(input_tree)
+  for leaf in tree.get_leaves():
+    leaf.name = leaf.name.split(separator)[-1]
+  tree.write(outfile = output_tree, format = 1)
 
-#if (__name__ == "__main__"):
-#  if (len(sys.argv) != 3):
-#    print("Syntax: input_tree output_tree")
-#    exit(1)
-#  cut_node_names(sys.argv[1], sys.argv[2])
-
+if (__name__ == "__main__"):
+  if (len(sys.argv) != 3):
+    print("Syntax: input_tree output_tree")
+    exit(1)
+  input_tree = sys.argv[1]
+  output_tree = sys.argv[2]
+  separator = "|"
+  keep_last_elem(input_tree, output_tree, separator)
 
 
 

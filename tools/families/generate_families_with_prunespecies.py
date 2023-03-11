@@ -10,7 +10,7 @@ import fam
 from ete3 import Tree
 from ete3 import SeqGroup
 import get_dico
-
+from read_tree import read_tree
 
 
 def get_species_to_keep(inputdir, species_to_prune):
@@ -72,13 +72,13 @@ def get_pruned_tree(input_tree, output_tree, to_keep):
 def extract_species_tree(inputdir, outputdir, species_to_keep):
   input_tree = fam.get_species_tree(inputdir)
   output_tree = fam.get_species_tree(outputdir)
-  tree = Tree(input_tree)
+  tree = read_tree(input_tree)
   tree = prune(tree, species_to_keep)
   tree.write(outfile = fam.get_species_tree(outputdir))
 
 def extract_family(family, inputdir, outputdir, gene_method, subst_model, species_to_keep):
   print(family)
-  tree = Tree(fam.get_true_tree(inputdir, family), format = 1)
+  #tree = Tree(fam.get_true_tree(inputdir, family), format = 1)
   species_to_genes = get_dico.get_species_to_genes_family(inputdir, family)
   new_species_to_genes = {}
   genes_to_keep = set()
@@ -107,7 +107,7 @@ def extract_family(family, inputdir, outputdir, gene_method, subst_model, specie
     new_msa.write(outfile = fam.get_alignment(outputdir, family))
 
 def generate(inputdir, outputdir, gene_method, subst_model, keep, species_to_prune):
-  print("Species to prune: " + " ".join(species_to_prune))
+  print("Species to keep/prune: " + " ".join(species_to_prune))
   fam.init_top_directories(outputdir)   
   with open(os.path.join(fam.get_misc_dir(outputdir), "info.txt"), "w") as writer:
     writer.write("Extracted from " + os.path.basename(inputdir))
@@ -129,11 +129,10 @@ def generate(inputdir, outputdir, gene_method, subst_model, keep, species_to_pru
   print("Result datadir in " + outputdir)
   print("Species to keep: " + " ".join(species_to_keep))
 
-  
 
 if (__name__ == "__main__"): 
   if (len(sys.argv) < 6): 
-    print("Syntax: python " + os.path.basename(__file__) + " input output gene_method subst_model keep species1 [species2 species3 ...]")
+    print("Syntax: python " + os.path.basename(__file__) + " input output gene_method subst_model keep  use_species_tree species1 [species2 species3 ...]")
     print("Set keep to 0 for pruning the species, and to 1 for keeping the species")
     exit(1)
   inputdir = sys.argv[1]
@@ -141,7 +140,11 @@ if (__name__ == "__main__"):
   gene_method = sys.argv[3]
   subst_model = sys.argv[4]
   keep = int(sys.argv[5]) != 0
-  species_to_prune = sys.argv[6:]
+  use_species_tree = int(sys.argv[6]) != 0
+  species_to_prune = sys.argv[7:]
+  if (use_species_tree):
+    species_tree = sys.argv[7]
+    species_to_prune = read_tree(species_tree).get_leaf_names()
   generate(inputdir, outputdir, gene_method, subst_model, keep, species_to_prune)
 
 

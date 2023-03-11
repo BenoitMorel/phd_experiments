@@ -25,7 +25,8 @@ def  treat_gene_tree(gene_tree, datadir, family, authorized_species):
   with open(output_mapping_file, "w") as writer:
     for gene in tree.get_leaf_names():
       #assert(gene in authorized_species)
-      species = gene.split("_")[0]
+      #species = gene.split("_")[0]
+      species = gene
       writer.write(species + ":" + gene + "\n")
   
 

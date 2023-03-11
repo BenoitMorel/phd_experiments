@@ -153,7 +153,10 @@ def run(datadir, subst_model, starting_species_tree, starting_gene_tree, cores, 
       run_name += "_cat" + gamma
     if ("--per-family-rates" in additional_arguments):
       run_name += "-fam"
+    if ("--fix-rates" in additional_arguments):
+      run_name += "-fix"
     trim_ratio = exp.getArg("--trim-ratio", additional_arguments, None)
+
     if (trim_ratio != None):
       run_name += "-trim" + trim_ratio
     if (with_likelihoods):

@@ -11,11 +11,11 @@ def tree_diff(tree_file_1, tree_file_2):
   only2 = leaves2 - leaves1
   print("")
   print("Leaves that are in first tree only:")
-  print("-" + "\n-".join(sorted(list(only1))))
+  print(" ".join(sorted(list(only1))))
   print("")
   print("")
   print("Leaves that are in second tree only:")
-  print("-""\n-".join(sorted(list(only2))))
+  print(" ".join(sorted(list(only2))))
   print("")
 
 if (__name__ == "__main__"):

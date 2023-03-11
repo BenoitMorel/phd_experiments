@@ -65,12 +65,14 @@ def rename(input_tree, output_tree, dict_path):
   tree.write(format = 1, outfile = output_tree)
 
 if (__name__ == "__main__"):
-  if (len(sys.argv) < 3):
+  if (len(sys.argv) < 2):
     print("Syntax python " + os.path.basename(__file__)  + "input_tree output_tree (dict)")
     sys.exit(1)
   input_tree = sys.argv[1]
-  output_tree = sys.argv[2]
-  dict_path = None
+  output_tree = input_tree
+  if (len(sys.argv) > 2):
+    output_tree = sys.argv[2]
+  dict_path = os.path.join(os.path.dirname(input_tree), os.pardir, "misc", "species_dict.txt")
   if (len(sys.argv) > 3):
     dict_path = sys.argv[3]
   rename(input_tree, output_tree, dict_path)
