@@ -191,9 +191,10 @@ def duplicate_families_symlink(input_datadir, output_datadir, family):
       exp.relative_symlink(os.path.join(input_gene_trees_dir, f), os.path.join(output_gene_trees_dir, f))
   input_amalgamation_dir = fam.get_amalgamation_dir(input_datadir, family)
   output_amalgamation_dir = fam.get_amalgamation_dir(output_datadir, family)
-  for f in os.listdir(input_amalgamation_dir):
-    if (f.startswith("true") or f.startswith("raxml") or "mrbayes" in f):
-      exp.relative_symlink(os.path.join(input_amalgamation_dir, f), os.path.join(output_amalgamation_dir, f))
-  
+  if (os.path.isdir(input_amalgamation_dir)):
+    for f in os.listdir(input_amalgamation_dir):
+      if (f.startswith("true") or f.startswith("raxml") or "mrbayes" in f):
+        exp.relative_symlink(os.path.join(input_amalgamation_dir, f), os.path.join(output_amalgamation_dir, f))
+    
 
 

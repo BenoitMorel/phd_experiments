@@ -124,6 +124,9 @@ def get_discordance_rate(datadir):
 def get_missing_data_file(datadir):
   return os.path.join(datadir, "missing_data.txt")
 
+def get_fraction_missing_file(datadir):
+  return os.path.join(get_misc_dir(datadir), "fraction_missing.txt")
+
 def get_species_coverage(datadir):
   return os.path.join(datadir, "metrics", "species_coverage.txt")
 

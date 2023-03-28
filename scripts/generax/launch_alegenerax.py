@@ -133,6 +133,7 @@ def run(datadir, subst_model, starting_species_tree, starting_gene_tree, cores, 
   run_name = exp.getAndDelete("--run", additional_arguments, None) 
   
   with_likelihoods = exp.checkAndDelete("--likelihoods", additional_arguments)
+  fraction_missing = exp.checkAndDelete("--fraction-missing", additional_arguments)
   if (run_name == None):
     run_name = "alegenerax" 
     tc = exp.getArg("--transfer-constraint", additional_arguments, "NONE")
@@ -148,6 +149,10 @@ def run(datadir, subst_model, starting_species_tree, starting_gene_tree, cores, 
       run_name += "_cat" + gamma
     if (with_likelihoods):
       run_name += "-like"
+    if (fraction_missing):
+      run_name += "_fracmiss"
+    if ("--no-dl" in additional_arguments):
+      run_name += "_notl"
     run_name += "_" + starting_gene_tree
     run_name += "." + subst_model
     
@@ -157,7 +162,9 @@ def run(datadir, subst_model, starting_species_tree, starting_gene_tree, cores, 
   if (not os.path.isfile(fam.get_true_tree(datadir, any_family))):
     print("no ground truth gene tree, skipping gene tree analysis")
     do_analyze = False
-
+  if (fraction_missing):
+    additional_arguments.append("--fraction-missing")
+    additional_arguments.append(fam.get_fraction_missing_file(datadir))
   print("Run name " + run_name)
   amalgamations = exp.checkAndDelete("--amalgamations", additional_arguments)
   sys.stdout.flush()
