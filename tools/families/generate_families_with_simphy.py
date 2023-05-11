@@ -19,7 +19,7 @@ class SimphyParameters():
     self.tag = "dtl"
     self.prefix = "ssim"
     self.speciations_per_year = 0.000000005
-    self.extinction_per_year = 0.0000000049
+    self.extinctions_per_year = 0.00000000
     self.species_taxa = 20 
     self.families_number = 200
     self.bl = 1.0    
@@ -34,6 +34,7 @@ class SimphyParameters():
     self.population = 10
     self.miss_species = 0.0
     self.miss_fam = 0.0
+    self.subst_heterogeneity = True
 
 def build_config_file(parameters, output_dir):
   config_file = os.path.join(output_dir, "simphy_config.txt")
@@ -43,14 +44,17 @@ def build_config_file(parameters, output_dir):
     writer.write("-RS 1 // number of replicates\n")
     # speciation rates (speciation per yer)
     writer.write("-sb f:" + str(parameters.speciations_per_year) + "\n")
-    writer.write("-sd f:" + str(parameters.extinction_per_year) + "\n")
+    writer.write("-sd f:" + str(parameters.extinctions_per_year) + "\n")
     # number of species taxa 
     writer.write("-sl f:" + str(parameters.species_taxa) + "\n")
     # species tree height in years (I don't understand this)
     writer.write("-st ln:21.25,0.2\n")
     # substitution rate
     #writer.write("-su ln:-21.9," + str(0.1 * parameters.bl) + "\n")
-    writer.write("-su ln:-21.9,0.1\n")
+    if (parameters.subst_heterogeneity):
+      writer.write("-su ln:-21.9,0.1\n")
+    else:
+      writer.write("-su f:0.0000000001\n")
     # L, D, T global rates 
     lognormal_scale = 1.0
     lognormal_location = 0.0 #math.log(1.0 - 0.5 * pow(lognormal_scale, 2.0))
@@ -88,10 +92,12 @@ def build_config_file(parameters, output_dir):
     writer.write("-rl f:" + str(parameters.families_number) + " // locus (gene family) per replicate\n")
 
     writer.write("// Subsitution rates heterogeneity parameters\n")
-    writer.write("-hs ln:1.5,1\n")
-    writer.write("-hl ln:1.551533,0.6931472\n")
-    writer.write("-hg ln:1.5,1\n")
-
+    if (parameters.subst_heterogeneity):
+      writer.write("-hs ln:1.5,1\n")
+      writer.write("-hl ln:1.551533,0.6931472\n")
+      writer.write("-hg ln:1.5,1\n")
+    else:
+      pass
 
     writer.write("// GENERAL\n")
     writer.write("-cs " + str(parameters.seed) + "\n") 

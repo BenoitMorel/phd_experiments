@@ -3,10 +3,13 @@ import os
 from ete3 import Tree
 
 def read_tree(tree):
-  lines = open(tree).readlines()
-  for line in lines:
-    if (not line.startswith(">")):
-      return Tree(line, format=1)
+  with open(tree) as reader:
+    while (True):
+      line = reader.readline()
+      if (not line):
+        return None
+      if (not line.startswith(">")):
+        return Tree(line, format=1)
   return None
 
 

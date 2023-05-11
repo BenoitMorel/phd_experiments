@@ -41,7 +41,7 @@ def translate(gene_tree_path, dictionary_path):
   species_tree_path = fam.get_species_tree(datadir) 
   gene_to_species = get_dico.get_gene_to_species(datadir, family)
   existing_names = set()
-  species_dict = get_species_dict(datadir, gene_tree_path, dictionary_path)
+  species_dict = get_species_dict(datadir, species_tree_path, dictionary_path)
   for leaf in tree.get_leaves():
     species = gene_to_species[leaf.name]
     trans_species = species_dict[species]

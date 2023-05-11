@@ -102,7 +102,7 @@ def get_alegenerax_command(alegenerax_families_file, starting_species_tree, addi
     command.append(starting_species_tree)
     command.append("-p")
     command.append(alegenerax_output)
-    command.append("--species-search")
+    command.append("--species-tree-search")
     command.append("EVAL")
     command.append("--min-covered-species")
     if ("--prune-species-tree" in additional_arguments):
@@ -139,8 +139,8 @@ def run(datadir, subst_model, starting_species_tree, starting_gene_tree, cores, 
     tc = exp.getArg("--transfer-constraint", additional_arguments, "NONE")
     if (tc == "NONE"):
       run_name += "-tcnone"
-    if (tc == "SOFTDATED"):
-      run_name += "-tcsoft"
+    if (tc == "SRELDATED"):
+      run_name += "-tcrel"
     rec_model = exp.getArg("--rec-model", additional_arguments, "UndatedDTL")
     if (rec_model != "UndatedDTL"):
       run_name += rec_model

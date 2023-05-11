@@ -144,8 +144,8 @@ def run(datadir, subst_model, starting_species_tree, starting_gene_tree, cores, 
     tc = exp.getArg("--transfer-constraint", additional_arguments, "PARENTS")
     if (tc == "NONE"):
       run_name += "-tcnone"
-    if (tc == "SOFTDATED"):
-      run_name += "-tcsoft"
+    if (tc == "RELDATED"):
+      run_name += "-tcrel"
     origin = exp.getArg("--origination", additional_arguments, "UNIFORM")
     run_name += "-or" + origin.lower()[:4]
     gamma = exp.getArg("--gamma-categories", additional_arguments, "1")

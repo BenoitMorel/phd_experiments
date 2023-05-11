@@ -21,7 +21,7 @@ def generate_replicate(input_datadir, sampling_ratio, replicate):
   leaves = ete3.Tree(species_tree).get_leaf_names()
   number_to_remove = int(float(len(leaves)) * (1.0 - sampling_ratio))
   leaves_to_remove = random.sample(leaves, number_to_remove)
-  generate_families_with_prunespecies.generate(input_datadir, output_datadir, "true", "true", leaves_to_remove)
+  generate_families_with_prunespecies.generate(input_datadir, output_datadir, "true", "true", False, leaves_to_remove)
   print("Result datadir in " + output_datadir)
 
 

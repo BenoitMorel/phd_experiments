@@ -89,6 +89,8 @@ def run_raxml(subst_model, cores, run_dir, supermatrix_path, partition_path):
   command.append("--seed")
   command.append("40")
   command.append("--force")
+  command.append("--threads")
+  command.append("1")
   FNULL = open(os.devnull, 'w')
   print("running " + " ".join(command))
   process = subprocess.Popen(command, stdout=subprocess.PIPE, stdin=subprocess.PIPE)

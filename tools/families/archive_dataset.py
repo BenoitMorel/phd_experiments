@@ -46,7 +46,7 @@ def archive(datadir):
     print("  [ERROR] " + datadir + " is not an archivable directory")
     sys.exit(1)
   output = compress(datadir)
-  backup(output)
+  #backup(output)
   clean(datadir)
 
 

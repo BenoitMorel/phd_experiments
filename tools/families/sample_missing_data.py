@@ -39,7 +39,10 @@ def copy_mappings(input_datadir, output_datadir, family, output_gene_set):
 
 def copy_gene_tree(input_datadir, output_datadir, family, output_gene_set):
   old_gene_tree = fam.get_true_tree(input_datadir, family)
+  if (not os.path.isfile(old_gene_tree)):
+    return
   new_gene_tree = fam.get_true_tree(output_datadir, family)
+  
   tree = ete3.Tree(old_gene_tree, format=1)
   tree.prune(output_gene_set, preserve_branch_length = True)
   open(new_gene_tree, "w").write(tree.write())
@@ -95,7 +98,6 @@ def export_sample_probs(output_datadir, species_sample_prob):
       writer.write(k + " " + str(v) + "\n")
       
 def sample_missing_data(input_datadir, output_datadir, miss_species, miss_fam):
-  random.seed = 42
   if (os.path.exists(output_datadir)):
     print("PATH " + output_datadir + " already exists!!!")
     sys.exit(1)
@@ -116,13 +118,18 @@ def sample_missing_data(input_datadir, output_datadir, miss_species, miss_fam):
   fam.postprocess_datadir(output_datadir)
 
 if (__name__ == "__main__"): 
-  if (len(sys.argv) < 5): 
+  if (len(sys.argv) < 6): 
     print("Syntax: python " + os.path.basename(__file__) + " input_datadir output_datadir miss_species miss_fam")
     sys.exit(1)
   input_datadir = sys.argv[1]
   output_datadir = sys.argv[2]
   miss_species = float(sys.argv[3])
   miss_fam = float(sys.argv[4])
+  random.seed(42)
+  if (len(sys.argv) >= 6):
+    seed = int(sys.argv[5])
+    print("Seed " + str(seed))
+    random.seed(seed)
   sample_missing_data(input_datadir, output_datadir, miss_species, miss_fam)
 
 

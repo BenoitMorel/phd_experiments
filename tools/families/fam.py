@@ -185,6 +185,9 @@ def build_gene_tree_path(datadir, subst_model, family, method):
   else:
     return os.path.join(get_gene_tree_dir(datadir, family), method + "." + subst_model + ".geneTree.newick")
 
+def get_gene_tree_path(datadir, family, method, subst_model):
+  return build_gene_tree_path(datadir, subst_model, family, method)
+
 def get_amalgamation(datadir, family, method, subst_model):
   return os.path.join(get_amalgamation_dir(datadir, family), method + "." + subst_model + ".ale")
 

@@ -19,7 +19,10 @@ def run_pargenes(datadir, pargenes_dir, subst_model, rand_trees, parsi_trees, bs
     raxml_command +="--model " + sequence_model.get_raxml_model(subst_model) + " --blopt nr_safe"
   command = []
   command.append(exp.python())
-  command.append(exp.pargenes_script)
+  if (cores > 4):
+    command.append(exp.pargenes_script)
+  else:
+    command.append(exp.pargenes_script_laptop)
   command.append("-a")
   command.append(os.path.join(datadir, "alignments"))
   command.append("-b")
@@ -70,6 +73,10 @@ def gather_likelihoods(pargenes_dir, output_file):
 
 def export_pargenes_trees(pargenes_dir, subst_model, starting_trees, bs_trees, datadir):
   families_dir = os.path.join(datadir, "families")
+  
+  ok_family = {}
+  for family in os.listdir(families_dir):
+    ok_family[family] = False
   # tca scores
   concatenated_dir = os.path.join(pargenes_dir, "concatenated_bootstraps")
   fixed_subst_model = subst_model.replace(".", "")
@@ -101,6 +108,7 @@ def export_pargenes_trees(pargenes_dir, subst_model, starting_trees, bs_trees, d
       print(old_raxml_tree)
       print(new_raxml_tree)
       shutil.copyfile(old_raxml_tree, new_raxml_tree)
+      ok_family[family] = True
 
   # ml trees
   ml_trees_dir = os.path.join(pargenes_dir, "mlsearch_run", "results")
@@ -115,6 +123,7 @@ def export_pargenes_trees(pargenes_dir, subst_model, starting_trees, bs_trees, d
     new_raxml_tree = fam.get_raxml_tree(datadir, fixed_subst_model, family, starting = starting_trees)
     if (bs_trees == 0):
       shutil.copyfile(ml_tree_file, new_raxml_tree)
+      ok_family[family] = True
     try:
       shutil.copyfile(trees_file, new_raxml_trees)
     except:
@@ -132,7 +141,7 @@ def export_pargenes_trees(pargenes_dir, subst_model, starting_trees, bs_trees, d
   except:
     pass
   for family in os.listdir(families_dir):
-    if (not os.path.isfile(fam.get_raxml_tree(datadir, fixed_subst_model, family, starting_trees)) and not os.path.isfile(fam.get_raxml_light_tree(datadir, fixed_subst_model, family))): 
+    if (not ok_family[family]):
       print("Cleaning family " + family)
       shutil.move(os.path.join(families_dir, family), garbage_dir)
 

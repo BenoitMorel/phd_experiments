@@ -20,6 +20,18 @@ def subsample(input_msa, output_msa, msa_format, ratio):
     seqs.set_seq(seq[0], new_seq)
   seqs.write(msa_format, output_msa)
 
+
+"""
+  Remove all sequences that are not in to_keep
+"""
+def prune_sequences(input_msa, output_msa, msa_format, to_keep):
+  seqs = ete3.SeqGroup(open(input_msa).read(), format=msa_format)
+  new_msa = ete3.SeqGroup()
+  for entry in seqs.get_entries():
+    if (entry[0] in to_keep):
+      new_msa.set_seq(entry[0], entry[1])
+  new_msa.write(msa_format, output_msa)
+
 if (__name__ == "__main__"):
   if (len(sys.argv) != 5):
     print("Syntax: python msa_subsampler input_msa output_msa format ratio")
