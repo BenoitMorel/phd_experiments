@@ -67,6 +67,10 @@ def get_genetegrator_command(genetegrator_families_file, starting_species_tree, 
     command.append(starting_species_tree)
     command.append("-p")
     command.append(genetegrator_output)
+    command.append("--gene-tree-samples")
+    command.append("0")
+    command.append("--species-tree-search")
+    command.append("HYBRID")
     command.extend(additional_arguments)
     return " ".join(command)
 

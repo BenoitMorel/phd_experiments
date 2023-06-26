@@ -127,9 +127,12 @@ def extract_trees(datadir, results_family_dir, run_name, subst_model):
 def get_run_name(species_tree, gene_trees, subst_model, strategy, additional_arguments):
     rec_model = exp.getArg("--rec-model", additional_arguments, "UndatedDTL") 
     radius = exp.getArg("--max-spr-radius", additional_arguments, "5") 
+    mad = "--mad-rooting" in additional_arguments
     per_fam_rates = "--per-family-rates" in additional_arguments
     per_species_rates = "--per-species-rates" in additional_arguments
     run_name = "generax-" + strategy + "-" + rec_model + "-r" + radius
+    if (mad):
+      run_name += "-mad"
     if (per_fam_rates):
         run_name += "-famrates"
     if (per_species_rates):
@@ -157,7 +160,7 @@ def run(datadir, subst_model, strategy, species_tree, starting_tree, cores, addi
   if (None == run_name):
       run_name = get_run_name(species_tree, starting_tree, subst_model, strategy, additional_arguments)
   arg_analyze = exp.getAndDelete("--analyze", additional_arguments, "yes")
-  do_analyze = do_analyze and (arg_analyze == "yes") and (strategy != "EVAL")
+  #do_analyze = do_analyze and (arg_analyze == "yes") and (strategy != "EVAL")
   print("Run name " + run_name)
   sys.stdout.flush()
   mode = get_mode_from_additional_arguments(additional_arguments)
@@ -177,6 +180,7 @@ def run(datadir, subst_model, strategy, species_tree, starting_tree, cores, addi
   try:
     if (do_analyze):
       fast_rf_cells.analyze(datadir, "all", cores, run_name)
+      rf_cells.analyze(datadir, "all", True) 
   except:
     print("Analyze failed!!!!")
   extract_events(datadir, os.path.join(resultsdir, "generax"), additional_arguments)

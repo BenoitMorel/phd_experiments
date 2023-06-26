@@ -44,7 +44,8 @@ fast_github_root = "/hits/fast/cme/benoit/github"
 fast_dataset_archive = os.path.join(fast_github_root, "BenoitDatasets", "families")
 # externals
 github_root = os.path.join(root, "..")
-benoit_datasets_root = os.path.join(fast_github_root, "BenoitDatasets")
+#benoit_datasets_root = os.path.join(fast_github_root, "BenoitDatasets")
+benoit_datasets_root = os.path.join(github_root, "BenoitDatasets")
 families_datasets_root  = os.path.join(benoit_datasets_root, "families")
 benoit_datasets_root_no_fast = os.path.join(github_root, "BenoitDatasets")
 families_datasets_root_no_fast  = os.path.join(benoit_datasets_root_no_fast, "families")

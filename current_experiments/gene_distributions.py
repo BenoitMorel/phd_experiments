@@ -19,7 +19,7 @@ subst_model = "GTR+G"
 gene_trees = ["mrbayes-r2-c2-g1M-f1K-b100"]
 #gene_trees = ["bootstrap100", "bootstrap1000"]
 launch_mode = "normald"
-replicates = range(3000, 3100)
+replicates = range(3000, 3010)
 varying_params = []
 
 varying_params.append((None, ["none"]))
@@ -29,12 +29,12 @@ varying_params.append((None, ["none"]))
 #varying_params.append(("families", ["f50", "f200", "f500", "f1000"]))
 #varying_params.append(("population", ["pop10000000", "pop100000000", "pop1000000000"]))
 
-tag = "dlsim"
-fixed_point = "ssim_" + tag + "_s25_f100_sites100_GTR_bl1.0_d1.0_l1.0_t0.0_p0.0_pop10_mu1.0_theta0.0_seed3000"
+tag = "dtlsim"
+fixed_point = "ssim_" + tag + "_s25_f50_sites100_GTR_bl1.0_d1.0_l1.0_t1.0_gc0.0_p0.0_pop10_ms0.0_mf0.0_seed3000"
 #tag = "dtlsim"
 #fixed_point = "ssim_" + tag + "_s25_f100_sites100_GTR_bl1.0_d1.0_l1.0_t1.0_p0.0_pop10_mu1.0_theta0.0_seed3000"
 
-generate_gene_trees = False
+generate_gene_trees = True
 generate_species_trees = True
 
 # run run_filter on all datasets in dataset
@@ -59,8 +59,8 @@ def run_varying_experiment():
   run_filter.mb_burnin = 100
   run_filter.rm_mrbayes = True
   run_filter.disable_all()
-  run_filter.bootstrap = [100]
-  run_filter.raxml_multi = [100]
+  run_filter.generate = True
+  run_filter.pargene = True
   #run_filter.parsimony = [100, 500]
   #run_filter.bootstrap = [100]
   species_run_filter = SpeciesRunFilter()

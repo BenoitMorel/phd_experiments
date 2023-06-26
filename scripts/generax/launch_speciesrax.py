@@ -166,7 +166,7 @@ def do_not_opt_rates(additional_arguments):
   pos = additional_arguments.index(arg)
   return (additional_arguments[pos + 1] == "NONE")
 
-def run(dataset, subst_model, starting_species_tree, starting_gene_tree, cores, additional_arguments, resultsdir, do_analyze = True, do_extract = True):
+def run(datadir, subst_model, starting_species_tree, starting_gene_tree, cores, additional_arguments, resultsdir, do_analyze = True, do_extract = True):
   run_name = exp.getAndDelete("--run", additional_arguments, None) 
   if (run_name == None):
     run_name = "generax-" + starting_species_tree
@@ -199,7 +199,6 @@ def run(dataset, subst_model, starting_species_tree, starting_gene_tree, cores, 
   print("Run name " + run_name)
   sys.stdout.flush()
   mode = get_mode_from_additional_arguments(additional_arguments)
-  datadir = fam.get_datadir(dataset)
   generax_families_file = os.path.join(resultsdir, "families.txt")
   build_generax_families_file(datadir, starting_gene_tree, subst_model, generax_families_file)
   start = time.time()
@@ -223,7 +222,8 @@ def run(dataset, subst_model, starting_species_tree, starting_gene_tree, cores, 
   #cleanup(resultsdir)
   print("Output in " + resultsdir)
 
-def launch(dataset, subst_model, starting_species_tree, starting_gene_tree, cluster, cores, additional_arguments):
+def launch(datadir, subst_model, starting_species_tree, starting_gene_tree, cluster, cores, additional_arguments):
+  dataset = os.path.basename(datadir)
   command = [exp.python()]
   command.extend(sys.argv)
   command.append("--exprun")
@@ -246,13 +246,12 @@ if (__name__ == "__main__"):
     print("Syntax error: python " + os.path.basename(__file__) + "  dataset  species_tree gene_tree subst_model cluster cores [additional paremeters]. ")
     sys.exit(1)
 
-  dataset = sys.argv[1]
+  datadir = os.path.normpath(sys.argv[1])
   starting_species_tree = sys.argv[2]
   starting_gene_tree = sys.argv[3]
   subst_model = sys.argv[4]
   cluster = sys.argv[5]
   cores = int(sys.argv[6])
-  dataset = os.path.basename(os.path.normpath(dataset))
   additional_arguments = sys.argv[min_args_number:]
 
   if (starting_gene_tree == "raxml"):
@@ -260,9 +259,9 @@ if (__name__ == "__main__"):
     exit(1)
 
   if (is_run):
-    run(dataset, subst_model, starting_species_tree, starting_gene_tree, cores, additional_arguments, resultsdir)
+    run(datadir, subst_model, starting_species_tree, starting_gene_tree, cores, additional_arguments, resultsdir)
   else:
-    launch(dataset, subst_model, starting_species_tree, starting_gene_tree, cluster, cores, additional_arguments)
+    launch(datadir, subst_model, starting_species_tree, starting_gene_tree, cluster, cores, additional_arguments)
 
 
 
