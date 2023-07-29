@@ -50,7 +50,8 @@ class MrbayesInstance():
     basename = self.get_tag("mrbayes_run")
     self.output_dir = fam.get_run_dir(self.datadir, self.subst_model, basename)
     self.output_dir = os.path.abspath(self.output_dir)
-
+    self.output_dir = "/data/morelbt/github/BenoitDatasets/families/cyano_simulated/runs/LG+G+I/mrbayes_run/"
+    
   def get_tag(self, prefix = "mrbayes"):
     tag = prefix
     tag += "-r" + short_str(self.runs)
@@ -227,9 +228,9 @@ def extract_mrbayes_family(futures_params):
           split = line.split(" ")
           left = split[-2]
           right = split[-1][:-2]
-          if (remove_refix):
+          if (remove_prefix):
             sp = right.split("_")
-            right = "_".join(sp[0:-1])
+            right = "_".join(sp[1:])
           translator[left] = right
 
 def extract_mrbayes_results(instance):
@@ -249,7 +250,7 @@ def run_mrbayes_on_families(instance, cores, do_continue = False, prefix_species
   save_output_dir = instance.output_dir
   try:
     if (not do_continue):
-      shutil.rmtree(instance.output_dir, True)
+      pass
     try:
       exp.mkdir(instance.output_dir)
     except:
@@ -259,15 +260,15 @@ def run_mrbayes_on_families(instance, cores, do_continue = False, prefix_species
     instance.output_dir = os.path.relpath(instance.output_dir)
     instance.datadir = os.path.relpath(instance.datadir)
     instance.save_parameters()
-    commands = generate_commands_file(instance, cores, prefix_species)
-    start = time.time()
-    exp.run_with_scheduler(exp.mrbayes_exec, commands, "onecore", cores, instance.output_dir, "logs.txt")   
-    tag = instance.get_tag()
-    saved_metrics.save_metrics(instance.datadir, fam.get_run_name(tag, instance.subst_model), (time.time() - start), "runtimes") 
-    lb = fam.get_lb_from_run(instance.output_dir)
-    saved_metrics.save_metrics(instance.datadir, fam.get_run_name(tag, instance.subst_model), (time.time() - start) * lb, "seqtimes") 
-    print("Finished running mrbayes after " + str(time.time() - start) + "s")
-    sys.stdout.flush()
+    #commands = generate_commands_file(instance, cores, prefix_species)
+    #start = time.time()
+    #exp.run_with_scheduler(exp.mrbayes_exec, commands, "onecore", cores, instance.output_dir, "logs.txt")   
+    #tag = instance.get_tag()
+    #saved_metrics.save_metrics(instance.datadir, fam.get_run_name(tag, instance.subst_model), (time.time() - start), "runtimes") 
+    #lb = fam.get_lb_from_run(instance.output_dir)
+    #saved_metrics.save_metrics(instance.datadir, fam.get_run_name(tag, instance.subst_model), (time.time() - start) * lb, "seqtimes") 
+    #print("Finished running mrbayes after " + str(time.time() - start) + "s")
+    #sys.stdout.flush()
     extract_mrbayes_results(instance)
   finally:
     os.chdir(cwd)

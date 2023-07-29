@@ -38,17 +38,22 @@ def extract_trees(datadir, output_dir, subst_model, samples):
   for family in fam.get_families_list(datadir):
     src = os.path.join(results_dir, family + ".ufboot")
     dest = fam.build_gene_tree_path(datadir, subst_model, family, "ufboot" + str(samples))
-    shutil.copyfile(src, dest)
+    try: 
+      shutil.copyfile(src, dest)
+    except:
+      print("No ufboot trees for family " + family)
 
 def run_ufboot_on_families(datadir, subst_model, samples, cores):
   run_name = "ufboot" + str(samples)
   output_dir = fam.get_run_dir(datadir, subst_model, run_name + "_run")
-  shutil.rmtree(output_dir, True)
-  os.makedirs(output_dir)
-  scheduler_commands_file = generate_scheduler_commands_file(datadir, subst_model, samples, cores, output_dir)
-  start = time.time()
-  exp.run_with_scheduler(exp.iqtree_exec, scheduler_commands_file, "onecore", cores, output_dir, "logs.txt")   
-  saved_metrics.save_metrics(datadir, fam.get_run_name("run_nae", subst_model), (time.time() - start), "runtimes") 
+  run = False
+  if (run):
+    shutil.rmtree(output_dir, True)
+    os.makedirs(output_dir)
+    scheduler_commands_file = generate_scheduler_commands_file(datadir, subst_model, samples, cores, output_dir)
+    start = time.time()
+    exp.run_with_scheduler(exp.iqtree_exec, scheduler_commands_file, "onecore", cores, output_dir, "logs.txt")   
+    saved_metrics.save_metrics(datadir, fam.get_run_name("run_nae", subst_model), (time.time() - start), "runtimes") 
   extract_trees(datadir, output_dir, subst_model, samples)
 
 if (__name__== "__main__"):

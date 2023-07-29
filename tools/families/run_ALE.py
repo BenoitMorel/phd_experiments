@@ -16,7 +16,7 @@ import re
 import  run_mrbayes
 
 # ALE
-ALE_SAMPLES = 1
+ALE_SAMPLES = 100
 
 
 def get_run_name(gene_trees, with_transfers, dated):
@@ -59,7 +59,7 @@ def generate_ALE_observe_commands_file(datadir, gene_trees, subst_model, cores, 
       writer.write(" ".join(command) + "\n")
   return scheduler_commands_file
 
-def generate_ALE_ml_commands_file(datadir, subst_model, with_transfers, cores, observe_output_dir, output_dir):
+def generate_ALE_ml_commands_file(datadir, subst_model, with_transfers, cores, observe_output_dir, output_dir, additional_arguments):
   obs_results_dir = os.path.join(observe_output_dir, "results")
   results_dir = os.path.join(output_dir, "results")
   scheduler_commands_file = os.path.join(output_dir, "commands.txt")
@@ -81,6 +81,7 @@ def generate_ALE_ml_commands_file(datadir, subst_model, with_transfers, cores, o
       if (not with_transfers):
         command.append("tau=0.0")
       command.append("separator=_")
+      command.extend(additional_arguments)
       writer.write(" ".join(command) + "\n")
   return scheduler_commands_file
 
@@ -89,19 +90,23 @@ def force_move(src, dest_dir):
   shutil.move(src, os.path.join(dest_dir, src))
 
 def extract_trees_from_ale_output(ale_output, output_trees):
-  lines = open(ale_output).readlines()
-  position = 0
-  while True:
-    if ("reconciled G-s:" in lines[position]):
-      break
-    position += 1
-  position += 2
-  with open(output_trees, "w") as writer:
-    for i in range(position, position + ALE_SAMPLES):
-      # get rid of weird reconciliation format
-      new_lines = re.sub("\.T.[^:]*", "", lines[i])
-      new_lines = re.sub("\.[0-9\.]*:", ":", new_lines)
-      writer.write(new_lines)
+  try:
+    lines = open(ale_output).readlines()
+    position = 0
+    while True:
+      if ("reconciled G-s:" in lines[position]):
+        break
+      position += 1
+    position += 2
+    with open(output_trees, "w") as writer:
+      for i in range(position, position + ALE_SAMPLES):
+        # get rid of weird reconciliation format
+        new_lines = re.sub("\.T.[^:]*", "", lines[i])
+        new_lines = re.sub("\.[0-9\.]*:", ":", new_lines)
+        writer.write(new_lines)
+  except:
+    print("WARNING: can't extract ale tree " + ale_output + " to " + output_trees)
+
 
 def extract_ALE_results(datadir, gene_trees, subst_model, ALE_run_dir, with_transfers, families_dir, dated):
   run_name = get_run_name(gene_trees, with_transfers, dated)
@@ -137,7 +142,7 @@ def extract_ALE_results(datadir, gene_trees, subst_model, ALE_run_dir, with_tran
     #force_move(prefix + ".ucons_tree", family_misc_dir)
     #force_move(prefix + "." + mlstring + "_rec", family_misc_dir)
 
-def run_ALE_on_families(datadir, gene_trees, subst_model, with_transfers, cores, dated = False):
+def run_ALE_on_families(datadir, gene_trees, subst_model, with_transfers, cores, dated = False, additional_arguments = []):
   cwd = os.getcwd()
   #try:
   run_name = get_run_name(gene_trees, with_transfers, dated)
@@ -149,7 +154,7 @@ def run_ALE_on_families(datadir, gene_trees, subst_model, with_transfers, cores,
     exp.reset_dir(observe_output_dir)
     exp.reset_dir(ml_output_dir)
     commands_observe = generate_ALE_observe_commands_file(datadir, gene_trees, subst_model, cores, observe_output_dir)
-    commands_ml = generate_ALE_ml_commands_file(datadir, subst_model, with_transfers, cores, observe_output_dir,  ml_output_dir)
+    commands_ml = generate_ALE_ml_commands_file(datadir, subst_model, with_transfers, cores, observe_output_dir,  ml_output_dir, additional_arguments)
     #os.chdir(observe_output_dir)
     start = time.time()
     exp.run_with_scheduler(exp.ale_observe_exec, commands_observe, "onecore", cores, observe_output_dir, run_name + "_ml_run.logs")
@@ -171,12 +176,12 @@ def run_ALE_on_families(datadir, gene_trees, subst_model, with_transfers, cores,
   #finally:
   #  cwd = os.getcwd()
 
-def run_ALE(datadir, gene_trees, subst_model, cores, dated = False):
+def run_ALE(datadir, gene_trees, subst_model, cores, dated = False, additional_arguments = []):
   cwd = os.getcwd()
   try:
     datadir = os.path.abspath(datadir)
-    run_ALE_on_families(datadir, gene_trees, subst_model, True, cores, dated)
-    #clean_ALE(datadir, subst_model, dated)
+    run_ALE_on_families(datadir, gene_trees, subst_model, True, cores, dated, additional_arguments)
+    clean_ALE(datadir, subst_model, dated)
   finally:
     os.chdir(cwd)
 
@@ -184,7 +189,7 @@ def run_ALE(datadir, gene_trees, subst_model, cores, dated = False):
 if (__name__== "__main__"):
   min_args_number = 5
   if len(sys.argv) < min_args_number:
-    print("Syntax error: python run_ALE.py datadir gene_trees subst_model cores [dated].")
+    print("Syntax error: python run_ALE.py datadir gene_trees subst_model cores [dated] [additional_arguments.")
     sys.exit(0)
 
   datadir = sys.argv[1]
@@ -192,9 +197,12 @@ if (__name__== "__main__"):
   subst_model = sys.argv[3]
   cores = int(sys.argv[4])
   dated = False
+  additional_arguments = []
   if (len(sys.argv) > 5):
-      dated = (int(sys.argv[5]) != 0)
-  run_ALE(datadir, gene_trees, subst_model, cores, dated)
+    dated = (int(sys.argv[5]) != 0)
+  if (len(sys.argv) > 6):
+    additional_arguments = sys.argv[6:]
+  run_ALE(datadir, gene_trees, subst_model, cores, dated, additional_arguments)
 
 #
 

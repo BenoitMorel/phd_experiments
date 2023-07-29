@@ -12,7 +12,7 @@ import fam
 import sequence_model
 import fast_rf_cells
 from ete3 import Tree
-
+import list_gene_tree_methods
 
 
 
@@ -51,10 +51,16 @@ def do_not_opt_rates(additional_arguments):
 
 def export_gene_trees(datadir, output_dir, run_name):
   reconciliations = os.path.join(output_dir, "alegenerax", "reconciliations", "all")
+  reconciliations_summary = os.path.join(output_dir, "alegenerax", "reconciliations", "summaries")
+  sp = run_name.split(".")
+  run_name_consensus = ".".join(sp[:-1]) + "_consensus" + "." + sp[-1]
   for family in fam.get_families_list(datadir):
     source = os.path.join(reconciliations, family + ".newick")
     dest = fam.build_gene_tree_path_from_run(datadir, family, run_name)
     shutil.copy(source, dest)
+    #source = os.path.join(reconciliations_summary, family + "_consensus_mre.newick")
+    #dest = fam.build_gene_tree_path_from_run(datadir, family, run_name_consensus)
+    #shutil.copy(source, dest)
 
 
 def build_alegenerax_families_file(datadir, starting_gene_tree, subst_model, with_likelihoods, amalgamations, output):
@@ -108,7 +114,7 @@ def get_alegenerax_command(alegenerax_families_file, starting_species_tree, addi
     if ("--prune-species-tree" in additional_arguments):
       command.append("4")
     else:
-      command.append("4")
+      command.append("1")
     command.append("--gene-tree-samples")
     command.append("1")
     command.extend(additional_arguments)
@@ -129,7 +135,7 @@ def extract_species_tree(datadir, results_family_dir, run_name, subst_model):
 
 
 
-def run(datadir, subst_model, starting_species_tree, starting_gene_tree, cores, additional_arguments, resultsdir, do_analyze = True, do_extract = True):
+def run(datadir, starting_species_tree, starting_gene_tree, subst_model, cores, additional_arguments, resultsdir, do_analyze = True, do_extract = True):
   run_name = exp.getAndDelete("--run", additional_arguments, None) 
   
   with_likelihoods = exp.checkAndDelete("--likelihoods", additional_arguments)
@@ -139,8 +145,14 @@ def run(datadir, subst_model, starting_species_tree, starting_gene_tree, cores, 
     tc = exp.getArg("--transfer-constraint", additional_arguments, "NONE")
     if (tc == "NONE"):
       run_name += "-tcnone"
-    if (tc == "SRELDATED"):
+    if (tc == "RELDATED"):
       run_name += "-tcrel"
+    if ("--prune-species-tree" in additional_arguments):
+      run_name += "-prune"
+    if ("--per-family-rates" in additional_arguments):
+      run_name += "-fam"
+    origin = exp.getArg("--origination", additional_arguments, "UNIFORM")
+    run_name += "-or" + origin.lower()[:4]
     rec_model = exp.getArg("--rec-model", additional_arguments, "UndatedDTL")
     if (rec_model != "UndatedDTL"):
       run_name += rec_model
@@ -188,12 +200,16 @@ def run(datadir, subst_model, starting_species_tree, starting_gene_tree, cores, 
       print("Failed to analyze the gene trees")
   print("Output in " + resultsdir)
 
-def launch(datadir, subst_model, starting_species_tree, starting_gene_tree, cluster, cores, additional_arguments):
+def launch(datadir, starting_species_tree, starting_gene_tree, subst_model, cluster, cores, additional_arguments):
+  exp.getAndDelete("--script-output", sys.argv, None) 
   command = [exp.python()]
   command.extend(sys.argv)
   command.append("--exprun")
   dataset = os.path.basename(datadir)
-  resultsdir = os.path.join("AleGeneRax", dataset, starting_species_tree + "_start_" + starting_gene_tree, "run")
+  prefixresultsdir = os.path.join("AleGeneRax", dataset)
+  prefixresultsdir = exp.getAndDelete("--script-output", additional_arguments, prefixresultsdir) 
+
+  resultsdir = os.path.join(prefixresultsdir, starting_species_tree + "_start_" + starting_gene_tree, "run")
   resultsdir = exp.create_result_dir(resultsdir, additional_arguments)
   submit_path = os.path.join(resultsdir, "submit.sh")
   command.append(resultsdir)
@@ -208,7 +224,11 @@ if (__name__ == "__main__"):
     sys.argv = sys.argv[:-2]
   min_args_number = 7
   if (len(sys.argv) < min_args_number):
+    if (len(sys.argv) >= 2):
+      print("Possible gene trees:")
+      list_gene_tree_methods.list_gene_tree_methods(sys.argv[1])
     print("Syntax error: python " + os.path.basename(__file__) + "  datadir species_tree gene_trees subst_model cluster cores [additional paremeters]")
+    
     sys.exit(1)
 
   datadir = os.path.normpath(sys.argv[1])
@@ -221,9 +241,9 @@ if (__name__ == "__main__"):
 
 
   if (is_run):
-    run(datadir, subst_model, starting_species_tree, starting_gene_tree, cores, additional_arguments, resultsdir)
+    run(datadir, starting_species_tree, starting_gene_tree, subst_model, cores, additional_arguments, resultsdir)
   else:
-    launch(datadir, subst_model, starting_species_tree, starting_gene_tree, cluster, cores, additional_arguments)
+    launch(datadir, starting_species_tree, starting_gene_tree, subst_model, cluster, cores, additional_arguments)
 
 
 

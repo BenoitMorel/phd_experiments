@@ -180,7 +180,7 @@ def run(datadir, subst_model, strategy, species_tree, starting_tree, cores, addi
   try:
     if (do_analyze):
       fast_rf_cells.analyze(datadir, "all", cores, run_name)
-      rf_cells.analyze(datadir, "all", True) 
+      #rf_cells.analyze(datadir, "all", True) 
   except:
     print("Analyze failed!!!!")
   extract_events(datadir, os.path.join(resultsdir, "generax"), additional_arguments)

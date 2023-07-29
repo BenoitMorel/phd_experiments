@@ -20,7 +20,7 @@ def get_runs(datadir, run_tag):
   if (run_tag == "all"):
     successful_runs = fam.get_successful_runs(datadir)
     for run in successful_runs:
-      if (not "poly" in run and not "ultiple" in run and not "true.true" in run and not "disco" in run and not run.startswith("plausiblerax.")):
+      if (not "poly" in run and not "ultiple" in run and not "true.true" in run and not "disco" in run and not run.startswith("plausiblerax.") and not "consens" in run):
         runs.append(run)
   else:
     runs.append(run_tag)
@@ -73,6 +73,7 @@ def save_rf_cells(datadir, rf_cells, rooted):
   output = fam.get_raw_rf_cells_file(datadir, rooted)
   misc = fam.get_misc_dir(datadir)
   exp.mkdir(misc) 
+  print(output)
   pickle.dump(rf_cells, open(output, "wb"))
 
 def load_rf_cells(datadir, rooted = False):

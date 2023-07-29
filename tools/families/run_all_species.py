@@ -7,7 +7,7 @@ import time
 import run_raxml_supportvalues as raxml
 import fam
 import run_generax
-import run_alegenerax
+import run_alerax
 import run_ALE
 import run_stag
 import species_analyze
@@ -92,10 +92,7 @@ class SpeciesRunFilter():
     self.generax_softdated = False
     self.ale_undated = []
     self.ale_dated = []
-    self.alegenerax_undated = []
-    self.alegenerax_undated_ll = []
-    self.alegenerax_softdated = []
-    self.alegenerax_softdated_gamma = []
+    self.alerax = []
     self.concatenation_min = False
     self.concatenation_max = False
     self.stag = False
@@ -216,18 +213,10 @@ class SpeciesRunFilter():
     if (self.generax_softdated):
       printFlush("Run generax softdated")
       run_generax.run(datadir, subst_model, "SOFTDATED", cores, [])
-    for gene_tree in self.alegenerax_undated:
-      printFlush("Run alegenerax Undated from  " + gene_tree )
-      run_alegenerax.run(datadir, gene_tree, subst_model, "PARENTS", cores, [])
-    for gene_tree in self.alegenerax_undated_ll:
-      printFlush("Run alegenerax Undated from  " + gene_tree )
-      run_alegenerax.run(datadir, gene_tree, subst_model, "PARENTS", cores, ["--likelihoods"])
-    for gene_tree in self.alegenerax_softdated:
-      printFlush("Run alegenerax SoftDated from  " + gene_tree )
-      run_alegenerax.run(datadir, gene_tree, subst_model, "SOFTDATED", cores, [])
-    for gene_tree in self.alegenerax_softdated_gamma:
-      printFlush("Run alegenerax SoftDated from  " + gene_tree )
-      run_alegenerax.run(datadir, gene_tree, subst_model, "SOFTDATED", cores, ["--gamma-categories", "4"])
+    for gene_tree in self.alerax:
+      printFlush("Run alerax from  " + gene_tree )
+      run_alerax.run(datadir, gene_tree, subst_model, cores, ["--gene-tree-samples", "100"])
+      run_alerax.run(datadir, gene_tree, subst_model, cores, ["--gene-tree-samples", "100", "--per-family-rates"])
     for gene_tree in self.ale_undated:
       printFlush("Run ALE Undated from  " + gene_tree )
       run_ALE.run_ALE(datadir, gene_tree, subst_model, cores, dated = False)
@@ -355,7 +344,7 @@ class SpeciesRunFilter():
     for gene_tree in self.genetegratorbench:
       printFlush("Run genetegrator bench")
       run_tegrator.run_genetegrator_bench(datadir, "MiniNJ", gene_tree, subst_model, cores)
-      #run_tegrator.run_genetegrator_bench(datadir, "MiniNJ", gene_tree, subst_model, cores, ["--rec-model", "UndatedDL"])
+      run_tegrator.run_genetegrator_bench(datadir, "MiniNJ", gene_tree, subst_model, cores, ["--per-family-rates"])
     for gene_tree in self.speciesraxbench:
       printFlush("Run speciesRaxBench")
       dataset = os.path.basename(datadir)

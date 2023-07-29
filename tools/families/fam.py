@@ -410,7 +410,7 @@ def get_family_genes_number(datadir, family):
 # convert functions
 ######################
 def convert_to_phyldog_species_tree(speciesTree, phyldog_species_tree):
-  command = "sed s/)[nHR][0123456789a-zA-Z]*/)/g " + speciesTree 
+  command = "sed s/)[a-zA-Z]*[0123456789a-zA-Z-]*/)/g " + speciesTree 
   with open(phyldog_species_tree, "w") as output:
     subprocess.check_call(command.split(" "), stdout=output)
 

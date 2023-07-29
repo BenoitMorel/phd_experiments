@@ -85,7 +85,13 @@ def check_ultrametric_and_get_length(tree_file, epsilon = 0.001):
         assert(abs(ref - node.get_distance(tree)) < epsilon)
   return ref
 
-
+def check_duplicates(tree_file):
+  tree = read_tree(tree_file)
+  labels = set()
+  for leaf in tree.get_leaves():
+    if (leaf.name in labels):
+      print("duplicate label " + leaf.name)
+    labels.add(leaf.name)
 
 def count_monophylies(tree_file):
   tree = read_tree(tree_file)
@@ -113,6 +119,7 @@ if (__name__ == "__main__"):
     exit(1)
 
   tree_file = sys.argv[1]
+  check_duplicates(tree_file)
   analyze_tree(tree_file)
   if (is_ultrametric(tree_file)):
     print("Ultrametric")

@@ -137,7 +137,9 @@ def run(datadir, subst_model, starting_species_tree, starting_gene_tree, cores, 
   
   with_likelihoods = exp.checkAndDelete("--likelihoods", additional_arguments)
   if (run_name == None):
-    run_name = "genetegrator-" + starting_species_tree
+    run_name = "genetegrator"
+    if (starting_species_tree.lower() != "mininj"):
+      run_name += + "-" +  starting_species_tree
     rec_model = exp.getArg("--rec-model", additional_arguments, "UndatedDTL")
     if (starting_species_tree == "random"):
       run_name += exp.getArg("--seed", additional_arguments, "noseed")
@@ -145,13 +147,16 @@ def run(datadir, subst_model, starting_species_tree, starting_gene_tree, cores, 
       run_name += "-dl"
     if ("--prune-species-tree" in additional_arguments):
       run_name += "-prune"
+    if ("--per-family-rates" in additional_arguments):
+      run_name += "-fam"
     tc = exp.getArg("--transfer-constraint", additional_arguments, "PARENTS")
     if (tc == "NONE"):
       run_name += "-tcnone"
     if (tc == "RELDATED"):
       run_name += "-tcrel"
     origin = exp.getArg("--origination", additional_arguments, "UNIFORM")
-    run_name += "-or" + origin.lower()[:4]
+    if (origin.lower()[:4] != "orunif"):
+      run_name += "-or" + origin.lower()[:4]
     gamma = exp.getArg("--gamma-categories", additional_arguments, "1")
     if (gamma != "1"):
       run_name += "_cat" + gamma

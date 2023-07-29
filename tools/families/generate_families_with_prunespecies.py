@@ -115,9 +115,11 @@ def generate(inputdir, outputdir, gene_method, subst_model, keep, species_to_pru
   print("Species to keep: " + " ".join(species_to_keep))
   extract_species_tree(inputdir, outputdir, species_to_keep)
   families = fam.get_families_list(inputdir)
+  index = 0
   for family in families:
-    print("treating " + family)
+    print("treating " + family + " " + str(index) + "/" + str(len(families)))
     extract_family(family, inputdir, outputdir, gene_method, subst_model, species_to_keep)
+    index += 1
   fam.postprocess_datadir(outputdir)
   print("Result datadir in " + outputdir)
   print("Species to keep: " + " ".join(species_to_keep))

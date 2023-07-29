@@ -17,7 +17,7 @@ def run(datadir, subst_model, transfer_constraint, cores, additional_arguments):
   #additional_arguments.append("--transfer-constraint")
   #additional_arguments.append(transfer_constraint)
   exp.reset_dir(resultsdir)
-  launch_generax.run(dataset, subst_model, strategy, species_tree, starting_tree, cores, additional_arguments, resultsdir, do_analyze = False, do_extract = True)
+  launch_generax.run(datadir, subst_model, strategy, species_tree, starting_tree, cores, additional_arguments, resultsdir, do_analyze = False, do_extract = True)
 
 
 
