@@ -1,0 +1,33 @@
+# Archaeplastida: Eukaryota-20
+# Eukaryota-18 also includes TSAR 
+# Eukaryota-19 also includes Guillarda
+# Eukaryota-22: TSAR
+# EMIHU1: haptopyta (parent of tsar)
+# Alpha: Pseudomonadota-3
+# root-6 is the parent of Eukaryota
+
+# look for the alpha -> eukariotes highway
+#Pseudomonadota-3,Eukaryota
+#Pseudomonadota-2,Eukaryota
+#Pseudomonadota-4,Eukaryota
+#Pseudomonadota-3,root-6
+
+# look for the Chlamidiota highway
+#Chlamydiota, Eukaryota
+#Chlamydiota, root-6
+#Chlamydiota-2, Eukaryota
+#Chlamydiota, Eukaryota-20
+#Chlamydiota, Eukaryota-19
+#Chlamydiota, Eukaryota-21
+
+# look for the cyano -> archaeplastida highway
+Cyanobacteriota, Eukaryota-20
+Cyanobacteriota, Eukaryota-18
+Cyanobacteriota, Eukaryota-21
+Cyanobacteriota, Eukaryota
+Cyanobacteriota, EMIHU1
+Cyanobacteriota, Eukaryota-22
+Cyanobacteriota, Streptophyta
+Cyanobacteriota, Chlorophyta
+
+

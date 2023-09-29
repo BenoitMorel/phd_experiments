@@ -1,0 +1,36 @@
+Bacteria-3, Eukaryota
+Bacteria-4,Eukaryota
+Bacteria-5, Eukaryota
+Bacteria-15,Eukaryota
+Bacteria-16,Eukaryota
+Bacteria-20,Eukaryota
+Bacteria-21,Eukaryota
+Bacteria-29, Eukaryota
+Bacteria-39, Eukaryota
+Cyanobacteriota-3, Eukaryota
+Bacillota-60, Eukaryota
+Chlamydiota, Eukaryota
+Chlamydiota-2, Eukaryota
+Planctomycetota, Eukaryota
+Planctomycetota-3, Eukaryota
+Pseudomonadota-2,Eukaryota
+Pseudomonadota-4,Eukaryota
+Pseudomonadota-93, Eukaryota
+
+Archaea-2, Eukaryota
+Synergistota, Eukaryota
+Nitrososphaerota,Eukaryota
+Fusobacteriota,Eukaryota
+Deinococcota,Eukaryota
+Spirochaetota,Eukaryota
+Mycoplasmatota,Eukaryota
+Mycoplasmatota-2,Eukaryota
+Mycoplasmatota-9,Eukaryota
+Bdellovibrionota, Eukaryota
+Euryarchaeota-5,Eukaryota
+Euryarchaeota-6, Eukaryota
+Euryarchaeota-16, Eukaryota
+Euryarchaeota-19,Eukaryota
+Thermoplasmatota-2, Eukaryota
+Thermoproteota-11,Eukaryota
+

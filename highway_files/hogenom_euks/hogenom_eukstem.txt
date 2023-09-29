@@ -1,0 +1,57 @@
+# Eukaryota-2: without Fornicota
+# Eukaryota-3: without Fornicota and without Eugienozoa
+# Pseudomonadota-2: root of alpha
+
+
+Bacteria-5, Eukaryota-3
+Bacteria-16, Eukaryota-3
+Bacteria-20, Eukaryota-3
+Bacteria-21, Eukaryota-3
+Bacteria-22, Eukaryota-3
+Bacteria-28, Eukaryota-3
+Bacteria-36, Eukaryota-3
+Bacteria-39, Eukaryota-3
+
+Spirochaetota, Eukaryota-3
+Spirochaetota-2, Eukaryota-3
+
+Nitrososphaerota, Eukaryota-3
+Nitrososphaerota, Eukaryota-2
+Synergistota, Eukaryota-3
+Synergistota, Eukaryota-2
+
+Pseudomonadota, Eukaryota-3
+Pseudomonadota-2, Eukaryota-3
+Pseudomonadota-3, Eukaryota-3
+Pseudomonadota-4, Eukaryota-3
+Pseudomonadota-5, Eukaryota-3
+Pseudomonadota-45, Eukaryota-3
+
+Pseudomonadota-48, Eukaryota
+Pseudomonadota-49, Eukaryota
+Pseudomonadota-50, Eukaryota
+
+Pseudomonadota-48, Eukaryota-2
+Pseudomonadota-49, Eukaryota-2
+Pseudomonadota-50, Eukaryota-2
+Pseudomonadota-48, Eukaryota-3
+Pseudomonadota-49, Eukaryota-3
+Pseudomonadota-50, Eukaryota-3
+
+Chlamydiota, Eukaryota
+Chlamydiota, Eukaryota-2
+Chlamydiota, Eukaryota-3
+
+Chlamydiota-2, Eukaryota
+Chlamydiota-2, Eukaryota-2
+Chlamydiota-2, Eukaryota-3
+
+
+Planctomycetota, Eukaryota
+Planctomycetota, Eukaryota-2
+Planctomycetota, Eukaryota-3
+
+Thermotogota-2, Eukaryota-3
+Cyanobacteriota-14, Eukaryota-3
+Acidobacteriota-2, Eukaryota-3
+

@@ -1,0 +1,38 @@
+# Eukaryota-18 SAR + Guillarda + Archaeaplastida
+# Eukaryota-19 Archaeaplastida +  Guillarda
+# Eukaryota-20: Archaeaplastida
+# Eukaryota-22:  SAR + haptopyta
+# Eukaryota-23:  SAR 
+# Eukaryota-24:  SAR subtree
+# Eukaryota-25:  SAR subtree
+# EMIHU1: haptopyta 
+# root-6 is the parent of Eukaryota
+# Alpha: Pseudomonadota-3
+
+
+# highway archaeplastida (red alga) -> SAR
+CYAME1, Eukaryota-23
+CYAME1, Eukaryota-22
+CYAME1, Eukaryota-24
+CYAME1, Eukaryota-25
+CYAME1, Eukaryota-26
+CYAME1, Eukaryota-27
+CYAME1, Oomycota
+CYAME1, Bacillariophyta
+# control test
+CYAME1, Mollusca
+CYAME1, Pseudomonadota-86
+
+
+# look for the cyano -> archaeplastida highway
+Cyanobacteriota, Eukaryota-20
+Cyanobacteriota, Eukaryota-18
+Cyanobacteriota, Eukaryota-21
+Cyanobacteriota, Eukaryota
+Cyanobacteriota, EMIHU1
+Cyanobacteriota, Eukaryota-22
+Cyanobacteriota, Streptophyta
+Cyanobacteriota, Chlorophyta
+# test
+Cyanobacteriota, Mollusca
+Cyanobacteriota, Pseudomonadota-86

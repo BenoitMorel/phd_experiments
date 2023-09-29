@@ -203,7 +203,7 @@ def display_warning_file(warning_filename):
 def create_result_dir(suffix, additional_args = []):
   base = os.path.join(results_root, suffix) 
   for arg in additional_args:
-    base += "_" + arg
+    base += "_" + arg.replace("/", "SLASH")
   base += "_"
   result_dir = ""
   for i in range(0, 10000):
