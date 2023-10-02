@@ -139,7 +139,7 @@ def run(datadir, subst_model, starting_species_tree, starting_gene_tree, cores, 
   if (run_name == None):
     run_name = "genetegrator"
     if (starting_species_tree.lower() != "mininj"):
-      run_name += + "-" +  starting_species_tree
+      run_name += "-" +  starting_species_tree
     rec_model = exp.getArg("--rec-model", additional_arguments, "UndatedDTL")
     if (starting_species_tree == "random"):
       run_name += exp.getArg("--seed", additional_arguments, "noseed")

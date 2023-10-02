@@ -85,6 +85,7 @@ class SpeciesRunFilter():
     self.bootstrap_trees = 0
     self.fasttree = False
     self.ufboot = []
+    self.iqtree = []
     self.plausiblerax = False
     self.dicotree = False
     self.mrbayes = False
@@ -114,6 +115,7 @@ class SpeciesRunFilter():
     self.astral_mp = []
     self.astralpro = []
     self.astralpro2 = []
+    self.astralproweighted = []
     self.speciesrax = []
     self.genetegratorbench = []
     self.speciesraxbench = []
@@ -180,11 +182,17 @@ class SpeciesRunFilter():
       assert(os.path.isdir((os.path.join(datadir, "runs", subst_model))))
       run_fasttree.run_fasttree_on_families(datadir, subst_model, cores)
       sys.stdout.flush()
+    for samples in self.iqtree:
+      printFlush("Run IQTree...")
+      sys.stdout.flush()
+      assert(os.path.isdir((os.path.join(datadir, "runs", subst_model))))
+      run_ufboot.run_ufboot_on_families(datadir, subst_model, samples, 0, cores)
+      sys.stdout.flush()
     for samples in self.ufboot:
       printFlush("Run UFBoot...")
       sys.stdout.flush()
       assert(os.path.isdir((os.path.join(datadir, "runs", subst_model))))
-      run_fasttree.run_ufboot(datadir, subst_model, samples, cores)
+      run_ufboot.run_ufboot_on_families(datadir, subst_model, samples, 1, cores)
       sys.stdout.flush()
     if (self.plausiblerax and subst_model != "true"):
       printFlush("Run PlausibleRax...")
@@ -340,7 +348,10 @@ class SpeciesRunFilter():
       run_astral_pro.run_astralpro(datadir, gene_tree, subst_model)
     for gene_tree in self.astralpro2:
       printFlush("Run Astral-pro 2")
-      run_aster.run_aster(datadir, gene_tree, subst_model, True, cores)
+      run_aster.run_aster(datadir, gene_tree, subst_model, True, False, cores)
+    for gene_tree in self.astralproweighted:
+      printFlush("Run Astral-pro 2 weighted")
+      run_aster.run_aster(datadir, gene_tree, subst_model, True, True, cores)
     for gene_tree in self.genetegratorbench:
       printFlush("Run genetegrator bench")
       run_tegrator.run_genetegrator_bench(datadir, "MiniNJ", gene_tree, subst_model, cores)

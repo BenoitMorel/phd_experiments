@@ -33,20 +33,24 @@ def generate_scheduler_commands_file(datadir, subst_model, samples, cores, outpu
       writer.write(" ".join(command) + "\n")
   return scheduler_commands_file
     
-def extract_trees(datadir, output_dir, subst_model, samples):
+def extract_trees(datadir, output_dir, subst_model, samples, export_samples):
   results_dir = os.path.join(output_dir, "results")
   for family in fam.get_families_list(datadir):
-    src = os.path.join(results_dir, family + ".ufboot")
-    dest = fam.build_gene_tree_path(datadir, subst_model, family, "ufboot" + str(samples))
-    try: 
-      shutil.copyfile(src, dest)
-    except:
-      print("No ufboot trees for family " + family)
+    if (export_samples):
+      src = os.path.join(results_dir, family + ".ufboot")
+      dest = fam.build_gene_tree_path(datadir, subst_model, family, "ufboot" + str(samples))
+      try: 
+        shutil.copyfile(src, dest)
+      except:
+        print("No ufboot trees for family " + family)
+    src = os.path.join(results_dir, family + ".treefile")
+    dest = fam.build_gene_tree_path(datadir, subst_model, family, "iqtree" + str(samples))
+    shutil.copyfile(src, dest)
 
-def run_ufboot_on_families(datadir, subst_model, samples, cores):
+def run_ufboot_on_families(datadir, subst_model, samples, export_samples, cores):
   run_name = "ufboot" + str(samples)
   output_dir = fam.get_run_dir(datadir, subst_model, run_name + "_run")
-  run = False
+  run = True
   if (run):
     shutil.rmtree(output_dir, True)
     os.makedirs(output_dir)
@@ -54,19 +58,20 @@ def run_ufboot_on_families(datadir, subst_model, samples, cores):
     start = time.time()
     exp.run_with_scheduler(exp.iqtree_exec, scheduler_commands_file, "onecore", cores, output_dir, "logs.txt")   
     saved_metrics.save_metrics(datadir, fam.get_run_name("run_nae", subst_model), (time.time() - start), "runtimes") 
-  extract_trees(datadir, output_dir, subst_model, samples)
+  extract_trees(datadir, output_dir, subst_model, samples, export_samples)
 
 if (__name__== "__main__"):
-  max_args_number = 4
+  max_args_number = 6
   if len(sys.argv) < max_args_number:
-    print("Syntax error: python " + os.path.basename(__file__) + " datadir subst_model samples cores.")
+    print("Syntax error: python " + os.path.basename(__file__) + " datadir subst_model samples export_samples cores.")
     sys.exit(0)
 
   datadir = sys.argv[1]
   subst_model = sys.argv[2]
   samples = int(sys.argv[3])
-  cores = int(sys.argv[4])
-  run_ufboot_on_families(datadir, subst_model, samples, cores)
+  export_samples = int(sys.argv[4]) == 1
+  cores = int(sys.argv[5])
+  run_ufboot_on_families(datadir, subst_model, samples, export_samples, cores)
 
 
 

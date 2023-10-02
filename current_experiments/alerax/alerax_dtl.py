@@ -3,9 +3,11 @@ import os
 import sys
 import re
 sys.path.insert(0, os.path.join("tools", "families"))
+sys.path.insert(0, os.path.join("current_experiments"))
 import fam
 import run_all_species
 from run_all_species import SpeciesRunFilter
+
 import plot_speciesrax
 import simulations_common
 import plot_simulations
@@ -18,7 +20,8 @@ datasets = []
 cores = 10
 subst_model = "GTR+G"
 mrbayes_trees = "mrbayes-r1-c2-g100K-f100-braxml"
-gene_trees = "raxml-ng"
+#gene_trees = "raxml-ng"
+gene_trees = "iqtree1000"
 launch_mode = "normald"
 
 tag = "dtl"
@@ -27,15 +30,15 @@ replicates = range(3000,3050)
 
 varying_params = []
 if (True):
-  #if (do_run):
-  #  varying_params.append((None, ["none"]))
-  #varying_params.append(("dup_rate", ["d0.5_l0.5_t0.5", "d2.0_l2.0_t2.0", "d3.0_l3.0_t3.0"]))
-  #varying_params.append(("transfer_rate", ["t0.5", "t2.0", "t3.0"]))
-  #varying_params.append(("population", ["pop10000000", "pop100000000", "pop1000000000"]))
+  if (do_run):
+    varying_params.append((None, ["none"]))
+  varying_params.append(("dup_rate", ["d0.5_l0.5_t0.5", "d2.0_l2.0_t2.0", "d3.0_l3.0_t3.0"]))
+  varying_params.append(("transfer_rate", ["t0.5", "t2.0", "t3.0"]))
+  varying_params.append(("population", ["pop10000000", "pop100000000", "pop1000000000"]))
   varying_params.append(("species", ["s15", "s35", "s50", "s75"]))
-  #varying_params.append(("families", ["f50", "f200", "f500", "f1000"]))
-  #varying_params.append(("bl", ["bl0.01", "bl0.1", "bl10.0", "bl100.0", "bl1000.0", "bl10000.0", "bl100000.0"]))
-  varying_params.append(("sites", ["sites51", "sites200", "sites300"]))
+  varying_params.append(("families", ["f50", "f200", "f500", "f1000"]))
+  varying_params.append(("bl", ["bl0.01", "bl0.1", "bl10.0", "bl100.0", "bl1000.0", "bl10000.0", "bl100000.0"]))
+  varying_params.append(("sites", ["sites50", "sites200", "sites300"]))
 
 
 
@@ -64,12 +67,14 @@ def run_varying_experiment():
   run_filter.starting_gene_trees = gene_trees 
   run_filter.disable_all()
   if (True):
-    
     run_filter.generate = False
-    run_filter.ale_undated = [mrbayes_trees]
-    run_filter.alerax = [mrbayes_trees]
+    run_filter.iqtree = [1000]
+    run_filter.astralpro2 = [gene_trees]
+    run_filter.astralproweighted = [gene_trees]
+    #run_filter.ale_undated = [mrbayes_trees]
+    #run_filter.alerax = [mrbayes_trees]
     #run_filter.generax_undated = True
-    run_filter.analyze_gene_trees = True 
+    #run_filter.analyze_gene_trees = True 
     #run_filter.fasttree = True
     #run_filter.pargenes = True
     #run_filter.plausiblerax = True
