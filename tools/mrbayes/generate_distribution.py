@@ -31,6 +31,33 @@ def generate_config_file(chains, generations, frequency, output_config_file, nex
       writer.write("end;")
 
 
+def extract_trees(mrbayes_nexus, output, burnin):
+  with open(output, "w") as writer:
+      lines = open(mrbayes_nexus).readlines()
+      is_translation = False
+      translator = {}
+      tree_index = 0
+      for line in lines:
+        if ("tree gen" in line):
+          tree_index += 1
+          if (tree_index <= int(burnin)):
+            continue
+          is_translation = False
+          tree = line.split(" ")[-1]
+          writer.write(rename_leaves.rename_leaves(tree, translator) + "\n")
+          continue
+        if ("translate" in line):
+          is_translation = True
+          continue
+        if (is_translation):
+          split = line.split(" ")
+          left = split[-2]
+          right = split[-1][:-2]
+          sp = right.split("_")
+          right = "_".join(sp[0:-1])
+          translator[left] = right
+
+
 def generate(alignment, subst_model, runs, chains, generations, frequency, burnin, outputdir):
     os.mkdir(outputdir)
     prefix = os.path.join(outputdir, "mrbayes")
@@ -44,8 +71,12 @@ def generate(alignment, subst_model, runs, chains, generations, frequency, burni
     command = []
     command.append(exp.mrbayes_exec)
     command.append(config_file)
+    # run
     subprocess.run(command)
-
+    unfiltered = os.path.join(prefix + ".t")
+    filtered = os.path.join(prefix + ".newick")
+    extract_trees(unfiltered, filtered, burnin)
+    print("output distributions in " + filtered)
 
 if (__name__== "__main__"):
   if len(sys.argv) != 9:
