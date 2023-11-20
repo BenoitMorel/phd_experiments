@@ -12,7 +12,7 @@ def get_parent_path(path):
 root = get_parent_path(get_parent_path(os.path.realpath(__file__)))
 
 def python():
-  return "python"
+  return "python3"
 
 def python3():
   return "python3"
